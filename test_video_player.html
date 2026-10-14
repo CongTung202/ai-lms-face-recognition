@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Luồng Video Học Tập LMS - HTTP 206 Streaming & Chống Tua</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Video Player Wrapper */
+        .video-box {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Progress Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .stat-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 4px;
+            color: #38bdf8;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            margin-top: 16px;
+        }
+
+        .progress-bar-bg {
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Config Form */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-warning {
+            background: #d97706;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        .log-box {
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+            margin-top: 14px;
+            color: #a5f3fc;
+            line-height: 1.5;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .badge-pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+            Kiểm Thử Luồng Video Học Tập & Chống Tua Gian Lận
+        </h1>
+        <p>Giao thức HTTP 206 Partial Content Chunk 1MB | Tự động Heartbeat 5s | Chống tua vượt mốc | Tự động đánh dấu hoàn thành khi đạt 85%</p>
+    </div>
+
+    <div class="grid">
+        <!-- Cột Trái: Trình phát Video & Tiến độ -->
+        <div>
+            <div class="card">
+                <div class="card-title">
+                    <span>Màn hình phát video bài học</span>
+                    <span id="completionBadge" class="badge badge-pending">Chưa hoàn thành</span>
+                </div>
+
+                <div class="video-box">
+                    <video id="videoPlayer" controls preload="metadata">
+                        <source id="videoSource" src="" type="video/mp4">
+                        Trình duyệt không hỗ trợ thẻ video.
+                    </video>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                        <span>Tiến độ học thực tế (Chống tua)</span>
+                        <strong id="percentageText">0%</strong>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="progressBarFill" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Vị trí xem hiện tại</div>
+                        <div id="currentTimeText" class="stat-value">0s</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Mốc xa nhất đã duyệt</div>
+                        <div id="maxWatchedText" class="stat-value">0s</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Tổng thời gian học thực tế</div>
+                        <div id="timeSpentText" class="stat-value">0s</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Trạng thái Resume</div>
+                        <div id="resumeStatus" class="stat-value" style="font-size: 14px; color: #34d399;">Sẵn sàng</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột Phải: Điều khiển & Log kết nối -->
+        <div>
+            <div class="card">
+                <div class="card-title">Cấu hình phiên học</div>
+
+                <div class="form-group">
+                    <label>Mã ID Bài học (Lesson ID):</label>
+                    <input type="number" id="lessonId" value="1">
+                </div>
+
+                <div class="form-group">
+                    <label>Mã Sinh Viên (User ID):</label>
+                    <input type="number" id="userId" value="1">
+                </div>
+
+                <div class="form-group">
+                    <label>JWT Token (Tùy chọn nếu đã đăng nhập):</label>
+                    <input type="text" id="jwtToken" placeholder="Dán Bearer token nếu có...">
+                </div>
+
+                <button class="btn btn-primary" onclick="loadLessonAndResume()">
+                    ▶ Tải Bài Học & Resume Tiến Trình
+                </button>
+
+                <div style="margin-top: 15px;">
+                    <div class="card-title" style="margin-bottom: 8px;">Upload Video cho Bài học</div>
+                    <input type="file" id="videoFileInput" accept="video/mp4,video/mkv,video/webm" style="margin-bottom: 8px;">
+                    <button class="btn btn-warning" onclick="uploadVideo()">
+                        ⬆ Tải Video Lên Server (Byte-Range)
+                    </button>
+                </div>
+
+                <div class="card-title" style="margin-top: 20px; margin-bottom: 6px;">Nhật ký Heartbeat & Sự kiện</div>
+                <div id="logBox" class="log-box">
+                    [System] Sẵn sàng kiểm thử luồng video...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = "http://localhost:8080/api";
+    let heartbeatInterval = null;
+    let videoEl = document.getElementById("videoPlayer");
+
+    function log(msg) {
+        const box = document.getElementById("logBox");
+        const time = new Date().toLocaleTimeString();
+        box.innerHTML = `[${time}] ${msg}<br>` + box.innerHTML;
+    }
+
+    async function loadLessonAndResume() {
+        const lessonId = document.getElementById("lessonId").value;
+        const userId = document.getElementById("userId").value;
+        const token = document.getElementById("jwtToken").value.trim();
+
+        log(`Đang tải tiến trình bài học ${lessonId}...`);
+
+        // Cập nhật nguồn video stream HTTP 206
+        const streamUrl = `${API_BASE}/videos/stream/${lessonId}`;
+        videoEl.src = streamUrl;
+
+        // Gọi API lấy tiến trình cũ để Resume
+        try {
+            let headers = {};
+            if (token) headers["Authorization"] = "Bearer " + token;
+
+            const res = await fetch(`${API_BASE}/videos/progress/${lessonId}?userId=${userId}`, { headers });
+            const data = await res.json();
+
+            if (data.code === 200 && data.data) {
+                const p = data.data;
+                updateUIProgress(p);
+
+                // Resume player
+                if (p.lastWatchedSecond > 0) {
+                    videoEl.currentTime = p.lastWatchedSecond;
+                    log(`▶ Đã Resume phát tiếp từ giây thứ: ${p.lastWatchedSecond}s`);
+                }
+            }
+        } catch (e) {
+            log(`Lỗi lấy tiến trình: ${e.message}`);
+        }
+
+        // Bắt đầu nhịp tim gửi mỗi 5 giây
+        startHeartbeat();
+    }
+
+    function startHeartbeat() {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+
+        heartbeatInterval = setInterval(async () => {
+            if (videoEl.paused || videoEl.ended) return;
+
+            const lessonId = parseInt(document.getElementById("lessonId").value);
+            const userId = parseInt(document.getElementById("userId").value);
+            const token = document.getElementById("jwtToken").value.trim();
+            const currentTime = Math.floor(videoEl.currentTime);
+            const duration = Math.floor(videoEl.duration) || 60;
+
+            const body = {
+                lessonId: lessonId,
+                currentTimeSecond: currentTime,
+                durationSecond: duration
+            };
+
+            let headers = { "Content-Type": "application/json" };
+            if (token) headers["Authorization"] = "Bearer " + token;
+
+            try {
+                const res = await fetch(`${API_BASE}/videos/progress/heartbeat?userId=${userId}`, {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify(body)
+                });
+                const resData = await res.json();
+                if (resData.code === 200 && resData.data) {
+                    updateUIProgress(resData.data);
+                    log(`♥ Heartbeat: Đang xem ${currentTime}s | Hợp lệ: ${resData.data.maxWatchedSecond}s (${resData.data.completionPercentage}%)`);
+                }
+            } catch (err) {
+                log(`Lỗi gửi heartbeat: ${err.message}`);
+            }
+        }, 5000);
+    }
+
+    function updateUIProgress(p) {
+        document.getElementById("currentTimeText").innerText = (p.lastWatchedSecond || 0) + "s";
+        document.getElementById("maxWatchedText").innerText = (p.maxWatchedSecond || 0) + "s";
+        document.getElementById("timeSpentText").innerText = (p.totalTimeSpentSeconds || 0) + "s";
+        document.getElementById("percentageText").innerText = (p.completionPercentage || 0) + "%";
+        document.getElementById("progressBarFill").style.width = (p.completionPercentage || 0) + "%";
+
+        const badge = document.getElementById("completionBadge");
+        if (p.isCompleted) {
+            badge.className = "badge badge-success";
+            badge.innerText = "✓ ĐÃ HOÀN THÀNH";
+        } else {
+            badge.className = "badge badge-pending";
+            badge.innerText = "Đang học";
+        }
+    }
+
+    async function uploadVideo() {
+        const fileInput = document.getElementById("videoFileInput");
+        const lessonId = document.getElementById("lessonId").value;
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Vui lòng chọn 1 tệp video để tải lên!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        log(`Đang tải tệp ${fileInput.files[0].name} lên server...`);
+        try {
+            const res = await fetch(`${API_BASE}/videos/upload/${lessonId}`, {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            if (data.code === 200) {
+                log(`✓ Tải lên thành công! Bấm 'Tải Bài Học' để phát.`);
+                alert("Upload thành công!");
+            } else {
+                log(`Thất bại: ${data.message}`);
+            }
+        } catch (e) {
+            log(`Lỗi upload: ${e.message}`);
+        }
+    }
+</script>
+
+</body>
+</html>

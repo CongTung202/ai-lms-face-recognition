@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Trợ Lý AI RAG - Bóc Tách Giáo Trình & Hỏi Đáp Bài Học</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --purple: #8b5cf6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--purple);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-purple {
+            background: var(--purple);
+            color: #fff;
+        }
+
+        .btn-purple:hover {
+            background: #7c3aed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Chat Messages Box */
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            height: 480px;
+            overflow-y: auto;
+            padding: 12px;
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 14px;
+        }
+
+        .chat-msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .msg-user {
+            align-self: flex-end;
+            background: #1e3a8a;
+            color: #dbeafe;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-ai {
+            align-self: flex-start;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            color: #f1f5f9;
+            border-bottom-left-radius: 2px;
+        }
+
+        .source-tag {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.2);
+            color: #c084fc;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 8px;
+            margin-right: 6px;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+
+        .meta-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+            Trợ Lý AI RAG - Hỏi Đáp Giáo Trình Môn Học (Offline / Miễn Phí)
+        </h1>
+        <p>Bóc tách tài liệu .pdf (Apache PDFBox) & .docx (Apache POI) | Định vị số trang | Tìm kiếm ngữ nghĩa TF-IDF & Cosine siêu tốc (< 10ms)</p>
+    </div>
+
+    <div class="grid">
+        <!-- Cột Trái: Quản lý & Tải lên tài liệu giáo trình -->
+        <div>
+            <div class="card">
+                <div class="card-title">
+                    <span>Tải Lên Giáo Trình Môn Học</span>
+                    <span class="badge badge-success">Sẵn Sàng</span>
+                </div>
+
+                <div class="form-group">
+                    <label>ID Khóa học (Course ID):</label>
+                    <input type="number" id="courseId" value="1">
+                </div>
+
+                <div class="form-group">
+                    <label>Tiêu đề tài liệu / Giáo trình:</label>
+                    <input type="text" id="docTitle" placeholder="Ví dụ: Giáo trình Cơ sở dữ liệu quan hệ">
+                </div>
+
+                <div class="form-group">
+                    <label>Chọn tệp (.pdf, .docx, .txt):</label>
+                    <input type="file" id="docFile" accept=".pdf,.docx,.txt">
+                </div>
+
+                <button class="btn btn-purple" onclick="uploadAndIndexDoc()">
+                    ⚡ Bóc Tách & Lập Chỉ Mục RAG
+                </button>
+
+                <div id="uploadStatus" style="font-size: 13px; margin-top: 14px; line-height: 1.5; color: #a5f3fc;"></div>
+            </div>
+        </div>
+
+        <!-- Cột Phải: Khung Chat AI RAG -->
+        <div>
+            <div class="card">
+                <div class="card-title">
+                    <span>Hộp Thoại Trợ Lý AI RAG</span>
+                    <span id="ragLatency" style="font-size: 12px; color: #34d399;">Độ trễ: 0ms</span>
+                </div>
+
+                <div id="chatBox" class="chat-box">
+                    <div class="chat-msg msg-ai">
+                        Xin chào bạn! Tôi là Trợ lý AI học tập. Hãy tải lên tài liệu giáo trình và đặt câu hỏi cho tôi, tôi sẽ tra cứu và trả lời chính xác kèm số trang trong sách!
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="userQuestion" placeholder="Đặt câu hỏi về nội dung giáo trình..." onkeypress="handleEnter(event)">
+                    <button class="btn btn-primary" style="width: auto; padding: 0 20px;" onclick="sendQuestion()">
+                        Gửi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = "http://localhost:8080/api";
+
+    function handleEnter(e) {
+        if (e.key === "Enter") sendQuestion();
+    }
+
+    async function uploadAndIndexDoc() {
+        const courseId = document.getElementById("courseId").value;
+        const title = document.getElementById("docTitle").value;
+        const fileInput = document.getElementById("docFile");
+        const statusEl = document.getElementById("uploadStatus");
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Vui lòng chọn 1 tệp .pdf, .docx hoặc .txt!");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append("courseId", courseId);
+        formData.append("title", title);
+        formData.append("file", file);
+
+        statusEl.innerHTML = `<span style="color:#fbbf24;">⏳ Đang bóc tách văn bản và lập chỉ mục RAG...</span>`;
+
+        try {
+            const res = await fetch(`${API_BASE}/documents/upload`, {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+
+            if (data.code === 200) {
+                const doc = data.data;
+                statusEl.innerHTML = `
+                    <div style="color:#34d399; font-weight:600;">✓ ${data.message}</div>
+                    <div style="color:#94a3b8; font-size:12px; margin-top:4px;">
+                        • Tổng số trang: <b>${doc.totalPages}</b><br>
+                        • Số đoạn trích (Chunks): <b>${doc.chunkCount}</b><br>
+                        • Trạng thái RAG: <b>${doc.ragStatus}</b>
+                    </div>
+                `;
+            } else {
+                statusEl.innerHTML = `<span style="color:#f87171;">✕ ${data.message}</span>`;
+            }
+        } catch (err) {
+            statusEl.innerHTML = `<span style="color:#f87171;">✕ Lỗi kết nối: ${err.message}</span>`;
+        }
+    }
+
+    async function sendQuestion() {
+        const inputEl = document.getElementById("userQuestion");
+        const question = inputEl.value.trim();
+        const courseId = parseInt(document.getElementById("courseId").value);
+        const chatBox = document.getElementById("chatBox");
+
+        if (!question) return;
+
+        // Thêm tin nhắn của User
+        chatBox.innerHTML += `<div class="chat-msg msg-user">${escapeHtml(question)}</div>`;
+        inputEl.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Hiển thị trạng thái đang xử lý
+        const loadingId = "loading_" + Date.now();
+        chatBox.innerHTML += `<div id="${loadingId}" class="chat-msg msg-ai" style="color:#94a3b8;">Trợ lý AI đang tra cứu giáo trình...</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            const res = await fetch(`${API_BASE}/documents/rag/ask`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ courseId: courseId, question: question })
+            });
+
+            const data = await res.json();
+            document.getElementById(loadingId).remove();
+
+            if (data.code === 200 && data.data) {
+                const ans = data.data;
+                document.getElementById("ragLatency").innerText = `Độ trễ RAG: ${ans.executionTimeMs}ms`;
+
+                let sourcesHtml = "";
+                if (ans.sources && ans.sources.length > 0) {
+                    sourcesHtml = `<div style="margin-top:10px; border-top:1px solid #334155; padding-top:8px;">`;
+                    sourcesHtml += `<div style="font-size:12px; color:#94a3b8; margin-bottom:4px;">Nguồn tài liệu tham khảo:</div>`;
+                    ans.sources.forEach(s => {
+                        sourcesHtml += `<span class="source-tag">📖 Trang ${s.pageNumber} (Độ khớp: ${(s.similarityScore * 100).toFixed(0)}%)</span>`;
+                    });
+                    sourcesHtml += `</div>`;
+                }
+
+                chatBox.innerHTML += `
+                    <div class="chat-msg msg-ai">
+                        ${formatAnswer(ans.answer)}
+                        ${sourcesHtml}
+                        <div class="meta-time">Tra cứu trong ${ans.executionTimeMs}ms</div>
+                    </div>
+                `;
+            } else {
+                chatBox.innerHTML += `<div class="chat-msg msg-ai" style="color:#f87171;">✕ ${data.message}</div>`;
+            }
+        } catch (err) {
+            document.getElementById(loadingId).remove();
+            chatBox.innerHTML += `<div class="chat-msg msg-ai" style="color:#f87171;">✕ Lỗi kết nối: ${err.message}</div>`;
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function formatAnswer(text) {
+        if (!text) return "";
+        return text
+            .replace(/\n/g, "<br>")
+            .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+    }
+
+    function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+</script>
+
+</body>
+</html>
