@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Python virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Maven & Java Build Output
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Uploads / Media files (Videos & documents can be very large)
+uploads/videos/*
+!uploads/videos/.gitkeep
+uploads/documents/*
+!uploads/documents/.gitkeep
+
+# OS specific files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs
+*.log
