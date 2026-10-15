@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Đề Thi &amp; Giám Sát AI - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Quản Lý Đề Thi Trực Tuyến &amp; Giám Sát AI Proctoring</h2>
+                    <p class="panel-description">Danh mục kỳ thi, yêu cầu kiểm tra danh tính khuôn mặt và theo dõi lịch sử vi phạm</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="create.html" class="btn btn-primary">Tạo đề thi mới</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đề</th>
+                                <th>Tên kỳ thi</th>
+                                <th>Khóa học đào tạo</th>
+                                <th>Thời lượng (phút)</th>
+                                <th>Yêu cầu AI Face</th>
+                                <th>Số lượng câu hỏi</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="examTableBody">
+                            <!-- Rendered by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('exams', [
+                { label: 'Đề thi & Giám sát AI', url: 'list.html' },
+                { label: 'Danh sách' }
+            ]);
+            loadTableData();
+        });
+
+        function loadTableData() {
+            const store = Store.get();
+            const tbody = document.getElementById("examTableBody");
+            tbody.innerHTML = "";
+
+            store.exams.forEach(ex => {
+                const tr = document.createElement("tr");
+
+                const faceBadge = ex.requireFace 
+                    ? `<span class="status-badge connected">Bắt buộc AI</span>` 
+                    : `<span class="status-badge local">Không bắt buộc</span>`;
+
+                const statusBadge = ex.status === "OPEN" 
+                    ? `<span class="status-badge connected">Đang mở</span>` 
+                    : `<span class="status-badge danger">Đã đóng</span>`;
+
+                tr.innerHTML = `
+                    <td><code>${escapeHtml(ex.code)}</code></td>
+                    <td><strong>${escapeHtml(ex.title)}</strong></td>
+                    <td>${escapeHtml(ex.course)}</td>
+                    <td>${ex.duration} phút</td>
+                    <td>${faceBadge}</td>
+                    <td>${ex.questionsCount} câu hỏi</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="details.html?id=${ex.id}" class="btn btn-secondary btn-sm">Chi tiết &amp; Nhật ký vi phạm</a>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleExamStatus(${ex.id})">Đổi trạng thái</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteExamRow(${ex.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleExamStatus(examId) {
+            const store = Store.get();
+            const ex = store.exams.find(x => x.id === examId);
+            if (!ex) return;
+
+            ex.status = ex.status === 'OPEN' ? 'CLOSED' : 'OPEN';
+            Store.save(store);
+            showToast("Đã cập nhật trạng thái đề thi!");
+            loadTableData();
+        }
+
+        function deleteExamRow(examId) {
+            const store = Store.get();
+            const ex = store.exams.find(x => x.id === examId);
+            if (!ex) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa đề thi " + ex.title + "?")) {
+                store.exams = store.exams.filter(x => x.id !== examId);
+                Store.save(store);
+                showToast("Đã xóa đề thi thành công!");
+                loadTableData();
+            }
+        }
+    </script>
+</body>
+</html>

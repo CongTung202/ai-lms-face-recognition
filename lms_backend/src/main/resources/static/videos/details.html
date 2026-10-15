@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm Thử Phát Video &amp; Chống Tua - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 960px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title" id="videoHeading">Kiểm Thử Trình Phát Video</h2>
+                    <p class="panel-description">Truyền phát phân đoạn HTTP 206 Partial Content, giám sát nhịp tim 15s và chống tua đốt giai đoạn</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <!-- VIDEO PLAYER CONTAINER -->
+                <div style="background-color: #000000; border-radius: 6px; overflow: hidden; height: 380px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <video id="html5VideoPlayer" controls style="width: 100%; height: 100%; object-fit: contain;">
+                        <source src="../../uploads/videos/lesson_1/compressed_1791787433969.mp4" type="video/mp4">
+                        Trình duyệt không hỗ trợ phát video HTML5.
+                    </video>
+                </div>
+
+                <!-- TELEMETRY & PROGRESS METRICS -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 24px;">
+                    <div class="details-item">
+                        <div class="details-key">Giao thức truyền phát</div>
+                        <div class="details-val" style="color: #60a5fa;">HTTP 206 (1MB/Chunk)</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Giây xem cao nhất (maxWatched)</div>
+                        <div class="details-val" id="valMaxWatched" style="color: #a7f3d0;">0 giây (0%)</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Trạng thái Anti-Cheat</div>
+                        <div class="details-val" id="valAntiCheat" style="color: #fde68a;">Bảo vệ nhịp tim 15s</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Tình trạng hoàn thành (&gt;=85%)</div>
+                        <div class="details-val" id="valCompletion">Chưa hoàn thành</div>
+                    </div>
+                </div>
+
+                <!-- VIDEO METADATA GRID -->
+                <div class="details-grid">
+                    <div class="details-item">
+                        <div class="details-key">Tên tệp tin</div>
+                        <div class="details-val" id="valFileName">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Bài học liên kết</div>
+                        <div class="details-val" id="valLesson">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Tổng thời lượng</div>
+                        <div class="details-val" id="valDuration">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Dung lượng lưu trữ</div>
+                        <div class="details-val" id="valSize">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Trạng thái nén JAVE2</div>
+                        <div class="details-val" id="valStatus">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Đường dẫn Cloudinary CDN</div>
+                        <div class="details-val" id="valCdnUrl">-</div>
+                    </div>
+                </div>
+
+                <!-- CONTROL BUTTONS -->
+                <div style="display: flex; gap: 12px; margin-top: 10px;">
+                    <button type="button" class="btn btn-primary" onclick="simulateHeartbeat()">Gửi nhịp tim kiểm tra (Heartbeat 15s)</button>
+                    <button type="button" class="btn btn-secondary" onclick="simulateCloudinarySync()">Đồng bộ Cloudinary CDN</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        let currentVideoId = null;
+        let maxWatchedSeconds = 0;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            currentVideoId = parseInt(getQueryParam('id'), 10);
+            if (!currentVideoId) {
+                alert("Thiếu mã video!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            renderMasterLayout('videos', [
+                { label: 'Tài nguyên Video', url: 'list.html' },
+                { label: 'Kiểm thử phát video' }
+            ]);
+
+            loadVideoDetails();
+            initPlayerEvents();
+        });
+
+        function loadVideoDetails() {
+            const store = Store.get();
+            const v = store.videos.find(x => x.id === currentVideoId);
+            if (!v) {
+                alert("Không tìm thấy video!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            document.getElementById("videoHeading").innerText = "Video: " + v.fileName;
+            document.getElementById("valFileName").innerText = v.fileName;
+            document.getElementById("valLesson").innerText = v.lesson;
+            document.getElementById("valDuration").innerText = v.duration + " giây (" + Math.round(v.duration/60) + " phút)";
+            document.getElementById("valSize").innerText = v.size;
+            document.getElementById("valStatus").innerHTML = v.status === 'COMPRESSED'
+                ? `<span class="status-badge connected">Đã nén chuẩn 720p</span>`
+                : (v.status === 'UPLOADED_CLOUDINARY' ? `<span class="status-badge connected">Đã lên Cloudinary CDN</span>` : `<span class="status-badge warning">Bản ghi gốc</span>`);
+            document.getElementById("valCdnUrl").innerText = v.cdnUrl || "Chưa đồng bộ";
+        }
+
+        function initPlayerEvents() {
+            const video = document.getElementById("html5VideoPlayer");
+            video.addEventListener("timeupdate", () => {
+                const current = Math.floor(video.currentTime);
+                // Anti-cheat verification logic
+                if (current <= maxWatchedSeconds + 2) {
+                    if (current > maxWatchedSeconds) {
+                        maxWatchedSeconds = current;
+                        updateProgressDisplay();
+                    }
+                }
+            });
+
+            video.addEventListener("seeking", () => {
+                const target = Math.floor(video.currentTime);
+                if (target > maxWatchedSeconds + 5) {
+                    document.getElementById("valAntiCheat").innerText = "Phát hiện tua đốt giai đoạn (Không tích lũy %)";
+                    document.getElementById("valAntiCheat").style.color = "#f87171";
+                    setTimeout(() => {
+                        document.getElementById("valAntiCheat").innerText = "Bảo vệ nhịp tim 15s";
+                        document.getElementById("valAntiCheat").style.color = "#fde68a";
+                    }, 3000);
+                }
+            });
+        }
+
+        function updateProgressDisplay() {
+            const video = document.getElementById("html5VideoPlayer");
+            const duration = video.duration || 1840;
+            const pct = Math.min(100, Math.round((maxWatchedSeconds / duration) * 100));
+            document.getElementById("valMaxWatched").innerText = maxWatchedSeconds + " giây (" + pct + "%)";
+
+            if (pct >= 85) {
+                document.getElementById("valCompletion").innerHTML = `<span class="status-badge connected">ĐÃ HOÀN THÀNH (>=85%)</span>`;
+            } else {
+                document.getElementById("valCompletion").innerText = "Chưa hoàn thành (" + pct + "% / 85%)";
+            }
+        }
+
+        function simulateHeartbeat() {
+            maxWatchedSeconds += 15;
+            updateProgressDisplay();
+            showToast("Đã gửi nhịp tim Progress Heartbeat 15s thành công về máy chủ!");
+        }
+
+        function simulateCloudinarySync() {
+            const store = Store.get();
+            const v = store.videos.find(x => x.id === currentVideoId);
+            if (!v) return;
+
+            v.status = "UPLOADED_CLOUDINARY";
+            v.cdnUrl = "https://res.cloudinary.com/dhefmthim/video/upload/lms_datn/" + v.fileName;
+            Store.save(store);
+            showToast("Đã đẩy tệp video lên Cloudinary CDN toàn cầu!");
+            loadVideoDetails();
+        }
+    </script>
+</body>
+</html>

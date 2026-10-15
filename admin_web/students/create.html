@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Tài Khoản / Sinh Viên Mới - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Khởi Tạo Tài Khoản Người Dùng Mới</h2>
+                    <p class="panel-description">Nhập đầy đủ thông tin định danh và phân quyền hệ thống</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <form id="createStudentForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-grid">
+                        <div class="form-field-group">
+                            <label class="form-label">Tên đăng nhập (Username)</label>
+                            <input type="text" id="username" class="form-input" required>
+                            <span class="form-hint">Dùng cho đăng nhập, không chứa dấu cách</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Mật khẩu khởi tạo</label>
+                            <input type="password" id="password" class="form-input" required value="123456">
+                            <span class="form-hint">Mặc định ban đầu là 123456</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Họ và tên đầy đủ</label>
+                            <input type="text" id="fullName" class="form-input" required>
+                            <span class="form-hint">Ghi đầy đủ họ và tên đệm tiếng Việt</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Địa chỉ Email</label>
+                            <input type="email" id="email" class="form-input" required>
+                            <span class="form-hint">Email nhận thông báo hệ thống và mã kích hoạt</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Phân quyền vai trò</label>
+                            <select id="role" class="form-select" onchange="handleRoleChange(this.value)">
+                                <option value="STUDENT">Sinh viên (STUDENT)</option>
+                                <option value="INSTRUCTOR">Giảng viên (INSTRUCTOR)</option>
+                                <option value="ADMIN">Quản trị viên (ADMIN)</option>
+                            </select>
+                            <span class="form-hint">Xác định quyền truy cập các chức năng</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Trạng thái kích hoạt</label>
+                            <select id="status" class="form-select">
+                                <option value="ACTIVE">Hoạt động bình thường</option>
+                                <option value="LOCKED">Tạm khóa tài khoản</option>
+                            </select>
+                            <span class="form-hint">Tình trạng mở khóa đăng nhập</span>
+                        </div>
+
+                        <div class="form-field-group" id="studentCodeGroup">
+                            <label class="form-label">Mã số sinh viên (MSSV)</label>
+                            <input type="text" id="studentCode" class="form-input">
+                            <span class="form-hint">Ví dụ: SV2026005</span>
+                        </div>
+
+                        <div class="form-field-group" id="classCodeGroup">
+                            <label class="form-label">Mã lớp sinh hoạt niên chế</label>
+                            <input type="text" id="classCode" class="form-input">
+                            <span class="form-hint">Ví dụ: K23CNT1, D22CQCN02</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary">Lưu và tạo tài khoản</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('students', [
+                { label: 'Quản lý Sinh viên & Tài khoản', url: 'list.html' },
+                { label: 'Thêm mới' }
+            ]);
+        });
+
+        function handleRoleChange(role) {
+            const isStudent = role === 'STUDENT';
+            document.getElementById('studentCodeGroup').style.display = isStudent ? 'flex' : 'none';
+            document.getElementById('classCodeGroup').style.display = isStudent ? 'flex' : 'none';
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const store = Store.get();
+            const username = document.getElementById("username").value.trim();
+            const fullName = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const role = document.getElementById("role").value;
+            const status = document.getElementById("status").value;
+            const studentCode = document.getElementById("studentCode").value.trim();
+            const classCode = document.getElementById("classCode").value.trim();
+
+            const isDuplicate = store.users.some(u => u.username.toLowerCase() === username.toLowerCase());
+            if (isDuplicate) {
+                alert("Tên đăng nhập này đã được sử dụng!");
+                return;
+            }
+
+            const newId = store.users.length ? Math.max(...store.users.map(u => u.id)) + 1 : 1;
+            const now = new Date();
+            const timeStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0') + " " + String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+
+            store.users.push({
+                id: newId,
+                username: username,
+                fullName: fullName,
+                email: email,
+                role: role,
+                status: status,
+                studentCode: role === 'STUDENT' ? (studentCode || "-") : "-",
+                classCode: role === 'STUDENT' ? (classCode || "-") : "-",
+                faceEnrolled: false,
+                avatarUrl: "",
+                createdAt: timeStr
+            });
+
+            Store.save(store);
+            alert("Tạo người dùng mới thành công!");
+            window.location.href = "list.html";
+        }
+    </script>
+</body>
+</html>

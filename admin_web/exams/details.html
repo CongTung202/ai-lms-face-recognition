@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Đề Thi &amp; Giám Sát Vi Phạm AI - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 1000px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title" id="examHeading">Chi Tiết Đề Thi &amp; Giám Sát Gian Lận</h2>
+                    <p class="panel-description">Bảng câu hỏi thi trắc nghiệm và nhật ký vi phạm thời gian thực từ AI Proctoring</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="simulateNewViolation()">Giả lập cảnh báo vi phạm mới</button>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="details-grid">
+                    <div class="details-item">
+                        <div class="details-key">Mã đề thi</div>
+                        <div class="details-val" id="valCode">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Tên kỳ thi</div>
+                        <div class="details-val" id="valTitle">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Khóa học đào tạo</div>
+                        <div class="details-val" id="valCourse">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Thời lượng làm bài</div>
+                        <div class="details-val" id="valDuration">0 phút</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Bắt buộc AI Face</div>
+                        <div class="details-val" id="valRequireFace">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Trạng thái kỳ thi</div>
+                        <div class="details-val" id="valStatus">-</div>
+                    </div>
+                </div>
+
+                <!-- REALTIME VIOLATIONS TELEMETRY LOG -->
+                <div style="margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="color: var(--text-heading); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Nhật Ký Cảnh Báo Vi Phạm Thi Cử (AI Proctoring Telemetry MongoDB)
+                        </h3>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã vi phạm</th>
+                                    <th>Mã sinh viên</th>
+                                    <th>Tên sinh viên</th>
+                                    <th>Hành vi phát hiện</th>
+                                    <th>Thông số góc quay / Chi tiết</th>
+                                    <th>Thời điểm</th>
+                                    <th>Mức độ xử lý</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="violationTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SAMPLE QUESTIONS LIST -->
+                <div style="margin-top: 32px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+                    <h3 style="color: var(--text-heading); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">
+                        Ngân Hàng Câu Hỏi Trắc Nghiệm Mẫu Trong Đề Thi
+                    </h3>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="background-color: var(--bg-card-subtle); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 14px;">
+                            <div style="font-weight: 700; color: var(--text-heading); margin-bottom: 8px;">
+                                Câu 1: Trong kiến trúc Spring Boot 3, annotation nào dùng để khai báo một Bean cấu hình SecurityFilterChain?
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 13px; color: var(--text-body);">
+                                <div>A. @Component</div>
+                                <div style="color: #a7f3d0; font-weight: 700;">B. @Bean (Đáp án đúng)</div>
+                                <div>C. @Service</div>
+                                <div>D. @Repository</div>
+                            </div>
+                        </div>
+
+                        <div style="background-color: var(--bg-card-subtle); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 14px;">
+                            <div style="font-weight: 700; color: var(--text-heading); margin-bottom: 8px;">
+                                Câu 2: Mô hình ArcFace ResNet100 trích xuất vector đặc trưng khuôn mặt với số chiều là bao nhiêu?
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 13px; color: var(--text-body);">
+                                <div>A. 128 chiều</div>
+                                <div>B. 256 chiều</div>
+                                <div style="color: #a7f3d0; font-weight: 700;">C. 512 chiều (Đáp án đúng)</div>
+                                <div>D. 1024 chiều</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        let currentExamId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            currentExamId = parseInt(getQueryParam('id'), 10);
+            if (!currentExamId) {
+                alert("Thiếu mã đề thi!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            renderMasterLayout('exams', [
+                { label: 'Đề thi & Giám sát AI', url: 'list.html' },
+                { label: 'Chi tiết đề thi' }
+            ]);
+
+            loadExamDetails();
+            loadViolations();
+        });
+
+        function loadExamDetails() {
+            const store = Store.get();
+            const ex = store.exams.find(x => x.id === currentExamId);
+            if (!ex) {
+                alert("Không tìm thấy đề thi!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            document.getElementById("examHeading").innerText = "Đề Thi: " + ex.title;
+            document.getElementById("valCode").innerText = ex.code;
+            document.getElementById("valTitle").innerText = ex.title;
+            document.getElementById("valCourse").innerText = ex.course;
+            document.getElementById("valDuration").innerText = ex.duration + " phút";
+            document.getElementById("valRequireFace").innerHTML = ex.requireFace
+                ? `<span class="status-badge connected">BẮT BUỘC AI PROCTORING</span>`
+                : `<span class="status-badge local">Không bắt buộc</span>`;
+            document.getElementById("valStatus").innerHTML = ex.status === 'OPEN'
+                ? `<span class="status-badge connected">Đang mở</span>`
+                : `<span class="status-badge danger">Đã đóng</span>`;
+        }
+
+        function loadViolations() {
+            const store = Store.get();
+            const tbody = document.getElementById("violationTableBody");
+            tbody.innerHTML = "";
+
+            if (!store.violations || store.violations.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Chưa ghi nhận vi phạm nào trong phòng thi.</td></tr>`;
+                return;
+            }
+
+            store.violations.forEach(v => {
+                const tr = document.createElement("tr");
+                const levelBadge = v.level === "ĐÌNH CHỈ" 
+                    ? `<span class="status-badge danger">${v.level}</span>` 
+                    : `<span class="status-badge warning">${v.level}</span>`;
+
+                tr.innerHTML = `
+                    <td><code>VIO-00${v.id}</code></td>
+                    <td><strong>${escapeHtml(v.studentCode)}</strong></td>
+                    <td>${escapeHtml(v.studentName)}</td>
+                    <td><strong style="color: #fca5a5;">${escapeHtml(v.behavior)}</strong></td>
+                    <td>${escapeHtml(v.details)}</td>
+                    <td>${escapeHtml(v.time)}</td>
+                    <td>${levelBadge}</td>
+                    <td>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="dismissViolationRow(${v.id})">Bỏ qua</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function simulateNewViolation() {
+            const store = Store.get();
+            const newId = store.violations.length ? Math.max(...store.violations.map(x => x.id)) + 1 : 1;
+            const now = new Date();
+            const timeStr = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0') + ":" + String(now.getSeconds()).padStart(2,'0') + " " + now.toLocaleDateString("vi-VN");
+
+            store.violations.unshift({
+                id: newId,
+                studentCode: "SV2026001",
+                studentName: "Lê Thị Hoàng An",
+                exam: "Kỳ thi trắc nghiệm",
+                behavior: "Quay đầu nghiêng góc Yaw +42 độ quá 10 giây",
+                details: "Thuật toán 3D Head Pose phát hiện ánh mắt lệch khỏi vùng an toàn",
+                time: timeStr,
+                level: "CẢNH BÁO"
+            });
+
+            Store.save(store);
+            showToast("Đã ghi nhận bản ghi vi phạm thi cử vào MongoDB!");
+            loadViolations();
+        }
+
+        function dismissViolationRow(vioId) {
+            const store = Store.get();
+            store.violations = store.violations.filter(x => x.id !== vioId);
+            Store.save(store);
+            showToast("Đã đóng bản ghi cảnh báo!");
+            loadViolations();
+        }
+    </script>
+</body>
+</html>

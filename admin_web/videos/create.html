@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Video Bài Học Mới - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Đăng Ký &amp; Tải Lên Video Bài Giảng Mới</h2>
+                    <p class="panel-description">Hệ thống sẽ tự động kích hoạt nén chuẩn 720p H.264 qua FFmpeg nhúng</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <form id="createVideoForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-grid">
+                        <div class="form-field-group full-width">
+                            <label class="form-label">Tên tệp tin Video (File Name)</label>
+                            <input type="text" id="fileName" class="form-input" required>
+                            <span class="form-hint">Ví dụ: lesson4_spring_security_jwt.mp4</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Bài học liên kết</label>
+                            <input type="text" id="lesson" class="form-input" required>
+                            <span class="form-hint">Ví dụ: Bài 4: Cấu hình Spring Security 6 &amp; JWT Filter</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Khóa học đào tạo</label>
+                            <select id="courseSelect" class="form-select">
+                                <option value="1">Lập trình Java Nâng cao &amp; Spring Boot 3</option>
+                                <option value="2">Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)</option>
+                                <option value="3">Cơ sở Dữ liệu Quan hệ &amp; NoSQL MongoDB</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Thời lượng ước tính (giây)</label>
+                            <input type="number" id="duration" class="form-input" min="10" step="10" value="1500" required>
+                            <span class="form-hint">Nhập thời lượng tính theo đơn vị giây</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Dung lượng tệp gốc</label>
+                            <input type="text" id="size" class="form-input" value="95 MB" required>
+                        </div>
+
+                        <div class="form-field-group full-width">
+                            <label class="form-label">Kích hoạt quy trình xử lý tự động</label>
+                            <select id="status" class="form-select">
+                                <option value="COMPRESSED">Tự động nén xuống chuẩn H.264 720p HD (JAVE2)</option>
+                                <option value="RAW">Lưu trữ tệp gốc (Chưa nén)</option>
+                                <option value="UPLOADED_CLOUDINARY">Đồng bộ trực tiếp lên Cloudinary CDN</option>
+                            </select>
+                            <span class="form-hint">Quá trình nén giúp giảm từ 70% đến 85% dung lượng gốc, bảo đảm streaming mượt mà</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary">Xác nhận đăng ký video</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('videos', [
+                { label: 'Tài nguyên Video', url: 'list.html' },
+                { label: 'Đăng ký mới' }
+            ]);
+        });
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const store = Store.get();
+            const fileName = document.getElementById("fileName").value.trim();
+            const lesson = document.getElementById("lesson").value.trim();
+            const duration = parseInt(document.getElementById("duration").value, 10) || 600;
+            const size = document.getElementById("size").value.trim();
+            const status = document.getElementById("status").value;
+
+            const newId = store.videos.length ? Math.max(...store.videos.map(v => v.id)) + 1 : 1;
+            const cdnUrl = status === 'UPLOADED_CLOUDINARY' 
+                ? "https://res.cloudinary.com/dhefmthim/video/upload/lms_datn/" + fileName 
+                : "Chưa đồng bộ CDN";
+
+            store.videos.push({
+                id: newId,
+                fileName: fileName,
+                lesson: lesson,
+                duration: duration,
+                size: size,
+                status: status,
+                cdnUrl: cdnUrl,
+                resolution: "1280x720 (720p HD)"
+            });
+
+            Store.save(store);
+            alert("Đã đăng ký tài nguyên video thành công!");
+            window.location.href = "details.html?id=" + newId;
+        }
+    </script>
+</body>
+</html>

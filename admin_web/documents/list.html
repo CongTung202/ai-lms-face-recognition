@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Giáo Trình &amp; Tài Liệu RAG - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Tài Liệu Giáo Trình &amp; Trợ Lý AI RAG Hỏi Đáp</h2>
+                    <p class="panel-description">Bóc tách PDF/DOCX bằng Apache PDFBox &amp; POI, cắt đoạn Chunks nạp vào MongoDB</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="create.html" class="btn btn-primary">Nạp tài liệu giáo trình mới</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã tài liệu</th>
+                                <th>Tên tệp tin</th>
+                                <th>Khóa học đào tạo</th>
+                                <th>Định dạng</th>
+                                <th>Số trang</th>
+                                <th>Số đoạn Chunks (MongoDB)</th>
+                                <th>Trạng thái đồng bộ</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="documentTableBody">
+                            <!-- Rendered by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('documents', [
+                { label: 'Tài liệu Giáo trình & RAG', url: 'list.html' },
+                { label: 'Danh sách' }
+            ]);
+            loadTableData();
+        });
+
+        function loadTableData() {
+            const store = Store.get();
+            const tbody = document.getElementById("documentTableBody");
+            tbody.innerHTML = "";
+
+            store.documents.forEach(doc => {
+                const tr = document.createElement("tr");
+                const statusBadge = doc.status === "SYNCED" 
+                    ? `<span class="status-badge connected">Đã đồng bộ RAG (MongoDB)</span>` 
+                    : `<span class="status-badge warning">Chờ bóc tách văn bản</span>`;
+
+                tr.innerHTML = `
+                    <td><code>DOC-00${doc.id}</code></td>
+                    <td><strong>${escapeHtml(doc.fileName)}</strong></td>
+                    <td>${escapeHtml(doc.course)}</td>
+                    <td><span class="status-badge local">${doc.format}</span></td>
+                    <td>${doc.pages} trang</td>
+                    <td><strong>${doc.chunks}</strong> đoạn chunks</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="details.html?id=${doc.id}" class="btn btn-secondary btn-sm">Xem chunks &amp; Test RAG</a>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteDocRow(${doc.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteDocRow(docId) {
+            const store = Store.get();
+            const doc = store.documents.find(x => x.id === docId);
+            if (!doc) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa tài liệu " + doc.fileName + " và toàn bộ vector chunks trong MongoDB?")) {
+                store.documents = store.documents.filter(x => x.id !== docId);
+                Store.save(store);
+                showToast("Đã xóa tài liệu và chỉ mục RAG thành công!");
+                loadTableData();
+            }
+        }
+    </script>
+</body>
+</html>

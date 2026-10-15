@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Khóa Học &amp; Đào Tạo - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Quản Lý Khóa Học &amp; Chương Trình Đào Tạo</h2>
+                    <p class="panel-description">Danh mục khóa học, học phí bán qua cổng PayOS và trạng thái xuất bản</p>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetFilter()">Đặt lại bộ lọc</button>
+                    <a href="create.html" class="btn btn-primary">Thêm khóa học mới</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <!-- FILTER BAR (NO GHOST TEXT) -->
+                <div class="filter-controls-row">
+                    <div class="form-field-group">
+                        <label class="form-label">Tìm kiếm khóa học</label>
+                        <input type="text" id="keywordInput" class="form-input" onkeyup="loadTableData()">
+                        <span class="form-hint">Nhập tên khóa học hoặc mã khóa</span>
+                    </div>
+
+                    <div class="form-field-group" style="max-width: 240px;">
+                        <label class="form-label">Tình trạng phát hành</label>
+                        <select id="statusFilter" class="form-select" onchange="loadTableData()">
+                            <option value="ALL">Tất cả tình trạng</option>
+                            <option value="PUBLISHED">Đã xuất bản (Công khai)</option>
+                            <option value="DRAFT">Bản nháp (Đang soạn thảo)</option>
+                        </select>
+                        <span class="form-hint">Lọc theo trạng thái hiển thị cho sinh viên</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã khóa</th>
+                                <th>Tiêu đề khóa học</th>
+                                <th>Môn học trực thuộc</th>
+                                <th>Giảng viên</th>
+                                <th>Học phí (VND)</th>
+                                <th>Số chương</th>
+                                <th>Số bài học</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="courseTableBody">
+                            <!-- Rendered by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('courses', [
+                { label: 'Quản lý Khóa học', url: 'list.html' },
+                { label: 'Danh sách' }
+            ]);
+            loadTableData();
+        });
+
+        function loadTableData() {
+            const store = Store.get();
+            const keyword = (document.getElementById("keywordInput").value || "").toLowerCase().trim();
+            const status = document.getElementById("statusFilter").value;
+
+            const tbody = document.getElementById("courseTableBody");
+            tbody.innerHTML = "";
+
+            const filtered = store.courses.filter(c => {
+                const matchKeyword = !keyword || 
+                    c.title.toLowerCase().includes(keyword) || 
+                    c.code.toLowerCase().includes(keyword) ||
+                    c.subject.toLowerCase().includes(keyword);
+                const matchStatus = status === "ALL" || c.status === status;
+                return matchKeyword && matchStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 30px; color: var(--text-muted);">Không tìm thấy khóa học phù hợp.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const tr = document.createElement("tr");
+
+                const statusBadge = c.status === "PUBLISHED" 
+                    ? `<span class="status-badge connected">Đã xuất bản</span>` 
+                    : `<span class="status-badge warning">Bản nháp</span>`;
+
+                tr.innerHTML = `
+                    <td><code>${escapeHtml(c.code)}</code></td>
+                    <td><strong>${escapeHtml(c.title)}</strong></td>
+                    <td>${escapeHtml(c.subject)}</td>
+                    <td>${escapeHtml(c.lecturer)}</td>
+                    <td><strong>${c.price.toLocaleString("vi-VN")} VND</strong></td>
+                    <td>${c.chaptersCount} chương</td>
+                    <td>${c.lessonsCount || (c.chaptersCount * 3)} bài</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="details.html?id=${c.id}" class="btn btn-secondary btn-sm">Chi tiết</a>
+                            <a href="edit.html?id=${c.id}" class="btn btn-secondary btn-sm">Chỉnh sửa</a>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteCourseRow(${c.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetFilter() {
+            document.getElementById("keywordInput").value = "";
+            document.getElementById("statusFilter").value = "ALL";
+            loadTableData();
+        }
+
+        function deleteCourseRow(courseId) {
+            const store = Store.get();
+            const c = store.courses.find(x => x.id === courseId);
+            if (!c) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa khóa học: " + c.title + "?")) {
+                store.courses = store.courses.filter(x => x.id !== courseId);
+                Store.save(store);
+                showToast("Đã xóa khóa học thành công!");
+                loadTableData();
+            }
+        }
+    </script>
+</body>
+</html>

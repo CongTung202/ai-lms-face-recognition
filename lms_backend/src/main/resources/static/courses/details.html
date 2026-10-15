@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Khóa Học &amp; Bài Giảng - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 1000px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title" id="courseHeading">Chi Tiết Khóa Học</h2>
+                    <p class="panel-description">Xem cấu trúc chương mục, bài giảng video và thông số học phí PayOS</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                    <a id="btnEditLink" href="#" class="btn btn-primary btn-sm">Chỉnh sửa khóa học</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="details-grid">
+                    <div class="details-item">
+                        <div class="details-key">Mã khóa học</div>
+                        <div class="details-val" id="valCode">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Tiêu đề khóa học</div>
+                        <div class="details-val" id="valTitle">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Môn học đào tạo</div>
+                        <div class="details-val" id="valSubject">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Giảng viên phụ trách</div>
+                        <div class="details-val" id="valLecturer">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Học phí bán PayOS</div>
+                        <div class="details-val" id="valPrice">0 VND</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Trạng thái phát hành</div>
+                        <div class="details-val" id="valStatus">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Quy mô chương mục</div>
+                        <div class="details-val" id="valChapters">0 chương</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Tổng số bài học</div>
+                        <div class="details-val" id="valLessons">0 bài</div>
+                    </div>
+                </div>
+
+                <div style="background-color: var(--bg-card-subtle); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 16px; margin-bottom: 24px;">
+                    <div class="form-label" style="margin-bottom: 6px;">Mô tả tổng quan khóa học:</div>
+                    <div id="valDescription" style="color: var(--text-body); font-size: 13px; line-height: 1.6;">-</div>
+                </div>
+
+                <!-- CHAPTERS & LESSONS LIST -->
+                <div style="border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="color: var(--text-heading); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Cấu Trúc Chương Mục &amp; Bài Học
+                        </h3>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="addLessonMock()">Thêm bài học mới</button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tiêu đề bài học</th>
+                                    <th>Định dạng</th>
+                                    <th>Thời lượng / Trang</th>
+                                    <th>Trạng thái tài nguyên</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lessonsTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        let currentCourseId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            currentCourseId = parseInt(getQueryParam('id'), 10);
+            if (!currentCourseId) {
+                alert("Thiếu tham số mã khóa học!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            renderMasterLayout('courses', [
+                { label: 'Quản lý Khóa học', url: 'list.html' },
+                { label: 'Chi tiết' }
+            ]);
+
+            loadDetails();
+        });
+
+        function loadDetails() {
+            const store = Store.get();
+            const c = store.courses.find(x => x.id === currentCourseId);
+            if (!c) {
+                alert("Không tìm thấy khóa học!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            document.getElementById("courseHeading").innerText = "Khóa Học: " + c.title;
+            document.getElementById("btnEditLink").href = "edit.html?id=" + c.id;
+
+            document.getElementById("valCode").innerText = c.code;
+            document.getElementById("valTitle").innerText = c.title;
+            document.getElementById("valSubject").innerText = c.subject;
+            document.getElementById("valLecturer").innerText = c.lecturer;
+            document.getElementById("valPrice").innerText = c.price.toLocaleString("vi-VN") + " VND";
+            document.getElementById("valStatus").innerHTML = c.status === 'PUBLISHED'
+                ? `<span class="status-badge connected">Đã xuất bản (Công khai)</span>`
+                : `<span class="status-badge warning">Bản nháp</span>`;
+            document.getElementById("valChapters").innerText = c.chaptersCount + " chương";
+            document.getElementById("valLessons").innerText = (c.lessonsCount || (c.chaptersCount * 3)) + " bài học";
+            document.getElementById("valDescription").innerText = c.description || "Chưa có mô tả chi tiết.";
+
+            renderLessons();
+        }
+
+        function renderLessons() {
+            const tbody = document.getElementById("lessonsTableBody");
+            tbody.innerHTML = `
+                <tr>
+                    <td>1</td>
+                    <td><strong>Bài 1: Giới thiệu kiến trúc tổng quan &amp; Khởi tạo dự án</strong></td>
+                    <td><span class="status-badge local">VIDEO MP4</span></td>
+                    <td>25 phút (1.500 giây)</td>
+                    <td><span class="status-badge connected">Đã nén chuẩn 720p H.264</span></td>
+                    <td><a href="../videos/details.html?id=1" class="btn btn-secondary btn-sm">Mở video</a></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Bài 2: Thiết kế Cơ sở Dữ liệu &amp; Thực hành JPA Hibernate</strong></td>
+                    <td><span class="status-badge local">VIDEO MP4</span></td>
+                    <td>40 phút (2.420 giây)</td>
+                    <td><span class="status-badge connected">Đã phát Cloudinary CDN</span></td>
+                    <td><a href="../videos/details.html?id=2" class="btn btn-secondary btn-sm">Mở video</a></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Bài 3: Tài liệu Giáo trình Chuẩn hóa 3NF &amp; Hệ thống câu hỏi</strong></td>
+                    <td><span class="status-badge warning">TÀI LIỆU PDF</span></td>
+                    <td>45 trang</td>
+                    <td><span class="status-badge connected">Đã nạp vào MongoDB RAG</span></td>
+                    <td><a href="../documents/details.html?id=1" class="btn btn-secondary btn-sm">Xem giáo trình</a></td>
+                </tr>
+            `;
+        }
+
+        function addLessonMock() {
+            const name = prompt("Nhập tiêu đề bài học mới cần bổ sung:");
+            if (name && name.trim()) {
+                const tbody = document.getElementById("lessonsTableBody");
+                const rowCount = tbody.children.length + 1;
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${rowCount}</td>
+                    <td><strong>${escapeHtml(name.trim())}</strong></td>
+                    <td><span class="status-badge local">VIDEO MP4</span></td>
+                    <td>20 phút (1.200 giây)</td>
+                    <td><span class="status-badge warning">Chờ tải lên tệp video</span></td>
+                    <td><a href="../videos/create.html" class="btn btn-secondary btn-sm">Gán video</a></td>
+                `;
+                tbody.appendChild(tr);
+                showToast("Đã bổ sung bài học mới vào khóa học!");
+            }
+        }
+    </script>
+</body>
+</html>

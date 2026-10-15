@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khởi Tạo Đơn Hàng Mua Khóa Học - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Tạo Đơn Hàng &amp; Phát Mã Thanh Toán VietQR</h2>
+                    <p class="panel-description">Giả lập đăng ký mua khóa học và liên kết mã giao dịch ngân hàng PayOS</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <form id="createOrderForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-grid">
+                        <div class="form-field-group">
+                            <label class="form-label">Chọn sinh viên đăng ký học</label>
+                            <select id="studentSelect" class="form-select" required>
+                                <!-- Populated dynamically -->
+                            </select>
+                            <span class="form-hint">Danh sách các tài khoản sinh viên đã kích hoạt</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Chọn khóa học cần mua</label>
+                            <select id="courseSelect" class="form-select" onchange="updatePricePreview()" required>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Số tiền học phí thanh toán (VND)</label>
+                            <input type="text" id="priceDisplay" class="form-input" readonly>
+                            <span class="form-hint">Số tiền chính xác chuyển khoản qua mã QR</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Cổng thanh toán tự động</label>
+                            <select id="gateway" class="form-select">
+                                <option value="PAYOS">PayOS VietQR (Quét mã App Ngân hàng 24/7)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary">Xác nhận tạo đơn và sinh mã QR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('orders', [
+                { label: 'Đơn hàng & PayOS', url: 'list.html' },
+                { label: 'Tạo đơn mới' }
+            ]);
+
+            populateDropdowns();
+        });
+
+        function populateDropdowns() {
+            const store = Store.get();
+            const studentSelect = document.getElementById("studentSelect");
+            studentSelect.innerHTML = "";
+            const students = store.users.filter(u => u.role === 'STUDENT');
+            students.forEach(s => {
+                studentSelect.innerHTML += `<option value="${escapeHtml(s.fullName)}">${escapeHtml(s.fullName)} (${escapeHtml(s.studentCode || s.username)})</option>`;
+            });
+
+            const courseSelect = document.getElementById("courseSelect");
+            courseSelect.innerHTML = "";
+            store.courses.forEach(c => {
+                courseSelect.innerHTML += `<option value="${c.id}" data-price="${c.price}">${escapeHtml(c.title)} (${c.price.toLocaleString("vi-VN")} VND)</option>`;
+            });
+
+            updatePricePreview();
+        }
+
+        function updatePricePreview() {
+            const courseSelect = document.getElementById("courseSelect");
+            const opt = courseSelect.options[courseSelect.selectedIndex];
+            if (opt) {
+                const price = parseInt(opt.getAttribute("data-price"), 10) || 0;
+                document.getElementById("priceDisplay").value = price.toLocaleString("vi-VN") + " VND";
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const store = Store.get();
+            const studentName = document.getElementById("studentSelect").value;
+            const courseSelect = document.getElementById("courseSelect");
+            const opt = courseSelect.options[courseSelect.selectedIndex];
+            const courseTitle = opt.text.split(" (")[0];
+            const price = parseInt(opt.getAttribute("data-price"), 10) || 0;
+
+            const newId = store.orders.length ? Math.max(...store.orders.map(o => o.id)) + 1 : 1001;
+            const now = new Date();
+            const timeStr = String(now.getDate()).padStart(2,'0') + "/" + String(now.getMonth()+1).padStart(2,'0') + "/" + now.getFullYear() + " " + String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+
+            store.orders.unshift({
+                id: newId,
+                studentName: studentName,
+                course: courseTitle,
+                amount: price,
+                status: "PENDING",
+                vietQrTx: "VCB-" + Math.floor(10000000 + Math.random() * 90000000),
+                createdAt: timeStr
+            });
+
+            Store.save(store);
+            alert("Đã tạo đơn hàng thành công!");
+            window.location.href = "details.html?id=" + newId;
+        }
+    </script>
+</body>
+</html>

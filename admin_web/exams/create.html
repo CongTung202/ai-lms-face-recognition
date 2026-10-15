@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khởi Tạo Đề Thi Trực Tuyến Mới - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Tạo Đề Thi Trực Tuyến &amp; Cấu Hình Giám Sát AI</h2>
+                    <p class="panel-description">Thiết lập thời lượng, số câu hỏi và cơ chế phát hiện gian lận tự động</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <form id="createExamForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-grid">
+                        <div class="form-field-group">
+                            <label class="form-label">Mã đề thi</label>
+                            <input type="text" id="code" class="form-input" required>
+                            <span class="form-hint">Ví dụ: EX003, EX_SPRING_FINAL</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Khóa học tổ chức thi</label>
+                            <select id="courseSelect" class="form-select">
+                                <option value="Lập trình Java Nâng cao &amp; Spring Boot 3">Lập trình Java Nâng cao &amp; Spring Boot 3</option>
+                                <option value="Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)">Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)</option>
+                                <option value="Cơ sở Dữ liệu Quan hệ &amp; NoSQL MongoDB">Cơ sở Dữ liệu Quan hệ &amp; NoSQL MongoDB</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field-group full-width">
+                            <label class="form-label">Tên kỳ thi / Tiêu đề bài kiểm tra</label>
+                            <input type="text" id="title" class="form-input" required>
+                            <span class="form-hint">Ví dụ: Thi Cuối Kỳ - Lý thuyết &amp; Thực hành Kiến trúc Spring Boot</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Thời lượng làm bài (phút)</label>
+                            <input type="number" id="duration" class="form-input" min="15" max="180" value="60" required>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Số lượng câu hỏi trắc nghiệm</label>
+                            <input type="number" id="questionsCount" class="form-input" min="5" max="100" value="40" required>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Bắt buộc AI giám sát khuôn mặt</label>
+                            <select id="requireFace" class="form-select">
+                                <option value="true">BẬT (Bắt buộc điểm danh và giám sát 3D Head Pose liên tục)</option>
+                                <option value="false">TẮT (Thi tự do không yêu cầu webcam)</option>
+                            </select>
+                            <span class="form-hint">Nếu bật, AI sẽ phát hiện quay đầu quá 10s hoặc rời khỏi khung hình</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Trạng thái kỳ thi</label>
+                            <select id="status" class="form-select">
+                                <option value="OPEN">Đang mở cho sinh viên vào thi</option>
+                                <option value="CLOSED">Đóng đề thi (Chưa cho phép)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary">Lưu và khởi tạo đề thi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('exams', [
+                { label: 'Đề thi & Giám sát AI', url: 'list.html' },
+                { label: 'Tạo mới' }
+            ]);
+        });
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const store = Store.get();
+            const code = document.getElementById("code").value.trim();
+            const title = document.getElementById("title").value.trim();
+            const course = document.getElementById("courseSelect").value;
+            const duration = parseInt(document.getElementById("duration").value, 10) || 45;
+            const questionsCount = parseInt(document.getElementById("questionsCount").value, 10) || 30;
+            const requireFace = document.getElementById("requireFace").value === "true";
+            const status = document.getElementById("status").value;
+
+            const isDuplicate = store.exams.some(x => x.code.toLowerCase() === code.toLowerCase());
+            if (isDuplicate) {
+                alert("Mã đề thi này đã tồn tại!");
+                return;
+            }
+
+            const newId = store.exams.length ? Math.max(...store.exams.map(x => x.id)) + 1 : 1;
+            store.exams.push({
+                id: newId,
+                code: code,
+                title: title,
+                course: course,
+                duration: duration,
+                questionsCount: questionsCount,
+                requireFace: requireFace,
+                status: status
+            });
+
+            Store.save(store);
+            alert("Đã khởi tạo đề thi trực tuyến thành công!");
+            window.location.href = "details.html?id=" + newId;
+        }
+    </script>
+</body>
+</html>

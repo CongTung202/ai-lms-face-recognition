@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Video Bài Giảng - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Quản Lý Tài Nguyên Video &amp; Nén Tự Động H.264</h2>
+                    <p class="panel-description">Giám sát xử lý FFmpeg JAVE2 chuẩn 720p, truyền phát HTTP 206 Partial Content và Cloudinary CDN</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="create.html" class="btn btn-primary">Đăng ký tệp video mới</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã tài nguyên</th>
+                                <th>Tên tệp Video</th>
+                                <th>Bài học liên kết</th>
+                                <th>Độ phân giải</th>
+                                <th>Thời lượng (giây)</th>
+                                <th>Dung lượng</th>
+                                <th>Trạng thái nén</th>
+                                <th>Đường dẫn phát</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="videoTableBody">
+                            <!-- Rendered by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('videos', [
+                { label: 'Tài nguyên Video', url: 'list.html' },
+                { label: 'Danh sách' }
+            ]);
+            loadTableData();
+        });
+
+        function loadTableData() {
+            const store = Store.get();
+            const tbody = document.getElementById("videoTableBody");
+            tbody.innerHTML = "";
+
+            store.videos.forEach(v => {
+                const tr = document.createElement("tr");
+
+                let statusBadge = "";
+                if (v.status === "COMPRESSED") {
+                    statusBadge = `<span class="status-badge connected">Đã nén H.264 720p</span>`;
+                } else if (v.status === "UPLOADED_CLOUDINARY") {
+                    statusBadge = `<span class="status-badge connected">Đã phát CDN Cloudinary</span>`;
+                } else {
+                    statusBadge = `<span class="status-badge warning">Bản ghi gốc (Chờ nén)</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td><code>VID-00${v.id}</code></td>
+                    <td><strong>${escapeHtml(v.fileName)}</strong></td>
+                    <td>${escapeHtml(v.lesson)}</td>
+                    <td>${escapeHtml(v.resolution || "1280x720")}</td>
+                    <td>${v.duration} giây</td>
+                    <td>${v.size}</td>
+                    <td>${statusBadge}</td>
+                    <td><small style="color: var(--text-muted);">${escapeHtml(v.cdnUrl)}</small></td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="details.html?id=${v.id}" class="btn btn-secondary btn-sm">Kiểm thử phát</a>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteVideoRow(${v.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteVideoRow(videoId) {
+            const store = Store.get();
+            const v = store.videos.find(x => x.id === videoId);
+            if (!v) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa tài nguyên video: " + v.fileName + "?")) {
+                store.videos = store.videos.filter(x => x.id !== videoId);
+                Store.save(store);
+                showToast("Đã xóa video thành công!");
+                loadTableData();
+            }
+        }
+    </script>
+</body>
+</html>

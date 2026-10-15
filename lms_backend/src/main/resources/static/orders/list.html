@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Đơn Hàng &amp; PayOS - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Quản Lý Đơn Hàng Mua Khóa Học &amp; PayOS VietQR</h2>
+                    <p class="panel-description">Lịch sử giao dịch thanh toán học phí, trạng thái Webhook và kích hoạt quyền học</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="create.html" class="btn btn-primary">Tạo đơn hàng VietQR mới</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Sinh viên đăng ký</th>
+                                <th>Khóa học mua</th>
+                                <th>Số tiền học phí</th>
+                                <th>Trạng thái thanh toán</th>
+                                <th>Mã giao dịch ngân hàng</th>
+                                <th>Thời gian tạo</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                            <!-- Rendered by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('orders', [
+                { label: 'Đơn hàng & PayOS', url: 'list.html' },
+                { label: 'Danh sách' }
+            ]);
+            loadTableData();
+        });
+
+        function loadTableData() {
+            const store = Store.get();
+            const tbody = document.getElementById("orderTableBody");
+            tbody.innerHTML = "";
+
+            store.orders.forEach(o => {
+                const tr = document.createElement("tr");
+
+                let statusBadge = "";
+                if (o.status === "PAID") {
+                    statusBadge = `<span class="status-badge connected">Đã thanh toán (Hoàn tất)</span>`;
+                } else if (o.status === "PENDING") {
+                    statusBadge = `<span class="status-badge warning">Chờ quét mã VietQR</span>`;
+                } else {
+                    statusBadge = `<span class="status-badge danger">Đã hủy</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td><strong>#${o.id}</strong></td>
+                    <td><strong>${escapeHtml(o.studentName)}</strong></td>
+                    <td>${escapeHtml(o.course)}</td>
+                    <td><strong>${o.amount.toLocaleString("vi-VN")} VND</strong></td>
+                    <td>${statusBadge}</td>
+                    <td><code>${escapeHtml(o.vietQrTx || "-")}</code></td>
+                    <td>${escapeHtml(o.createdAt)}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="details.html?id=${o.id}" class="btn btn-secondary btn-sm">Chi tiết &amp; Test Webhook</a>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteOrderRow(${o.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteOrderRow(orderId) {
+            const store = Store.get();
+            const o = store.orders.find(x => x.id === orderId);
+            if (!o) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa đơn hàng #" + o.id + "?")) {
+                store.orders = store.orders.filter(x => x.id !== orderId);
+                Store.save(store);
+                showToast("Đã xóa đơn hàng thành công!");
+                loadTableData();
+            }
+        }
+    </script>
+</body>
+</html>

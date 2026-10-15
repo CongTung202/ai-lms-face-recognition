@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Sinh Viên &amp; Tài Khoản - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">Danh Sách Sinh Viên &amp; Người Dùng</h2>
+                    <p class="panel-description">Quản lý tài khoản, mã sinh viên, phân quyền RBAC và tình trạng nạp vector khuôn mặt</p>
+                </div>
+                <div class="panel-actions">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetFilter()">Đặt lại bộ lọc</button>
+                    <a href="create.html" class="btn btn-primary">Thêm tài khoản mới</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <!-- FILTER BAR (STRICTLY NO GHOST TEXT) -->
+                <div class="filter-controls-row">
+                    <div class="form-field-group">
+                        <label class="form-label">Tìm kiếm từ khóa</label>
+                        <input type="text" id="keywordInput" class="form-input" onkeyup="loadTableData()">
+                        <span class="form-hint">Nhập tên tài khoản, họ và tên hoặc địa chỉ email</span>
+                    </div>
+
+                    <div class="form-field-group" style="max-width: 220px;">
+                        <label class="form-label">Phân quyền vai trò</label>
+                        <select id="roleFilter" class="form-select" onchange="loadTableData()">
+                            <option value="ALL">Tất cả vai trò</option>
+                            <option value="STUDENT">Sinh viên (STUDENT)</option>
+                            <option value="INSTRUCTOR">Giảng viên (INSTRUCTOR)</option>
+                            <option value="ADMIN">Quản trị viên (ADMIN)</option>
+                        </select>
+                        <span class="form-hint">Lọc theo nhóm vai trò</span>
+                    </div>
+
+                    <div class="form-field-group" style="max-width: 240px;">
+                        <label class="form-label">Trạng thái nhận diện mặt</label>
+                        <select id="faceFilter" class="form-select" onchange="loadTableData()">
+                            <option value="ALL">Tất cả trạng thái</option>
+                            <option value="ENROLLED">Đã đăng ký khuôn mặt</option>
+                            <option value="NOT_ENROLLED">Chưa đăng ký khuôn mặt</option>
+                        </select>
+                        <span class="form-hint">Tình trạng nạp vector AI</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã UID</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Họ và tên</th>
+                                <th>Địa chỉ Email</th>
+                                <th>Vai trò</th>
+                                <th>Mã sinh viên / Lớp</th>
+                                <th>Trạng thái AI Face</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <!-- Rendered by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('students', [
+                { label: 'Quản lý Sinh viên & Tài khoản', url: 'list.html' },
+                { label: 'Danh sách' }
+            ]);
+            loadTableData();
+        });
+
+        function loadTableData() {
+            const store = Store.get();
+            const keyword = (document.getElementById("keywordInput").value || "").toLowerCase().trim();
+            const role = document.getElementById("roleFilter").value;
+            const face = document.getElementById("faceFilter").value;
+
+            const tbody = document.getElementById("studentTableBody");
+            tbody.innerHTML = "";
+
+            const filtered = store.users.filter(u => {
+                const matchKeyword = !keyword || 
+                    u.username.toLowerCase().includes(keyword) || 
+                    u.fullName.toLowerCase().includes(keyword) || 
+                    u.email.toLowerCase().includes(keyword);
+                const matchRole = role === "ALL" || u.role === role;
+                const matchFace = face === "ALL" || 
+                    (face === "ENROLLED" && u.faceEnrolled) || 
+                    (face === "NOT_ENROLLED" && !u.faceEnrolled);
+                return matchKeyword && matchRole && matchFace;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 30px; color: var(--text-muted);">Không tìm thấy bản ghi người dùng phù hợp.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(u => {
+                const tr = document.createElement("tr");
+
+                const faceBadge = u.faceEnrolled 
+                    ? `<span class="status-badge connected">Đã có vector mặt</span>` 
+                    : `<span class="status-badge warning">Chưa quét mặt</span>`;
+
+                const statusBadge = u.status === "ACTIVE" 
+                    ? `<span class="status-badge connected">Hoạt động</span>` 
+                    : `<span class="status-badge danger">Đã khóa</span>`;
+
+                tr.innerHTML = `
+                    <td><strong>#${u.id}</strong></td>
+                    <td><code>${escapeHtml(u.username)}</code></td>
+                    <td><strong>${escapeHtml(u.fullName)}</strong></td>
+                    <td>${escapeHtml(u.email)}</td>
+                    <td><span class="status-badge local">${escapeHtml(u.role)}</span></td>
+                    <td>${escapeHtml(u.studentCode || "-")} / ${escapeHtml(u.classCode || "-")}</td>
+                    <td>${faceBadge}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="details.html?id=${u.id}" class="btn btn-secondary btn-sm">Chi tiết</a>
+                            <a href="edit.html?id=${u.id}" class="btn btn-secondary btn-sm">Chỉnh sửa</a>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteUserRow(${u.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetFilter() {
+            document.getElementById("keywordInput").value = "";
+            document.getElementById("roleFilter").value = "ALL";
+            document.getElementById("faceFilter").value = "ALL";
+            loadTableData();
+        }
+
+        function deleteUserRow(userId) {
+            const store = Store.get();
+            const u = store.users.find(x => x.id === userId);
+            if (!u) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa tài khoản: " + u.username + " (" + u.fullName + ")?")) {
+                store.users = store.users.filter(x => x.id !== userId);
+                Store.save(store);
+                showToast("Đã xóa tài khoản thành công!");
+                loadTableData();
+            }
+        }
+    </script>
+</body>
+</html>

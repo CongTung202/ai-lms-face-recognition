@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Giáo Trình &amp; Khung Kiểm Thử RAG - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 1000px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title" id="docHeading">Chi Tiết Giáo Trình RAG</h2>
+                    <p class="panel-description">Xem cấu trúc phân mảnh văn bản trong MongoDB và kiểm thử truy vấn hỏi đáp tức thì</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="details-grid">
+                    <div class="details-item">
+                        <div class="details-key">Mã tài liệu</div>
+                        <div class="details-val" id="valDocId">DOC-001</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Tên tệp tin</div>
+                        <div class="details-val" id="valFileName">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Khóa học liên kết</div>
+                        <div class="details-val" id="valCourse">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Định dạng bóc tách</div>
+                        <div class="details-val" id="valFormat">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Tổng số trang</div>
+                        <div class="details-val" id="valPages">-</div>
+                    </div>
+                    <div class="details-item">
+                        <div class="details-key">Số đoạn Chunks (MongoDB)</div>
+                        <div class="details-val" id="valChunks">-</div>
+                    </div>
+                </div>
+
+                <!-- LIVE RAG QUERY TEST CONSOLE -->
+                <div style="background-color: var(--bg-card-subtle); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 20px; margin-bottom: 24px;">
+                    <h3 style="color: var(--text-heading); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">
+                        Khung Kiểm Thử Trợ Lý RAG Trực Tiếp (TF-IDF &amp; Cosine Similarity)
+                    </h3>
+
+                    <div style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 280px;">
+                            <label class="form-label">Nhập câu hỏi học tập cần đối soát</label>
+                            <input type="text" id="ragQueryInput" class="form-input">
+                            <span class="form-hint">Ví dụ: Trình bày quy trình bóc tách token và xác thực JWT trong SecurityConfig?</span>
+                        </div>
+                        <div style="align-self: flex-end; display: flex; gap: 8px;">
+                            <button type="button" class="btn btn-primary" onclick="executeTestRagQuery()">Thực hiện truy vấn</button>
+                            <button type="button" class="btn btn-secondary" onclick="clearRagResult()">Xóa</button>
+                        </div>
+                    </div>
+
+                    <label class="form-label">Kết quả trả lời và trích dẫn số trang nguồn:</label>
+                    <div id="ragResultBox" class="terminal-box" style="margin-top: 6px;">Chưa có truy vấn. Nhập câu hỏi và nhấn 'Thực hiện truy vấn'.</div>
+                </div>
+
+                <!-- SAMPLE CHUNKS IN MONGODB -->
+                <div>
+                    <h3 style="color: var(--text-heading); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">
+                        Danh Sách Đoạn Cắt Chunks Tiêu Biểu Trong MongoDB
+                    </h3>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Thứ tự Chunk</th>
+                                    <th>Trang số</th>
+                                    <th>Độ dài (ký tự)</th>
+                                    <th>Nội dung trích đoạn (Văn bản thuần)</th>
+                                    <th>Trọng số TF-IDF</th>
+                                </tr>
+                            </thead>
+                            <tbody id="chunksTableBody">
+                                <tr>
+                                    <td><strong>Chunk #1</strong></td>
+                                    <td>Trang 1</td>
+                                    <td>584 ký tự</td>
+                                    <td>Kiến trúc tổng thể của hệ thống LMS bao gồm 3 tầng: Tầng ứng dụng Web UI, Tầng dịch vụ trung tâm Java Spring Boot 3 và Tầng dịch vụ thị giác AI Python FastAPI.</td>
+                                    <td>1.000</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Chunk #2</strong></td>
+                                    <td>Trang 2</td>
+                                    <td>592 ký tự</td>
+                                    <td>Mô hình cơ sở dữ liệu quan hệ được chuẩn hóa theo dạng chuẩn 3NF, bảo đảm tính toàn vẹn khóa ngoại và loại bỏ dữ liệu dư thừa trên 24 bảng thực thể.</td>
+                                    <td>0.945</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Chunk #3</strong></td>
+                                    <td>Trang 12</td>
+                                    <td>600 ký tự</td>
+                                    <td>Hệ thống nhúng FFmpeg thông qua thư viện JAVE2 giúp tự động nén các video tải lên về độ phân giải chuẩn 720p HD, giảm băng thông lưu trữ và hỗ trợ HTTP 206 Partial Content.</td>
+                                    <td>0.892</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        let currentDocId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            currentDocId = parseInt(getQueryParam('id'), 10);
+            if (!currentDocId) {
+                alert("Thiếu mã tài liệu!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            renderMasterLayout('documents', [
+                { label: 'Tài liệu Giáo trình & RAG', url: 'list.html' },
+                { label: 'Chi tiết & Kiểm thử RAG' }
+            ]);
+
+            loadDocDetails();
+        });
+
+        function loadDocDetails() {
+            const store = Store.get();
+            const doc = store.documents.find(x => x.id === currentDocId);
+            if (!doc) {
+                alert("Không tìm thấy tài liệu!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            document.getElementById("docHeading").innerText = "Tài Liệu: " + doc.fileName;
+            document.getElementById("valDocId").innerText = "DOC-00" + doc.id;
+            document.getElementById("valFileName").innerText = doc.fileName;
+            document.getElementById("valCourse").innerText = doc.course;
+            document.getElementById("valFormat").innerHTML = `<span class="status-badge local">${doc.format}</span>`;
+            document.getElementById("valPages").innerText = doc.pages + " trang";
+            document.getElementById("valChunks").innerText = doc.chunks + " đoạn chunks";
+        }
+
+        function executeTestRagQuery() {
+            const query = (document.getElementById("ragQueryInput").value || "").trim();
+            const box = document.getElementById("ragResultBox");
+
+            if (!query) {
+                alert("Vui lòng nhập câu hỏi!");
+                return;
+            }
+
+            box.innerText = "[Đang quét chỉ mục TF-IDF trên kho Chunks MongoDB và tính khoảng cách Cosine...]";
+
+            setTimeout(() => {
+                box.innerText = `[TRẢ LỜI TỔNG HỢP]:
+Cơ chế bảo mật Spring Security 6 kết hợp JwtTokenProvider hoạt động theo luồng: Khi người dùng gửi yêu cầu kèm Header 'Authorization: Bearer <token>', bộ lọc JwtAuthenticationFilter sẽ giải mã chữ ký bí mật HMAC SHA-256 (khóa 256-bit), trích xuất thông tin Subject (Username và vai trò RBAC), sau đó nạp đối tượng Authentication vào SecurityContextHolder để phân quyền truy cập endpoint.
+
+[TRÍCH DẪN NGUỒN]:
+- Tài liệu: ${document.getElementById("valFileName").innerText}
+- Trang tham chiếu: Trang 28 - 31, Mục 'Cấu hình SecurityFilterChain & Bộ lọc JWT'
+- Độ khớp Cosine Similarity: 0.918 (Khớp cao)`;
+            }, 500);
+        }
+
+        function clearRagResult() {
+            document.getElementById("ragQueryInput").value = "";
+            document.getElementById("ragResultBox").innerText = "Chưa có truy vấn.";
+        }
+    </script>
+</body>
+</html>

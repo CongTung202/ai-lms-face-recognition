@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh Sửa Khóa Học - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title" id="pageHeading">Chỉnh Sửa Khóa Học</h2>
+                    <p class="panel-description">Cập nhật thông tin học phần, giá bán và cấu hình xuất bản</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <form id="editCourseForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-grid">
+                        <div class="form-field-group">
+                            <label class="form-label">Mã khóa học</label>
+                            <input type="text" id="code" class="form-input" required>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Môn học trực thuộc</label>
+                            <input type="text" id="subject" class="form-input" required>
+                        </div>
+
+                        <div class="form-field-group full-width">
+                            <label class="form-label">Tiêu đề khóa học</label>
+                            <input type="text" id="title" class="form-input" required>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Giảng viên phụ trách</label>
+                            <input type="text" id="lecturer" class="form-input" required>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Học phí bán qua PayOS (VND)</label>
+                            <input type="number" id="price" class="form-input" min="0" step="10000" required>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Trạng thái phát hành</label>
+                            <select id="status" class="form-select">
+                                <option value="PUBLISHED">Xuất bản công khai</option>
+                                <option value="DRAFT">Lưu bản nháp</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Số chương mục</label>
+                            <input type="number" id="chaptersCount" class="form-input" min="1" max="50">
+                        </div>
+
+                        <div class="form-field-group full-width">
+                            <label class="form-label">Mô tả tổng quan khóa học</label>
+                            <textarea id="description" class="form-textarea" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        let currentCourseId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            currentCourseId = parseInt(getQueryParam('id'), 10);
+            if (!currentCourseId) {
+                alert("Thiếu tham số mã khóa học!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            renderMasterLayout('courses', [
+                { label: 'Quản lý Khóa học', url: 'list.html' },
+                { label: 'Chỉnh sửa' }
+            ]);
+
+            loadCourseData();
+        });
+
+        function loadCourseData() {
+            const store = Store.get();
+            const c = store.courses.find(x => x.id === currentCourseId);
+            if (!c) {
+                alert("Không tìm thấy khóa học!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            document.getElementById("pageHeading").innerText = "Chỉnh Sửa Khóa Học: " + c.code;
+            document.getElementById("code").value = c.code;
+            document.getElementById("title").value = c.title;
+            document.getElementById("subject").value = c.subject;
+            document.getElementById("lecturer").value = c.lecturer;
+            document.getElementById("price").value = c.price;
+            document.getElementById("status").value = c.status;
+            document.getElementById("chaptersCount").value = c.chaptersCount;
+            document.getElementById("description").value = c.description || "";
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const store = Store.get();
+            const c = store.courses.find(x => x.id === currentCourseId);
+            if (!c) return;
+
+            c.code = document.getElementById("code").value.trim();
+            c.title = document.getElementById("title").value.trim();
+            c.subject = document.getElementById("subject").value.trim();
+            c.lecturer = document.getElementById("lecturer").value.trim();
+            c.price = parseInt(document.getElementById("price").value, 10) || 0;
+            c.status = document.getElementById("status").value;
+            c.chaptersCount = parseInt(document.getElementById("chaptersCount").value, 10) || 1;
+            c.description = document.getElementById("description").value.trim();
+
+            Store.save(store);
+            alert("Đã cập nhật khóa học thành công!");
+            window.location.href = "details.html?id=" + currentCourseId;
+        }
+    </script>
+</body>
+</html>

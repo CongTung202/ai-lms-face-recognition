@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh Sửa Tài Khoản / Sinh Viên - LMS Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <main class="layout-container">
+        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title" id="pageHeading">Chỉnh Sửa Tài Khoản</h2>
+                    <p class="panel-description">Cập nhật hồ sơ thông tin và trạng thái phân quyền</p>
+                </div>
+                <div class="panel-actions">
+                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <form id="editStudentForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-grid">
+                        <div class="form-field-group">
+                            <label class="form-label">Tên đăng nhập (Cố định)</label>
+                            <input type="text" id="username" class="form-input" disabled>
+                            <span class="form-hint">Mã định danh hệ thống không được thay đổi</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Đổi mật khẩu mới</label>
+                            <input type="password" id="password" class="form-input">
+                            <span class="form-hint">Để trống nếu không muốn thay đổi mật khẩu</span>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Họ và tên đầy đủ</label>
+                            <input type="text" id="fullName" class="form-input" required>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Địa chỉ Email</label>
+                            <input type="email" id="email" class="form-input" required>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Phân quyền vai trò</label>
+                            <select id="role" class="form-select" onchange="handleRoleChange(this.value)">
+                                <option value="STUDENT">Sinh viên (STUDENT)</option>
+                                <option value="INSTRUCTOR">Giảng viên (INSTRUCTOR)</option>
+                                <option value="ADMIN">Quản trị viên (ADMIN)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field-group">
+                            <label class="form-label">Trạng thái kích hoạt</label>
+                            <select id="status" class="form-select">
+                                <option value="ACTIVE">Hoạt động bình thường</option>
+                                <option value="LOCKED">Tạm khóa tài khoản</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field-group" id="studentCodeGroup">
+                            <label class="form-label">Mã số sinh viên (MSSV)</label>
+                            <input type="text" id="studentCode" class="form-input">
+                        </div>
+
+                        <div class="form-field-group" id="classCodeGroup">
+                            <label class="form-label">Mã lớp sinh hoạt</label>
+                            <input type="text" id="classCode" class="form-input">
+                        </div>
+
+                        <div class="form-field-group full-width">
+                            <label class="form-label">Trạng thái đăng ký Face AI</label>
+                            <select id="faceEnrolled" class="form-select">
+                                <option value="true">Đã nạp vector nhận diện khuôn mặt</option>
+                                <option value="false">Chưa đăng ký (Yêu cầu sinh viên quét 3 góc mặt lần đầu)</option>
+                            </select>
+                            <span class="form-hint">Nếu chọn 'Chưa đăng ký', hệ thống sẽ bắt buộc sinh viên quét mặt khi đăng nhập</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
+                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        let currentUserId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            currentUserId = parseInt(getQueryParam('id'), 10);
+            if (!currentUserId) {
+                alert("Thiếu tham số mã người dùng cần sửa!");
+                window.location.href = "list.html";
+                return;
+            }
+
+            renderMasterLayout('students', [
+                { label: 'Quản lý Sinh viên & Tài khoản', url: 'list.html' },
+                { label: 'Chỉnh sửa' }
+            ]);
+
+            loadUserData();
+        });
+
+        function handleRoleChange(role) {
+            const isStudent = role === 'STUDENT';
+            document.getElementById('studentCodeGroup').style.display = isStudent ? 'flex' : 'none';
+            document.getElementById('classCodeGroup').style.display = isStudent ? 'flex' : 'none';
+        }
+
+        function loadUserData() {
+            const store = Store.get();
+            const u = store.users.find(x => x.id === currentUserId);
+            if (!u) {
+                alert("Không tìm thấy người dùng có mã ID: " + currentUserId);
+                window.location.href = "list.html";
+                return;
+            }
+
+            document.getElementById("pageHeading").innerText = "Chỉnh Sửa Tài Khoản: " + u.username;
+            document.getElementById("username").value = u.username;
+            document.getElementById("fullName").value = u.fullName;
+            document.getElementById("email").value = u.email;
+            document.getElementById("role").value = u.role;
+            document.getElementById("status").value = u.status;
+            document.getElementById("studentCode").value = u.studentCode === '-' ? '' : u.studentCode;
+            document.getElementById("classCode").value = u.classCode === '-' ? '' : u.classCode;
+            document.getElementById("faceEnrolled").value = u.faceEnrolled ? "true" : "false";
+
+            handleRoleChange(u.role);
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const store = Store.get();
+            const u = store.users.find(x => x.id === currentUserId);
+            if (!u) return;
+
+            u.fullName = document.getElementById("fullName").value.trim();
+            u.email = document.getElementById("email").value.trim();
+            u.role = document.getElementById("role").value;
+            u.status = document.getElementById("status").value;
+            u.studentCode = u.role === 'STUDENT' ? (document.getElementById("studentCode").value.trim() || "-") : "-";
+            u.classCode = u.role === 'STUDENT' ? (document.getElementById("classCode").value.trim() || "-") : "-";
+            u.faceEnrolled = document.getElementById("faceEnrolled").value === "true";
+
+            Store.save(store);
+            alert("Đã cập nhật thông tin thành công!");
+            window.location.href = "details.html?id=" + currentUserId;
+        }
+    </script>
+</body>
+</html>
