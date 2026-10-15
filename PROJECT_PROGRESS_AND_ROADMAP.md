@@ -1,8 +1,9 @@
 # 🎓 ĐỒ ÁN TỐT NGHIỆP: HỆ THỐNG QUẢN LÝ HỌC TẬP TRỰC TUYẾN (LMS)
 ## BÁO CÁO TIẾN ĐỘ THỰC HIỆN & LỘ TRÌNH PHÁT TRIỂN TIẾP THEO
 
-*Cập nhật ngày: 12/10/2026*  
-*Mã dự án: DATN_LMS_2026*
+*Cập nhật ngày: 15/10/2026*  
+*Mã dự án: DATN_LMS_2026*  
+*Mã nguồn GitHub: [ai-lms-face-recognition](https://github.com/CongTung202/ai-lms-face-recognition.git)*
 
 ---
 
@@ -10,11 +11,13 @@
 
 | Thành phần | Công nghệ / Dịch vụ | Thông số kết nối & Cổng | Vai trò |
 | :--- | :--- | :--- | :--- |
-| **Backend Core** | Java Spring Boot 3.2.5 (JDK 17) | Cổng `8080`, Context `/api` | RESTful API, Security, Quản lý nghiệp vụ chính |
+| **Backend Core** | Java Spring Boot 3.2.5 (JDK 17) | Cổng `8080`, Context `/` & `/api` | RESTful API, Security, Quản lý nghiệp vụ chính |
+| **Admin Portal UI** | OnePortal Light Theme (Tailwind CSS v3) | `http://localhost:8080/admin/index.html` | Bảng điều khiển quản trị, Quản lý học viên, Khóa học, eKYC |
+| **Testing UI (Modular)**| HTML5 + Vanilla JS + Tailwind CSS v3 | `d:\DATN\admin_web\` (Thư mục con theo domain) | Giao diện kiểm thử từng module không icon, không ghost text |
 | **RDBMS** | MySQL 8.0 | `localhost:3306`, DB: `lms_online_db` | Lưu trữ dữ liệu quan hệ chuẩn 3NF (Người dùng, Khóa học, Bài học, Giao dịch) |
 | **NoSQL** | MongoDB | `localhost:27017`, DB: `lms_nosql_db` | Lưu trữ toàn văn tài liệu RAG (`course_documents`), Chunks vector (`document_chunks`), Log thi (`exam_telemetry_logs`) |
 | **AI Engine** | Python FastAPI | Cổng `8001` (`face_ai`) | Nhận diện khuôn mặt ArcFace, Head-Pose 3D, Liveness detection |
-| **Cloud Storage** | Cloudinary CDN | Cloud: `dhefmthim`, Key: `253544761519318` | Lưu ảnh nhận diện khuôn mặt sinh viên, Video bài giảng phát toàn cầu |
+| **Cloud Storage** | Cloudinary CDN | Cloud: `dhefmthim` | Lưu ảnh nhận diện khuôn mặt sinh viên, Video bài giảng phát toàn cầu |
 | **Payment Gateway** | PayOS VietQR | API Key + Checksum cấu hình sẵn | Thanh toán học phí/mua khóa học tự động qua mã QR Ngân hàng |
 
 ---
@@ -61,8 +64,6 @@
   - **Thuật toán chống tua (Anti-Cheat)**: Chỉ cho phép tăng `maxWatchedSecond` khi học sinh xem thực tế (ngưỡng nhịp tim 15s). Tua đốt cháy giai đoạn sẽ không được tính % hoàn thành.
   - **Tự động hoàn thành**: Đạt $\ge 85\%$ thời lượng video sẽ đánh dấu `is_completed = true`.
   - **Hỗ trợ Resume**: Tiếp tục xem từ giây dừng gần nhất.
-  - **Điểm danh ngẫu nhiên**: Popup chụp webcam bất thình lình trong khi xem video để đối chiếu khuôn mặt.
-  - **Trang kiểm thử**: [`test_video_player.html`](file:///d:/DATN/test_video_player.html).
 
 #### 6. Phân Hệ Trợ Lý AI RAG Giáo Trình (100% Miễn Phí, Tốc Độ < 10ms)
 - **Tệp triển khai**:
@@ -75,7 +76,46 @@
   - **Cắt đoạn thông minh (Recursive Chunking)**: 600 ký tự / đoạn, overlap 100 ký tự.
   - **Tìm kiếm ngữ nghĩa siêu tốc**: Thuật toán TF-IDF & Cosine Similarity in-memory lọc trước theo `course_id`.
   - Trả về câu trả lời tổng hợp kèm **trích dẫn cụ thể số trang** trong giáo trình gốc.
-  - **Trang kiểm thử**: [`test_rag_chatbot.html`](file:///d:/DATN/test_rag_chatbot.html).
+
+#### 7. Bảo Mật Bí Mật Hệ Thống & Quản Lý Mã Nguồn Git
+- **Cách ly Secret Keys**: Chuyển toàn bộ Cloudinary Key, PayOS Secret, JWT Secret, CSDL sang tệp `.env`.
+- **Cấu hình Spring Boot**: Dùng `spring.config.import` nạp biến môi trường tự động mà không lưu cứng trong code.
+- **Git Push an toàn**: Đã khởi tạo Git và đẩy toàn bộ mã nguồn lên nhánh `main` repository `https://github.com/CongTung202/ai-lms-face-recognition.git`.
+
+#### 8. Nâng Cấp Tệp Khởi Động Hệ Thống (Startup Scripts)
+- **[`run_backend.bat`](file:///d:/DATN/run_backend.bat)**:
+  - Tự động nạp mã hóa UTF-8 (`chcp 65001`).
+  - Tự động nạp cấu hình từ `.env` nếu tồn tại.
+  - Tự động phát hiện JDK 17 và Maven binary wrapper.
+  - Hiển thị bảng điều khiển danh mục API, trạng thái kết nối CSDL và đường dẫn giao diện.
+- **[`start_face_ai.bat`](file:///d:/DATN/start_face_ai.bat)**:
+  - Tự động phát hiện môi trường ảo Python (`.venv` hoặc `venv`).
+  - Tự động kiểm tra và tải mô hình YuNet ONNX nếu chưa có.
+  - Hiển thị các endpoint Swagger UI, Face Enroll, Face Verify trên cổng 8001.
+
+#### 9. Giao Diện Quản Trị OnePortal (Light Modern Theme & Live Integration)
+- **Đường dẫn truy cập**: `http://localhost:8080/admin/index.html` (hoặc bản sao tĩnh tại [`d:\DATN\admin_web\index.html`](file:///d:/DATN/admin_web/index.html)).
+- **Bố cục chuẩn OnePortal**: Header tìm kiếm nhanh `Ctrl+K`, Sidebar điều hướng chuyên nghiệp, Tabs chức năng ngang, Khối hồ sơ cá nhân 2 cột và Cụm eKYC 3 góc mặt.
+- **Quản trị Người Dùng (Full CRUD)**:
+  - Hiển thị danh sách thực tế từ MySQL (`GET /api/admin/users`).
+  - Thêm tài khoản mới trực tiếp vào CSDL (`POST /api/admin/users`).
+  - Chỉnh sửa thông tin học viên/quản trị viên (`PUT /api/admin/users/{id}`).
+  - Xóa tài khoản an toàn kèm xử lý ràng buộc khóa ngoại (`DELETE /api/admin/users/{id}`).
+- **Quản lý Khóa Học, Buổi Học (Chapters) & Video/Tài Liệu Cloudinary**:
+  - Khắc phục triệt để lỗi 500 Jackson Hibernate proxy (`ByteBuddyInterceptor`).
+  - Hiển thị chi tiết từng Buổi học (Chapters/Sessions) và Bài học (Lessons).
+  - Tích hợp phát Video trực tiếp từ Cloudinary CDN (`dhefmthim`) với trình phát HTML5 Video Player.
+  - Hiển thị tài liệu PDF/DOCX đính kèm đã lập chỉ mục vector RAG.
+
+#### 10. Giao Diện Kiểm Thử Độc Lập Theo Từng Module (admin_web)
+- Cấu trúc thư mục tách biệt cho từng domain:
+  - `students/`: `list.html`, `create.html`, `edit.html`, `details.html`
+  - `courses/`: `list.html`, `create.html`, `edit.html`, `details.html`
+  - `videos/`: `list.html`, `create.html`, `details.html`
+  - `documents/`: `list.html`, `create.html`, `details.html`
+  - `exams/`: `list.html`, `create.html`, `details.html`
+  - `orders/`: `list.html`, `create.html`, `details.html`
+- Thiết kế responsive hiện đại với Tailwind CSS v3, tuân thủ nguyên tắc không dùng icon và không dùng ghost text.
 
 ---
 
@@ -83,6 +123,7 @@
 
 - [`d:\DATN\run_backend.bat`](file:///d:/DATN/run_backend.bat): Khởi chạy Spring Boot 3 Backend (Cổng 8080).
 - [`d:\DATN\start_face_ai.bat`](file:///d:/DATN/start_face_ai.bat): Khởi chạy Python Face AI Microservice (Cổng 8001).
+- [`d:\DATN\admin_web\index.html`](file:///d:/DATN/admin_web/index.html): Giao diện OnePortal độc lập kiểm thử offline.
 - [`d:\DATN\test_video_player.html`](file:///d:/DATN/test_video_player.html): Web kiểm thử Video Streaming & Chống tua.
 - [`d:\DATN\test_rag_chatbot.html`](file:///d:/DATN/test_rag_chatbot.html): Web kiểm thử Trợ lý AI RAG hỏi đáp tài liệu.
 
@@ -93,30 +134,33 @@
 Dưới đây là các phân hệ còn lại để hoàn tất 100% đồ án tốt nghiệp:
 
 ```
-[ Hiện Tại: Đã Xong 6 Phân Hệ Nền Tảng & AI ]
-                      │
-                      ▼
- ┌─────────────────────────────────────────────────────────┐
- │ 1. PHÂN HỆ THANH TOÁN TỰ ĐỘNG PAYOS (VietQR)            │
- │    • Tạo link thanh toán VietQR khi sinh viên mua khóa  │
- │    • Nhận Webhook từ PayOS -> Tự động kích hoạt khóa học│
- │    • Cập nhật bảng orders & course_enrollments          │
- └─────────────────────────────────────────────────────────┘
-                      │
-                      ▼
- ┌─────────────────────────────────────────────────────────┐
- │ 2. PHÂN HỆ GIÁM SÁT THI TRỰC TUYẾN (AI PROCTORING)      │
- │    • WebSocket giám sát thời gian thực phòng thi        │
- │    • AI phát hiện: Rời màn hình, Quay trái/phải quá lâu │
- │    • Ghi telemetry log vi phạm vào MongoDB              │
- └─────────────────────────────────────────────────────────┘
-                      │
-                      ▼
- ┌─────────────────────────────────────────────────────────┐
- │ 3. GIAO DIỆN NGƯỜI DÙNG TỔNG THỂ (FRONTEND INTEGRATION) │
- │    • Giao diện Web Student (Xem bài, Học video, Chat RAG│
- │    • Giao diện Web Admin/Teacher (Quản lý khóa, Upload) │
- └─────────────────────────────────────────────────────────┘
+[ Hiện Tại: Đã Xong 10 Phân Hệ Nền Tảng, AI Engine & Giao Diện Quản Trị OnePortal ]
+                                      │
+                                      ▼
+                 ┌─────────────────────────────────────────┐
+                 │ 1. PHÂN HỆ THANH TOÁN TỰ ĐỘNG PAYOS     │
+                 │    • Tạo link thanh toán VietQR động    │
+                 │    • Nhận Webhook từ PayOS tự động mở   │
+                 │      khóa học cho sinh viên             │
+                 │    • Cập nhật bảng orders & enrollments │
+                 └─────────────────────────────────────────┘
+                                      │
+                                      ▼
+                 ┌─────────────────────────────────────────┐
+                 │ 2. PHÂN HỆ GIÁM SÁT THI TRỰC TUYẾN      │
+                 │    • WebSocket giám sát phòng thi       │
+                 │    • AI phát hiện: Rời màn hình,        │
+                 │      quay đầu trái/phải quá lâu         │
+                 │    • Ghi telemetry log vi phạm MongoDB  │
+                 └─────────────────────────────────────────┘
+                                      │
+                                      ▼
+                 ┌─────────────────────────────────────────┐
+                 │ 3. GIAO DIỆN HỌC VIÊN (STUDENT PORTAL)  │
+                 │    • Web xem khóa học, xem video H264   │
+                 │    • Chatbot AI RAG hỏi đáp giáo trình  │
+                 │    • Làm bài thi trực tuyến có camera   │
+                 └─────────────────────────────────────────┘
 ```
 
 #### Nhiệm vụ cụ thể tiếp theo đề xuất:
