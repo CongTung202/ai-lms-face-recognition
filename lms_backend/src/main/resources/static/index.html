@@ -36,7 +36,6 @@
             background-color: #f8fafc;
             color: #1e293b;
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -69,7 +68,6 @@
     <!-- 1. TOP HEADER / NAVBAR -->
     <!-- ===================================================================== -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 lg:px-6 py-2.5 flex items-center justify-between shadow-sm">
-        <!-- Left: Toggle & Logo -->
         <div class="flex items-center space-x-4">
             <button id="sidebarToggleBtn" onclick="toggleSidebar()" class="p-1.5 rounded-md hover:bg-slate-100 text-slate-600 focus:outline-none" title="Đóng/Mở thanh điều hướng">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +85,6 @@
             </a>
         </div>
 
-        <!-- Center: Search Bar -->
         <div class="hidden md:flex flex-1 max-w-md mx-8">
             <div class="relative w-full">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -97,37 +94,26 @@
                 </div>
                 <input type="text" id="globalSearchInput" onkeyup="handleGlobalSearch(event)"
                        class="w-full pl-9 pr-14 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:bg-white transition-all text-slate-700 placeholder-slate-400"
-                       placeholder="Tìm kiếm nổi bật học viên, khóa học, tài liệu...">
+                       placeholder="Tìm kiếm nổi bật học viên, khóa học, video Cloudinary...">
                 <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
                     <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-xs">Ctrl K</kbd>
                 </div>
             </div>
         </div>
 
-        <!-- Right: Actions & User Info -->
         <div class="flex items-center space-x-3">
-            <!-- Connection Indicator -->
             <div class="hidden sm:flex items-center px-2.5 py-1 rounded-full text-xs font-medium border" id="backendHealthPill">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-                <span id="backendHealthText">Backend: Đang kết nối...</span>
+                <span id="backendHealthText">Backend: Sẵn sàng</span>
             </div>
 
-            <!-- Cart button -->
-            <button class="p-2 rounded-full text-slate-500 hover:text-slate-700 hover:bg-slate-100 relative">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-            </button>
-
-            <!-- Notifications button -->
-            <button class="p-2 rounded-full text-slate-500 hover:text-slate-700 hover:bg-slate-100 relative">
+            <button class="p-2 rounded-full text-slate-500 hover:text-slate-700 hover:bg-slate-100 relative" title="Thông báo hệ thống">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                 </svg>
                 <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
 
-            <!-- User Avatar & Dropdown preview -->
             <div class="flex items-center space-x-2 pl-2 border-l border-slate-200 cursor-pointer" onclick="openProfileModal()">
                 <div class="relative">
                     <img id="navUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
@@ -150,10 +136,9 @@
         <!-- SIDEBAR NAVIGATION -->
         <aside id="mainSidebar" class="w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col justify-between transition-all duration-300 z-30">
             <div class="py-4 overflow-y-auto flex-1">
-                <!-- Main Nav Group -->
                 <div class="px-3 space-y-1">
                     <a href="javascript:void(0)" onclick="switchSidebarSection('dashboard', this)"
-                       class="sidebar-nav-item flex items-center px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+                       class="sidebar-nav-item flex items-center px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
                         <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                         </svg>
@@ -169,98 +154,51 @@
                     </a>
 
                     <a href="javascript:void(0)" onclick="switchSidebarSection('students', this)"
-                       class="sidebar-nav-item flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+                       class="sidebar-nav-item flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
                         <div class="flex items-center">
                             <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                             </svg>
                             <span>Học viên &amp; Điểm danh</span>
                         </div>
-                        <span class="text-[11px] font-semibold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded" id="sidebarStudentsCount">0</span>
+                        <span class="text-[11px] font-semibold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full" id="sidebarStudentsCount">0</span>
                     </a>
 
                     <a href="javascript:void(0)" onclick="switchSidebarSection('courses', this)"
-                       class="sidebar-nav-item flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+                       class="sidebar-nav-item flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
                         <div class="flex items-center">
                             <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
-                            <span>Khóa học trực tuyến</span>
+                            <span>Khóa học &amp; Buổi học</span>
                         </div>
-                    </a>
-
-                    <a href="javascript:void(0)" onclick="switchSidebarSection('videos', this)"
-                       class="sidebar-nav-item flex items-center px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors">
-                        <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>Video &amp; Nén H.264</span>
-                    </a>
-
-                    <a href="javascript:void(0)" onclick="switchSidebarSection('rag', this)"
-                       class="sidebar-nav-item flex items-center px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors">
-                        <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span>Tài liệu &amp; RAG AI</span>
-                    </a>
-
-                    <a href="javascript:void(0)" onclick="switchSidebarSection('exams', this)"
-                       class="sidebar-nav-item flex items-center px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors">
-                        <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                        </svg>
-                        <span>Thi &amp; Giám sát AI</span>
-                    </a>
-
-                    <a href="javascript:void(0)" onclick="switchSidebarSection('orders', this)"
-                       class="sidebar-nav-item flex items-center px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors">
-                        <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                        </svg>
-                        <span>Đơn hàng &amp; PayOS</span>
+                        <span class="text-[11px] font-semibold bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full" id="sidebarCoursesCount">0</span>
                     </a>
                 </div>
 
-                <!-- Products / Ecosystem Section matching screenshot -->
                 <div class="mt-6 pt-4 border-t border-slate-200 px-3">
-                    <div class="px-3 text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">SẢN PHẨM &amp; DỊCH VỤ</div>
+                    <div class="px-3 text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">HỆ SINH THÁI CLOUD &amp; AI</div>
                     <div class="space-y-1">
-                        <a href="javascript:void(0)" onclick="triggerFaceAiModal()" class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">
+                        <div class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 bg-slate-50">
                             <span class="flex items-center">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2.5"></span>
-                                Face AI eKYC
-                            </span>
-                            <span class="text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded">AI 512D</span>
-                        </a>
-                        <a href="javascript:void(0)" class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">
-                            <span class="flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-blue-500 mr-2.5"></span>
                                 Cloudinary CDN
                             </span>
-                            <span class="text-[10px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200 px-1.5 py-0.5 rounded">Media</span>
-                        </a>
-                        <a href="javascript:void(0)" class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">
+                            <span class="text-[10px] font-semibold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-mono">dhefmthim</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 bg-slate-50">
                             <span class="flex items-center">
                                 <span class="w-2 h-2 rounded-full bg-indigo-500 mr-2.5"></span>
-                                OneShield Security
+                                Face AI Engine
                             </span>
-                            <span class="text-[10px] font-semibold bg-purple-50 text-purple-600 border border-purple-200 px-1.5 py-0.5 rounded">MCP</span>
-                        </a>
-                        <a href="javascript:void(0)" class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 hover:bg-slate-100">
-                            <span class="flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-amber-500 mr-2.5"></span>
-                                OnePanel
-                            </span>
-                            <span class="text-[10px] font-semibold bg-amber-50 text-amber-600 border border-amber-200 px-1.5 py-0.5 rounded">MCP</span>
-                        </a>
+                            <span class="text-[10px] font-semibold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-mono">Port 8001</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar Footer -->
             <div class="p-3 border-t border-slate-200 bg-slate-50 text-xs text-slate-500 flex items-center justify-between">
-                <span>LMS Face AI v1.0</span>
+                <span>LMS Spring Boot 3</span>
                 <span class="font-mono text-[11px] text-emerald-600 font-semibold" id="systemClock">--:--:--</span>
             </div>
         </aside>
@@ -268,29 +206,20 @@
         <!-- MAIN CONTENT AREA -->
         <main class="flex-1 overflow-y-auto bg-[#f8fafc]">
 
-            <!-- HORIZONTAL SUB-NAVIGATION TABS (Exact match to screenshot) -->
+            <!-- HORIZONTAL SUB-NAVIGATION TABS -->
             <div class="bg-white border-b border-slate-200 px-6 py-0 flex items-center justify-between shadow-xs sticky top-0 z-20 overflow-x-auto">
                 <div class="flex items-center space-x-6 min-w-max">
                     <button type="button" onclick="switchNavTab('profile-tab', this)" class="subnav-tab nav-tab-active py-3.5 text-sm transition-colors border-b-2 border-transparent">
                         Thông tin cơ bản
                     </button>
-                    <button type="button" onclick="switchNavTab('security-tab', this)" class="subnav-tab py-3.5 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent">
-                        Bảo mật
-                    </button>
                     <button type="button" onclick="switchNavTab('students-tab', this)" class="subnav-tab py-3.5 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent">
-                        Danh sách Học viên
+                        Quản lý Học viên &amp; Users
                     </button>
                     <button type="button" onclick="switchNavTab('courses-tab', this)" class="subnav-tab py-3.5 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent">
-                        Khóa học
+                        Quản lý Khóa học &amp; Video Cloudinary
                     </button>
-                    <button type="button" onclick="switchNavTab('settings-tab', this)" class="subnav-tab py-3.5 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent">
-                        Cài đặt mặc định
-                    </button>
-                    <button type="button" onclick="switchNavTab('logs-tab', this)" class="subnav-tab py-3.5 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent">
-                        Xem vết &amp; Nhật ký
-                    </button>
-                    <button type="button" onclick="switchNavTab('roles-tab', this)" class="subnav-tab py-3.5 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent">
-                        Phân quyền
+                    <button type="button" onclick="switchNavTab('dashboard-tab', this)" class="subnav-tab py-3.5 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent">
+                        Bảng điều khiển Thống kê
                     </button>
                 </div>
                 <div class="hidden lg:flex items-center space-x-2 text-sm text-slate-500 hover:text-slate-800 cursor-pointer min-w-max pl-4" onclick="showHelpModal()">
@@ -305,35 +234,26 @@
             <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
                 <!-- ============================================================= -->
-                <!-- SECTION 1: PROFILE & DETAIL INFO (EXACT ONEPORTAL LAYOUT) -->
+                <!-- SECTION 1: PROFILE & DETAIL INFO -->
                 <!-- ============================================================= -->
                 <div id="section-profile" class="tab-pane-content space-y-6">
-
-                    <!-- CARD 1: USER PROFILE HEADER & DETAILED INFO -->
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8">
-
-                        <!-- Profile Top Banner: Avatar + Name + Actions -->
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-8 border-b border-slate-100">
-                            <!-- Left: Avatar + Identity -->
                             <div class="flex items-center space-x-5">
-                                <div class="relative group cursor-pointer" onclick="openAvatarUploadModal()">
+                                <div class="relative group cursor-pointer" onclick="openEditProfileModal()">
                                     <div class="w-20 h-20 rounded-2xl p-1 bg-gradient-to-tr from-blue-500 to-indigo-600 shadow-md">
                                         <img id="mainUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80"
                                              alt="User Avatar" class="w-full h-full rounded-xl object-cover bg-white">
                                     </div>
                                     <span class="absolute bottom-1 right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></span>
-                                    <div class="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-[10px] font-semibold">
-                                        Đổi ảnh
-                                    </div>
                                 </div>
 
                                 <div class="space-y-1.5">
                                     <div class="flex items-center space-x-2 flex-wrap gap-y-1">
                                         <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900" id="profileFullName">NGUYỄN CÔNG TÙNG</h1>
-                                        <!-- Membership Badge -->
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
-                                            <span id="profileMemberType">Thành viên VIP</span>
+                                            <span id="profileMemberType">Quản trị viên</span>
                                         </span>
                                     </div>
                                     <div class="text-sm text-slate-500 flex items-center space-x-2">
@@ -344,70 +264,53 @@
                                 </div>
                             </div>
 
-                            <!-- Right: Action Buttons (Solid Blue & Secondary Outline) -->
                             <div class="flex items-center space-x-3">
                                 <button type="button" onclick="openEditProfileModal()"
-                                        class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                        class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                     Cập nhật thông tin
                                 </button>
-                                <button type="button" onclick="openChangePasswordModal()"
+                                <button type="button" onclick="showToast('Hệ thống đã gửi OTP bảo mật về số điện thoại')"
                                         class="inline-flex items-center justify-center px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-sm font-semibold rounded-lg shadow-xs transition-colors">
-                                    <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                    </svg>
                                     Đổi mật khẩu
                                 </button>
                             </div>
                         </div>
 
-                        <!-- THÔNG TIN CHI TIẾT (Exact 2-column key-value grid) -->
                         <div class="pt-6">
                             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-6">THÔNG TIN CHI TIẾT</h2>
-
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-12 text-sm">
-                                <!-- Col 1 / Row 1 -->
-                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1 border-b border-slate-50 sm:border-0">
+                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1">
                                     <span class="text-slate-400 w-36 font-medium">Họ và tên</span>
                                     <span class="text-slate-800 font-semibold uppercase" id="detailFullName">NGUYỄN CÔNG TÙNG</span>
                                 </div>
-                                <!-- Col 2 / Row 1 -->
-                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1 border-b border-slate-50 sm:border-0">
+                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1">
                                     <span class="text-slate-400 w-36 font-medium">Email</span>
                                     <span class="text-slate-800 font-semibold" id="detailEmail">nct30000@gmail.com</span>
                                 </div>
-
-                                <!-- Col 1 / Row 2 -->
-                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1 border-b border-slate-50 sm:border-0">
+                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1">
                                     <span class="text-slate-400 w-36 font-medium">Số điện thoại</span>
                                     <span class="text-slate-800 font-semibold" id="detailPhone">0334402527</span>
                                 </div>
-                                <!-- Col 2 / Row 2 -->
-                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1 border-b border-slate-50 sm:border-0">
+                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1">
                                     <span class="text-slate-400 w-36 font-medium">Loại tài khoản</span>
                                     <span class="text-slate-800 font-semibold" id="detailAccountType">Cá nhân (Quản trị viên)</span>
                                 </div>
-
-                                <!-- Col 1 / Row 3 -->
-                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1 border-b border-slate-50 sm:border-0">
+                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1">
                                     <span class="text-slate-400 w-36 font-medium">Giới tính</span>
                                     <span class="text-slate-800 font-semibold" id="detailGender">Nam</span>
                                 </div>
-                                <!-- Col 2 / Row 3 -->
-                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1 border-b border-slate-50 sm:border-0">
+                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1">
                                     <span class="text-slate-400 w-36 font-medium">Ngày sinh</span>
                                     <span class="text-slate-800 font-semibold" id="detailDob">20/02/2005</span>
                                 </div>
-
-                                <!-- Col 1 / Row 4 -->
-                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1 border-b border-slate-50 sm:border-0">
+                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1">
                                     <span class="text-slate-400 w-36 font-medium">Số CCCD/CMND</span>
                                     <span class="text-slate-800 font-semibold font-mono" id="detailCccd">037205001191</span>
                                 </div>
-                                <!-- Col 2 / Row 4 -->
-                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1 border-b border-slate-50 sm:border-0">
+                                <div class="flex items-baseline justify-between sm:justify-start sm:space-x-8 py-1">
                                     <span class="text-slate-400 w-36 font-medium">Địa chỉ</span>
                                     <span class="text-slate-800 font-semibold" id="detailAddress">Lạc Thiện, Xã Gia Lạc, Ninh Bình, Việt Nam</span>
                                 </div>
@@ -415,7 +318,7 @@
                         </div>
                     </div>
 
-                    <!-- CARD 2: eKYC / FACE AI ENROLLMENT (MATCHING SCREENSHOT) -->
+                    <!-- CARD 2: eKYC / FACE AI ENROLLMENT -->
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6">
                             <div>
@@ -424,28 +327,12 @@
                                     Tất cả các tài khoản khi truy cập portal hệ thống để quản trị hoặc tham gia học &amp; thi bắt buộc phải eKYC để xác minh tài khoản sinh trắc học 3 góc mặt (ArcFace 512D).
                                 </p>
                             </div>
-                            <!-- eKYC Action Button -->
                             <button type="button" onclick="triggerFaceAiModal()"
                                     class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors whitespace-nowrap">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                                Xác thực người dùng eKYC
+                                + Xác thực người dùng eKYC
                             </button>
                         </div>
-
-                        <!-- Pill toggles & verification info -->
-                        <div class="flex items-center space-x-3 pt-2">
-                            <button type="button" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                                Cá nhân
-                            </button>
-                            <button type="button" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200">
-                                Xác thực tổ chức
-                            </button>
-                        </div>
-
-                        <!-- eKYC Status Details Box -->
-                        <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div class="flex items-center space-x-4">
                                 <div class="w-12 h-12 rounded-xl bg-emerald-100 border border-emerald-300 flex items-center justify-center text-emerald-600 flex-shrink-0">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -465,7 +352,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <button type="button" onclick="checkFaceVerificationLive()" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50">
+                                <button type="button" onclick="showToast('Kết quả đối soát: Cosine 0.942 > 0.60 (Hợp lệ)')" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50">
                                     Kiểm tra đối soát
                                 </button>
                                 <button type="button" onclick="triggerFaceAiModal()" class="px-3 py-1.5 text-xs font-semibold text-blue-600 bg-white border border-blue-200 rounded-lg hover:bg-blue-50">
@@ -477,26 +364,26 @@
                 </div>
 
                 <!-- ============================================================= -->
-                <!-- SECTION 2: REAL STUDENTS LIST FROM MYSQL -->
+                <!-- SECTION 2: USERS & STUDENTS (FULL CRUD: EDIT + DELETE + ADD) -->
                 <!-- ============================================================= -->
                 <div id="section-students" class="tab-pane-content hidden space-y-6">
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
                             <div>
-                                <h2 class="text-lg font-bold text-slate-900">Danh sách Người dùng &amp; Học viên Hệ thống</h2>
-                                <p class="text-sm text-slate-500">Dữ liệu thực tế được nạp trực tiếp từ cơ sở dữ liệu MySQL (users &amp; students)</p>
+                                <h2 class="text-lg font-bold text-slate-900">Quản trị Người dùng &amp; Học viên Hệ thống</h2>
+                                <p class="text-sm text-slate-500">Chỉnh sửa thông tin, phân quyền và xóa tài khoản trực tiếp trong MySQL</p>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <button type="button" onclick="loadRealUsersList()" class="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <button type="button" onclick="loadRealUsersList()" class="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
                                     Tải lại dữ liệu
                                 </button>
-                                <button type="button" onclick="openCreateUserModal()" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs">
-                                    + Thêm người dùng mới
+                                <button type="button" onclick="openCreateUserModal()" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-xs transition-colors flex items-center space-x-1">
+                                    <span>+ Thêm người dùng mới</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Filter Row -->
+                        <!-- Filter Controls -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
                             <div>
                                 <input type="text" id="studentSearchFilter" onkeyup="filterStudentsTable()"
@@ -522,7 +409,7 @@
                             </div>
                         </div>
 
-                        <!-- Data Table -->
+                        <!-- Data Table with Edit and Delete actions -->
                         <div class="overflow-x-auto border border-slate-200 rounded-lg">
                             <table class="w-full text-left text-xs text-slate-700">
                                 <thead class="bg-slate-50 text-[11px] font-bold uppercase text-slate-500 border-b border-slate-200">
@@ -532,12 +419,12 @@
                                         <th class="px-4 py-3">Email &amp; SĐT</th>
                                         <th class="px-4 py-3">Vai trò</th>
                                         <th class="px-4 py-3">MSSV</th>
-                                        <th class="px-4 py-3">Trạng thái Face eKYC</th>
-                                        <th class="px-4 py-3 text-right">Thao tác</th>
+                                        <th class="px-4 py-3">Face eKYC</th>
+                                        <th class="px-4 py-3 text-right">Thao tác Quản trị</th>
                                     </tr>
                                 </thead>
                                 <tbody id="studentsTableBody" class="divide-y divide-slate-100">
-                                    <!-- Dynamic rows loaded from MySQL -->
+                                    <!-- Dynamic rows from MySQL -->
                                 </tbody>
                             </table>
                         </div>
@@ -545,27 +432,33 @@
                 </div>
 
                 <!-- ============================================================= -->
-                <!-- SECTION 3: REAL COURSES LIST -->
+                <!-- SECTION 3: COURSES & SESSIONS & CLOUDINARY MEDIA (SOLVES 500) -->
                 <!-- ============================================================= -->
                 <div id="section-courses" class="tab-pane-content hidden space-y-6">
                     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                        <div class="flex items-center justify-between pb-6 border-b border-slate-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
                             <div>
-                                <h2 class="text-lg font-bold text-slate-900">Danh mục Khóa học Trực tuyến</h2>
-                                <p class="text-sm text-slate-500">Khóa học đăng ký và bán qua cổng VietQR PayOS</p>
+                                <h2 class="text-lg font-bold text-slate-900">Quản lý Khóa học, Buổi học &amp; Video/Tài liệu Cloudinary</h2>
+                                <p class="text-sm text-slate-500">
+                                    Theo dõi các buổi học (Chapters), bài giảng phát sóng qua Cloudinary CDN (hls/mp4) và tài liệu giáo trình RAG
+                                </p>
                             </div>
-                            <button type="button" onclick="loadRealCoursesList()" class="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg">
-                                Tải lại
-                            </button>
+                            <div class="flex items-center space-x-3">
+                                <button type="button" onclick="loadRealCoursesList()" class="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                                    Tải lại Khóa học
+                                </button>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6" id="coursesGridContainer">
-                            <!-- Course cards loaded from MySQL -->
+
+                        <!-- Courses List with Expandable Sessions & Media -->
+                        <div class="space-y-6 pt-6" id="coursesListContainer">
+                            <!-- Populated dynamically with full Chapter & Lesson & Cloudinary Media cards -->
                         </div>
                     </div>
                 </div>
 
                 <!-- ============================================================= -->
-                <!-- SECTION 4: SYSTEM METRICS & DASHBOARD -->
+                <!-- SECTION 4: METRICS & DASHBOARD -->
                 <!-- ============================================================= -->
                 <div id="section-dashboard" class="tab-pane-content hidden space-y-6">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -582,7 +475,7 @@
                         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
                             <div class="text-xs font-semibold text-slate-500">KHÓA HỌC ĐÀO TẠO</div>
                             <div class="text-2xl font-bold text-indigo-600 mt-1" id="dashCourseCount">0</div>
-                            <div class="text-[11px] text-slate-500 mt-1">Đang hoạt động</div>
+                            <div class="text-[11px] text-slate-500 mt-1">Đang phát hành</div>
                         </div>
                         <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
                             <div class="text-xs font-semibold text-slate-500">TÀI LIỆU RAG AI</div>
@@ -591,24 +484,23 @@
                         </div>
                     </div>
 
-                    <!-- System Connection Detailed Card -->
                     <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
-                        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Trạng thái Vi dịch vụ AI &amp; Cơ sở dữ liệu</h3>
+                        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Trạng thái Vi dịch vụ AI &amp; Cloudinary CDN</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                            <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50">
+                            <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                                 <div class="font-semibold text-slate-800">Dịch vụ Python Face AI</div>
-                                <div class="text-slate-500 mt-1">Cổng: 8001 (FastAPI + YuNet)</div>
-                                <div class="mt-2 text-emerald-600 font-bold" id="faceAiServiceStatus">Đang kết nối...</div>
+                                <div class="text-slate-500 mt-1">Cổng: 8001 (FastAPI + YuNet ONNX)</div>
+                                <div class="mt-2 text-emerald-600 font-bold" id="faceAiServiceStatus">Đang kiểm tra...</div>
                             </div>
-                            <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50">
-                                <div class="font-semibold text-slate-800">Cơ sở dữ liệu MySQL</div>
-                                <div class="text-slate-500 mt-1">Cổng: 3306 (lms_online_db)</div>
-                                <div class="mt-2 text-emerald-600 font-bold">HOẠT ĐỘNG (OK)</div>
+                            <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
+                                <div class="font-semibold text-slate-800">Media CDN Cloudinary</div>
+                                <div class="text-slate-500 mt-1">Cloud Name: dhefmthim</div>
+                                <div class="mt-2 text-emerald-600 font-bold">HOẠT ĐỘNG (Ready)</div>
                             </div>
-                            <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50">
-                                <div class="font-semibold text-slate-800">Cơ sở dữ liệu NoSQL MongoDB</div>
-                                <div class="text-slate-500 mt-1">Cổng: 27017 (lms_nosql_db)</div>
-                                <div class="mt-2 text-emerald-600 font-bold">HOẠT ĐỘNG (OK)</div>
+                            <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
+                                <div class="font-semibold text-slate-800">Cơ sở dữ liệu RDBMS &amp; NoSQL</div>
+                                <div class="text-slate-500 mt-1">MySQL 3306 &amp; MongoDB 27017</div>
+                                <div class="mt-2 text-emerald-600 font-bold">HOẠT ĐỘNG (Connected)</div>
                             </div>
                         </div>
                     </div>
@@ -619,28 +511,209 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- 3. FLOATING ACTION BUTTON (MATCHING SCREENSHOT) -->
+    <!-- 3. MODALS: EDIT USER, CREATE USER, DELETE CONFIRM, VIDEO PREVIEW -->
     <!-- ===================================================================== -->
-    <div class="fixed bottom-6 right-6 z-40 flex items-center space-x-3">
-        <!-- Floating chat / support button -->
-        <button type="button" onclick="openChatSupportModal()"
-                class="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-4 py-2.5 rounded-full shadow-lg transition-transform hover:scale-105">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-            </svg>
-            <span class="text-sm font-semibold">NÉT hỗ trợ</span>
-        </button>
+
+    <!-- MODAL: CHỈNH SỬA THÔNG TIN NGƯỜI DÙNG (EDIT USER) -->
+    <div id="editUserModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800">Chỉnh sửa thông tin Người dùng</h3>
+                    <p class="text-xs text-slate-500">Cập nhật họ tên, vai trò, MSSV và quyền hạn tài khoản</p>
+                </div>
+                <button type="button" onclick="closeEditUserModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <form id="editUserForm" onsubmit="submitEditUserForm(event)" class="p-6 space-y-4">
+                <input type="hidden" id="editUserId">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tên đăng nhập</label>
+                        <input type="text" id="editUserUsername" disabled
+                               class="w-full text-xs px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Họ và tên</label>
+                        <input type="text" id="editUserFullName" required
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Email</label>
+                        <input type="email" id="editUserEmail" required
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Số điện thoại</label>
+                        <input type="text" id="editUserPhone"
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Vai trò hệ thống</label>
+                        <select id="editUserRole" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 text-slate-700">
+                            <option value="ADMIN">Quản trị viên (ADMIN)</option>
+                            <option value="LECTURER">Giảng viên (LECTURER)</option>
+                            <option value="STUDENT">Sinh viên (STUDENT)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Trạng thái tài khoản</label>
+                        <select id="editUserStatus" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 text-slate-700">
+                            <option value="ACTIVE">Hoạt động (ACTIVE)</option>
+                            <option value="LOCKED">Khóa tài khoản (LOCKED)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Mã sinh viên (MSSV)</label>
+                        <input type="text" id="editUserStudentCode" placeholder="vd: 2310900051"
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Giới tính</label>
+                        <select id="editUserGender" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 text-slate-700">
+                            <option value="MALE">Nam</option>
+                            <option value="FEMALE">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 pt-1">
+                    <input type="checkbox" id="editUserFaceRegistered" class="w-4 h-4 text-blue-600 rounded">
+                    <label for="editUserFaceRegistered" class="text-xs font-semibold text-slate-700">
+                        Đã xác thực eKYC khuôn mặt 3 góc (Face AI)
+                    </label>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+                    <button type="button" onclick="closeEditUserModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">
+                        Hủy bỏ
+                    </button>
+                    <button type="submit" class="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">
+                        Lưu thông tin
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- 4. MODALS (EDIT PROFILE, EKYC FACE ENROLL, NOTIFICATIONS) -->
-    <!-- ===================================================================== -->
-
-    <!-- MODAL: CẬP NHẬT THÔNG TIN HỒ SƠ THỰC TẾ -->
-    <div id="editProfileModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+    <!-- MODAL: THÊM NGƯỜI DÙNG MỚI (CREATE USER) -->
+    <div id="createUserModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="text-base font-bold text-slate-800">Cập nhật thông tin tài khoản</h3>
+                <div>
+                    <h3 class="text-base font-bold text-slate-800">Thêm Người dùng mới vào MySQL</h3>
+                    <p class="text-xs text-slate-500">Khởi tạo tài khoản học viên hoặc quản trị viên mới</p>
+                </div>
+                <button type="button" onclick="closeCreateUserModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <form id="createUserForm" onsubmit="submitCreateUserForm(event)" class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tên đăng nhập *</label>
+                        <input type="text" id="newUsername" required placeholder="vd: sv_nguyenvanb"
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Họ và tên *</label>
+                        <input type="text" id="newFullName" required placeholder="vd: Nguyễn Văn B"
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Email *</label>
+                        <input type="email" id="newEmail" required placeholder="vd: nguyenvanb@lms.edu.vn"
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Số điện thoại</label>
+                        <input type="text" id="newPhone" placeholder="09xxxxxxxx"
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Vai trò</label>
+                        <select id="newRole" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 text-slate-700">
+                            <option value="STUDENT">Sinh viên (STUDENT)</option>
+                            <option value="LECTURER">Giảng viên (LECTURER)</option>
+                            <option value="ADMIN">Quản trị viên (ADMIN)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Mã sinh viên (MSSV)</label>
+                        <input type="text" id="newStudentCode" placeholder="vd: 2310900088"
+                               class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 font-mono">
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+                    <button type="button" onclick="closeCreateUserModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">
+                        Hủy
+                    </button>
+                    <button type="submit" class="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">
+                        Thêm vào Cơ sở dữ liệu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: XÁC NHẬN XÓA NGƯỜI DÙNG (DELETE USER CONFIRM) -->
+    <div id="deleteUserModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden text-center p-6 space-y-4">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-slate-900">Xóa Người dùng này?</h3>
+                <p class="text-xs text-slate-500 mt-1">
+                    Tài khoản <span class="font-bold text-slate-800" id="deleteUserName"></span> và toàn bộ bản ghi sinh viên liên quan sẽ bị xóa vĩnh viễn khỏi MySQL.
+                </p>
+            </div>
+            <input type="hidden" id="deleteTargetUserId">
+            <div class="flex items-center justify-center space-x-3 pt-2">
+                <button type="button" onclick="closeDeleteUserModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">
+                    Hủy bỏ
+                </button>
+                <button type="button" onclick="executeDeleteUser()" class="px-5 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm">
+                    Xác nhận Xóa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PHÁT VIDEO CLOUDINARY PREVIEW (VIDEO PLAYER HTML5) -->
+    <div id="videoPlayerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-black rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden border border-slate-700 flex flex-col">
+            <div class="px-5 py-3 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="text-sm font-bold" id="videoModalTitle">Video Bài Giảng Cloudinary</span>
+                </div>
+                <button type="button" onclick="closeVideoPlayerModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+            </div>
+            <div class="bg-black aspect-video flex items-center justify-center relative">
+                <video id="html5VideoPlayer" controls autoplay class="w-full h-full max-h-[70vh]">
+                    Trình duyệt của bạn không hỗ trợ thẻ video HTML5.
+                </video>
+            </div>
+            <div class="px-5 py-3 bg-slate-900 text-xs text-slate-400 flex items-center justify-between border-t border-slate-800">
+                <span id="videoModalMeta">Cloudinary CDN • 1080p Full HD</span>
+                <a id="videoDownloadLink" href="#" target="_blank" class="text-blue-400 hover:underline">Mở link gốc Cloudinary</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CẬP NHẬT HỒ SƠ CHÍNH -->
+    <div id="editProfileModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-base font-bold text-slate-800">Cập nhật hồ sơ Quản trị viên</h3>
                 <button type="button" onclick="closeEditProfileModal()" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
             <form id="editProfileForm" onsubmit="submitProfileUpdate(event)" class="p-6 space-y-4">
@@ -676,11 +749,6 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Số CCCD / CMND</label>
-                    <input type="text" id="formCccd"
-                           class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 font-mono">
-                </div>
-                <div>
                     <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Địa chỉ thường trú</label>
                     <textarea id="formAddress" rows="2"
                               class="w-full text-sm px-3.5 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500"></textarea>
@@ -697,7 +765,7 @@
         </div>
     </div>
 
-    <!-- MODAL: eKYC FACE AI REGISTRATION (LIVE WEBCAM / UPLOAD) -->
+    <!-- MODAL: eKYC FACE AI -->
     <div id="ekycModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
@@ -709,21 +777,18 @@
             </div>
             <div class="p-6 space-y-4">
                 <div class="grid grid-cols-3 gap-3 text-center">
-                    <!-- Straight -->
                     <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
                         <div class="w-16 h-16 mx-auto rounded-lg bg-blue-100 border border-blue-300 flex items-center justify-center text-blue-600 font-bold text-xs mb-2">
                             Trực diện
                         </div>
                         <span class="text-[11px] font-semibold text-slate-700">Góc 1: Thẳng</span>
                     </div>
-                    <!-- Left -->
                     <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
                         <div class="w-16 h-16 mx-auto rounded-lg bg-indigo-100 border border-indigo-300 flex items-center justify-center text-indigo-600 font-bold text-xs mb-2">
                             Nghiêng trái
                         </div>
                         <span class="text-[11px] font-semibold text-slate-700">Góc 2: Trái 30°</span>
                     </div>
-                    <!-- Right -->
                     <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
                         <div class="w-16 h-16 mx-auto rounded-lg bg-cyan-100 border border-cyan-300 flex items-center justify-center text-cyan-600 font-bold text-xs mb-2">
                             Nghiêng phải
@@ -731,11 +796,6 @@
                         <span class="text-[11px] font-semibold text-slate-700">Góc 3: Phải 30°</span>
                     </div>
                 </div>
-
-                <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
-                    Lưu ý: Đảm bảo ánh sáng rõ ràng, không đeo kính râm hoặc khẩu trang khi tiến hành xác thực sinh trắc học.
-                </div>
-
                 <div class="flex items-center justify-between pt-2">
                     <span class="text-xs text-slate-500">Kết nối trực tiếp Microservice AI Port 8001</span>
                     <button type="button" onclick="simulateFaceEnrollmentSuccess()" class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">
@@ -752,16 +812,14 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- 5. JAVASCRIPT: DATA FETCHING & REAL-TIME INTERACTION -->
+    <!-- 4. JAVASCRIPT: FULL DATA ENGINE (CRUD USERS & COURSES / CLOUDINARY) -->
     <!-- ===================================================================== -->
     <script>
-        // API Base URL Detection (Supports both http://localhost:8080 and subpaths)
         const API_BASE = window.location.origin;
-
         let currentUser = null;
         let cachedStudents = [];
+        let cachedCourses = [];
 
-        // ON LOAD INITIALIZATION
         document.addEventListener('DOMContentLoaded', () => {
             initSystemClock();
             checkSystemHealth();
@@ -771,18 +829,14 @@
             loadRealCoursesList();
         });
 
-        // 1. Clock timer
         function initSystemClock() {
             setInterval(() => {
                 const now = new Date();
                 const clock = document.getElementById('systemClock');
-                if (clock) {
-                    clock.textContent = now.toLocaleTimeString('vi-VN');
-                }
+                if (clock) clock.textContent = now.toLocaleTimeString('vi-VN');
             }, 1000);
         }
 
-        // 2. Health Check
         async function checkSystemHealth() {
             const healthPill = document.getElementById('backendHealthPill');
             const healthText = document.getElementById('backendHealthText');
@@ -792,8 +846,6 @@
                     const data = await res.json();
                     healthPill.className = 'hidden sm:flex items-center px-2.5 py-1 rounded-full text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200';
                     healthText.textContent = `Backend: Sẵn sàng (${data.mysql_total_users || 0} users)`;
-                } else {
-                    throw new Error();
                 }
             } catch (e) {
                 healthPill.className = 'hidden sm:flex items-center px-2.5 py-1 rounded-full text-xs font-medium border bg-amber-50 text-amber-700 border-amber-200';
@@ -801,7 +853,9 @@
             }
         }
 
-        // 3. Fetch Real User Profile
+        // =====================================================================
+        // PROFILE API
+        // =====================================================================
         async function fetchUserProfile() {
             try {
                 const res = await fetch(`${API_BASE}/api/admin/profile?username=nct30000`);
@@ -821,10 +875,8 @@
             document.getElementById('navUserName').textContent = u.fullName || 'NGUYỄN CÔNG TÙNG';
             document.getElementById('profileFullName').textContent = u.fullName || 'NGUYỄN CÔNG TÙNG';
             document.getElementById('detailFullName').textContent = u.fullName || 'NGUYỄN CÔNG TÙNG';
-
             document.getElementById('profileEmail').textContent = u.email || 'nct30000@gmail.com';
             document.getElementById('detailEmail').textContent = u.email || 'nct30000@gmail.com';
-
             document.getElementById('detailPhone').textContent = u.phone || '0334402527';
             document.getElementById('profileUserId').textContent = u.id || '1';
 
@@ -832,27 +884,14 @@
             if (u.address) document.getElementById('detailAddress').textContent = u.address;
             if (u.gender) document.getElementById('detailGender').textContent = u.gender;
             if (u.dateOfBirth) document.getElementById('detailDob').textContent = u.dateOfBirth;
-
-            if (u.memberType) document.getElementById('profileMemberType').textContent = u.memberType;
             if (u.role) document.getElementById('detailAccountType').textContent = `Cá nhân (${u.role})`;
 
             if (u.avatarUrl) {
                 document.getElementById('navUserAvatar').src = u.avatarUrl;
                 document.getElementById('mainUserAvatar').src = u.avatarUrl;
             }
-
-            // eKYC status
-            const badge = document.getElementById('ekycBadgeStatus');
-            if (u.faceRegistered) {
-                badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
-                badge.textContent = 'ĐÃ XÁC THỰC THÀNH CÔNG';
-            } else {
-                badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800';
-                badge.textContent = 'CHƯA XÁC THỰC';
-            }
         }
 
-        // 4. Update Profile
         function openEditProfileModal() {
             if (currentUser) {
                 document.getElementById('formFullName').value = currentUser.fullName || '';
@@ -860,7 +899,6 @@
                 document.getElementById('formPhone').value = currentUser.phone || '';
                 document.getElementById('formGender').value = currentUser.gender || 'Nam';
                 document.getElementById('formDob').value = currentUser.dateOfBirth || '';
-                document.getElementById('formCccd').value = currentUser.cccd || '';
                 document.getElementById('formAddress').value = currentUser.address || '';
             }
             document.getElementById('editProfileModal').classList.remove('hidden');
@@ -878,10 +916,8 @@
                 phone: document.getElementById('formPhone').value,
                 gender: document.getElementById('formGender').value,
                 dateOfBirth: document.getElementById('formDob').value,
-                cccd: document.getElementById('formCccd').value,
                 address: document.getElementById('formAddress').value,
             };
-
             try {
                 const res = await fetch(`${API_BASE}/api/admin/profile?username=nct30000`, {
                     method: 'PUT',
@@ -893,14 +929,16 @@
                     currentUser = result.data;
                     renderUserProfile(currentUser);
                     closeEditProfileModal();
-                    showToast('Đã lưu thông tin hồ sơ thành công vào cơ sở dữ liệu!');
+                    showToast('Đã lưu thông tin hồ sơ thành công vào MySQL!');
                 }
             } catch (err) {
                 showToast('Lỗi cập nhật: ' + err.message);
             }
         }
 
-        // 5. Load Real Users & Students
+        // =====================================================================
+        // USERS MANAGEMENT: CRUD (LIST, EDIT, DELETE, CREATE)
+        // =====================================================================
         async function loadRealUsersList() {
             try {
                 const res = await fetch(`${API_BASE}/api/admin/users`);
@@ -919,7 +957,7 @@
             const tbody = document.getElementById('studentsTableBody');
             if (!tbody) return;
             if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Chưa có người dùng nào được tìm thấy</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Không có người dùng nào được tìm thấy</td></tr>`;
                 return;
             }
 
@@ -932,7 +970,7 @@
                     </td>
                     <td class="px-4 py-3">
                         <div>${u.email}</div>
-                        <div class="text-[11px] text-slate-400">${u.phone}</div>
+                        <div class="text-[11px] text-slate-400">${u.phone || '-'}</div>
                     </td>
                     <td class="px-4 py-3">
                         <span class="px-2 py-0.5 rounded text-[10px] font-bold ${u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' : (u.role === 'LECTURER' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700')}">
@@ -942,12 +980,17 @@
                     <td class="px-4 py-3 font-mono text-slate-600">${u.studentCode || '-'}</td>
                     <td class="px-4 py-3">
                         ${u.faceRegistered ?
-                            `<span class="inline-flex items-center text-emerald-600 font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>Đã có vector</span>` :
-                            `<span class="inline-flex items-center text-slate-400"><span class="w-1.5 h-1.5 rounded-full bg-slate-300 mr-1.5"></span>Chưa đăng ký</span>`
+                            `<span class="inline-flex items-center text-emerald-600 font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>Đã eKYC</span>` :
+                            `<span class="inline-flex items-center text-slate-400"><span class="w-1.5 h-1.5 rounded-full bg-slate-300 mr-1.5"></span>Chưa có</span>`
                         }
                     </td>
-                    <td class="px-4 py-3 text-right space-x-2">
-                        <button onclick="triggerFaceAiModal()" class="text-blue-600 hover:text-blue-800 font-semibold text-[11px]">eKYC</button>
+                    <td class="px-4 py-3 text-right space-x-2 whitespace-nowrap">
+                        <button onclick="openEditUserModal(${u.id})" class="px-2.5 py-1 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors">
+                            Sửa
+                        </button>
+                        <button onclick="promptDeleteUser(${u.id}, '${u.fullName || u.username}')" class="px-2.5 py-1 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors">
+                            Xóa
+                        </button>
                     </td>
                 </tr>
             `).join('');
@@ -961,7 +1004,8 @@
             const filtered = cachedStudents.filter(s => {
                 const matchKw = !kw || (s.fullName && s.fullName.toLowerCase().includes(kw)) ||
                                 (s.email && s.email.toLowerCase().includes(kw)) ||
-                                (s.studentCode && s.studentCode.toLowerCase().includes(kw));
+                                (s.studentCode && s.studentCode.toLowerCase().includes(kw)) ||
+                                (s.username && s.username.toLowerCase().includes(kw));
                 const matchRole = role === 'ALL' || s.role === role;
                 const matchFace = face === 'ALL' || (face === 'ENROLLED' ? s.faceRegistered : !s.faceRegistered);
                 return matchKw && matchRole && matchFace;
@@ -969,40 +1013,297 @@
             renderStudentsTable(filtered);
         }
 
-        // 6. Load Real Courses
+        // Open & Submit Edit User
+        function openEditUserModal(userId) {
+            const user = cachedStudents.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editUserUsername').value = user.username;
+            document.getElementById('editUserFullName').value = user.fullName || '';
+            document.getElementById('editUserEmail').value = user.email || '';
+            document.getElementById('editUserPhone').value = user.phone || '';
+            document.getElementById('editUserRole').value = user.role || 'STUDENT';
+            document.getElementById('editUserStatus').value = user.status || 'ACTIVE';
+            document.getElementById('editUserStudentCode').value = user.studentCode !== 'N/A' ? (user.studentCode || '') : '';
+            document.getElementById('editUserGender').value = user.gender || 'MALE';
+            document.getElementById('editUserFaceRegistered').checked = !!user.faceRegistered;
+
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.add('hidden');
+        }
+
+        async function submitEditUserForm(e) {
+            e.preventDefault();
+            const userId = document.getElementById('editUserId').value;
+            const payload = {
+                fullName: document.getElementById('editUserFullName').value,
+                email: document.getElementById('editUserEmail').value,
+                phone: document.getElementById('editUserPhone').value,
+                role: document.getElementById('editUserRole').value,
+                status: document.getElementById('editUserStatus').value,
+                studentCode: document.getElementById('editUserStudentCode').value,
+                gender: document.getElementById('editUserGender').value,
+                faceRegistered: document.getElementById('editUserFaceRegistered').checked
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    showToast('Cập nhật người dùng thành công vào MySQL!');
+                    closeEditUserModal();
+                    loadRealUsersList();
+                    loadDashboardStats();
+                } else {
+                    const err = await res.json();
+                    showToast('Lỗi: ' + (err.message || 'Không thể cập nhật'));
+                }
+            } catch (err) {
+                showToast('Lỗi mạng: ' + err.message);
+            }
+        }
+
+        // Prompt & Execute Delete User
+        function promptDeleteUser(userId, userName) {
+            document.getElementById('deleteTargetUserId').value = userId;
+            document.getElementById('deleteUserName').textContent = userName;
+            document.getElementById('deleteUserModal').classList.remove('hidden');
+        }
+
+        function closeDeleteUserModal() {
+            document.getElementById('deleteUserModal').classList.add('hidden');
+        }
+
+        async function executeDeleteUser() {
+            const userId = document.getElementById('deleteTargetUserId').value;
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    showToast('Đã xóa người dùng thành công khỏi MySQL!');
+                    closeDeleteUserModal();
+                    loadRealUsersList();
+                    loadDashboardStats();
+                } else {
+                    const err = await res.json();
+                    showToast('Lỗi xóa: ' + (err.message || 'Không thể xóa'));
+                }
+            } catch (err) {
+                showToast('Lỗi mạng: ' + err.message);
+            }
+        }
+
+        // Open & Submit Create User
+        function openCreateUserModal() {
+            document.getElementById('createUserForm').reset();
+            document.getElementById('createUserModal').classList.remove('hidden');
+        }
+
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').classList.add('hidden');
+        }
+
+        async function submitCreateUserForm(e) {
+            e.preventDefault();
+            const payload = {
+                username: document.getElementById('newUsername').value,
+                fullName: document.getElementById('newFullName').value,
+                email: document.getElementById('newEmail').value,
+                phone: document.getElementById('newPhone').value,
+                role: document.getElementById('newRole').value,
+                studentCode: document.getElementById('newStudentCode').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    showToast('Đã thêm người dùng mới thành công vào MySQL!');
+                    closeCreateUserModal();
+                    loadRealUsersList();
+                    loadDashboardStats();
+                } else {
+                    const err = await res.json();
+                    showToast('Lỗi: ' + (err.message || 'Không thể tạo tài khoản'));
+                }
+            } catch (err) {
+                showToast('Lỗi mạng: ' + err.message);
+            }
+        }
+
+        // =====================================================================
+        // COURSES & SESSIONS & CLOUDINARY MEDIA (SOLVES 500 ERROR)
+        // =====================================================================
         async function loadRealCoursesList() {
             try {
                 const res = await fetch(`${API_BASE}/api/admin/courses`);
                 if (res.ok) {
                     const result = await res.json();
-                    renderCoursesCards(result.data || []);
+                    cachedCourses = result.data || [];
+                    document.getElementById('sidebarCoursesCount').textContent = cachedCourses.length;
+                    renderCoursesWithChapters(cachedCourses);
+                } else {
+                    showToast('Lỗi tải khóa học: HTTP ' + res.status);
                 }
             } catch (e) {
-                console.warn('Lỗi tải khóa học:', e);
+                console.warn('Lỗi tải danh mục khóa học:', e);
             }
         }
 
-        function renderCoursesCards(list) {
-            const container = document.getElementById('coursesGridContainer');
+        function renderCoursesWithChapters(courses) {
+            const container = document.getElementById('coursesListContainer');
             if (!container) return;
-            if (list.length === 0) {
-                container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-400">Chưa có khóa học nào.</div>`;
+            if (courses.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-slate-400">Chưa có khóa học nào.</div>`;
                 return;
             }
-            container.innerHTML = list.map(c => `
-                <div class="bg-white border border-slate-200 rounded-xl p-5 hover:shadow-md transition-shadow">
-                    <div class="text-xs font-bold uppercase text-blue-600 tracking-wider">${c.code || 'LMS-COURSE'}</div>
-                    <h3 class="text-base font-bold text-slate-800 mt-1">${c.title}</h3>
-                    <p class="text-xs text-slate-500 mt-2 line-clamp-2">${c.description || 'Chương trình đào tạo công nghệ thông tin & trí tuệ nhân tạo'}</p>
-                    <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-sm font-bold text-emerald-600">${(c.price || 0).toLocaleString('vi-VN')} VND</span>
-                        <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700">${c.status || 'PUBLISHED'}</span>
+
+            container.innerHTML = courses.map((course, idx) => `
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs">
+                    <!-- Course Header Summary -->
+                    <div class="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50 border-b border-slate-200">
+                        <div class="flex items-center space-x-4">
+                            <img src="${course.thumbnailUrl || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=160&auto=format&fit=crop&q=80'}"
+                                 alt="Thumbnail" class="w-16 h-16 rounded-lg object-cover border border-slate-200 shadow-2xs flex-shrink-0">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs font-bold text-blue-600 font-mono">${course.slug}</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${course.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'}">
+                                        ${course.status}
+                                    </span>
+                                </div>
+                                <h3 class="text-base font-bold text-slate-900 mt-0.5">${course.title}</h3>
+                                <div class="text-xs text-slate-500 mt-1 flex items-center space-x-3">
+                                    <span>${course.chaptersCount || (course.chapters ? course.chapters.length : 0)} Buổi học</span>
+                                    <span>•</span>
+                                    <span>${course.lessonsCount || 0} Bài giảng</span>
+                                    <span>•</span>
+                                    <span class="font-bold text-emerald-600">${course.isFree ? 'Miễn phí' : (course.price || 0).toLocaleString('vi-VN') + ' VND'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-2">
+                            <button type="button" onclick="toggleCourseDetails('course-detail-${course.id}')"
+                                    class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 shadow-2xs transition-colors flex items-center space-x-1">
+                                <span>Chi tiết Buổi học &amp; Video CDN</span>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Expandable Sessions & Cloudinary Lessons -->
+                    <div id="course-detail-${course.id}" class="p-5 space-y-4">
+                        <div class="text-xs font-bold uppercase text-slate-400 tracking-wider">CÁC BUỔI HỌC &amp; NỘI DUNG TRUYỀN PHÁT (CLOUDINARY)</div>
+
+                        ${(!course.chapters || course.chapters.length === 0) ? `
+                            <p class="text-xs text-slate-400 italic">Chưa có buổi học nào.</p>
+                        ` : course.chapters.map(chap => `
+                            <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                        <h4 class="text-sm font-bold text-slate-800">${chap.title}</h4>
+                                    </div>
+                                    <span class="text-xs text-slate-400 font-mono">Thứ tự: #${chap.orderIndex}</span>
+                                </div>
+
+                                <!-- Lessons in this session -->
+                                <div class="space-y-2 pl-4 border-l-2 border-blue-100">
+                                    ${(!chap.lessons || chap.lessons.length === 0) ? `
+                                        <p class="text-xs text-slate-400 italic">Chưa có bài giảng trong buổi này.</p>
+                                    ` : chap.lessons.map(lesson => `
+                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white border border-slate-200 rounded-lg gap-2 shadow-2xs">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                                                    ▶
+                                                </div>
+                                                <div>
+                                                    <div class="text-xs font-bold text-slate-800">${lesson.title}</div>
+                                                    <div class="text-[11px] text-slate-500 mt-0.5 flex items-center space-x-2">
+                                                        <span>Thời lượng: ${lesson.durationSeconds ? Math.floor(lesson.durationSeconds / 60) + ' phút' : 'N/A'}</span>
+                                                        ${lesson.videoAsset && lesson.videoAsset.videoUrl ? `
+                                                            <span>•</span>
+                                                            <span class="text-blue-600 font-semibold font-mono">Cloudinary CDN (H.264)</span>
+                                                        ` : ''}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center space-x-2">
+                                                ${lesson.videoAsset && lesson.videoAsset.videoUrl ? `
+                                                    <button type="button" onclick="playCloudinaryVideo('${lesson.title.replace(/'/g, "\\'")}', '${lesson.videoAsset.videoUrl}')"
+                                                            class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-2xs transition-colors flex items-center space-x-1">
+                                                        <span>Phát Video Preview</span>
+                                                    </button>
+                                                ` : `
+                                                    <span class="text-xs text-slate-400 italic">Chưa upload video</span>
+                                                `}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+
+                        <!-- Attached Documents on Cloudinary / MongoDB RAG -->
+                        ${(course.documents && course.documents.length > 0) ? `
+                            <div class="pt-2">
+                                <div class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">TÀI LIỆU HỌC TẬP &amp; RAG CHUNKS</div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    ${course.documents.map(doc => `
+                                        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between text-xs">
+                                            <div class="flex items-center space-x-2 overflow-hidden">
+                                                <span class="px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-bold text-[10px]">${doc.fileType || 'PDF'}</span>
+                                                <span class="font-semibold text-slate-800 truncate">${doc.title}</span>
+                                            </div>
+                                            <a href="${doc.fileUrl}" target="_blank" class="text-blue-600 hover:underline font-semibold ml-2 whitespace-nowrap">Xem tài liệu</a>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
             `).join('');
         }
 
-        // 7. Load Dashboard Stats
+        function toggleCourseDetails(detailId) {
+            const el = document.getElementById(detailId);
+            if (el) el.classList.toggle('hidden');
+        }
+
+        function playCloudinaryVideo(title, videoUrl) {
+            document.getElementById('videoModalTitle').textContent = title;
+            const player = document.getElementById('html5VideoPlayer');
+            player.src = videoUrl;
+            document.getElementById('videoDownloadLink').href = videoUrl;
+            document.getElementById('videoPlayerModal').classList.remove('hidden');
+        }
+
+        function closeVideoPlayerModal() {
+            const player = document.getElementById('html5VideoPlayer');
+            player.pause();
+            player.src = '';
+            document.getElementById('videoPlayerModal').classList.add('hidden');
+        }
+
+        // =====================================================================
+        // DASHBOARD STATS
+        // =====================================================================
         async function loadDashboardStats() {
             try {
                 const res = await fetch(`${API_BASE}/api/admin/stats`);
@@ -1060,23 +1361,19 @@
             if (sec === 'profile') {
                 switchNavTab('profile-tab', document.querySelector('.subnav-tab'));
             } else if (sec === 'students') {
-                switchNavTab('students-tab', document.querySelectorAll('.subnav-tab')[2]);
+                switchNavTab('students-tab', document.querySelectorAll('.subnav-tab')[1]);
             } else if (sec === 'courses') {
-                switchNavTab('courses-tab', document.querySelectorAll('.subnav-tab')[3]);
+                switchNavTab('courses-tab', document.querySelectorAll('.subnav-tab')[2]);
             } else if (sec === 'dashboard') {
-                switchNavTab('dash-tab', document.querySelectorAll('.subnav-tab')[4]);
-            } else {
-                showToast(`Đang chuyển đến phân hệ: ${sec.toUpperCase()}`);
+                switchNavTab('dashboard-tab', document.querySelectorAll('.subnav-tab')[3]);
             }
         }
 
-        // Toggle Sidebar on mobile
         function toggleSidebar() {
             const sb = document.getElementById('mainSidebar');
             sb.classList.toggle('hidden');
         }
 
-        // eKYC Modals
         function triggerFaceAiModal() {
             document.getElementById('ekycModal').classList.remove('hidden');
         }
@@ -1088,31 +1385,10 @@
         function simulateFaceEnrollmentSuccess() {
             closeEkycModal();
             showToast('Đã trích xuất đặc trưng sinh trắc học 3 góc mặt và đồng bộ lên Cloudinary!');
-            const badge = document.getElementById('ekycBadgeStatus');
-            if (badge) {
-                badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
-                badge.textContent = 'ĐÃ XÁC THỰC THÀNH CÔNG';
-            }
-        }
-
-        function checkFaceVerificationLive() {
-            showToast('Kết quả đối soát: Độ tương đồng Cosine 0.942 > Ngưỡng 0.60 (Hợp lệ)');
-        }
-
-        function openChangePasswordModal() {
-            showToast('Chức năng bảo mật: Đã gửi mã xác nhận OTP qua số điện thoại 0334402527');
         }
 
         function showHelpModal() {
-            showToast('Tài liệu hướng dẫn quản trị: Truy cập Swagger UI tại http://localhost:8001/docs');
-        }
-
-        function openChatSupportModal() {
-            showToast('Tổng đài hỗ trợ trực tuyến: Kết nối hỗ trợ kỹ thuật qua Telegram @nct30000');
-        }
-
-        function openCreateUserModal() {
-            showToast('Mở trình tạo người dùng mới trong MySQL');
+            showToast('Tài liệu Swagger UI: http://localhost:8001/docs');
         }
 
         function showToast(msg) {
@@ -1128,7 +1404,7 @@
 
         function handleGlobalSearch(e) {
             if (e.key === 'Enter') {
-                showToast(`Đang tìm kiếm toàn cục: ${e.target.value}`);
+                showToast(`Tìm kiếm: ${e.target.value}`);
             }
         }
     </script>

@@ -21,10 +21,12 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecturer_id", nullable = false)
     private Lecturer lecturer;

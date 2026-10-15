@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface FaceAttendanceLogRepository extends JpaRepository<FaceAttendanceLog, Long> {
     List<FaceAttendanceLog> findByStudentUserIdOrderByCaptureTimeDesc(Long studentUserId);
+    void deleteByStudentUserId(Long studentUserId);
 }
