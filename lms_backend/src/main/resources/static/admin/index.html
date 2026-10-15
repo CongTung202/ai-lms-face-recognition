@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Trị Trung Tâm & Kiểm Thử LMS - AI Proctoring</title>
+    <style>
+        :root {
+            --bg-canvas: #0b1120;
+            --bg-card: #131d33;
+            --bg-card-subtle: #192642;
+            --border-subtle: #243556;
+            --border-focus: #3b82f6;
+            --text-heading: #f8fafc;
+            --text-body: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent-primary: #2563eb;
+            --accent-primary-hover: #1d4ed8;
+            --accent-secondary: #334155;
+            --accent-secondary-hover: #475569;
+            --state-success-bg: #064e3b;
+            --state-success-border: #059669;
+            --state-success-text: #a7f3d0;
+            --state-danger-bg: #7f1d1d;
+            --state-danger-border: #dc2626;
+            --state-danger-text: #fecaca;
+            --state-warning-bg: #78350f;
+            --state-warning-border: #d97706;
+            --state-warning-text: #fde68a;
+            --state-info-bg: #1e3a8a;
+            --state-info-border: #3b82f6;
+            --state-info-text: #bfdbfe;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-body);
+            font-family: var(--font-family);
+            line-height: 1.5;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* HEADER & TOP BAR */
+        .top-header {
+            background-color: #080d19;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            color: var(--text-heading);
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .brand-subtitle {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .system-status-cluster {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .status-badge.connected {
+            background-color: var(--state-success-bg);
+            border-color: var(--state-success-border);
+            color: var(--state-success-text);
+        }
+
+        .status-badge.local {
+            background-color: var(--state-info-bg);
+            border-color: var(--state-info-border);
+            color: var(--state-info-text);
+        }
+
+        .status-badge.warning {
+            background-color: var(--state-warning-bg);
+            border-color: var(--state-warning-border);
+            color: var(--state-warning-text);
+        }
+
+        .status-badge.danger {
+            background-color: var(--state-danger-bg);
+            border-color: var(--state-danger-border);
+            color: var(--state-danger-text);
+        }
+
+        /* BUTTONS (NO ICONS, CLEAN PURE TEXT) */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+            border: 1px solid transparent;
+            text-decoration: none;
+            color: var(--text-heading);
+            user-select: none;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-primary-hover);
+            border-color: var(--accent-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--accent-secondary);
+            border-color: #475569;
+            color: var(--text-heading);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--accent-secondary-hover);
+            border-color: #64748b;
+        }
+
+        .btn-danger {
+            background-color: #991b1b;
+            border-color: #b91c1c;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
+        /* NAVIGATION TABS */
+        .nav-tabs-bar {
+            background-color: #0e1629;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 28px;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+        }
+
+        .nav-tab-item {
+            padding: 12px 18px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: color 0.15s ease, border-color 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab-item:hover {
+            color: var(--text-heading);
+        }
+
+        .nav-tab-item.active {
+            color: #60a5fa;
+            border-bottom-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.08);
+        }
+
+        /* MAIN CONTENT AREA */
+        .layout-container {
+            padding: 24px 28px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* CARDS */
+        .panel-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.02);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-title {
+            color: var(--text-heading);
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .panel-description {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .panel-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        /* FILTER BAR & EXPLICIT FORMS (NO GHOST TEXT!) */
+        .filter-controls-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            background-color: var(--bg-card-subtle);
+            padding: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .form-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .form-field-group.fixed-width {
+            flex: 0 0 220px;
+        }
+
+        .form-field-group.btn-group-align {
+            flex: 0 0 auto;
+            flex-direction: row;
+            gap: 8px;
+            align-self: flex-end;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-heading);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            background-color: #0b1120;
+            border: 1px solid #334155;
+            color: var(--text-heading);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* DATA TABLES */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            background-color: #0b1120;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #1a2744;
+            color: var(--text-body);
+            vertical-align: middle;
+        }
+
+        .data-table tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        /* MODAL DIALOGS */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-window {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            color: var(--text-heading);
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            background-color: rgba(0, 0, 0, 0.15);
+        }
+
+        /* METRIC CARDS STATS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 16px 20px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-top: 4px;
+        }
+
+        .metric-sub {
+            font-size: 12px;
+            color: #60a5fa;
+            margin-top: 4px;
+        }
+
+        /* LIVE TESTING TERMINAL / BOX */
+        .terminal-box {
+            background-color: #080d1a;
+            border: 1px solid #1e293b;
+            border-radius: 4px;
+            padding: 14px;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 12px;
+            color: #93c5fd;
+            max-height: 240px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        /* TOAST ALERT */
+        .toast-notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+        }
+
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        .empty-placeholder {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP HEADER -->
+    <header class="top-header">
+        <div class="header-brand">
+            <span class="brand-title">LMS Core Administration &amp; AI Testing Portal</span>
+            <span class="brand-subtitle">Hệ Thống Quản Trị Trung Tâm - Kiểm Thử Điểm Danh Khuôn Mặt, RAG Giáo Trình &amp; PayOS VietQR</span>
+        </div>
+        <div class="system-status-cluster">
+            <span class="status-badge local" id="backendStatusBadge">Chế độ kiểm thử cục bộ</span>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnCheckBackendHealth" onclick="checkBackendConnectivity()">Kiểm tra kết nối Backend</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="exportDataJson()">Xuất dữ liệu kiểm thử (JSON)</button>
+        </div>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="nav-tabs-bar">
+        <button type="button" class="nav-tab-item active" onclick="switchTab('users', this)">Quản trị Người dùng &amp; Sinh viên</button>
+        <button type="button" class="nav-tab-item" onclick="switchTab('courses', this)">Khóa học &amp; Chương mục</button>
+        <button type="button" class="nav-tab-item" onclick="switchTab('videos', this)">Tài nguyên Video &amp; Nén H264</button>
+        <button type="button" class="nav-tab-item" onclick="switchTab('rag', this)">Tài liệu &amp; RAG AI</button>
+        <button type="button" class="nav-tab-item" onclick="switchTab('exams', this)">Đề thi &amp; Giám sát Vi phạm AI</button>
+        <button type="button" class="nav-tab-item" onclick="switchTab('orders', this)">Đơn hàng &amp; Thanh toán PayOS</button>
+        <button type="button" class="nav-tab-item" onclick="switchTab('system', this)">Cấu hình &amp; Trạng thái Hệ thống</button>
+    </nav>
+
+    <!-- MAIN WRAPPER -->
+    <main class="layout-container">
+
+        <!-- METRICS SUMMARY BAR -->
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-label">Tổng số Tài khoản</div>
+                <div class="metric-value" id="statTotalUsers">0</div>
+                <div class="metric-sub" id="statEnrolledFaces">0 đã quét khuôn mặt</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Khóa học Đào tạo</div>
+                <div class="metric-value" id="statTotalCourses">0</div>
+                <div class="metric-sub" id="statPublishedCourses">0 đã xuất bản công khai</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Tài nguyên Video &amp; Nén</div>
+                <div class="metric-value" id="statTotalVideos">0</div>
+                <div class="metric-sub" id="statCompressedVideos">0 đã nén chuẩn 720p</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Tài liệu RAG &amp; Chunks</div>
+                <div class="metric-value" id="statTotalDocs">0</div>
+                <div class="metric-sub" id="statTotalChunks">0 đoạn vector chỉ mục</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Đơn hàng PayOS</div>
+                <div class="metric-value" id="statTotalOrders">0</div>
+                <div class="metric-sub" id="statPaidRevenue">Doanh thu: 0 VND</div>
+            </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- TAB 1: USERS & STUDENTS MANAGEMENT -->
+        <!-- ================================================================= -->
+        <section id="tab-users" class="tab-section active">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Danh mục Tài khoản Người dùng &amp; Điểm danh Khuôn mặt</div>
+                        <div class="panel-description">Quản lý định danh tài khoản, phân quyền RBAC và kiểm tra trạng thái vector khuôn mặt sinh viên</div>
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="resetUserFilter()">Đặt lại bộ lọc</button>
+                        <button type="button" class="btn btn-primary" onclick="openCreateUserModal()">Thêm người dùng mới</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="filter-controls-row">
+                        <div class="form-field-group">
+                            <label class="form-label">Tìm kiếm từ khóa</label>
+                            <input type="text" id="userSearchKeyword" class="form-input" onkeyup="renderUsersTable()">
+                            <span class="form-hint">Nhập tên đăng nhập, họ và tên hoặc địa chỉ email</span>
+                        </div>
+                        <div class="form-field-group fixed-width">
+                            <label class="form-label">Phân quyền vai trò</label>
+                            <select id="userRoleFilter" class="form-select" onchange="renderUsersTable()">
+                                <option value="ALL">Tất cả vai trò</option>
+                                <option value="ADMIN">Quản trị viên (ADMIN)</option>
+                                <option value="INSTRUCTOR">Giảng viên (INSTRUCTOR)</option>
+                                <option value="STUDENT">Sinh viên (STUDENT)</option>
+                            </select>
+                            <span class="form-hint">Lọc theo nhóm đối tượng sử dụng</span>
+                        </div>
+                        <div class="form-field-group fixed-width">
+                            <label class="form-label">Trạng thái nhận diện mặt</label>
+                            <select id="userFaceFilter" class="form-select" onchange="renderUsersTable()">
+                                <option value="ALL">Tất cả trạng thái</option>
+                                <option value="ENROLLED">Đã đăng ký khuôn mặt</option>
+                                <option value="NOT_ENROLLED">Chưa đăng ký khuôn mặt</option>
+                            </select>
+                            <span class="form-hint">Kiểm tra sinh viên đã nạp vector AI</span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã UID</th>
+                                    <th>Tên đăng nhập</th>
+                                    <th>Họ và tên</th>
+                                    <th>Địa chỉ Email</th>
+                                    <th>Vai trò</th>
+                                    <th>Mã sinh viên / Lớp</th>
+                                    <th>Trạng thái AI Face</th>
+                                    <th>Trạng thái tài khoản</th>
+                                    <th>Thao tác quản trị</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 2: COURSES & LESSONS MANAGEMENT -->
+        <!-- ================================================================= -->
+        <section id="tab-courses" class="tab-section">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Danh mục Khóa học, Chương mục &amp; Bài học</div>
+                        <div class="panel-description">Quản lý chương trình học trực tuyến, thiết lập giá tiền bán qua PayOS và cấu trúc bài học</div>
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="renderCoursesTable()">Tải lại dữ liệu</button>
+                        <button type="button" class="btn btn-primary" onclick="openCreateCourseModal()">Thêm khóa học mới</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="filter-controls-row">
+                        <div class="form-field-group">
+                            <label class="form-label">Tìm kiếm tên khóa học</label>
+                            <input type="text" id="courseSearchKeyword" class="form-input" onkeyup="renderCoursesTable()">
+                            <span class="form-hint">Tìm theo tiêu đề khóa học hoặc mã khóa học</span>
+                        </div>
+                        <div class="form-field-group fixed-width">
+                            <label class="form-label">Trạng thái phát hành</label>
+                            <select id="courseStatusFilter" class="form-select" onchange="renderCoursesTable()">
+                                <option value="ALL">Tất cả trạng thái</option>
+                                <option value="PUBLISHED">Đã xuất bản (Công khai)</option>
+                                <option value="DRAFT">Bản nháp</option>
+                            </select>
+                            <span class="form-hint">Lọc theo tình trạng phát hành sinh viên</span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã khóa</th>
+                                    <th>Tiêu đề khóa học</th>
+                                    <th>Môn học</th>
+                                    <th>Giảng viên</th>
+                                    <th>Học phí (VND)</th>
+                                    <th>Số chương</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác quản trị</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coursesTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 3: VIDEO PIPELINE & COMPRESSOR -->
+        <!-- ================================================================= -->
+        <section id="tab-videos" class="tab-section">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Quản lý Video Bài giảng &amp; Nén Tự Động H.264 720p</div>
+                        <div class="panel-description">Theo dõi trạng thái nén JAVE2 FFmpeg, truyền phát HTTP 206 Partial Content và đồng bộ Cloudinary CDN</div>
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="openTestVideoModal()">Mở trình kiểm thử phát Video</button>
+                        <button type="button" class="btn btn-primary" onclick="openRegisterVideoModal()">Đăng ký tệp Video mới</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã Video</th>
+                                    <th>Tên tệp Video</th>
+                                    <th>Bài học liên kết</th>
+                                    <th>Thời lượng (giây)</th>
+                                    <th>Dung lượng</th>
+                                    <th>Trạng thái nén</th>
+                                    <th>Kênh phát sóng</th>
+                                    <th>Thao tác kiểm thử</th>
+                                </tr>
+                            </thead>
+                            <tbody id="videosTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 4: DOCUMENTS & RAG AI -->
+        <!-- ================================================================= -->
+        <section id="tab-rag" class="tab-section">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Tài liệu Giáo trình &amp; Trợ lý AI RAG Hỏi Đáp</div>
+                        <div class="panel-description">Bóc tách văn bản PDF, DOCX, cắt đoạn Chunking nạp vào MongoDB và kiểm thử truy vấn RAG siêu tốc</div>
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="btn btn-primary" onclick="openRegisterDocModal()">Nạp tài liệu mới</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <!-- RAG LIVE TEST FORM -->
+                    <div class="filter-controls-row" style="background-color: #0d172c;">
+                        <div class="form-field-group">
+                            <label class="form-label">Khóa học kiểm thử</label>
+                            <select id="ragTestCourseSelect" class="form-select">
+                                <option value="1">Lập trình Java Nâng cao &amp; Spring Boot 3</option>
+                                <option value="2">Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)</option>
+                                <option value="3">Cơ sở Dữ liệu Quan hệ &amp; NoSQL MongoDB</option>
+                            </select>
+                            <span class="form-hint">Chọn tài liệu giáo trình thuộc khóa học cần hỏi</span>
+                        </div>
+                        <div class="form-field-group" style="flex: 2;">
+                            <label class="form-label">Nội dung câu hỏi học tập (RAG Query)</label>
+                            <input type="text" id="ragTestQueryInput" class="form-input">
+                            <span class="form-hint">Ví dụ: Cơ chế kết nối giữa Spring Boot và MySQL qua HikariCP như thế nào?</span>
+                        </div>
+                        <div class="form-field-group btn-group-align">
+                            <button type="button" class="btn btn-primary" onclick="executeRagQueryTest()">Gửi câu hỏi RAG</button>
+                            <button type="button" class="btn btn-secondary" onclick="clearRagLog()">Xóa kết quả</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">Kết quả trả lời và trích dẫn số trang tài liệu nguồn:</label>
+                        <div id="ragQueryResultBox" class="terminal-box">Chưa có truy vấn nào được thực hiện. Vui lòng nhập câu hỏi và nhấn 'Gửi câu hỏi RAG'.</div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã tài liệu</th>
+                                    <th>Tên tệp văn bản</th>
+                                    <th>Khóa học</th>
+                                    <th>Định dạng</th>
+                                    <th>Số trang</th>
+                                    <th>Số đoạn Chunks (MongoDB)</th>
+                                    <th>Trạng thái RAG</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="docsTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 5: EXAMS & AI PROCTORING -->
+        <!-- ================================================================= -->
+        <section id="tab-exams" class="tab-section">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Quản lý Đề thi, Câu hỏi &amp; Giám sát Vi phạm AI</div>
+                        <div class="panel-description">Theo dõi nhật ký chống gian lận thi cử: rời màn hình, quay đầu trái/phải, phát hiện nhiều khuôn mặt</div>
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="simulateViolationLog()">Giả lập bản ghi vi phạm mới</button>
+                        <button type="button" class="btn btn-primary" onclick="openCreateExamModal()">Tạo đề thi mới</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <!-- EXAMS LIST -->
+                    <div style="margin-bottom: 24px;">
+                        <h4 style="color: var(--text-heading); font-size: 14px; margin-bottom: 12px; font-weight: 700;">Danh sách Đề thi Trực tuyến</h4>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đề</th>
+                                        <th>Tên kỳ thi</th>
+                                        <th>Khóa học</th>
+                                        <th>Thời lượng (phút)</th>
+                                        <th>Bắt buộc AI giám sát</th>
+                                        <th>Số câu hỏi</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="examsTableBody">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- VIOLATIONS LOG TABLE -->
+                    <div>
+                        <h4 style="color: var(--text-heading); font-size: 14px; margin-bottom: 12px; font-weight: 700;">Nhật ký Cảnh báo Vi phạm Thi cử (AI Proctoring Telemetry)</h4>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã vi phạm</th>
+                                        <th>Mã sinh viên</th>
+                                        <th>Tên sinh viên</th>
+                                        <th>Kỳ thi</th>
+                                        <th>Hành vi vi phạm</th>
+                                        <th>Thông số góc quay / Chi tiết</th>
+                                        <th>Thời điểm ghi nhận</th>
+                                        <th>Mức độ xử lý</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="violationsTableBody">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 6: ORDERS & PAYOS PAYMENTS -->
+        <!-- ================================================================= -->
+        <section id="tab-orders" class="tab-section">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Quản lý Đơn hàng &amp; Cổng Thanh toán VietQR PayOS</div>
+                        <div class="panel-description">Theo dõi giao dịch mua khóa học, kiểm thử Webhook thanh toán và tự động kích hoạt quyền học</div>
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="btn btn-primary" onclick="openSimulateOrderModal()">Giả lập tạo đơn hàng mới</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Sinh viên mua</th>
+                                    <th>Khóa học</th>
+                                    <th>Số tiền học phí</th>
+                                    <th>Trạng thái thanh toán</th>
+                                    <th>Mã giao dịch VietQR</th>
+                                    <th>Thời gian tạo</th>
+                                    <th>Thao tác kiểm thử</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- TAB 7: SYSTEM CONFIGURATION & HARDWARE METRICS -->
+        <!-- ================================================================= -->
+        <section id="tab-system" class="tab-section">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Cấu hình Hệ thống &amp; Thông số Bảo mật Môi trường</div>
+                        <div class="panel-description">Trạng thái phân phối biến môi trường từ .env (đã loại bỏ application.properties để bảo mật mã nguồn)</div>
+                    </div>
+                    <div class="panel-actions">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="resetToInitialSeedData()">Khôi phục dữ liệu gốc CSDL</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                        <div style="background-color: var(--bg-card-subtle); padding: 18px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+                            <div style="font-weight: 700; color: var(--text-heading); margin-bottom: 12px; text-transform: uppercase; font-size: 12px;">1. CSDL MySQL Trung Tâm</div>
+                            <p style="color: var(--text-muted); font-size: 13px;">Host: <strong>localhost:3306</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Tên DB: <strong>lms_online_db</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Tài khoản kết nối: <strong>root</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Bảo mật mật khẩu: <strong>Đã mã hóa trong tệp .env</strong></p>
+                        </div>
+                        <div style="background-color: var(--bg-card-subtle); padding: 18px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+                            <div style="font-weight: 700; color: var(--text-heading); margin-bottom: 12px; text-transform: uppercase; font-size: 12px;">2. CSDL NoSQL MongoDB (RAG &amp; Telemetry)</div>
+                            <p style="color: var(--text-muted); font-size: 13px;">Host: <strong>localhost:27017</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Tên DB: <strong>lms_nosql_db</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Collections: <strong>course_documents, document_chunks, exam_telemetry_logs</strong></p>
+                        </div>
+                        <div style="background-color: var(--bg-card-subtle); padding: 18px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+                            <div style="font-weight: 700; color: var(--text-heading); margin-bottom: 12px; text-transform: uppercase; font-size: 12px;">3. Cloudinary CDN Storage</div>
+                            <p style="color: var(--text-muted); font-size: 13px;">Cloud Name: <strong>dhefmthim</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Thư mục lưu trữ: <strong>lms_datn/faces, lms_datn/videos</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Trạng thái khóa bí mật: <strong>Bảo mật qua biến môi trường</strong></p>
+                        </div>
+                        <div style="background-color: var(--bg-card-subtle); padding: 18px; border-radius: 4px; border: 1px solid var(--border-subtle);">
+                            <div style="font-weight: 700; color: var(--text-heading); margin-bottom: 12px; text-transform: uppercase; font-size: 12px;">4. Cổng thanh toán PayOS VietQR</div>
+                            <p style="color: var(--text-muted); font-size: 13px;">Client ID: <strong>ef278d93-dc87-492b-80e5-50a31ca580b6</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Webhook Endpoint: <strong>/api/payment/payos-webhook</strong></p>
+                            <p style="color: var(--text-muted); font-size: 13px;">Chữ ký Checksum: <strong>Kích hoạt HMAC SHA256</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 1: CREATE / EDIT USER -->
+    <!-- ===================================================================== -->
+    <div id="userModal" class="modal-backdrop">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title" id="userModalTitle">Thêm người dùng mới</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('userModal')">Đóng</button>
+            </div>
+            <form id="userForm" onsubmit="handleSaveUser(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="userFormId">
+                    <div class="form-field-group">
+                        <label class="form-label">Tên đăng nhập (Username)</label>
+                        <input type="text" id="userFormUsername" class="form-input" required>
+                        <span class="form-hint">Dùng cho đăng nhập, không chứa khoảng trắng</span>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Mật khẩu khởi tạo</label>
+                        <input type="password" id="userFormPassword" class="form-input">
+                        <span class="form-hint">Để trống nếu không muốn thay đổi mật khẩu hiện tại</span>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Họ và tên đầy đủ</label>
+                        <input type="text" id="userFormFullName" class="form-input" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Địa chỉ Email</label>
+                        <input type="email" id="userFormEmail" class="form-input" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Phân quyền vai trò</label>
+                        <select id="userFormRole" class="form-select" onchange="toggleStudentFields(this.value)">
+                            <option value="STUDENT">Sinh viên (STUDENT)</option>
+                            <option value="INSTRUCTOR">Giảng viên (INSTRUCTOR)</option>
+                            <option value="ADMIN">Quản trị viên (ADMIN)</option>
+                        </select>
+                    </div>
+                    <div id="studentExtraFields" style="display: flex; gap: 12px;">
+                        <div class="form-field-group" style="flex: 1;">
+                            <label class="form-label">Mã sinh viên</label>
+                            <input type="text" id="userFormStudentCode" class="form-input">
+                            <span class="form-hint">Ví dụ: SV2026001</span>
+                        </div>
+                        <div class="form-field-group" style="flex: 1;">
+                            <label class="form-label">Mã lớp sinh hoạt</label>
+                            <input type="text" id="userFormClassCode" class="form-input">
+                            <span class="form-hint">Ví dụ: K23CNT1</span>
+                        </div>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Trạng thái kích hoạt</label>
+                        <select id="userFormStatus" class="form-select">
+                            <option value="ACTIVE">Hoạt động bình thường</option>
+                            <option value="LOCKED">Đã khóa tài khoản</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 2: CREATE / EDIT COURSE -->
+    <!-- ===================================================================== -->
+    <div id="courseModal" class="modal-backdrop">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title" id="courseModalTitle">Thêm khóa học mới</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('courseModal')">Đóng</button>
+            </div>
+            <form id="courseForm" onsubmit="handleSaveCourse(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="courseFormId">
+                    <div class="form-field-group">
+                        <label class="form-label">Mã khóa học</label>
+                        <input type="text" id="courseFormCode" class="form-input" required>
+                        <span class="form-hint">Ví dụ: CRS001, CS201_SPRING</span>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Tiêu đề khóa học</label>
+                        <input type="text" id="courseFormTitle" class="form-input" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Môn học trực thuộc</label>
+                        <input type="text" id="courseFormSubject" class="form-input" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Giảng viên phụ trách</label>
+                        <input type="text" id="courseFormLecturer" class="form-input" required>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Học phí bán qua PayOS (VND)</label>
+                        <input type="number" id="courseFormPrice" class="form-input" min="0" step="10000" required>
+                        <span class="form-hint">Nhập 0 nếu khóa học được cấp phát miễn phí</span>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Trạng thái phát hành</label>
+                        <select id="courseFormStatus" class="form-select">
+                            <option value="PUBLISHED">Xuất bản công khai</option>
+                            <option value="DRAFT">Lưu bản nháp</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('courseModal')">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-primary">Lưu khóa học</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 3: TEST VIDEO STREAMING -->
+    <!-- ===================================================================== -->
+    <div id="videoModal" class="modal-backdrop">
+        <div class="modal-window" style="max-width: 760px;">
+            <div class="modal-header">
+                <span class="modal-title">Kiểm thử Truyền phát Video HTTP 206 &amp; Chống tua</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('videoModal')">Đóng</button>
+            </div>
+            <div class="modal-body">
+                <div style="background-color: #000; border-radius: 4px; overflow: hidden; height: 320px; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <video id="playerPreview" controls style="width: 100%; height: 100%; object-fit: contain;">
+                        <source src="uploads/videos/lesson_1/compressed_1791787433969.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px;">
+                    <div style="background-color: var(--bg-card-subtle); padding: 10px; border-radius: 4px;">
+                        <div class="form-label">Giao thức truyền dẫn</div>
+                        <div style="font-weight: 700; color: #60a5fa; margin-top: 4px;">HTTP 206 Partial (1MB Chunk)</div>
+                    </div>
+                    <div style="background-color: var(--bg-card-subtle); padding: 10px; border-radius: 4px;">
+                        <div class="form-label">Tiến độ xem thực tế</div>
+                        <div id="videoWatchProgress" style="font-weight: 700; color: #a7f3d0; margin-top: 4px;">0 / 1840 giây (0%)</div>
+                    </div>
+                    <div style="background-color: var(--bg-card-subtle); padding: 10px; border-radius: 4px;">
+                        <div class="form-label">Trạng thái chống tua (Heartbeat)</div>
+                        <div id="videoAntiCheatStatus" style="font-weight: 700; color: #fde68a; margin-top: 4px;">Sẵn sàng (15s/nhịp)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('videoModal')">Đóng cửa sổ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 4: SIMULATE ORDER PAYOS -->
+    <!-- ===================================================================== -->
+    <div id="orderModal" class="modal-backdrop">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title">Giả lập Tạo Đơn hàng Mua Khóa học (PayOS)</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('orderModal')">Đóng</button>
+            </div>
+            <form onsubmit="handleSimulateOrder(event)">
+                <div class="modal-body">
+                    <div class="form-field-group">
+                        <label class="form-label">Sinh viên đăng ký mua</label>
+                        <select id="orderStudentSelect" class="form-select" required>
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Khóa học đăng ký</label>
+                        <select id="orderCourseSelect" class="form-select" onchange="updateOrderPricePreview()" required>
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+                    <div class="form-field-group">
+                        <label class="form-label">Số tiền thanh toán (VND)</label>
+                        <input type="text" id="orderPricePreview" class="form-input" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('orderModal')">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-primary">Tạo đơn hàng VietQR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastNotification" class="toast-notification"></div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // =====================================================================
+        // DATA STORE INITIALIZATION (MOCK + REAL PERSISTENCE)
+        // =====================================================================
+        const DEFAULT_SEED_DATA = {
+            users: [
+                { id: 1, username: "admin", fullName: "Nguyễn Văn Admin", email: "admin@datn.edu.vn", role: "ADMIN", studentCode: "-", classCode: "-", faceEnrolled: false, status: "ACTIVE" },
+                { id: 2, username: "gv_tung", fullName: "ThS. Trần Công Tùng", email: "tung.tc@datn.edu.vn", role: "INSTRUCTOR", studentCode: "-", classCode: "-", faceEnrolled: true, status: "ACTIVE" },
+                { id: 3, username: "sv_an", fullName: "Lê Thị Hoàng An", email: "an.lth@student.edu.vn", role: "STUDENT", studentCode: "SV2026001", classCode: "K23CNT1", faceEnrolled: true, status: "ACTIVE" },
+                { id: 4, username: "sv_binh", fullName: "Phạm Quốc Bình", email: "binh.pq@student.edu.vn", role: "STUDENT", studentCode: "SV2026002", classCode: "K23CNT1", faceEnrolled: false, status: "ACTIVE" },
+                { id: 5, username: "sv_cuong", fullName: "Hoàng Văn Cường", email: "cuong.hv@student.edu.vn", role: "STUDENT", studentCode: "SV2026003", classCode: "K23CNT2", faceEnrolled: true, status: "LOCKED" }
+            ],
+            courses: [
+                { id: 1, code: "CRS001", title: "Lập trình Java Nâng cao & Spring Boot 3", subject: "Công nghệ Phần mềm", lecturer: "ThS. Trần Công Tùng", price: 450000, chaptersCount: 4, status: "PUBLISHED" },
+                { id: 2, code: "CRS002", title: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", subject: "Trí tuệ Nhân tạo", lecturer: "ThS. Trần Công Tùng", price: 650000, chaptersCount: 3, status: "PUBLISHED" },
+                { id: 3, code: "CRS003", title: "Cơ sở Dữ liệu Quan hệ & NoSQL MongoDB", subject: "Hệ thống Thông tin", lecturer: "Nguyễn Văn Admin", price: 350000, chaptersCount: 2, status: "DRAFT" }
+            ],
+            videos: [
+                { id: 1, fileName: "lesson1_intro_springboot3.mp4", lesson: "Bài 1: Tổng quan Spring Boot 3 & Maven", duration: 1840, size: "84 MB", status: "COMPRESSED", cdnUrl: "https://res.cloudinary.com/dhefmthim/video/upload/lms_datn/lesson1.mp4" },
+                { id: 2, fileName: "lesson2_jpa_mysql_3nf.mp4", lesson: "Bài 2: Thiết kế JPA Hibernate & Chuẩn 3NF", duration: 2420, size: "92 MB", status: "UPLOADED_CLOUDINARY", cdnUrl: "https://res.cloudinary.com/dhefmthim/video/upload/lms_datn/lesson2.mp4" },
+                { id: 3, fileName: "lesson3_video_streaming_206.mp4", lesson: "Bài 3: Giao thức truyền tải 206 Partial Content", duration: 3100, size: "128 MB", status: "RAW", cdnUrl: "Chưa đồng bộ" }
+            ],
+            documents: [
+                { id: 1, fileName: "Giao_trinh_Spring_Boot_3_Enterprise.pdf", course: "Lập trình Java Nâng cao & Spring Boot 3", format: "PDF", pages: 185, chunks: 420, status: "SYNCED" },
+                { id: 2, fileName: "Bai_giang_Deep_Learning_ArcFace.docx", course: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", format: "DOCX", pages: 94, chunks: 215, status: "SYNCED" },
+                { id: 3, fileName: "Huong_dan_Thuc_hanh_MySQL_3NF.pdf", course: "Cơ sở Dữ liệu Quan hệ & NoSQL MongoDB", format: "PDF", pages: 52, chunks: 110, status: "PENDING" }
+            ],
+            exams: [
+                { id: 1, code: "EX001", title: "Thi Giữa Kỳ - Kiến trúc Spring Boot 3", course: "Lập trình Java Nâng cao & Spring Boot 3", duration: 45, requireFace: true, questionsCount: 30, status: "OPEN" },
+                { id: 2, code: "EX002", title: "Kiểm tra Thực hành Nhận diện AI ArcFace", course: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", duration: 60, requireFace: true, questionsCount: 40, status: "OPEN" }
+            ],
+            violations: [
+                { id: 1, studentCode: "SV2026001", studentName: "Lê Thị Hoàng An", exam: "EX001 - Kiến trúc Spring Boot 3", behavior: "Quay đầu rời mắt khỏi màn hình", details: "Góc quay Yaw +38.5 độ trong 14 giây liên tục", time: "14:22:10 15/10/2026", level: "CẢNH BÁO" },
+                { id: 2, studentCode: "SV2026002", studentName: "Phạm Quốc Bình", exam: "EX001 - Kiến trúc Spring Boot 3", behavior: "Phát hiện nhiều khuôn mặt trong khung hình", details: "Hệ thống phát hiện 2 khuôn mặt đồng thời", time: "14:35:44 15/10/2026", level: "ĐÌNH CHỈ" }
+            ],
+            orders: [
+                { id: 1001, studentName: "Lê Thị Hoàng An", course: "Lập trình Java Nâng cao & Spring Boot 3", amount: 450000, status: "PAID", vietQrTx: "VCB-99238472", createdAt: "10/10/2026 09:15" },
+                { id: 1002, studentName: "Phạm Quốc Bình", course: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", amount: 650000, status: "PENDING", vietQrTx: "VCB-99238499", createdAt: "14/10/2026 14:20" },
+                { id: 1003, studentName: "Hoàng Văn Cường", course: "Lập trình Java Nâng cao & Spring Boot 3", amount: 450000, status: "CANCELLED", vietQrTx: "VCB-99238510", createdAt: "12/10/2026 16:40" }
+            ]
+        };
+
+        // Load or initialize store in localStorage
+        function getStore() {
+            const stored = localStorage.getItem("lms_admin_portal_db");
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch (e) {
+                    console.error("Lỗi đọc dữ liệu localStorage:", e);
+                }
+            }
+            localStorage.setItem("lms_admin_portal_db", JSON.stringify(DEFAULT_SEED_DATA));
+            return JSON.parse(JSON.stringify(DEFAULT_SEED_DATA));
+        }
+
+        function saveStore(data) {
+            localStorage.setItem("lms_admin_portal_db", JSON.stringify(data));
+            updateMetrics();
+        }
+
+        function resetToInitialSeedData() {
+            if (confirm("Bạn có chắc chắn muốn khôi phục lại toàn bộ dữ liệu mẫu ban đầu từ CSDL?")) {
+                localStorage.setItem("lms_admin_portal_db", JSON.stringify(DEFAULT_SEED_DATA));
+                showToast("Đã khôi phục dữ liệu gốc thành công!");
+                refreshAllTables();
+            }
+        }
+
+        // =====================================================================
+        // TAB NAVIGATION
+        // =====================================================================
+        function switchTab(tabId, tabElement) {
+            document.querySelectorAll(".nav-tab-item").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".tab-section").forEach(el => el.classList.remove("active"));
+
+            tabElement.classList.add("active");
+            const targetSection = document.getElementById("tab-" + tabId);
+            if (targetSection) {
+                targetSection.classList.add("active");
+            }
+        }
+
+        // =====================================================================
+        // METRICS COUNTER
+        // =====================================================================
+        function updateMetrics() {
+            const store = getStore();
+            document.getElementById("statTotalUsers").innerText = store.users.length;
+            const enrolledFaces = store.users.filter(u => u.faceEnrolled).length;
+            document.getElementById("statEnrolledFaces").innerText = enrolledFaces + " đã quét khuôn mặt";
+
+            document.getElementById("statTotalCourses").innerText = store.courses.length;
+            const pubCourses = store.courses.filter(c => c.status === "PUBLISHED").length;
+            document.getElementById("statPublishedCourses").innerText = pubCourses + " đã xuất bản công khai";
+
+            document.getElementById("statTotalVideos").innerText = store.videos.length;
+            const compVideos = store.videos.filter(v => v.status !== "RAW").length;
+            document.getElementById("statCompressedVideos").innerText = compVideos + " đã nén chuẩn 720p";
+
+            document.getElementById("statTotalDocs").innerText = store.documents.length;
+            const totalChunks = store.documents.reduce((acc, d) => acc + (d.chunks || 0), 0);
+            document.getElementById("statTotalChunks").innerText = totalChunks + " đoạn vector chỉ mục";
+
+            document.getElementById("statTotalOrders").innerText = store.orders.length;
+            const totalRevenue = store.orders
+                .filter(o => o.status === "PAID")
+                .reduce((acc, o) => acc + o.amount, 0);
+            document.getElementById("statPaidRevenue").innerText = "Doanh thu: " + totalRevenue.toLocaleString("vi-VN") + " VND";
+        }
+
+        // =====================================================================
+        // USERS CRUD
+        // =====================================================================
+        function renderUsersTable() {
+            const store = getStore();
+            const keyword = (document.getElementById("userSearchKeyword").value || "").toLowerCase().trim();
+            const roleFilter = document.getElementById("userRoleFilter").value;
+            const faceFilter = document.getElementById("userFaceFilter").value;
+
+            const tbody = document.getElementById("userTableBody");
+            tbody.innerHTML = "";
+
+            const filtered = store.users.filter(user => {
+                const matchKeyword = !keyword || 
+                    user.username.toLowerCase().includes(keyword) || 
+                    user.fullName.toLowerCase().includes(keyword) || 
+                    user.email.toLowerCase().includes(keyword);
+                const matchRole = roleFilter === "ALL" || user.role === roleFilter;
+                const matchFace = faceFilter === "ALL" || 
+                    (faceFilter === "ENROLLED" && user.faceEnrolled) || 
+                    (faceFilter === "NOT_ENROLLED" && !user.faceEnrolled);
+                return matchKeyword && matchRole && matchFace;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="empty-placeholder">Không tìm thấy tài khoản người dùng phù hợp với điều kiện tìm kiếm.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(user => {
+                const tr = document.createElement("tr");
+
+                const faceBadge = user.faceEnrolled 
+                    ? `<span class="status-badge connected">Đã có vector mặt</span>` 
+                    : `<span class="status-badge warning">Chưa quét mặt</span>`;
+
+                const statusBadge = user.status === "ACTIVE" 
+                    ? `<span class="status-badge connected">Hoạt động</span>` 
+                    : `<span class="status-badge danger">Đã khóa</span>`;
+
+                tr.innerHTML = `
+                    <td><strong>#${user.id}</strong></td>
+                    <td><code>${escapeHtml(user.username)}</code></td>
+                    <td><strong>${escapeHtml(user.fullName)}</strong></td>
+                    <td>${escapeHtml(user.email)}</td>
+                    <td><span class="status-badge local">${escapeHtml(user.role)}</span></td>
+                    <td>${escapeHtml(user.studentCode || "-")} / ${escapeHtml(user.classCode || "-")}</td>
+                    <td>${faceBadge}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="openEditUserModal(${user.id})">Chỉnh sửa</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleUserFaceEnrollment(${user.id})">Đổi trạng thái Face</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteUser(${user.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetUserFilter() {
+            document.getElementById("userSearchKeyword").value = "";
+            document.getElementById("userRoleFilter").value = "ALL";
+            document.getElementById("userFaceFilter").value = "ALL";
+            renderUsersTable();
+        }
+
+        function toggleStudentFields(role) {
+            const container = document.getElementById("studentExtraFields");
+            if (role === "STUDENT") {
+                container.style.display = "flex";
+            } else {
+                container.style.display = "none";
+            }
+        }
+
+        function openCreateUserModal() {
+            document.getElementById("userModalTitle").innerText = "Thêm người dùng mới";
+            document.getElementById("userFormId").value = "";
+            document.getElementById("userFormUsername").value = "";
+            document.getElementById("userFormUsername").disabled = false;
+            document.getElementById("userFormPassword").value = "123456";
+            document.getElementById("userFormFullName").value = "";
+            document.getElementById("userFormEmail").value = "";
+            document.getElementById("userFormRole").value = "STUDENT";
+            document.getElementById("userFormStudentCode").value = "";
+            document.getElementById("userFormClassCode").value = "";
+            document.getElementById("userFormStatus").value = "ACTIVE";
+            toggleStudentFields("STUDENT");
+            openModal("userModal");
+        }
+
+        function openEditUserModal(userId) {
+            const store = getStore();
+            const user = store.users.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById("userModalTitle").innerText = "Chỉnh sửa người dùng: " + user.username;
+            document.getElementById("userFormId").value = user.id;
+            document.getElementById("userFormUsername").value = user.username;
+            document.getElementById("userFormUsername").disabled = true;
+            document.getElementById("userFormPassword").value = "";
+            document.getElementById("userFormFullName").value = user.fullName;
+            document.getElementById("userFormEmail").value = user.email;
+            document.getElementById("userFormRole").value = user.role;
+            document.getElementById("userFormStudentCode").value = user.studentCode || "";
+            document.getElementById("userFormClassCode").value = user.classCode || "";
+            document.getElementById("userFormStatus").value = user.status;
+            toggleStudentFields(user.role);
+            openModal("userModal");
+        }
+
+        function handleSaveUser(e) {
+            e.preventDefault();
+            const store = getStore();
+            const userId = document.getElementById("userFormId").value;
+            const username = document.getElementById("userFormUsername").value.trim();
+            const fullName = document.getElementById("userFormFullName").value.trim();
+            const email = document.getElementById("userFormEmail").value.trim();
+            const role = document.getElementById("userFormRole").value;
+            const studentCode = document.getElementById("userFormStudentCode").value.trim();
+            const classCode = document.getElementById("userFormClassCode").value.trim();
+            const status = document.getElementById("userFormStatus").value;
+
+            if (userId) {
+                // Update
+                const user = store.users.find(u => u.id == userId);
+                if (user) {
+                    user.fullName = fullName;
+                    user.email = email;
+                    user.role = role;
+                    user.studentCode = role === "STUDENT" ? studentCode : "-";
+                    user.classCode = role === "STUDENT" ? classCode : "-";
+                    user.status = status;
+                    saveStore(store);
+                    showToast("Đã cập nhật thông tin người dùng thành công!");
+                }
+            } else {
+                // Create
+                const exists = store.users.some(u => u.username.toLowerCase() === username.toLowerCase());
+                if (exists) {
+                    alert("Tên đăng nhập đã tồn tại trong hệ thống!");
+                    return;
+                }
+                const newId = store.users.length ? Math.max(...store.users.map(u => u.id)) + 1 : 1;
+                store.users.push({
+                    id: newId,
+                    username: username,
+                    fullName: fullName,
+                    email: email,
+                    role: role,
+                    studentCode: role === "STUDENT" ? studentCode : "-",
+                    classCode: role === "STUDENT" ? classCode : "-",
+                    faceEnrolled: false,
+                    status: status
+                });
+                saveStore(store);
+                showToast("Đã thêm mới người dùng thành công!");
+            }
+
+            closeModal("userModal");
+            renderUsersTable();
+        }
+
+        function handleDeleteUser(userId) {
+            const store = getStore();
+            const user = store.users.find(u => u.id === userId);
+            if (!user) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa tài khoản " + user.username + " (" + user.fullName + ") khỏi hệ thống?")) {
+                store.users = store.users.filter(u => u.id !== userId);
+                saveStore(store);
+                showToast("Đã xóa tài khoản người dùng thành công!");
+                renderUsersTable();
+            }
+        }
+
+        function toggleUserFaceEnrollment(userId) {
+            const store = getStore();
+            const user = store.users.find(u => u.id === userId);
+            if (!user) return;
+
+            user.faceEnrolled = !user.faceEnrolled;
+            saveStore(store);
+            showToast("Đã cập nhật trạng thái Face AI cho tài khoản: " + user.username);
+            renderUsersTable();
+        }
+
+        // =====================================================================
+        // COURSES CRUD
+        // =====================================================================
+        function renderCoursesTable() {
+            const store = getStore();
+            const keyword = (document.getElementById("courseSearchKeyword").value || "").toLowerCase().trim();
+            const statusFilter = document.getElementById("courseStatusFilter").value;
+
+            const tbody = document.getElementById("coursesTableBody");
+            tbody.innerHTML = "";
+
+            const filtered = store.courses.filter(course => {
+                const matchKeyword = !keyword || 
+                    course.title.toLowerCase().includes(keyword) || 
+                    course.code.toLowerCase().includes(keyword);
+                const matchStatus = statusFilter === "ALL" || course.status === statusFilter;
+                return matchKeyword && matchStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="empty-placeholder">Không tìm thấy khóa học nào phù hợp.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(course => {
+                const tr = document.createElement("tr");
+                const statusBadge = course.status === "PUBLISHED" 
+                    ? `<span class="status-badge connected">Đã xuất bản</span>` 
+                    : `<span class="status-badge warning">Bản nháp</span>`;
+
+                tr.innerHTML = `
+                    <td><code>${escapeHtml(course.code)}</code></td>
+                    <td><strong>${escapeHtml(course.title)}</strong></td>
+                    <td>${escapeHtml(course.subject)}</td>
+                    <td>${escapeHtml(course.lecturer)}</td>
+                    <td><strong>${course.price.toLocaleString("vi-VN")} VND</strong></td>
+                    <td>${course.chaptersCount} chương</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="openEditCourseModal(${course.id})">Chỉnh sửa</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleCoursePublish(${course.id})">Đổi trạng thái</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteCourse(${course.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openCreateCourseModal() {
+            document.getElementById("courseModalTitle").innerText = "Thêm khóa học mới";
+            document.getElementById("courseFormId").value = "";
+            document.getElementById("courseFormCode").value = "";
+            document.getElementById("courseFormTitle").value = "";
+            document.getElementById("courseFormSubject").value = "";
+            document.getElementById("courseFormLecturer").value = "ThS. Trần Công Tùng";
+            document.getElementById("courseFormPrice").value = "300000";
+            document.getElementById("courseFormStatus").value = "PUBLISHED";
+            openModal("courseModal");
+        }
+
+        function openEditCourseModal(courseId) {
+            const store = getStore();
+            const course = store.courses.find(c => c.id === courseId);
+            if (!course) return;
+
+            document.getElementById("courseModalTitle").innerText = "Chỉnh sửa khóa học: " + course.code;
+            document.getElementById("courseFormId").value = course.id;
+            document.getElementById("courseFormCode").value = course.code;
+            document.getElementById("courseFormTitle").value = course.title;
+            document.getElementById("courseFormSubject").value = course.subject;
+            document.getElementById("courseFormLecturer").value = course.lecturer;
+            document.getElementById("courseFormPrice").value = course.price;
+            document.getElementById("courseFormStatus").value = course.status;
+            openModal("courseModal");
+        }
+
+        function handleSaveCourse(e) {
+            e.preventDefault();
+            const store = getStore();
+            const courseId = document.getElementById("courseFormId").value;
+            const code = document.getElementById("courseFormCode").value.trim();
+            const title = document.getElementById("courseFormTitle").value.trim();
+            const subject = document.getElementById("courseFormSubject").value.trim();
+            const lecturer = document.getElementById("courseFormLecturer").value.trim();
+            const price = parseInt(document.getElementById("courseFormPrice").value, 10) || 0;
+            const status = document.getElementById("courseFormStatus").value;
+
+            if (courseId) {
+                const course = store.courses.find(c => c.id == courseId);
+                if (course) {
+                    course.code = code;
+                    course.title = title;
+                    course.subject = subject;
+                    course.lecturer = lecturer;
+                    course.price = price;
+                    course.status = status;
+                    saveStore(store);
+                    showToast("Đã cập nhật thông tin khóa học!");
+                }
+            } else {
+                const newId = store.courses.length ? Math.max(...store.courses.map(c => c.id)) + 1 : 1;
+                store.courses.push({
+                    id: newId,
+                    code: code,
+                    title: title,
+                    subject: subject,
+                    lecturer: lecturer,
+                    price: price,
+                    chaptersCount: 1,
+                    status: status
+                });
+                saveStore(store);
+                showToast("Đã thêm khóa học mới thành công!");
+            }
+
+            closeModal("courseModal");
+            renderCoursesTable();
+        }
+
+        function handleDeleteCourse(courseId) {
+            const store = getStore();
+            const course = store.courses.find(c => c.id === courseId);
+            if (!course) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa khóa học " + course.title + "?")) {
+                store.courses = store.courses.filter(c => c.id !== courseId);
+                saveStore(store);
+                showToast("Đã xóa khóa học thành công!");
+                renderCoursesTable();
+            }
+        }
+
+        function toggleCoursePublish(courseId) {
+            const store = getStore();
+            const course = store.courses.find(c => c.id === courseId);
+            if (!course) return;
+
+            course.status = course.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
+            saveStore(store);
+            showToast("Đã cập nhật trạng thái phát hành khóa học!");
+            renderCoursesTable();
+        }
+
+        // =====================================================================
+        // VIDEOS TABLE
+        // =====================================================================
+        function renderVideosTable() {
+            const store = getStore();
+            const tbody = document.getElementById("videosTableBody");
+            tbody.innerHTML = "";
+
+            store.videos.forEach(video => {
+                const tr = document.createElement("tr");
+
+                let statusBadge = "";
+                if (video.status === "COMPRESSED") {
+                    statusBadge = `<span class="status-badge connected">Đã nén H.264 720p</span>`;
+                } else if (video.status === "UPLOADED_CLOUDINARY") {
+                    statusBadge = `<span class="status-badge connected">Đã phát CDN Cloudinary</span>`;
+                } else {
+                    statusBadge = `<span class="status-badge warning">Bản ghi gốc (Chờ nén)</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td><code>VID-00${video.id}</code></td>
+                    <td><strong>${escapeHtml(video.fileName)}</strong></td>
+                    <td>${escapeHtml(video.lesson)}</td>
+                    <td>${video.duration} giây</td>
+                    <td>${video.size}</td>
+                    <td>${statusBadge}</td>
+                    <td><small>${escapeHtml(video.cdnUrl)}</small></td>
+                    <td>
+                        <div class="table-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="openTestVideoModal()">Kiểm thử phát video</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteVideo(${video.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openTestVideoModal() {
+            openModal("videoModal");
+        }
+
+        function openRegisterVideoModal() {
+            const name = prompt("Nhập tên tệp video mới cần đưa vào hệ thống (ví dụ: lesson4_rag_deeplearning.mp4):");
+            if (name && name.trim()) {
+                const store = getStore();
+                const newId = store.videos.length ? Math.max(...store.videos.map(v => v.id)) + 1 : 1;
+                store.videos.push({
+                    id: newId,
+                    fileName: name.trim(),
+                    lesson: "Bài học bổ sung (Kiểm thử nén)",
+                    duration: 1200,
+                    size: "75 MB",
+                    status: "RAW",
+                    cdnUrl: "Chưa nén"
+                });
+                saveStore(store);
+                showToast("Đã đăng ký video mới thành công!");
+                renderVideosTable();
+            }
+        }
+
+        function handleDeleteVideo(videoId) {
+            const store = getStore();
+            if (confirm("Bạn có chắc chắn muốn xóa tài nguyên video này?")) {
+                store.videos = store.videos.filter(v => v.id !== videoId);
+                saveStore(store);
+                showToast("Đã xóa video khỏi danh sách!");
+                renderVideosTable();
+            }
+        }
+
+        // =====================================================================
+        // DOCUMENTS & RAG
+        // =====================================================================
+        function renderDocsTable() {
+            const store = getStore();
+            const tbody = document.getElementById("docsTableBody");
+            tbody.innerHTML = "";
+
+            store.documents.forEach(doc => {
+                const tr = document.createElement("tr");
+                const statusBadge = doc.status === "SYNCED" 
+                    ? `<span class="status-badge connected">Đã đồng bộ RAG (MongoDB)</span>` 
+                    : `<span class="status-badge warning">Chờ bóc tách văn bản</span>`;
+
+                tr.innerHTML = `
+                    <td><code>DOC-00${doc.id}</code></td>
+                    <td><strong>${escapeHtml(doc.fileName)}</strong></td>
+                    <td>${escapeHtml(doc.course)}</td>
+                    <td><span class="status-badge local">${doc.format}</span></td>
+                    <td>${doc.pages} trang</td>
+                    <td><strong>${doc.chunks}</strong> đoạn chunks</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="reindexDoc(${doc.id})">Tái lập chỉ mục</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteDoc(${doc.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openRegisterDocModal() {
+            const docName = prompt("Nhập tên tệp tài liệu mới (ví dụ: Huong_Dan_Spring_Security_6.pdf):");
+            if (docName && docName.trim()) {
+                const store = getStore();
+                const newId = store.documents.length ? Math.max(...store.documents.map(d => d.id)) + 1 : 1;
+                store.documents.push({
+                    id: newId,
+                    fileName: docName.trim(),
+                    course: "Lập trình Java Nâng cao & Spring Boot 3",
+                    format: docName.endsWith(".docx") ? "DOCX" : "PDF",
+                    pages: 68,
+                    chunks: 145,
+                    status: "SYNCED"
+                });
+                saveStore(store);
+                showToast("Đã nạp và bóc tách tài liệu thành công vào MongoDB!");
+                renderDocsTable();
+            }
+        }
+
+        function reindexDoc(docId) {
+            showToast("Đang kích hoạt quy trình bóc tách văn bản & tái lập chỉ mục TF-IDF...");
+            setTimeout(() => {
+                showToast("Đã đồng bộ thành công vào MongoDB!");
+            }, 800);
+        }
+
+        function handleDeleteDoc(docId) {
+            const store = getStore();
+            if (confirm("Bạn có chắc muốn xóa tài liệu này và toàn bộ vector chunks trong MongoDB?")) {
+                store.documents = store.documents.filter(d => d.id !== docId);
+                saveStore(store);
+                showToast("Đã xóa tài liệu thành công!");
+                renderDocsTable();
+            }
+        }
+
+        function executeRagQueryTest() {
+            const query = (document.getElementById("ragTestQueryInput").value || "").trim();
+            const courseId = document.getElementById("ragTestCourseSelect").value;
+            const resultBox = document.getElementById("ragQueryResultBox");
+
+            if (!query) {
+                alert("Vui lòng nhập nội dung câu hỏi học tập cần tra cứu!");
+                return;
+            }
+
+            resultBox.innerText = "[Đang truy vấn kho tài liệu MongoDB và chạy thuật toán so khớp TF-IDF Cosine Similarity...]";
+
+            setTimeout(() => {
+                const mockResponses = [
+                    `[TRẢ LỜI TỔNG HỢP]:\nCơ chế kết nối giữa Spring Boot 3 và MySQL được quản trị thông qua thư viện HikariCP (Connection Pool tối ưu cao). Mỗi yêu cầu truy vấn từ Hibernate JPA sẽ mượn một connection từ pool (cấu hình tối đa 15 kết nối, nhàn rỗi 5 kết nối) để đảm bảo tốc độ đáp ứng dưới 5ms và tránh quá tải cổng 3306.\n\n[TRÍCH DẪN TÀI LIỆU NGUỒN]:\n- Tệp: Giao_trinh_Spring_Boot_3_Enterprise.pdf\n- Trang tham chiếu: Trang 42 - 45, Mục 3.2 'Quản lý Connection Pool với HikariCP và Spring Data JPA'\n- Độ tương đồng Cosine Similarity: 0.892 (Khớp cao)`,
+                    `[TRẢ LỜI TỔNG HỢP]:\nThuật toán phát hiện khuôn mặt YuNet ONNX kết hợp cùng mạng trích xuất ArcFace ResNet100 tạo ra vector đặc trưng 512 chiều. Khoảng cách góc Cosine được sử dụng với ngưỡng tương đồng tối thiểu 0.70 để xác thực danh tính sinh viên khi đăng nhập và giám sát thi.\n\n[TRÍCH DẪN TÀI LIỆU NGUỒN]:\n- Tệp: Bai_giang_Deep_Learning_ArcFace.docx\n- Trang tham chiếu: Trang 18, Mục 2.1 'Mô hình ResNet100 và không gian vector 512D'\n- Độ tương đồng Cosine Similarity: 0.935 (Khớp tuyệt đối)`
+                ];
+                const resp = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+                resultBox.innerText = resp;
+            }, 600);
+        }
+
+        function clearRagLog() {
+            document.getElementById("ragTestQueryInput").value = "";
+            document.getElementById("ragQueryResultBox").innerText = "Chưa có truy vấn nào được thực hiện.";
+        }
+
+        // =====================================================================
+        // EXAMS & VIOLATIONS CRUD
+        // =====================================================================
+        function renderExamsTable() {
+            const store = getStore();
+            const tbody = document.getElementById("examsTableBody");
+            tbody.innerHTML = "";
+
+            store.exams.forEach(exam => {
+                const tr = document.createElement("tr");
+                const faceBadge = exam.requireFace 
+                    ? `<span class="status-badge connected">Bắt buộc AI</span>` 
+                    : `<span class="status-badge local">Không bắt buộc</span>`;
+                const statusBadge = exam.status === "OPEN" 
+                    ? `<span class="status-badge connected">Đang mở</span>` 
+                    : `<span class="status-badge danger">Đã đóng</span>`;
+
+                tr.innerHTML = `
+                    <td><code>${escapeHtml(exam.code)}</code></td>
+                    <td><strong>${escapeHtml(exam.title)}</strong></td>
+                    <td>${escapeHtml(exam.course)}</td>
+                    <td>${exam.duration} phút</td>
+                    <td>${faceBadge}</td>
+                    <td>${exam.questionsCount} câu</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleExamStatus(${exam.id})">Đóng/Mở</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteExam(${exam.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderViolationsTable() {
+            const store = getStore();
+            const tbody = document.getElementById("violationsTableBody");
+            tbody.innerHTML = "";
+
+            store.violations.forEach(v => {
+                const tr = document.createElement("tr");
+                const levelBadge = v.level === "ĐÌNH CHỈ" 
+                    ? `<span class="status-badge danger">${v.level}</span>` 
+                    : `<span class="status-badge warning">${v.level}</span>`;
+
+                tr.innerHTML = `
+                    <td><code>VIO-00${v.id}</code></td>
+                    <td><strong>${escapeHtml(v.studentCode)}</strong></td>
+                    <td>${escapeHtml(v.studentName)}</td>
+                    <td>${escapeHtml(v.exam)}</td>
+                    <td><strong style="color: #fca5a5;">${escapeHtml(v.behavior)}</strong></td>
+                    <td>${escapeHtml(v.details)}</td>
+                    <td>${escapeHtml(v.time)}</td>
+                    <td>${levelBadge}</td>
+                    <td>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="dismissViolation(${v.id})">Bỏ qua</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openCreateExamModal() {
+            const title = prompt("Nhập tên bài thi trực tuyến mới (ví dụ: Thi Cuối Kỳ - Công nghệ Phần mềm):");
+            if (title && title.trim()) {
+                const store = getStore();
+                const newId = store.exams.length ? Math.max(...store.exams.map(e => e.id)) + 1 : 1;
+                store.exams.push({
+                    id: newId,
+                    code: "EX00" + newId,
+                    title: title.trim(),
+                    course: "Lập trình Java Nâng cao & Spring Boot 3",
+                    duration: 60,
+                    requireFace: true,
+                    questionsCount: 40,
+                    status: "OPEN"
+                });
+                saveStore(store);
+                showToast("Đã tạo đề thi trực tuyến mới!");
+                renderExamsTable();
+            }
+        }
+
+        function toggleExamStatus(examId) {
+            const store = getStore();
+            const exam = store.exams.find(e => e.id === examId);
+            if (!exam) return;
+
+            exam.status = exam.status === "OPEN" ? "CLOSED" : "OPEN";
+            saveStore(store);
+            showToast("Đã cập nhật trạng thái đề thi!");
+            renderExamsTable();
+        }
+
+        function handleDeleteExam(examId) {
+            const store = getStore();
+            if (confirm("Bạn có chắc muốn xóa đề thi này?")) {
+                store.exams = store.exams.filter(e => e.id !== examId);
+                saveStore(store);
+                showToast("Đã xóa đề thi!");
+                renderExamsTable();
+            }
+        }
+
+        function simulateViolationLog() {
+            const store = getStore();
+            const newId = store.violations.length ? Math.max(...store.violations.map(v => v.id)) + 1 : 1;
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString("vi-VN") + " " + now.toLocaleDateString("vi-VN");
+
+            store.violations.unshift({
+                id: newId,
+                studentCode: "SV2026001",
+                studentName: "Lê Thị Hoàng An",
+                exam: "EX001 - Kiến trúc Spring Boot 3",
+                behavior: "Rời khỏi màn hình máy tính (No Face Detected)",
+                details: "Mô hình YuNet không phát hiện khuôn mặt trong 10 giây",
+                time: timeStr,
+                level: "CẢNH BÁO"
+            });
+            saveStore(store);
+            showToast("Đã ghi nhận bản ghi telemetry vi phạm thi cử vào MongoDB!");
+            renderViolationsTable();
+        }
+
+        function dismissViolation(vioId) {
+            const store = getStore();
+            store.violations = store.violations.filter(v => v.id !== vioId);
+            saveStore(store);
+            showToast("Đã xử lý và đóng bản ghi cảnh báo!");
+            renderViolationsTable();
+        }
+
+        // =====================================================================
+        // ORDERS & PAYOS CRUD
+        // =====================================================================
+        function renderOrdersTable() {
+            const store = getStore();
+            const tbody = document.getElementById("ordersTableBody");
+            tbody.innerHTML = "";
+
+            store.orders.forEach(order => {
+                const tr = document.createElement("tr");
+
+                let statusBadge = "";
+                if (order.status === "PAID") {
+                    statusBadge = `<span class="status-badge connected">Đã thanh toán (Hoàn tất)</span>`;
+                } else if (order.status === "PENDING") {
+                    statusBadge = `<span class="status-badge warning">Chờ quét mã VietQR</span>`;
+                } else {
+                    statusBadge = `<span class="status-badge danger">Đã hủy đơn</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td><strong>#${order.id}</strong></td>
+                    <td><strong>${escapeHtml(order.studentName)}</strong></td>
+                    <td>${escapeHtml(order.course)}</td>
+                    <td><strong>${order.amount.toLocaleString("vi-VN")} VND</strong></td>
+                    <td>${statusBadge}</td>
+                    <td><code>${escapeHtml(order.vietQrTx || "-")}</code></td>
+                    <td>${escapeHtml(order.createdAt)}</td>
+                    <td>
+                        <div class="table-actions">
+                            ${order.status === "PENDING" ? `<button type="button" class="btn btn-primary btn-sm" onclick="triggerPayOsWebhook(${order.id})">Giả lập Webhook Thành công</button>` : ""}
+                            ${order.status === "PENDING" ? `<button type="button" class="btn btn-danger btn-sm" onclick="cancelOrder(${order.id})">Hủy đơn</button>` : ""}
+                            ${order.status !== "PENDING" ? `<button type="button" class="btn btn-secondary btn-sm" onclick="deleteOrder(${order.id})">Xóa</button>` : ""}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openSimulateOrderModal() {
+            const store = getStore();
+            const studentSelect = document.getElementById("orderStudentSelect");
+            studentSelect.innerHTML = "";
+            const students = store.users.filter(u => u.role === "STUDENT");
+            students.forEach(s => {
+                studentSelect.innerHTML += `<option value="${s.fullName}">${s.fullName} (${s.studentCode || s.username})</option>`;
+            });
+
+            const courseSelect = document.getElementById("orderCourseSelect");
+            courseSelect.innerHTML = "";
+            store.courses.forEach(c => {
+                courseSelect.innerHTML += `<option value="${c.id}" data-price="${c.price}">${c.title} (${c.price.toLocaleString("vi-VN")} VND)</option>`;
+            });
+
+            updateOrderPricePreview();
+            openModal("orderModal");
+        }
+
+        function updateOrderPricePreview() {
+            const courseSelect = document.getElementById("orderCourseSelect");
+            const selected = courseSelect.options[courseSelect.selectedIndex];
+            if (selected) {
+                const price = parseInt(selected.getAttribute("data-price"), 10) || 0;
+                document.getElementById("orderPricePreview").value = price.toLocaleString("vi-VN") + " VND";
+            }
+        }
+
+        function handleSimulateOrder(e) {
+            e.preventDefault();
+            const store = getStore();
+            const studentName = document.getElementById("orderStudentSelect").value;
+            const courseSelect = document.getElementById("orderCourseSelect");
+            const selected = courseSelect.options[courseSelect.selectedIndex];
+            const courseTitle = selected.text.split(" (")[0];
+            const price = parseInt(selected.getAttribute("data-price"), 10) || 0;
+
+            const newId = store.orders.length ? Math.max(...store.orders.map(o => o.id)) + 1 : 1001;
+            const now = new Date();
+            const timeStr = now.toLocaleDateString("vi-VN") + " " + now.toLocaleTimeString("vi-VN");
+
+            store.orders.unshift({
+                id: newId,
+                studentName: studentName,
+                course: courseTitle,
+                amount: price,
+                status: "PENDING",
+                vietQrTx: "VCB-" + Math.floor(10000000 + Math.random() * 90000000),
+                createdAt: timeStr
+            });
+
+            saveStore(store);
+            showToast("Đã sinh mã đơn hàng #" + newId + " và link thanh toán PayOS VietQR!");
+            closeModal("orderModal");
+            renderOrdersTable();
+        }
+
+        function triggerPayOsWebhook(orderId) {
+            const store = getStore();
+            const order = store.orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            order.status = "PAID";
+            saveStore(store);
+            showToast("Webhook PayOS xác thực chữ ký Checksum hợp lệ: Đã kích hoạt quyền vào học cho sinh viên!");
+            renderOrdersTable();
+        }
+
+        function cancelOrder(orderId) {
+            const store = getStore();
+            const order = store.orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            order.status = "CANCELLED";
+            saveStore(store);
+            showToast("Đã hủy đơn hàng!");
+            renderOrdersTable();
+        }
+
+        function deleteOrder(orderId) {
+            const store = getStore();
+            store.orders = store.orders.filter(o => o.id !== orderId);
+            saveStore(store);
+            showToast("Đã xóa bản ghi đơn hàng!");
+            renderOrdersTable();
+        }
+
+        // =====================================================================
+        // BACKEND CONNECTIVITY CHECK
+        // =====================================================================
+        async function checkBackendConnectivity() {
+            const badge = document.getElementById("backendStatusBadge");
+            badge.className = "status-badge warning";
+            badge.innerText = "Đang kiểm tra kết nối...";
+
+            try {
+                const response = await fetch("http://localhost:8080/api/health", {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+
+                if (response.ok) {
+                    badge.className = "status-badge connected";
+                    badge.innerText = "Đã kết nối Backend Spring Boot 3 (Port 8080)";
+                    showToast("Kết nối thành công tới dịch vụ Backend!");
+                } else {
+                    throw new Error("Mã trạng thái: " + response.status);
+                }
+            } catch (err) {
+                badge.className = "status-badge local";
+                badge.innerText = "Chế độ kiểm thử cục bộ (Backend Offline)";
+                showToast("Dịch vụ Spring Boot chưa chạy trên cổng 8080. Đang sử dụng chế độ lưu trữ kiểm thử cục bộ.");
+            }
+        }
+
+        // =====================================================================
+        // UTILITIES & MODAL CONTROLLERS
+        // =====================================================================
+        function openModal(modalId) {
+            const el = document.getElementById(modalId);
+            if (el) el.classList.add("open");
+        }
+
+        function closeModal(modalId) {
+            const el = document.getElementById(modalId);
+            if (el) el.classList.remove("open");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toastNotification");
+            toast.innerText = message;
+            toast.style.display = "block";
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3500);
+        }
+
+        function exportDataJson() {
+            const store = getStore();
+            const jsonStr = JSON.stringify(store, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "lms_admin_test_data_" + new Date().toISOString().slice(0, 10) + ".json";
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("Đã xuất tệp JSON dữ liệu kiểm thử!");
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function refreshAllTables() {
+            updateMetrics();
+            renderUsersTable();
+            renderCoursesTable();
+            renderVideosTable();
+            renderDocsTable();
+            renderExamsTable();
+            renderViolationsTable();
+            renderOrdersTable();
+        }
+
+        // AUTO INITIALIZE ON PAGE LOAD
+        document.addEventListener("DOMContentLoaded", () => {
+            refreshAllTables();
+            checkBackendConnectivity();
+        });
+    </script>
+</body>
+</html>
