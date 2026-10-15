@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/documents")
+@RequestMapping({"/documents", "/api/documents"})
 @RequiredArgsConstructor
 @Slf4j
 public class RagDocumentController {

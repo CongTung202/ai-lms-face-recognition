@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/videos")
+@RequestMapping({"/videos", "/api/videos"})
 @RequiredArgsConstructor
 @Slf4j
 public class VideoController {
