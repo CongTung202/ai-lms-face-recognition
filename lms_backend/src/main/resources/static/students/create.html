@@ -4,84 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thêm Tài Khoản / Sinh Viên Mới - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Khởi Tạo Tài Khoản Người Dùng Mới</h2>
-                    <p class="panel-description">Nhập đầy đủ thông tin định danh và phân quyền hệ thống</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Khởi Tạo Tài Khoản Người Dùng Mới</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Nhập đầy đủ thông tin định danh và phân quyền hệ thống</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                </div>
+                <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    Quay lại danh sách
+                </a>
             </div>
 
-            <div class="panel-body">
+            <div class="p-4 sm:p-6">
                 <form id="createStudentForm" onsubmit="handleFormSubmit(event)">
-                    <div class="form-grid">
-                        <div class="form-field-group">
-                            <label class="form-label">Tên đăng nhập (Username)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tên đăng nhập (Username)</label>
                             <input type="text" id="username" class="form-input" required>
-                            <span class="form-hint">Dùng cho đăng nhập, không chứa dấu cách</span>
+                            <span class="text-[11px] text-slate-400">Dùng cho đăng nhập, không chứa dấu cách</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Mật khẩu khởi tạo</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mật khẩu khởi tạo</label>
                             <input type="password" id="password" class="form-input" required value="123456">
-                            <span class="form-hint">Mặc định ban đầu là 123456</span>
+                            <span class="text-[11px] text-slate-400">Mặc định ban đầu là 123456</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Họ và tên đầy đủ</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Họ và tên đầy đủ</label>
                             <input type="text" id="fullName" class="form-input" required>
-                            <span class="form-hint">Ghi đầy đủ họ và tên đệm tiếng Việt</span>
+                            <span class="text-[11px] text-slate-400">Ghi đầy đủ họ và tên đệm tiếng Việt</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Địa chỉ Email</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Địa chỉ Email</label>
                             <input type="email" id="email" class="form-input" required>
-                            <span class="form-hint">Email nhận thông báo hệ thống và mã kích hoạt</span>
+                            <span class="text-[11px] text-slate-400">Email nhận thông báo và mã kích hoạt</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Phân quyền vai trò</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Phân quyền vai trò</label>
                             <select id="role" class="form-select" onchange="handleRoleChange(this.value)">
                                 <option value="STUDENT">Sinh viên (STUDENT)</option>
                                 <option value="INSTRUCTOR">Giảng viên (INSTRUCTOR)</option>
                                 <option value="ADMIN">Quản trị viên (ADMIN)</option>
                             </select>
-                            <span class="form-hint">Xác định quyền truy cập các chức năng</span>
+                            <span class="text-[11px] text-slate-400">Xác định quyền truy cập</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Trạng thái kích hoạt</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Trạng thái kích hoạt</label>
                             <select id="status" class="form-select">
                                 <option value="ACTIVE">Hoạt động bình thường</option>
                                 <option value="LOCKED">Tạm khóa tài khoản</option>
                             </select>
-                            <span class="form-hint">Tình trạng mở khóa đăng nhập</span>
+                            <span class="text-[11px] text-slate-400">Tình trạng mở khóa đăng nhập</span>
                         </div>
 
-                        <div class="form-field-group" id="studentCodeGroup">
-                            <label class="form-label">Mã số sinh viên (MSSV)</label>
+                        <div class="flex flex-col gap-1.5" id="studentCodeGroup">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mã số sinh viên (MSSV)</label>
                             <input type="text" id="studentCode" class="form-input">
-                            <span class="form-hint">Ví dụ: SV2026005</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: SV2026005</span>
                         </div>
 
-                        <div class="form-field-group" id="classCodeGroup">
-                            <label class="form-label">Mã lớp sinh hoạt niên chế</label>
+                        <div class="flex flex-col gap-1.5" id="classCodeGroup">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mã lớp sinh hoạt</label>
                             <input type="text" id="classCode" class="form-input">
-                            <span class="form-hint">Ví dụ: K23CNT1, D22CQCN02</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: K23CNT1, D22CQCN02</span>
                         </div>
                     </div>
 
-                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
-                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary">Lưu và tạo tài khoản</button>
+                    <div class="mt-6 pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
+                        <a href="list.html" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                            Hủy bỏ
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
+                            Lưu và tạo tài khoản
+                        </button>
                     </div>
                 </form>
             </div>

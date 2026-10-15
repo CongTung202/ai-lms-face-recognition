@@ -4,57 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Khởi Tạo Đơn Hàng Mua Khóa Học - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Tạo Đơn Hàng &amp; Phát Mã Thanh Toán VietQR</h2>
-                    <p class="panel-description">Giả lập đăng ký mua khóa học và liên kết mã giao dịch ngân hàng PayOS</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Tạo Đơn Hàng &amp; Phát Mã Thanh Toán VietQR</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Giả lập đăng ký mua khóa học và liên kết mã giao dịch ngân hàng PayOS</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                </div>
+                <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    Quay lại danh sách
+                </a>
             </div>
 
-            <div class="panel-body">
+            <div class="p-4 sm:p-6">
                 <form id="createOrderForm" onsubmit="handleFormSubmit(event)">
-                    <div class="form-grid">
-                        <div class="form-field-group">
-                            <label class="form-label">Chọn sinh viên đăng ký học</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Chọn sinh viên đăng ký học</label>
                             <select id="studentSelect" class="form-select" required>
                                 <!-- Populated dynamically -->
                             </select>
-                            <span class="form-hint">Danh sách các tài khoản sinh viên đã kích hoạt</span>
+                            <span class="text-[11px] text-slate-400">Danh sách các tài khoản sinh viên</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Chọn khóa học cần mua</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Chọn khóa học cần mua</label>
                             <select id="courseSelect" class="form-select" onchange="updatePricePreview()" required>
                                 <!-- Populated dynamically -->
                             </select>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Số tiền học phí thanh toán (VND)</label>
-                            <input type="text" id="priceDisplay" class="form-input" readonly>
-                            <span class="form-hint">Số tiền chính xác chuyển khoản qua mã QR</span>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Số tiền học phí thanh toán (VND)</label>
+                            <input type="text" id="priceDisplay" class="form-input opacity-80 cursor-not-allowed" readonly>
+                            <span class="text-[11px] text-slate-400">Số tiền chính xác chuyển khoản qua mã QR</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Cổng thanh toán tự động</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Cổng thanh toán tự động</label>
                             <select id="gateway" class="form-select">
                                 <option value="PAYOS">PayOS VietQR (Quét mã App Ngân hàng 24/7)</option>
                             </select>
                         </div>
                     </div>
 
-                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
-                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary">Xác nhận tạo đơn và sinh mã QR</button>
+                    <div class="mt-6 pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
+                        <a href="list.html" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                            Hủy bỏ
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
+                            Xác nhận tạo đơn và sinh mã QR
+                        </button>
                     </div>
                 </form>
             </div>

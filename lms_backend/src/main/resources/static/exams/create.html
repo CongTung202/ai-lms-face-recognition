@@ -4,33 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Khởi Tạo Đề Thi Trực Tuyến Mới - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Tạo Đề Thi Trực Tuyến &amp; Cấu Hình Giám Sát AI</h2>
-                    <p class="panel-description">Thiết lập thời lượng, số câu hỏi và cơ chế phát hiện gian lận tự động</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Tạo Đề Thi Trực Tuyến &amp; Cấu Hình Giám Sát AI</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Thiết lập thời lượng, số câu hỏi và cơ chế phát hiện gian lận tự động</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                </div>
+                <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    Quay lại danh sách
+                </a>
             </div>
 
-            <div class="panel-body">
+            <div class="p-4 sm:p-6">
                 <form id="createExamForm" onsubmit="handleFormSubmit(event)">
-                    <div class="form-grid">
-                        <div class="form-field-group">
-                            <label class="form-label">Mã đề thi</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mã đề thi</label>
                             <input type="text" id="code" class="form-input" required>
-                            <span class="form-hint">Ví dụ: EX003, EX_SPRING_FINAL</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: EX003, EX_SPRING_FINAL</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Khóa học tổ chức thi</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Khóa học tổ chức thi</label>
                             <select id="courseSelect" class="form-select">
                                 <option value="Lập trình Java Nâng cao &amp; Spring Boot 3">Lập trình Java Nâng cao &amp; Spring Boot 3</option>
                                 <option value="Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)">Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)</option>
@@ -38,33 +39,33 @@
                             </select>
                         </div>
 
-                        <div class="form-field-group full-width">
-                            <label class="form-label">Tên kỳ thi / Tiêu đề bài kiểm tra</label>
+                        <div class="flex flex-col gap-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tên kỳ thi / Tiêu đề bài kiểm tra</label>
                             <input type="text" id="title" class="form-input" required>
-                            <span class="form-hint">Ví dụ: Thi Cuối Kỳ - Lý thuyết &amp; Thực hành Kiến trúc Spring Boot</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: Thi Cuối Kỳ - Lý thuyết &amp; Thực hành Kiến trúc Spring Boot</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Thời lượng làm bài (phút)</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Thời lượng làm bài (phút)</label>
                             <input type="number" id="duration" class="form-input" min="15" max="180" value="60" required>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Số lượng câu hỏi trắc nghiệm</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Số lượng câu hỏi trắc nghiệm</label>
                             <input type="number" id="questionsCount" class="form-input" min="5" max="100" value="40" required>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Bắt buộc AI giám sát khuôn mặt</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Bắt buộc AI giám sát khuôn mặt</label>
                             <select id="requireFace" class="form-select">
                                 <option value="true">BẬT (Bắt buộc điểm danh và giám sát 3D Head Pose liên tục)</option>
                                 <option value="false">TẮT (Thi tự do không yêu cầu webcam)</option>
                             </select>
-                            <span class="form-hint">Nếu bật, AI sẽ phát hiện quay đầu quá 10s hoặc rời khỏi khung hình</span>
+                            <span class="text-[11px] text-slate-400">AI phát hiện quay đầu quá 10s hoặc rời khung hình</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Trạng thái kỳ thi</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Trạng thái kỳ thi</label>
                             <select id="status" class="form-select">
                                 <option value="OPEN">Đang mở cho sinh viên vào thi</option>
                                 <option value="CLOSED">Đóng đề thi (Chưa cho phép)</option>
@@ -72,9 +73,13 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
-                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary">Lưu và khởi tạo đề thi</button>
+                    <div class="mt-6 pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
+                        <a href="list.html" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                            Hủy bỏ
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
+                            Lưu và khởi tạo đề thi
+                        </button>
                     </div>
                 </form>
             </div>

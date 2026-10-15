@@ -4,38 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh Sách Giáo Trình &amp; Tài Liệu RAG - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Tài Liệu Giáo Trình &amp; Trợ Lý AI RAG Hỏi Đáp</h2>
-                    <p class="panel-description">Bóc tách PDF/DOCX bằng Apache PDFBox &amp; POI, cắt đoạn Chunks nạp vào MongoDB</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Tài Liệu Giáo Trình &amp; Trợ Lý AI RAG Hỏi Đáp</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Bóc tách PDF/DOCX bằng Apache PDFBox &amp; POI, cắt đoạn Chunks nạp vào MongoDB</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="create.html" class="btn btn-primary">Nạp tài liệu giáo trình mới</a>
-                </div>
+                <a href="create.html" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">
+                    Nạp tài liệu giáo trình mới
+                </a>
             </div>
 
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
+            <div class="p-4 sm:p-5">
+                <div class="overflow-x-auto border border-slate-800 rounded-lg">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-bold border-b border-slate-800">
                             <tr>
-                                <th>Mã tài liệu</th>
-                                <th>Tên tệp tin</th>
-                                <th>Khóa học đào tạo</th>
-                                <th>Định dạng</th>
-                                <th>Số trang</th>
-                                <th>Số đoạn Chunks (MongoDB)</th>
-                                <th>Trạng thái đồng bộ</th>
-                                <th>Thao tác</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã tài liệu</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Tên tệp tin</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Khóa học đào tạo</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Định dạng</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Số trang</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Số đoạn Chunks (MongoDB)</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Trạng thái đồng bộ</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="documentTableBody">
+                        <tbody id="documentTableBody" class="divide-y divide-slate-800/80">
                             <!-- Rendered by JavaScript -->
                         </tbody>
                     </table>
@@ -61,22 +62,24 @@
 
             store.documents.forEach(doc => {
                 const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors";
+
                 const statusBadge = doc.status === "SYNCED" 
-                    ? `<span class="status-badge connected">Đã đồng bộ RAG (MongoDB)</span>` 
-                    : `<span class="status-badge warning">Chờ bóc tách văn bản</span>`;
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã đồng bộ RAG (MongoDB)</span>` 
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">Chờ bóc tách văn bản</span>`;
 
                 tr.innerHTML = `
-                    <td><code>DOC-00${doc.id}</code></td>
-                    <td><strong>${escapeHtml(doc.fileName)}</strong></td>
-                    <td>${escapeHtml(doc.course)}</td>
-                    <td><span class="status-badge local">${doc.format}</span></td>
-                    <td>${doc.pages} trang</td>
-                    <td><strong>${doc.chunks}</strong> đoạn chunks</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <div class="table-actions">
-                            <a href="details.html?id=${doc.id}" class="btn btn-secondary btn-sm">Xem chunks &amp; Test RAG</a>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteDocRow(${doc.id})">Xóa</button>
+                    <td class="p-3 sm:p-3.5"><code class="text-blue-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">DOC-00${doc.id}</code></td>
+                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">${escapeHtml(doc.fileName)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${escapeHtml(doc.course)}</td>
+                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-950 border border-blue-700 text-blue-200">${doc.format}</span></td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${doc.pages} trang</td>
+                    <td class="p-3 sm:p-3.5 font-bold text-slate-100">${doc.chunks} đoạn chunks</td>
+                    <td class="p-3 sm:p-3.5">${statusBadge}</td>
+                    <td class="p-3 sm:p-3.5">
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <a href="details.html?id=${doc.id}" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Xem chunks &amp; Test RAG</a>
+                            <button type="button" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700 transition" onclick="deleteDocRow(${doc.id})">Xóa</button>
                         </div>
                     </td>
                 `;

@@ -4,83 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiểm Thử Phát Video &amp; Chống Tua - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 960px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title" id="videoHeading">Kiểm Thử Trình Phát Video</h2>
-                    <p class="panel-description">Truyền phát phân đoạn HTTP 206 Partial Content, giám sát nhịp tim 15s và chống tua đốt giai đoạn</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100" id="videoHeading">Kiểm Thử Trình Phát Video</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Truyền phát phân đoạn HTTP 206 Partial Content, giám sát nhịp tim 15s và chống tua đốt giai đoạn</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                </div>
+                <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    Quay lại danh sách
+                </a>
             </div>
 
-            <div class="panel-body">
-                <!-- VIDEO PLAYER CONTAINER -->
-                <div style="background-color: #000000; border-radius: 6px; overflow: hidden; height: 380px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                    <video id="html5VideoPlayer" controls style="width: 100%; height: 100%; object-fit: contain;">
+            <div class="p-4 sm:p-6">
+                <!-- VIDEO PLAYER CONTAINER (Responsive Aspect Ratio) -->
+                <div class="bg-black border border-slate-800 rounded-lg overflow-hidden h-64 sm:h-80 md:h-96 flex items-center justify-center mb-5">
+                    <video id="html5VideoPlayer" controls class="w-full h-full object-contain">
                         <source src="../../uploads/videos/lesson_1/compressed_1791787433969.mp4" type="video/mp4">
                         Trình duyệt không hỗ trợ phát video HTML5.
                     </video>
                 </div>
 
-                <!-- TELEMETRY & PROGRESS METRICS -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 24px;">
-                    <div class="details-item">
-                        <div class="details-key">Giao thức truyền phát</div>
-                        <div class="details-val" style="color: #60a5fa;">HTTP 206 (1MB/Chunk)</div>
+                <!-- TELEMETRY & PROGRESS METRICS (Responsive Grid 1 col mobile, 2 col tablet, 4 col desktop) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Giao thức truyền phát</div>
+                        <div class="text-sm font-bold text-blue-400 mt-1">HTTP 206 (1MB/Chunk)</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Giây xem cao nhất (maxWatched)</div>
-                        <div class="details-val" id="valMaxWatched" style="color: #a7f3d0;">0 giây (0%)</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Giây xem thực tế (maxWatched)</div>
+                        <div class="text-sm font-bold text-emerald-300 mt-1" id="valMaxWatched">0 giây (0%)</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Trạng thái Anti-Cheat</div>
-                        <div class="details-val" id="valAntiCheat" style="color: #fde68a;">Bảo vệ nhịp tim 15s</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trạng thái Anti-Cheat</div>
+                        <div class="text-sm font-bold text-amber-300 mt-1" id="valAntiCheat">Bảo vệ nhịp tim 15s</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Tình trạng hoàn thành (&gt;=85%)</div>
-                        <div class="details-val" id="valCompletion">Chưa hoàn thành</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tình trạng hoàn thành (&gt;=85%)</div>
+                        <div class="text-sm font-bold text-slate-200 mt-1" id="valCompletion">Chưa hoàn thành</div>
                     </div>
                 </div>
 
                 <!-- VIDEO METADATA GRID -->
-                <div class="details-grid">
-                    <div class="details-item">
-                        <div class="details-key">Tên tệp tin</div>
-                        <div class="details-val" id="valFileName">-</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tên tệp tin</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valFileName">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Bài học liên kết</div>
-                        <div class="details-val" id="valLesson">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Bài học liên kết</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valLesson">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Tổng thời lượng</div>
-                        <div class="details-val" id="valDuration">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tổng thời lượng</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valDuration">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Dung lượng lưu trữ</div>
-                        <div class="details-val" id="valSize">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Dung lượng lưu trữ</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valSize">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Trạng thái nén JAVE2</div>
-                        <div class="details-val" id="valStatus">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trạng thái nén JAVE2</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valStatus">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Đường dẫn Cloudinary CDN</div>
-                        <div class="details-val" id="valCdnUrl">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Đường dẫn Cloudinary CDN</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1 truncate" id="valCdnUrl">-</div>
                     </div>
                 </div>
 
                 <!-- CONTROL BUTTONS -->
-                <div style="display: flex; gap: 12px; margin-top: 10px;">
-                    <button type="button" class="btn btn-primary" onclick="simulateHeartbeat()">Gửi nhịp tim kiểm tra (Heartbeat 15s)</button>
-                    <button type="button" class="btn btn-secondary" onclick="simulateCloudinarySync()">Đồng bộ Cloudinary CDN</button>
+                <div class="flex flex-wrap gap-2.5 pt-2">
+                    <button type="button" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm" onclick="simulateHeartbeat()">Gửi nhịp tim kiểm tra (Heartbeat 15s)</button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" onclick="simulateCloudinarySync()">Đồng bộ Cloudinary CDN</button>
                 </div>
             </div>
         </div>
@@ -123,8 +124,8 @@
             document.getElementById("valDuration").innerText = v.duration + " giây (" + Math.round(v.duration/60) + " phút)";
             document.getElementById("valSize").innerText = v.size;
             document.getElementById("valStatus").innerHTML = v.status === 'COMPRESSED'
-                ? `<span class="status-badge connected">Đã nén chuẩn 720p</span>`
-                : (v.status === 'UPLOADED_CLOUDINARY' ? `<span class="status-badge connected">Đã lên Cloudinary CDN</span>` : `<span class="status-badge warning">Bản ghi gốc</span>`);
+                ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã nén chuẩn 720p</span>`
+                : (v.status === 'UPLOADED_CLOUDINARY' ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã lên Cloudinary CDN</span>` : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">Bản ghi gốc</span>`);
             document.getElementById("valCdnUrl").innerText = v.cdnUrl || "Chưa đồng bộ";
         }
 
@@ -132,7 +133,6 @@
             const video = document.getElementById("html5VideoPlayer");
             video.addEventListener("timeupdate", () => {
                 const current = Math.floor(video.currentTime);
-                // Anti-cheat verification logic
                 if (current <= maxWatchedSeconds + 2) {
                     if (current > maxWatchedSeconds) {
                         maxWatchedSeconds = current;
@@ -145,10 +145,10 @@
                 const target = Math.floor(video.currentTime);
                 if (target > maxWatchedSeconds + 5) {
                     document.getElementById("valAntiCheat").innerText = "Phát hiện tua đốt giai đoạn (Không tích lũy %)";
-                    document.getElementById("valAntiCheat").style.color = "#f87171";
+                    document.getElementById("valAntiCheat").className = "text-sm font-bold text-red-400 mt-1";
                     setTimeout(() => {
                         document.getElementById("valAntiCheat").innerText = "Bảo vệ nhịp tim 15s";
-                        document.getElementById("valAntiCheat").style.color = "#fde68a";
+                        document.getElementById("valAntiCheat").className = "text-sm font-bold text-amber-300 mt-1";
                     }, 3000);
                 }
             });
@@ -161,7 +161,7 @@
             document.getElementById("valMaxWatched").innerText = maxWatchedSeconds + " giây (" + pct + "%)";
 
             if (pct >= 85) {
-                document.getElementById("valCompletion").innerHTML = `<span class="status-badge connected">ĐÃ HOÀN THÀNH (>=85%)</span>`;
+                document.getElementById("valCompletion").innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">ĐÃ HOÀN THÀNH (>=85%)</span>`;
             } else {
                 document.getElementById("valCompletion").innerText = "Chưa hoàn thành (" + pct + "% / 85%)";
             }

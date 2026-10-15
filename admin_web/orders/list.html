@@ -4,38 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh Sách Đơn Hàng &amp; PayOS - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Quản Lý Đơn Hàng Mua Khóa Học &amp; PayOS VietQR</h2>
-                    <p class="panel-description">Lịch sử giao dịch thanh toán học phí, trạng thái Webhook và kích hoạt quyền học</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Quản Lý Đơn Hàng Mua Khóa Học &amp; PayOS VietQR</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Lịch sử giao dịch thanh toán học phí, trạng thái Webhook và kích hoạt quyền học</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="create.html" class="btn btn-primary">Tạo đơn hàng VietQR mới</a>
-                </div>
+                <a href="create.html" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">
+                    Tạo đơn hàng VietQR mới
+                </a>
             </div>
 
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
+            <div class="p-4 sm:p-5">
+                <div class="overflow-x-auto border border-slate-800 rounded-lg">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-bold border-b border-slate-800">
                             <tr>
-                                <th>Mã đơn</th>
-                                <th>Sinh viên đăng ký</th>
-                                <th>Khóa học mua</th>
-                                <th>Số tiền học phí</th>
-                                <th>Trạng thái thanh toán</th>
-                                <th>Mã giao dịch ngân hàng</th>
-                                <th>Thời gian tạo</th>
-                                <th>Thao tác</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã đơn</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Sinh viên đăng ký</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Khóa học mua</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Số tiền học phí</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Trạng thái thanh toán</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã tham chiếu</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thời gian tạo</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="orderTableBody">
+                        <tbody id="orderTableBody" class="divide-y divide-slate-800/80">
                             <!-- Rendered by JavaScript -->
                         </tbody>
                     </table>
@@ -61,28 +62,29 @@
 
             store.orders.forEach(o => {
                 const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors";
 
                 let statusBadge = "";
                 if (o.status === "PAID") {
-                    statusBadge = `<span class="status-badge connected">Đã thanh toán (Hoàn tất)</span>`;
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã thanh toán (Hoàn tất)</span>`;
                 } else if (o.status === "PENDING") {
-                    statusBadge = `<span class="status-badge warning">Chờ quét mã VietQR</span>`;
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">Chờ quét mã VietQR</span>`;
                 } else {
-                    statusBadge = `<span class="status-badge danger">Đã hủy</span>`;
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-red-950 border border-red-700 text-red-200">Đã hủy</span>`;
                 }
 
                 tr.innerHTML = `
-                    <td><strong>#${o.id}</strong></td>
-                    <td><strong>${escapeHtml(o.studentName)}</strong></td>
-                    <td>${escapeHtml(o.course)}</td>
-                    <td><strong>${o.amount.toLocaleString("vi-VN")} VND</strong></td>
-                    <td>${statusBadge}</td>
-                    <td><code>${escapeHtml(o.vietQrTx || "-")}</code></td>
-                    <td>${escapeHtml(o.createdAt)}</td>
-                    <td>
-                        <div class="table-actions">
-                            <a href="details.html?id=${o.id}" class="btn btn-secondary btn-sm">Chi tiết &amp; Test Webhook</a>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteOrderRow(${o.id})">Xóa</button>
+                    <td class="p-3 sm:p-3.5 font-bold text-slate-300">#${o.id}</td>
+                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">${escapeHtml(o.studentName)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${escapeHtml(o.course)}</td>
+                    <td class="p-3 sm:p-3.5 font-bold text-slate-100">${o.amount.toLocaleString("vi-VN")} VND</td>
+                    <td class="p-3 sm:p-3.5">${statusBadge}</td>
+                    <td class="p-3 sm:p-3.5"><code class="text-blue-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">${escapeHtml(o.vietQrTx || "-")}</code></td>
+                    <td class="p-3 sm:p-3.5 text-slate-400">${escapeHtml(o.createdAt)}</td>
+                    <td class="p-3 sm:p-3.5">
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <a href="details.html?id=${o.id}" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Chi tiết &amp; Test</a>
+                            <button type="button" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700 transition" onclick="deleteOrderRow(${o.id})">Xóa</button>
                         </div>
                     </td>
                 `;

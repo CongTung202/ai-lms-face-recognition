@@ -4,39 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng Ký Video Bài Học Mới - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Đăng Ký &amp; Tải Lên Video Bài Giảng Mới</h2>
-                    <p class="panel-description">Hệ thống sẽ tự động kích hoạt nén chuẩn 720p H.264 qua FFmpeg nhúng</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Đăng Ký &amp; Tải Lên Video Bài Giảng Mới</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Hệ thống sẽ tự động kích hoạt nén chuẩn 720p H.264 qua FFmpeg nhúng</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                </div>
+                <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    Quay lại danh sách
+                </a>
             </div>
 
-            <div class="panel-body">
+            <div class="p-4 sm:p-6">
                 <form id="createVideoForm" onsubmit="handleFormSubmit(event)">
-                    <div class="form-grid">
-                        <div class="form-field-group full-width">
-                            <label class="form-label">Tên tệp tin Video (File Name)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                        <div class="flex flex-col gap-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tên tệp tin Video (File Name)</label>
                             <input type="text" id="fileName" class="form-input" required>
-                            <span class="form-hint">Ví dụ: lesson4_spring_security_jwt.mp4</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: lesson4_spring_security_jwt.mp4</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Bài học liên kết</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Bài học liên kết</label>
                             <input type="text" id="lesson" class="form-input" required>
-                            <span class="form-hint">Ví dụ: Bài 4: Cấu hình Spring Security 6 &amp; JWT Filter</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: Bài 4: Cấu hình Spring Security 6 &amp; JWT Filter</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Khóa học đào tạo</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Khóa học đào tạo</label>
                             <select id="courseSelect" class="form-select">
                                 <option value="1">Lập trình Java Nâng cao &amp; Spring Boot 3</option>
                                 <option value="2">Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)</option>
@@ -44,31 +45,35 @@
                             </select>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Thời lượng ước tính (giây)</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Thời lượng ước tính (giây)</label>
                             <input type="number" id="duration" class="form-input" min="10" step="10" value="1500" required>
-                            <span class="form-hint">Nhập thời lượng tính theo đơn vị giây</span>
+                            <span class="text-[11px] text-slate-400">Nhập thời lượng tính theo đơn vị giây</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Dung lượng tệp gốc</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Dung lượng tệp gốc</label>
                             <input type="text" id="size" class="form-input" value="95 MB" required>
                         </div>
 
-                        <div class="form-field-group full-width">
-                            <label class="form-label">Kích hoạt quy trình xử lý tự động</label>
+                        <div class="flex flex-col gap-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Kích hoạt quy trình xử lý tự động</label>
                             <select id="status" class="form-select">
                                 <option value="COMPRESSED">Tự động nén xuống chuẩn H.264 720p HD (JAVE2)</option>
                                 <option value="RAW">Lưu trữ tệp gốc (Chưa nén)</option>
                                 <option value="UPLOADED_CLOUDINARY">Đồng bộ trực tiếp lên Cloudinary CDN</option>
                             </select>
-                            <span class="form-hint">Quá trình nén giúp giảm từ 70% đến 85% dung lượng gốc, bảo đảm streaming mượt mà</span>
+                            <span class="text-[11px] text-slate-400">Quá trình nén giúp giảm từ 70% đến 85% dung lượng gốc, bảo đảm streaming mượt mà</span>
                         </div>
                     </div>
 
-                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
-                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary">Xác nhận đăng ký video</button>
+                    <div class="mt-6 pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
+                        <a href="list.html" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                            Hủy bỏ
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
+                            Xác nhận đăng ký video
+                        </button>
                     </div>
                 </form>
             </div>

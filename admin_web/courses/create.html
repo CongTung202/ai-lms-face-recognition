@@ -4,77 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thêm Khóa Học Mới - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Tạo Khóa Học Đào Tạo Mới</h2>
-                    <p class="panel-description">Thiết lập chương trình đào tạo, học phí PayOS và phân công giảng viên</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Tạo Khóa Học Đào Tạo Mới</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Thiết lập chương trình đào tạo, học phí PayOS và phân công giảng viên</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                </div>
+                <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    Quay lại danh sách
+                </a>
             </div>
 
-            <div class="panel-body">
+            <div class="p-4 sm:p-6">
                 <form id="createCourseForm" onsubmit="handleFormSubmit(event)">
-                    <div class="form-grid">
-                        <div class="form-field-group">
-                            <label class="form-label">Mã khóa học</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mã khóa học</label>
                             <input type="text" id="code" class="form-input" required>
-                            <span class="form-hint">Ví dụ: CRS004, CS302_AI</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: CRS004, CS302_AI</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Môn học trực thuộc</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Môn học trực thuộc</label>
                             <input type="text" id="subject" class="form-input" required>
-                            <span class="form-hint">Ví dụ: Kỹ thuật Phần mềm, Trí tuệ Nhân tạo</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: Kỹ thuật Phần mềm, Trí tuệ Nhân tạo</span>
                         </div>
 
-                        <div class="form-field-group full-width">
-                            <label class="form-label">Tiêu đề khóa học</label>
+                        <div class="flex flex-col gap-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tiêu đề khóa học</label>
                             <input type="text" id="title" class="form-input" required>
-                            <span class="form-hint">Tên đầy đủ hiển thị cho học viên trên cổng đăng ký</span>
+                            <span class="text-[11px] text-slate-400">Tên đầy đủ hiển thị cho học viên trên cổng đăng ký</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Giảng viên phụ trách</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Giảng viên phụ trách</label>
                             <input type="text" id="lecturer" class="form-input" required value="ThS. Trần Công Tùng">
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Học phí bán qua PayOS (VND)</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Học phí bán qua PayOS (VND)</label>
                             <input type="number" id="price" class="form-input" min="0" step="10000" required value="400000">
-                            <span class="form-hint">Nhập 0 nếu khóa học cấp phát miễn phí</span>
+                            <span class="text-[11px] text-slate-400">Nhập 0 nếu khóa học cấp phát miễn phí</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Trạng thái phát hành</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Trạng thái phát hành</label>
                             <select id="status" class="form-select">
                                 <option value="PUBLISHED">Xuất bản công khai</option>
                                 <option value="DRAFT">Lưu bản nháp</option>
                             </select>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Số chương mục khởi tạo</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Số chương mục khởi tạo</label>
                             <input type="number" id="chaptersCount" class="form-input" min="1" max="20" value="3">
                         </div>
 
-                        <div class="form-field-group full-width">
-                            <label class="form-label">Mô tả tổng quan khóa học</label>
+                        <div class="flex flex-col gap-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mô tả tổng quan khóa học</label>
                             <textarea id="description" class="form-textarea" rows="3"></textarea>
-                            <span class="form-hint">Giới thiệu mục tiêu bài giảng, kiến thức trọng tâm và chuẩn đầu ra</span>
+                            <span class="text-[11px] text-slate-400">Giới thiệu mục tiêu bài giảng, kiến thức trọng tâm</span>
                         </div>
                     </div>
 
-                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
-                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary">Lưu và tạo khóa học</button>
+                    <div class="mt-6 pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
+                        <a href="list.html" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                            Hủy bỏ
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
+                            Lưu và tạo khóa học
+                        </button>
                     </div>
                 </form>
             </div>

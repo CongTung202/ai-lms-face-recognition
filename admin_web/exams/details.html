@@ -4,74 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi Tiết Đề Thi &amp; Giám Sát Vi Phạm AI - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 1000px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title" id="examHeading">Chi Tiết Đề Thi &amp; Giám Sát Gian Lận</h2>
-                    <p class="panel-description">Bảng câu hỏi thi trắc nghiệm và nhật ký vi phạm thời gian thực từ AI Proctoring</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100" id="examHeading">Chi Tiết Đề Thi &amp; Giám Sát Gian Lận</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Bảng câu hỏi thi trắc nghiệm và nhật ký vi phạm thời gian thực từ AI Proctoring</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="simulateNewViolation()">Giả lập cảnh báo vi phạm mới</button>
+                <div class="flex items-center gap-2">
+                    <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Quay lại danh sách</a>
+                    <button type="button" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm" onclick="simulateNewViolation()">Giả lập cảnh báo vi phạm mới</button>
                 </div>
             </div>
 
-            <div class="panel-body">
-                <div class="details-grid">
-                    <div class="details-item">
-                        <div class="details-key">Mã đề thi</div>
-                        <div class="details-val" id="valCode">-</div>
+            <div class="p-4 sm:p-6">
+                <!-- GRID DETAILS (Responsive 1 col mobile, 2 col tablet, 3 col desktop) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã đề thi</div>
+                        <div class="text-sm sm:text-base font-bold text-slate-100 mt-1" id="valCode">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Tên kỳ thi</div>
-                        <div class="details-val" id="valTitle">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4 sm:col-span-2">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tên kỳ thi</div>
+                        <div class="text-sm sm:text-base font-bold text-slate-100 mt-1" id="valTitle">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Khóa học đào tạo</div>
-                        <div class="details-val" id="valCourse">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Khóa học đào tạo</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valCourse">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Thời lượng làm bài</div>
-                        <div class="details-val" id="valDuration">0 phút</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Thời lượng làm bài</div>
+                        <div class="text-sm font-bold text-slate-100 mt-1" id="valDuration">0 phút</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Bắt buộc AI Face</div>
-                        <div class="details-val" id="valRequireFace">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Bắt buộc AI Face</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valRequireFace">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Trạng thái kỳ thi</div>
-                        <div class="details-val" id="valStatus">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4 sm:col-span-3">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trạng thái kỳ thi</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valStatus">-</div>
                     </div>
                 </div>
 
                 <!-- REALTIME VIOLATIONS TELEMETRY LOG -->
-                <div style="margin-top: 24px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="color: var(--text-heading); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                            Nhật Ký Cảnh Báo Vi Phạm Thi Cử (AI Proctoring Telemetry MongoDB)
-                        </h3>
-                    </div>
+                <div class="mt-6">
+                    <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200 mb-3">
+                        Nhật Ký Cảnh Báo Vi Phạm Thi Cử (AI Proctoring Telemetry MongoDB)
+                    </h3>
 
-                    <div class="table-responsive">
-                        <table class="data-table">
-                            <thead>
+                    <div class="overflow-x-auto border border-slate-800 rounded-lg">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-bold border-b border-slate-800">
                                 <tr>
-                                    <th>Mã vi phạm</th>
-                                    <th>Mã sinh viên</th>
-                                    <th>Tên sinh viên</th>
-                                    <th>Hành vi phát hiện</th>
-                                    <th>Thông số góc quay / Chi tiết</th>
-                                    <th>Thời điểm</th>
-                                    <th>Mức độ xử lý</th>
-                                    <th>Thao tác</th>
+                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã vi phạm</th>
+                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã SV</th>
+                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Tên sinh viên</th>
+                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Hành vi phát hiện</th>
+                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Chi tiết góc quay</th>
+                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Thời điểm</th>
+                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Mức độ</th>
+                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody id="violationTableBody">
+                            <tbody id="violationTableBody" class="divide-y divide-slate-800/80">
                                 <!-- Rendered dynamically -->
                             </tbody>
                         </table>
@@ -79,32 +79,32 @@
                 </div>
 
                 <!-- SAMPLE QUESTIONS LIST -->
-                <div style="margin-top: 32px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
-                    <h3 style="color: var(--text-heading); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">
+                <div class="mt-8 border-t border-slate-800 pt-5">
+                    <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200 mb-3">
                         Ngân Hàng Câu Hỏi Trắc Nghiệm Mẫu Trong Đề Thi
                     </h3>
 
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <div style="background-color: var(--bg-card-subtle); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 14px;">
-                            <div style="font-weight: 700; color: var(--text-heading); margin-bottom: 8px;">
+                    <div class="flex flex-col gap-3">
+                        <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4">
+                            <div class="text-xs sm:text-sm font-bold text-slate-200 mb-2">
                                 Câu 1: Trong kiến trúc Spring Boot 3, annotation nào dùng để khai báo một Bean cấu hình SecurityFilterChain?
                             </div>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 13px; color: var(--text-body);">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-slate-300">
                                 <div>A. @Component</div>
-                                <div style="color: #a7f3d0; font-weight: 700;">B. @Bean (Đáp án đúng)</div>
+                                <div class="text-emerald-400 font-bold">B. @Bean (Đáp án đúng)</div>
                                 <div>C. @Service</div>
                                 <div>D. @Repository</div>
                             </div>
                         </div>
 
-                        <div style="background-color: var(--bg-card-subtle); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 14px;">
-                            <div style="font-weight: 700; color: var(--text-heading); margin-bottom: 8px;">
+                        <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4">
+                            <div class="text-xs sm:text-sm font-bold text-slate-200 mb-2">
                                 Câu 2: Mô hình ArcFace ResNet100 trích xuất vector đặc trưng khuôn mặt với số chiều là bao nhiêu?
                             </div>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 13px; color: var(--text-body);">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-slate-300">
                                 <div>A. 128 chiều</div>
                                 <div>B. 256 chiều</div>
-                                <div style="color: #a7f3d0; font-weight: 700;">C. 512 chiều (Đáp án đúng)</div>
+                                <div class="text-emerald-400 font-bold">C. 512 chiều (Đáp án đúng)</div>
                                 <div>D. 1024 chiều</div>
                             </div>
                         </div>
@@ -150,11 +150,11 @@
             document.getElementById("valCourse").innerText = ex.course;
             document.getElementById("valDuration").innerText = ex.duration + " phút";
             document.getElementById("valRequireFace").innerHTML = ex.requireFace
-                ? `<span class="status-badge connected">BẮT BUỘC AI PROCTORING</span>`
-                : `<span class="status-badge local">Không bắt buộc</span>`;
+                ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">BẮT BUỘC AI PROCTORING</span>`
+                : `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-950 border border-blue-700 text-blue-200">Không bắt buộc</span>`;
             document.getElementById("valStatus").innerHTML = ex.status === 'OPEN'
-                ? `<span class="status-badge connected">Đang mở</span>`
-                : `<span class="status-badge danger">Đã đóng</span>`;
+                ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đang mở</span>`
+                : `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-950 border border-red-700 text-red-200">Đã đóng</span>`;
         }
 
         function loadViolations() {
@@ -163,26 +163,28 @@
             tbody.innerHTML = "";
 
             if (!store.violations || store.violations.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--text-muted);">Chưa ghi nhận vi phạm nào trong phòng thi.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Chưa ghi nhận vi phạm nào trong phòng thi.</td></tr>`;
                 return;
             }
 
             store.violations.forEach(v => {
                 const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors";
+
                 const levelBadge = v.level === "ĐÌNH CHỈ" 
-                    ? `<span class="status-badge danger">${v.level}</span>` 
-                    : `<span class="status-badge warning">${v.level}</span>`;
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-red-950 border border-red-700 text-red-200">${v.level}</span>` 
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">${v.level}</span>`;
 
                 tr.innerHTML = `
-                    <td><code>VIO-00${v.id}</code></td>
-                    <td><strong>${escapeHtml(v.studentCode)}</strong></td>
-                    <td>${escapeHtml(v.studentName)}</td>
-                    <td><strong style="color: #fca5a5;">${escapeHtml(v.behavior)}</strong></td>
-                    <td>${escapeHtml(v.details)}</td>
-                    <td>${escapeHtml(v.time)}</td>
-                    <td>${levelBadge}</td>
-                    <td>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="dismissViolationRow(${v.id})">Bỏ qua</button>
+                    <td class="p-3 sm:p-3.5"><code class="text-blue-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">VIO-00${v.id}</code></td>
+                    <td class="p-3 sm:p-3.5 font-bold text-slate-300">${escapeHtml(v.studentCode)}</td>
+                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">${escapeHtml(v.studentName)}</td>
+                    <td class="p-3 sm:p-3.5"><strong class="text-red-300">${escapeHtml(v.behavior)}</strong></td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${escapeHtml(v.details)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-400">${escapeHtml(v.time)}</td>
+                    <td class="p-3 sm:p-3.5">${levelBadge}</td>
+                    <td class="p-3 sm:p-3.5">
+                        <button type="button" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" onclick="dismissViolationRow(${v.id})">Bỏ qua</button>
                     </td>
                 `;
                 tbody.appendChild(tr);

@@ -4,59 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh Sách Khóa Học &amp; Đào Tạo - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Quản Lý Khóa Học &amp; Chương Trình Đào Tạo</h2>
-                    <p class="panel-description">Danh mục khóa học, học phí bán qua cổng PayOS và trạng thái xuất bản</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Quản Lý Khóa Học &amp; Chương Trình Đào Tạo</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Danh mục khóa học, học phí bán qua cổng PayOS và trạng thái xuất bản</p>
                 </div>
-                <div class="panel-actions">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetFilter()">Đặt lại bộ lọc</button>
-                    <a href="create.html" class="btn btn-primary">Thêm khóa học mới</a>
+                <div class="flex items-center gap-2">
+                    <button type="button" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" onclick="resetFilter()">Đặt lại bộ lọc</button>
+                    <a href="create.html" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">Thêm khóa học mới</a>
                 </div>
             </div>
 
-            <div class="panel-body">
-                <!-- FILTER BAR (NO GHOST TEXT) -->
-                <div class="filter-controls-row">
-                    <div class="form-field-group">
-                        <label class="form-label">Tìm kiếm khóa học</label>
+            <div class="p-4 sm:p-5">
+                <!-- FILTER BAR (NO GHOST TEXT / RESPONSIVE) -->
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-end p-4 bg-slate-950/60 border border-slate-800 rounded-lg mb-5">
+                    <div class="flex-1 flex flex-col gap-1.5">
+                        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tìm kiếm khóa học</label>
                         <input type="text" id="keywordInput" class="form-input" onkeyup="loadTableData()">
-                        <span class="form-hint">Nhập tên khóa học hoặc mã khóa</span>
+                        <span class="text-[11px] text-slate-400">Nhập tên khóa học, môn học hoặc mã khóa</span>
                     </div>
 
-                    <div class="form-field-group" style="max-width: 240px;">
-                        <label class="form-label">Tình trạng phát hành</label>
+                    <div class="w-full sm:w-64 flex flex-col gap-1.5">
+                        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tình trạng phát hành</label>
                         <select id="statusFilter" class="form-select" onchange="loadTableData()">
                             <option value="ALL">Tất cả tình trạng</option>
                             <option value="PUBLISHED">Đã xuất bản (Công khai)</option>
                             <option value="DRAFT">Bản nháp (Đang soạn thảo)</option>
                         </select>
-                        <span class="form-hint">Lọc theo trạng thái hiển thị cho sinh viên</span>
+                        <span class="text-[11px] text-slate-400">Lọc theo trạng thái hiển thị</span>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
+                <div class="overflow-x-auto border border-slate-800 rounded-lg">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-bold border-b border-slate-800">
                             <tr>
-                                <th>Mã khóa</th>
-                                <th>Tiêu đề khóa học</th>
-                                <th>Môn học trực thuộc</th>
-                                <th>Giảng viên</th>
-                                <th>Học phí (VND)</th>
-                                <th>Số chương</th>
-                                <th>Số bài học</th>
-                                <th>Trạng thái</th>
-                                <th>Thao tác</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã khóa</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Tiêu đề khóa học</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Môn học</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Giảng viên</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Học phí (VND)</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Số chương</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Số bài học</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Trạng thái</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="courseTableBody">
+                        <tbody id="courseTableBody" class="divide-y divide-slate-800/80">
                             <!-- Rendered by JavaScript -->
                         </tbody>
                     </table>
@@ -93,31 +94,32 @@
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 30px; color: var(--text-muted);">Không tìm thấy khóa học phù hợp.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-500">Không tìm thấy khóa học phù hợp.</td></tr>`;
                 return;
             }
 
             filtered.forEach(c => {
                 const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors";
 
                 const statusBadge = c.status === "PUBLISHED" 
-                    ? `<span class="status-badge connected">Đã xuất bản</span>` 
-                    : `<span class="status-badge warning">Bản nháp</span>`;
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã xuất bản</span>` 
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">Bản nháp</span>`;
 
                 tr.innerHTML = `
-                    <td><code>${escapeHtml(c.code)}</code></td>
-                    <td><strong>${escapeHtml(c.title)}</strong></td>
-                    <td>${escapeHtml(c.subject)}</td>
-                    <td>${escapeHtml(c.lecturer)}</td>
-                    <td><strong>${c.price.toLocaleString("vi-VN")} VND</strong></td>
-                    <td>${c.chaptersCount} chương</td>
-                    <td>${c.lessonsCount || (c.chaptersCount * 3)} bài</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <div class="table-actions">
-                            <a href="details.html?id=${c.id}" class="btn btn-secondary btn-sm">Chi tiết</a>
-                            <a href="edit.html?id=${c.id}" class="btn btn-secondary btn-sm">Chỉnh sửa</a>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteCourseRow(${c.id})">Xóa</button>
+                    <td class="p-3 sm:p-3.5"><code class="text-blue-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">${escapeHtml(c.code)}</code></td>
+                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">${escapeHtml(c.title)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-400">${escapeHtml(c.subject)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${escapeHtml(c.lecturer)}</td>
+                    <td class="p-3 sm:p-3.5 font-bold text-slate-100">${c.price.toLocaleString("vi-VN")} VND</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${c.chaptersCount} chương</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${c.lessonsCount || (c.chaptersCount * 3)} bài</td>
+                    <td class="p-3 sm:p-3.5">${statusBadge}</td>
+                    <td class="p-3 sm:p-3.5">
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <a href="details.html?id=${c.id}" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Chi tiết</a>
+                            <a href="edit.html?id=${c.id}" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Chỉnh sửa</a>
+                            <button type="button" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700 transition" onclick="deleteCourseRow(${c.id})">Xóa</button>
                         </div>
                     </td>
                 `;

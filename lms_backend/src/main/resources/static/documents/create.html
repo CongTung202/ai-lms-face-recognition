@@ -4,43 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nạp Tài Liệu Giáo Trình RAG Mới - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 800px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Nạp Giáo Trình Mới Vào Kho RAG AI</h2>
-                    <p class="panel-description">Bóc tách văn bản, lưu giữ số trang gốc và nạp các đoạn chunks vào MongoDB</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Nạp Giáo Trình Mới Vào Kho RAG AI</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Bóc tách văn bản, lưu giữ số trang gốc và nạp các đoạn chunks vào MongoDB</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                </div>
+                <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    Quay lại danh sách
+                </a>
             </div>
 
-            <div class="panel-body">
+            <div class="p-4 sm:p-6">
                 <form id="createDocForm" onsubmit="handleFormSubmit(event)">
-                    <div class="form-grid">
-                        <div class="form-field-group full-width">
-                            <label class="form-label">Tên tệp tin giáo trình (File Name)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                        <div class="flex flex-col gap-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tên tệp tin giáo trình (File Name)</label>
                             <input type="text" id="fileName" class="form-input" required>
-                            <span class="form-hint">Ví dụ: Giao_Trinh_Kien_Truc_Microservices.pdf</span>
+                            <span class="text-[11px] text-slate-400">Ví dụ: Giao_Trinh_Kien_Truc_Microservices.pdf</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Khóa học liên kết</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Khóa học liên kết</label>
                             <select id="courseSelect" class="form-select">
                                 <option value="Lập trình Java Nâng cao &amp; Spring Boot 3">Lập trình Java Nâng cao &amp; Spring Boot 3</option>
                                 <option value="Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)">Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)</option>
                                 <option value="Cơ sở Dữ liệu Quan hệ &amp; NoSQL MongoDB">Cơ sở Dữ liệu Quan hệ &amp; NoSQL MongoDB</option>
                             </select>
-                            <span class="form-hint">Khoanh vùng phạm vi tìm kiếm của chatbot RAG</span>
+                            <span class="text-[11px] text-slate-400">Khoanh vùng phạm vi tìm kiếm</span>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Định dạng tài liệu</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Định dạng tài liệu</label>
                             <select id="format" class="form-select">
                                 <option value="PDF">Tệp PDF (.pdf - Apache PDFBox 3.0)</option>
                                 <option value="DOCX">Tệp Word (.docx - Apache POI)</option>
@@ -48,26 +49,30 @@
                             </select>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Số trang ước tính</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Số trang ước tính</label>
                             <input type="number" id="pages" class="form-input" min="1" value="85" required>
                         </div>
 
-                        <div class="form-field-group">
-                            <label class="form-label">Kích thước đoạn cắt (Chunk Size)</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Kích thước đoạn cắt (Chunk Size)</label>
                             <input type="number" id="chunkSize" class="form-input" value="600" required>
-                            <span class="form-hint">Mặc định chuẩn hóa 600 ký tự / chunk</span>
+                            <span class="text-[11px] text-slate-400">Mặc định chuẩn hóa 600 ký tự / chunk</span>
                         </div>
 
-                        <div class="form-field-group full-width">
-                            <label class="form-label">Mô tả tóm tắt nội dung giáo trình</label>
+                        <div class="flex flex-col gap-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mô tả tóm tắt nội dung giáo trình</label>
                             <textarea id="description" class="form-textarea" rows="3"></textarea>
                         </div>
                     </div>
 
-                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 10px;">
-                        <a href="list.html" class="btn btn-secondary">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-primary">Xác nhận nạp và cắt đoạn Chunks</button>
+                    <div class="mt-6 pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
+                        <a href="list.html" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                            Hủy bỏ
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
+                            Xác nhận nạp và cắt đoạn Chunks
+                        </button>
                     </div>
                 </form>
             </div>

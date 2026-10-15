@@ -4,92 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hồ Sơ Chi Tiết Người Dùng &amp; Face AI - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card" style="max-width: 960px; margin: 0 auto;">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title" id="profileHeading">Hồ Sơ Người Dùng</h2>
-                    <p class="panel-description">Chi tiết định danh, quyền hạn và trạng thái đối chiếu nhận diện sinh trắc học</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100" id="profileHeading">Hồ Sơ Người Dùng</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Chi tiết định danh, quyền hạn và trạng thái đối chiếu nhận diện sinh trắc học</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="list.html" class="btn btn-secondary btn-sm">Quay lại danh sách</a>
-                    <a id="btnEditLink" href="#" class="btn btn-primary btn-sm">Chỉnh sửa hồ sơ</a>
+                <div class="flex items-center gap-2">
+                    <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Quay lại danh sách</a>
+                    <a id="btnEditLink" href="#" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">Chỉnh sửa hồ sơ</a>
                 </div>
             </div>
 
-            <div class="panel-body">
-                <!-- GRID DETAILS -->
-                <div class="details-grid">
-                    <div class="details-item">
-                        <div class="details-key">Mã định danh (UID)</div>
-                        <div class="details-val" id="valUid">#0</div>
+            <div class="p-4 sm:p-6">
+                <!-- GRID DETAILS (1 col mobile, 2 col tablet, 3 col desktop) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã định danh (UID)</div>
+                        <div class="text-sm sm:text-base font-bold text-slate-100 mt-1" id="valUid">#0</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Tên đăng nhập (Username)</div>
-                        <div class="details-val" id="valUsername">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tên đăng nhập (Username)</div>
+                        <div class="text-sm sm:text-base font-bold text-slate-100 mt-1" id="valUsername">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Họ và tên đầy đủ</div>
-                        <div class="details-val" id="valFullName">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Họ và tên đầy đủ</div>
+                        <div class="text-sm sm:text-base font-bold text-slate-100 mt-1" id="valFullName">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Địa chỉ Email</div>
-                        <div class="details-val" id="valEmail">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Địa chỉ Email</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valEmail">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Phân quyền vai trò</div>
-                        <div class="details-val" id="valRole">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Phân quyền vai trò</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valRole">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Trạng thái tài khoản</div>
-                        <div class="details-val" id="valStatus">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trạng thái tài khoản</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valStatus">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Mã sinh viên (MSSV)</div>
-                        <div class="details-val" id="valStudentCode">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã sinh viên (MSSV)</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valStudentCode">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Lớp niên chế</div>
-                        <div class="details-val" id="valClassCode">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Lớp niên chế</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valClassCode">-</div>
                     </div>
-                    <div class="details-item">
-                        <div class="details-key">Thời điểm tạo tài khoản</div>
-                        <div class="details-val" id="valCreatedAt">-</div>
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Thời điểm tạo</div>
+                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valCreatedAt">-</div>
                     </div>
                 </div>
 
-                <!-- FACE AI SECTION -->
-                <div style="background-color: var(--bg-card-subtle); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 20px; margin-top: 20px;">
-                    <h3 style="color: var(--text-heading); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">
+                <!-- FACE AI SECTION (Responsive Flex col/row) -->
+                <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-4 sm:p-6">
+                    <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200 mb-4">
                         Tình trạng Điểm danh Sinh trắc học (Face AI ArcFace 512D)
                     </h3>
 
-                    <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
-                        <div style="width: 140px; height: 160px; background-color: #0b1120; border: 1px solid #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                            <img id="avatarImage" src="" alt="Ảnh đại diện nhận diện" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                            <div id="noAvatarText" style="color: var(--text-muted); font-size: 11px; text-align: center; padding: 10px;">Chưa có ảnh khuôn mặt trực diện</div>
+                    <div class="flex flex-col sm:flex-row gap-5 items-start">
+                        <div class="w-32 h-40 shrink-0 bg-slate-950 border border-slate-800 rounded-md flex items-center justify-center overflow-hidden">
+                            <img id="avatarImage" src="" alt="Ảnh đại diện nhận diện" class="w-full h-full object-cover hidden">
+                            <div id="noAvatarText" class="text-slate-500 text-xs text-center p-3">Chưa có ảnh khuôn mặt trực diện</div>
                         </div>
 
-                        <div style="flex: 1; min-width: 260px;">
-                            <div style="margin-bottom: 10px;">
-                                <span class="form-label">Trạng thái nạp vector:</span>
-                                <span id="faceBadgeContainer" style="margin-left: 8px;"></span>
+                        <div class="flex-1 min-w-[240px]">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xs font-bold uppercase text-slate-400">Trạng thái nạp vector:</span>
+                                <span id="faceBadgeContainer"></span>
                             </div>
-                            <p style="color: var(--text-muted); font-size: 12px; line-height: 1.6; margin-bottom: 16px;">
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">
                                 Thuật toán: ArcFace ResNet100 trích xuất vector đặc trưng 512 chiều kết hợp kiểm tra chống giả mạo Liveness Detection và góc nhìn 3D Head Pose (Pitch, Yaw, Roll).
                             </p>
-                            <div style="display: flex; gap: 10px;">
-                                <button type="button" class="btn btn-secondary btn-sm" onclick="triggerTestFaceVerification()">Kiểm thử đối chiếu Face AI</button>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="resetFaceData()">Xóa dữ liệu khuôn mặt</button>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" onclick="triggerTestFaceVerification()">Kiểm thử đối chiếu Face AI</button>
+                                <button type="button" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700 transition" onclick="resetFaceData()">Xóa dữ liệu khuôn mặt</button>
                             </div>
                         </div>
                     </div>
 
-                    <div id="faceTestResultBox" class="terminal-box" style="margin-top: 16px; display: none;"></div>
+                    <div id="faceTestResultBox" class="terminal-box mt-4 hidden"></div>
                 </div>
             </div>
         </div>
@@ -131,28 +132,28 @@
             document.getElementById("valUsername").innerText = u.username;
             document.getElementById("valFullName").innerText = u.fullName;
             document.getElementById("valEmail").innerText = u.email;
-            document.getElementById("valRole").innerHTML = `<span class="status-badge local">${u.role}</span>`;
+            document.getElementById("valRole").innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-950 border border-blue-700 text-blue-200">${u.role}</span>`;
             document.getElementById("valStatus").innerHTML = u.status === 'ACTIVE' 
-                ? `<span class="status-badge connected">Đang hoạt động</span>`
-                : `<span class="status-badge danger">Đã khóa</span>`;
+                ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đang hoạt động</span>`
+                : `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-950 border border-red-700 text-red-200">Đã khóa</span>`;
             document.getElementById("valStudentCode").innerText = u.studentCode || "-";
             document.getElementById("valClassCode").innerText = u.classCode || "-";
             document.getElementById("valCreatedAt").innerText = u.createdAt || "2026-10-01";
 
             const badgeContainer = document.getElementById("faceBadgeContainer");
             if (u.faceEnrolled) {
-                badgeContainer.innerHTML = `<span class="status-badge connected">ĐÃ ĐĂNG KÝ (Vector 512D Sẵn sàng)</span>`;
+                badgeContainer.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">ĐÃ ĐĂNG KÝ (Vector 512D Sẵn sàng)</span>`;
             } else {
-                badgeContainer.innerHTML = `<span class="status-badge warning">CHƯA ĐĂNG KÝ (Bắt buộc quét mặt lần đầu)</span>`;
+                badgeContainer.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-amber-950 border border-amber-700 text-amber-200">CHƯA ĐĂNG KÝ (Bắt buộc quét mặt lần đầu)</span>`;
             }
 
             if (u.avatarUrl) {
                 document.getElementById("avatarImage").src = u.avatarUrl;
-                document.getElementById("avatarImage").style.display = "block";
-                document.getElementById("noAvatarText").style.display = "none";
+                document.getElementById("avatarImage").classList.remove("hidden");
+                document.getElementById("noAvatarText").classList.add("hidden");
             } else {
-                document.getElementById("avatarImage").style.display = "none";
-                document.getElementById("noAvatarText").style.display = "block";
+                document.getElementById("avatarImage").classList.add("hidden");
+                document.getElementById("noAvatarText").classList.remove("hidden");
             }
         }
 
@@ -160,7 +161,7 @@
             const store = Store.get();
             const u = store.users.find(x => x.id === currentUserId);
             const box = document.getElementById("faceTestResultBox");
-            box.style.display = "block";
+            box.classList.remove("hidden");
             box.innerText = "[Đang gửi lệnh tới Microservice Python Face AI trên cổng 8001 /api/v1/face/verify...]";
 
             setTimeout(() => {

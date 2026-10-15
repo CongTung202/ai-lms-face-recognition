@@ -1,5 +1,5 @@
 // =============================================================================
-// LMS ENTERPRISE SHARED DATA STORE & API CLIENT
+// LMS ENTERPRISE SHARED DATA STORE & TAILWIND V3 RESPONSIVE LAYOUT ENGINE
 // =============================================================================
 
 const DEFAULT_STORE_DATA = {
@@ -98,26 +98,45 @@ function escapeHtml(str) {
         .replace(/'/g, "&#039;");
 }
 
-// Shared Master Layout Renderer
+// Shared Master Layout Renderer with Tailwind CSS v3 Responsive Classes
 function renderMasterLayout(activeNavKey, breadcrumbs = []) {
     const rootRelative = activeNavKey === 'dashboard' ? './' : '../';
 
-    // Top Header
+    // Ensure Tailwind CSS v3 script is present
+    if (!window.tailwind) {
+        const twScript = document.createElement("script");
+        twScript.src = "https://cdn.tailwindcss.com";
+        document.head.appendChild(twScript);
+    }
+
+    // Top Header (Responsive flex column on mobile, row on tablet/desktop)
     const headerHtml = `
-    <header class="top-header">
-        <div class="header-brand">
-            <a href="${rootRelative}index.html" class="brand-title">LMS Core Administration &amp; AI Testing Portal</a>
-            <span class="brand-subtitle">Hệ Thống Quản Trị Phân Hệ &amp; Kiểm Thử Chức Năng Độc Lập</span>
-        </div>
-        <div class="system-status-cluster">
-            <span class="status-badge local" id="backendStatusBadge">Chế độ kiểm thử cục bộ</span>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="checkBackendHealth()">Kiểm tra Backend</button>
-            <a href="${rootRelative}index.html" class="btn btn-primary btn-sm">Trang chủ Quản trị</a>
+    <header class="bg-slate-950 border-b border-slate-800/80 px-4 sm:px-7 py-3.5 sticky top-0 z-50 shadow-md">
+        <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex flex-col">
+                <a href="${rootRelative}index.html" class="text-sm sm:text-base font-bold text-slate-100 tracking-wider uppercase hover:text-blue-400 transition-colors">
+                    LMS Core Administration &amp; AI Testing Portal
+                </a>
+                <span class="text-xs text-slate-400 mt-0.5">
+                    Hệ Thống Quản Trị Phân Hệ &amp; Kiểm Thử Chức Năng Độc Lập
+                </span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span id="backendStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-blue-950 border border-blue-700 text-blue-200">
+                    Chế độ kiểm thử cục bộ
+                </span>
+                <button type="button" onclick="checkBackendHealth()" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    Kiểm tra Backend
+                </button>
+                <a href="${rootRelative}index.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
+                    Trang chủ Quản trị
+                </a>
+            </div>
         </div>
     </header>
     `;
 
-    // Navigation Bar
+    // Navigation Bar (Horizontal scroll with touch momentum on mobile)
     const navItems = [
         { key: 'dashboard', label: 'Trang tổng quan', url: `${rootRelative}index.html` },
         { key: 'students', label: 'Quản lý Sinh viên &amp; Tài khoản', url: `${rootRelative}students/list.html` },
@@ -128,27 +147,34 @@ function renderMasterLayout(activeNavKey, breadcrumbs = []) {
         { key: 'orders', label: 'Đơn hàng &amp; Thanh toán PayOS', url: `${rootRelative}orders/list.html` }
     ];
 
-    let navHtml = `<nav class="nav-tabs-bar">`;
+    let navHtml = `
+    <nav class="bg-slate-900 border-b border-slate-800 px-4 sm:px-7 overflow-x-auto whitespace-nowrap scrollbar-thin">
+        <div class="max-w-[1440px] mx-auto flex items-center gap-1 sm:gap-2">`;
     navItems.forEach(item => {
-        const activeClass = item.key === activeNavKey ? 'active' : '';
-        navHtml += `<a href="${item.url}" class="nav-tab-item ${activeClass}">${item.label}</a>`;
+        const isActive = item.key === activeNavKey;
+        const activeClasses = isActive 
+            ? 'text-blue-400 border-b-2 border-blue-500 bg-blue-500/10 font-bold' 
+            : 'text-slate-400 border-b-2 border-transparent hover:text-slate-200 hover:border-slate-700 font-medium';
+        navHtml += `<a href="${item.url}" class="inline-block py-3 px-3 sm:px-4 text-xs sm:text-sm tracking-wide transition-all ${activeClasses}">${item.label}</a>`;
     });
-    navHtml += `</nav>`;
+    navHtml += `</div></nav>`;
 
-    // Breadcrumb
-    let breadcrumbHtml = `<div class="breadcrumb-bar">`;
-    breadcrumbHtml += `<a href="${rootRelative}index.html">Trang chủ</a>`;
+    // Breadcrumb Bar
+    let breadcrumbHtml = `
+    <div class="bg-slate-950/70 border-b border-slate-800/60 px-4 sm:px-7 py-2.5 text-xs text-slate-400 overflow-x-auto whitespace-nowrap">
+        <div class="max-w-[1440px] mx-auto flex items-center gap-2">
+            <a href="${rootRelative}index.html" class="text-blue-400 hover:underline">Trang chủ</a>`;
     breadcrumbs.forEach(bc => {
-        breadcrumbHtml += ` <span>/</span> `;
+        breadcrumbHtml += ` <span class="text-slate-600">/</span> `;
         if (bc.url) {
-            breadcrumbHtml += `<a href="${bc.url}">${bc.label}</a>`;
+            breadcrumbHtml += `<a href="${bc.url}" class="text-blue-400 hover:underline">${bc.label}</a>`;
         } else {
-            breadcrumbHtml += `<span>${bc.label}</span>`;
+            breadcrumbHtml += `<span class="text-slate-300 font-semibold">${bc.label}</span>`;
         }
     });
-    breadcrumbHtml += `</div>`;
+    breadcrumbHtml += `</div></div>`;
 
-    // Insert at beginning of body
+    // Insert at top of body
     document.body.insertAdjacentHTML('afterbegin', headerHtml + navHtml + breadcrumbHtml);
 
     // Append Toast container if not present
@@ -163,20 +189,20 @@ function renderMasterLayout(activeNavKey, breadcrumbs = []) {
 async function checkBackendHealth() {
     const badge = document.getElementById("backendStatusBadge");
     if (!badge) return;
-    badge.className = "status-badge warning";
+    badge.className = "inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-amber-950 border border-amber-700 text-amber-200";
     badge.innerText = "Đang kiểm tra kết nối...";
 
     try {
         const response = await fetch("http://localhost:8080/api/health", { method: "GET" });
         if (response.ok) {
-            badge.className = "status-badge connected";
+            badge.className = "inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200";
             badge.innerText = "Đã kết nối Backend (Port 8080)";
             showToast("Kết nối thành công tới dịch vụ Backend!");
         } else {
             throw new Error();
         }
     } catch (e) {
-        badge.className = "status-badge local";
+        badge.className = "inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-blue-950 border border-blue-700 text-blue-200";
         badge.innerText = "Chế độ kiểm thử cục bộ (Backend Offline)";
         showToast("Backend chưa khởi chạy. Hệ thống đang chạy trên cơ sở dữ liệu kiểm thử cục bộ.");
     }

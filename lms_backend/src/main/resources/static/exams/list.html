@@ -4,38 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh Sách Đề Thi &amp; Giám Sát AI - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Quản Lý Đề Thi Trực Tuyến &amp; Giám Sát AI Proctoring</h2>
-                    <p class="panel-description">Danh mục kỳ thi, yêu cầu kiểm tra danh tính khuôn mặt và theo dõi lịch sử vi phạm</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Quản Lý Đề Thi Trực Tuyến &amp; Giám Sát AI Proctoring</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Danh mục kỳ thi, yêu cầu kiểm tra danh tính khuôn mặt và theo dõi lịch sử vi phạm</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="create.html" class="btn btn-primary">Tạo đề thi mới</a>
-                </div>
+                <a href="create.html" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">
+                    Tạo đề thi mới
+                </a>
             </div>
 
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
+            <div class="p-4 sm:p-5">
+                <div class="overflow-x-auto border border-slate-800 rounded-lg">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-bold border-b border-slate-800">
                             <tr>
-                                <th>Mã đề</th>
-                                <th>Tên kỳ thi</th>
-                                <th>Khóa học đào tạo</th>
-                                <th>Thời lượng (phút)</th>
-                                <th>Yêu cầu AI Face</th>
-                                <th>Số lượng câu hỏi</th>
-                                <th>Trạng thái</th>
-                                <th>Thao tác</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã đề</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Tên kỳ thi</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Khóa học đào tạo</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thời lượng</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Yêu cầu AI Face</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Số câu hỏi</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Trạng thái</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="examTableBody">
+                        <tbody id="examTableBody" class="divide-y divide-slate-800/80">
                             <!-- Rendered by JavaScript -->
                         </tbody>
                     </table>
@@ -61,28 +62,29 @@
 
             store.exams.forEach(ex => {
                 const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors";
 
                 const faceBadge = ex.requireFace 
-                    ? `<span class="status-badge connected">Bắt buộc AI</span>` 
-                    : `<span class="status-badge local">Không bắt buộc</span>`;
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Bắt buộc AI</span>` 
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-950 border border-blue-700 text-blue-200">Không bắt buộc</span>`;
 
                 const statusBadge = ex.status === "OPEN" 
-                    ? `<span class="status-badge connected">Đang mở</span>` 
-                    : `<span class="status-badge danger">Đã đóng</span>`;
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đang mở</span>` 
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-red-950 border border-red-700 text-red-200">Đã đóng</span>`;
 
                 tr.innerHTML = `
-                    <td><code>${escapeHtml(ex.code)}</code></td>
-                    <td><strong>${escapeHtml(ex.title)}</strong></td>
-                    <td>${escapeHtml(ex.course)}</td>
-                    <td>${ex.duration} phút</td>
-                    <td>${faceBadge}</td>
-                    <td>${ex.questionsCount} câu hỏi</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <div class="table-actions">
-                            <a href="details.html?id=${ex.id}" class="btn btn-secondary btn-sm">Chi tiết &amp; Nhật ký vi phạm</a>
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleExamStatus(${ex.id})">Đổi trạng thái</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteExamRow(${ex.id})">Xóa</button>
+                    <td class="p-3 sm:p-3.5"><code class="text-blue-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">${escapeHtml(ex.code)}</code></td>
+                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">${escapeHtml(ex.title)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${escapeHtml(ex.course)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${ex.duration} phút</td>
+                    <td class="p-3 sm:p-3.5">${faceBadge}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${ex.questionsCount} câu hỏi</td>
+                    <td class="p-3 sm:p-3.5">${statusBadge}</td>
+                    <td class="p-3 sm:p-3.5">
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <a href="details.html?id=${ex.id}" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Chi tiết &amp; Nhật ký</a>
+                            <button type="button" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" onclick="toggleExamStatus(${ex.id})">Đổi trạng thái</button>
+                            <button type="button" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700 transition" onclick="deleteExamRow(${ex.id})">Xóa</button>
                         </div>
                     </td>
                 `;

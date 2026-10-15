@@ -4,39 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh Sách Video Bài Giảng - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <main class="layout-container">
-        <div class="panel-card">
-            <div class="panel-header">
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="panel-title">Quản Lý Tài Nguyên Video &amp; Nén Tự Động H.264</h2>
-                    <p class="panel-description">Giám sát xử lý FFmpeg JAVE2 chuẩn 720p, truyền phát HTTP 206 Partial Content và Cloudinary CDN</p>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Quản Lý Tài Nguyên Video &amp; Nén Tự Động H.264</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Giám sát xử lý FFmpeg JAVE2 chuẩn 720p, truyền phát HTTP 206 Partial Content và Cloudinary CDN</p>
                 </div>
-                <div class="panel-actions">
-                    <a href="create.html" class="btn btn-primary">Đăng ký tệp video mới</a>
-                </div>
+                <a href="create.html" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">
+                    Đăng ký tệp video mới
+                </a>
             </div>
 
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
+            <div class="p-4 sm:p-5">
+                <div class="overflow-x-auto border border-slate-800 rounded-lg">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-bold border-b border-slate-800">
                             <tr>
-                                <th>Mã tài nguyên</th>
-                                <th>Tên tệp Video</th>
-                                <th>Bài học liên kết</th>
-                                <th>Độ phân giải</th>
-                                <th>Thời lượng (giây)</th>
-                                <th>Dung lượng</th>
-                                <th>Trạng thái nén</th>
-                                <th>Đường dẫn phát</th>
-                                <th>Thao tác</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã tài nguyên</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Tên tệp Video</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Bài học liên kết</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Độ phân giải</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thời lượng</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Dung lượng</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Trạng thái nén</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Kênh phát</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody id="videoTableBody">
+                        <tbody id="videoTableBody" class="divide-y divide-slate-800/80">
                             <!-- Rendered by JavaScript -->
                         </tbody>
                     </table>
@@ -62,29 +63,30 @@
 
             store.videos.forEach(v => {
                 const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors";
 
                 let statusBadge = "";
                 if (v.status === "COMPRESSED") {
-                    statusBadge = `<span class="status-badge connected">Đã nén H.264 720p</span>`;
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã nén H.264 720p</span>`;
                 } else if (v.status === "UPLOADED_CLOUDINARY") {
-                    statusBadge = `<span class="status-badge connected">Đã phát CDN Cloudinary</span>`;
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã phát Cloudinary</span>`;
                 } else {
-                    statusBadge = `<span class="status-badge warning">Bản ghi gốc (Chờ nén)</span>`;
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">Bản ghi gốc (Chờ nén)</span>`;
                 }
 
                 tr.innerHTML = `
-                    <td><code>VID-00${v.id}</code></td>
-                    <td><strong>${escapeHtml(v.fileName)}</strong></td>
-                    <td>${escapeHtml(v.lesson)}</td>
-                    <td>${escapeHtml(v.resolution || "1280x720")}</td>
-                    <td>${v.duration} giây</td>
-                    <td>${v.size}</td>
-                    <td>${statusBadge}</td>
-                    <td><small style="color: var(--text-muted);">${escapeHtml(v.cdnUrl)}</small></td>
-                    <td>
-                        <div class="table-actions">
-                            <a href="details.html?id=${v.id}" class="btn btn-secondary btn-sm">Kiểm thử phát</a>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteVideoRow(${v.id})">Xóa</button>
+                    <td class="p-3 sm:p-3.5"><code class="text-blue-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">VID-00${v.id}</code></td>
+                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">${escapeHtml(v.fileName)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${escapeHtml(v.lesson)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-400">${escapeHtml(v.resolution || "1280x720")}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${v.duration} giây</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${v.size}</td>
+                    <td class="p-3 sm:p-3.5">${statusBadge}</td>
+                    <td class="p-3 sm:p-3.5"><small class="text-slate-400 max-w-[180px] truncate block">${escapeHtml(v.cdnUrl)}</small></td>
+                    <td class="p-3 sm:p-3.5">
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <a href="details.html?id=${v.id}" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Kiểm thử phát</a>
+                            <button type="button" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700 transition" onclick="deleteVideoRow(${v.id})">Xóa</button>
                         </div>
                     </td>
                 `;
