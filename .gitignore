@@ -4,14 +4,22 @@ __pycache__/
 *$py.class
 *.so
 
-# Python virtual environments
+# Python virtual environments & secret env files
 .env
+**/.env
+.env.*
+!.env.example
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Sensitive project files containing credentials
+Requiresystem.md
+**/application-secret.*
+**/application-local.*
 
 # Maven & Java Build Output
 **/target/

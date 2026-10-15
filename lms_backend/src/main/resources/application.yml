@@ -7,13 +7,18 @@ spring:
   application:
     name: lms-backend
 
+  config:
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:../.env[.properties]
+
   # ----------------------------------------------------------------------------
   # 1. CẤU HÌNH CƠ SỞ DỮ LIỆU MYSQL (RDBMS QUAN HỆ TRUNG TÂM)
   # ----------------------------------------------------------------------------
   datasource:
-    url: jdbc:mysql://localhost:3306/lms_online_db?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
-    username: root
-    password: "123456"
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:lms_online_db}?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+    username: ${DB_USERNAME:root}
+    password: "${DB_PASSWORD:123456}"
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 15
@@ -35,7 +40,7 @@ spring:
   # ----------------------------------------------------------------------------
   data:
     mongodb:
-      uri: mongodb://localhost:27017/lms_nosql_db
+      uri: ${MONGODB_URI:mongodb://localhost:27017/lms_nosql_db}
       auto-index-creation: true
 
   # ----------------------------------------------------------------------------
@@ -51,46 +56,45 @@ spring:
 # 4. CẤU HÌNH BẢO MẬT JWT AUTHENTICATION
 # ------------------------------------------------------------------------------
 jwt:
-  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-  expiration-ms: 86400000 # 24 giờ
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 giờ
 
 # ------------------------------------------------------------------------------
 # 5. CẤU HÌNH KẾT NỐI DỊCH VỤ AI FASTAPI (MODULE FACE_AI & RAG)
 # ------------------------------------------------------------------------------
 ai-service:
   face-api:
-    base-url: http://localhost:8001
+    base-url: ${AI_SERVICE_URL:http://localhost:8001}
     enroll-endpoint: /api/v1/face/enroll
     verify-endpoint: /api/v1/face/verify
     head-pose-endpoint: /api/v1/face/head-pose
   rag-api:
-    base-url: http://localhost:8001
+    base-url: ${AI_SERVICE_URL:http://localhost:8001}
     query-endpoint: /api/v1/rag/ask
 
 # ------------------------------------------------------------------------------
 # 6. ĐƯỜNG DẪN LƯU TRỮ TỆP TIN CỤC BỘ (LOCAL STORAGE)
 # ------------------------------------------------------------------------------
 storage:
-  upload-dir: d:/DATN/uploads
-  video-dir: d:/DATN/uploads/videos
-  document-dir: d:/DATN/uploads/documents
+  upload-dir: ${STORAGE_UPLOAD_DIR:d:/DATN/uploads}
+  video-dir: ${STORAGE_VIDEO_DIR:d:/DATN/uploads/videos}
+  document-dir: ${STORAGE_DOC_DIR:d:/DATN/uploads/documents}
 
 # ------------------------------------------------------------------------------
 # 7. CẤU HÌNH CLOUDINARY (LƯU TRỮ ẢNH KHUÔN MẶT SINH VIÊN QUA CDN)
 # ------------------------------------------------------------------------------
 cloudinary:
-  cloud-name: dhefmthim
-  api-key: "253544761519318"
-  api-secret: "IEoeKaJDt1t-P3i31TeOMzF4rKw"
-  folder: lms_datn/faces
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dhefmthim}
+  api-key: "${CLOUDINARY_API_KEY:253544761519318}"
+  api-secret: "${CLOUDINARY_API_SECRET:IEoeKaJDt1t-P3i31TeOMzF4rKw}"
+  folder: ${CLOUDINARY_FOLDER:lms_datn/faces}
 
 # ------------------------------------------------------------------------------
 # 8. CẤU HÌNH CỔNG THANH TOÁN TỰ ĐỘNG PAYOS (VIETQR KHÓA HỌC)
 # ------------------------------------------------------------------------------
 payos:
-  client-id: "ef278d93-dc87-492b-80e5-50a31ca580b6"
-  api-key: "87b589f1-048a-44bc-97ec-e7b886342b34"
-  checksum-key: "ef3972c57a254e7ae93d1f245df4b4d229d8bf665a9ff778ffef515d1f154ca1"
-  return-url: "http://localhost:3000/payment/success"
-  cancel-url: "http://localhost:3000/payment/cancel"
-
+  client-id: "${PAYOS_CLIENT_ID:ef278d93-dc87-492b-80e5-50a31ca580b6}"
+  api-key: "${PAYOS_API_KEY:87b589f1-048a-44bc-97ec-e7b886342b34}"
+  checksum-key: "${PAYOS_CHECKSUM_KEY:ef3972c57a254e7ae93d1f245df4b4d229d8bf665a9ff778ffef515d1f154ca1}"
+  return-url: "${PAYOS_RETURN_URL:http://localhost:3000/payment/success}"
+  cancel-url: "${PAYOS_CANCEL_URL:http://localhost:3000/payment/cancel}"
