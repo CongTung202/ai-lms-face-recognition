@@ -23,6 +23,14 @@ public class Course {
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_id")
+    private Faculty faculty;
+
+    @Column(name = "majors", columnDefinition = "TEXT")
+    private String majors;
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 

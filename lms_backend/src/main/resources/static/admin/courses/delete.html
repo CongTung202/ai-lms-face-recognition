@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xóa Khóa Học - EduFace LMS Admin</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 500: '#0068ff', 600: '#0054d1', 700: '#0043a8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    </style>
+</head>
+<body data-nav="courses" class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
+
+    <!-- REUSABLE HEADER -->
+    <div id="admin-header"></div>
+
+    <div class="flex-1 flex min-h-[calc(100vh-65px)]">
+        <!-- REUSABLE SIDEBAR -->
+        <div id="admin-sidebar"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto max-w-3xl mx-auto w-full">
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
+                    <a href="../index.html" class="hover:text-blue-600 transition">Dashboard</a>
+                    <span>/</span>
+                    <a href="list.html" class="hover:text-blue-600 transition">Khóa học</a>
+                    <span>/</span>
+                    <span class="text-red-600 font-medium">Xác nhận xóa</span>
+                </div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Xóa Khóa Học</h1>
+                <p class="text-xs text-slate-500 mt-1">Xác nhận xóa bỏ vĩnh viễn khóa học và dữ liệu bài giảng liên quan</p>
+            </div>
+
+            <!-- Delete Confirmation Card -->
+            <div class="bg-white border border-red-200 rounded-2xl shadow-sm overflow-hidden">
+                <div class="p-6 bg-red-50/50 border-b border-red-100 flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-red-800">Cảnh báo: Hành động này không thể hoàn tác!</h2>
+                        <p class="text-xs text-red-700 mt-1 leading-relaxed">
+                            Khi bạn xác nhận xóa khóa học này, toàn bộ dữ liệu gồm các buổi học (chương), bài giảng, video Cloudinary và các tài liệu liên kết sẽ bị gỡ bỏ khỏi hệ thống.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Thông Tin Khóa Học</h3>
+
+                    <div id="courseDetailsLoading" class="py-8 text-center text-slate-400 text-xs">
+                        Đang nạp thông tin khóa học...
+                    </div>
+
+                    <div id="courseDetailsContent" class="hidden space-y-4">
+                        <div class="flex items-center space-x-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <img id="courseThumb" src="" alt="Thumbnail" class="w-16 h-16 rounded-lg object-cover bg-slate-200">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span id="courseCode" class="text-xs font-mono font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded">--</span>
+                                    <span id="courseStatus" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">Công khai</span>
+                                </div>
+                                <h4 id="courseTitle" class="text-base font-bold text-slate-800 mt-1">--</h4>
+                                <div id="courseMajors" class="flex flex-wrap gap-1 mt-1 text-[11px] text-blue-600 font-medium">--</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-xs text-slate-600">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block mb-0.5">Số buổi học / chương:</span>
+                                <span id="courseChaptersCount" class="font-bold text-slate-800 text-sm">0</span>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block mb-0.5">Số bài giảng / video:</span>
+                                <span id="courseLessonsCount" class="font-bold text-slate-800 text-sm">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="pt-6 border-t border-slate-100 flex items-center justify-end space-x-3">
+                            <a href="list.html"
+                                class="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                                Hủy &amp; Quay lại danh sách
+                            </a>
+                            <button type="button" id="confirmDeleteBtn" onclick="executeDeleteCourse()"
+                                class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <span>Xác Nhận Xóa Vĩnh Viễn</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/admin-components.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!courseId) {
+                alert('Không tìm thấy mã khóa học cần xóa!');
+                location.href = 'list.html';
+                return;
+            }
+            loadCourseInfo(courseId);
+        });
+
+        async function loadCourseInfo(id) {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/courses/${id}`);
+                if (!res.ok) {
+                    document.getElementById('courseDetailsLoading').innerHTML = `
+                        <p class="text-red-500 font-semibold">Không tìm thấy khóa học (Mã ID: ${id}).</p>
+                        <a href="list.html" class="inline-block mt-3 text-blue-600 font-semibold underline">Quay lại danh sách</a>
+                    `;
+                    return;
+                }
+                const result = await res.json();
+                const c = result.data;
+                if (!c) throw new Error('Dữ liệu rỗng');
+
+                document.getElementById('courseDetailsLoading').classList.add('hidden');
+                document.getElementById('courseDetailsContent').classList.remove('hidden');
+
+                document.getElementById('courseThumb').src = c.thumbnailUrl || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=80';
+                document.getElementById('courseCode').textContent = c.courseCode || `COURSE-${c.id}`;
+                document.getElementById('courseTitle').textContent = c.courseName || c.title || '--';
+                document.getElementById('courseStatus').textContent = c.status === 'PUBLISHED' ? 'Công khai' : 'Bản nháp';
+
+                const majors = c.majors || [];
+                document.getElementById('courseMajors').innerHTML = majors.length > 0
+                    ? majors.map(m => `<span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-medium">${escapeHtml(m.majorName || m.majorCode)}</span>`).join(' ')
+                    : '<span class="text-slate-400 italic">Không phân chuyên ngành</span>';
+
+                const chapters = c.chapters || [];
+                document.getElementById('courseChaptersCount').textContent = chapters.length;
+
+                let lessonsCount = 0;
+                chapters.forEach(ch => { lessonsCount += (ch.lessons ? ch.lessons.length : 0); });
+                document.getElementById('courseLessonsCount').textContent = lessonsCount;
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('courseDetailsLoading').innerHTML = `
+                    <p class="text-red-500">Lỗi khi tải thông tin khóa học: ${err.message}</p>
+                `;
+            }
+        }
+
+        async function executeDeleteCourse() {
+            const btn = document.getElementById('confirmDeleteBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang xóa...</span>';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/courses/${courseId}`, {
+                    method: 'DELETE'
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    showToast('Đã xóa thành công khóa học!');
+                    setTimeout(() => {
+                        location.href = 'list.html';
+                    }, 800);
+                } else {
+                    alert('Lỗi khi xóa khóa học: ' + (result.message || 'Không thể xóa'));
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Xác Nhận Xóa Vĩnh Viễn</span>';
+                }
+            } catch (e) {
+                alert('Lỗi kết nối máy chủ: ' + e.message);
+                btn.disabled = false;
+                btn.innerHTML = '<span>Xác Nhận Xóa Vĩnh Viễn</span>';
+            }
+        }
+    </script>
+</body>
+</html>

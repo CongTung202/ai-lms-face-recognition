@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh Sửa Khoa Đào Tạo - EduFace LMS Admin</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#0068ff', 600: '#0054d1', 700: '#0043a8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    </style>
+</head>
+<body data-nav="faculties" class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
+
+    <!-- REUSABLE HEADER -->
+    <div id="admin-header"></div>
+
+    <div class="flex-1 flex min-h-[calc(100vh-65px)]">
+        <!-- REUSABLE SIDEBAR -->
+        <div id="admin-sidebar"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto max-w-3xl mx-auto w-full">
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
+                    <a href="../index.html" class="hover:text-blue-600 transition">Dashboard</a>
+                    <span>/</span>
+                    <a href="list.html" class="hover:text-blue-600 transition">Khoa đào tạo</a>
+                    <span>/</span>
+                    <span class="text-blue-600 font-medium">Chỉnh sửa</span>
+                </div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Chỉnh Sửa Khoa Đào Tạo</h1>
+                <p class="text-xs text-slate-500 mt-1">Cập nhật thông tin viện/khoa quản lý và cơ cấu các ngành học trực thuộc</p>
+            </div>
+
+            <!-- Edit Form Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
+                <div id="loadingFaculty" class="py-12 text-center text-slate-400 text-xs">
+                    Đang nạp thông tin khoa...
+                </div>
+
+                <form id="editFacultyForm" onsubmit="handleEditFaculty(event)" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Faculty Code -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Mã Khoa / Viện <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="facultyCodeInput" required
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 font-mono uppercase focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                        </div>
+
+                        <!-- Faculty Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Tên Khoa Đào Tạo <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="facultyNameInput" required
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                        </div>
+
+                        <!-- Description -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Giới thiệu &amp; Mô tả khoa
+                            </label>
+                            <textarea id="facultyDescInput" rows="3"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition leading-relaxed"></textarea>
+                        </div>
+
+
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+                        <a id="btnDeleteLink" href="#"
+                            class="px-4 py-2.5 rounded-xl border border-red-200 hover:bg-red-50 text-red-600 text-xs font-semibold transition">
+                            Xóa khoa này
+                        </a>
+                        <div class="flex items-center space-x-3">
+                            <a href="list.html"
+                                class="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                                Hủy &amp; Quay lại
+                            </a>
+                            <button type="submit" id="submitBtn"
+                                class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>Lưu Thay Đổi</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/admin-components.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const facultyId = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!facultyId) {
+                alert('Không tìm thấy ID khoa!');
+                location.href = 'list.html';
+                return;
+            }
+            document.getElementById('btnDeleteLink').href = `delete.html?id=${facultyId}`;
+            loadFacultyData(facultyId);
+        });
+
+        async function loadFacultyData(id) {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/faculties/${id}`);
+                if (res.ok) {
+                    const result = await res.json();
+                    const f = result.data;
+                    if (!f) throw new Error('Dữ liệu rỗng');
+
+                    document.getElementById('loadingFaculty').classList.add('hidden');
+                    document.getElementById('editFacultyForm').classList.remove('hidden');
+
+                    document.getElementById('facultyCodeInput').value = f.facultyCode || '';
+                    document.getElementById('facultyNameInput').value = f.facultyName || '';
+                    document.getElementById('facultyDescInput').value = f.description || '';
+                } else {
+                    document.getElementById('loadingFaculty').innerHTML = `
+                        <p class="text-red-500 font-semibold">Không tìm thấy khoa (ID: ${id})</p>
+                        <a href="list.html" class="inline-block mt-3 text-blue-600 underline">Quay lại danh sách</a>
+                    `;
+                }
+            } catch (err) {
+                document.getElementById('loadingFaculty').innerHTML = `
+                    <p class="text-red-500">Lỗi khi nạp dữ liệu: ${err.message}</p>
+                `;
+            }
+        }
+
+        async function handleEditFaculty(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang lưu...</span>';
+
+            const payload = {
+                facultyCode: document.getElementById('facultyCodeInput').value.trim().toUpperCase(),
+                facultyName: document.getElementById('facultyNameInput').value.trim(),
+                description: document.getElementById('facultyDescInput').value.trim()
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/faculties/${facultyId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    showToast('Đã cập nhật khoa đào tạo!');
+                    setTimeout(() => {
+                        location.href = 'list.html';
+                    }, 800);
+                } else {
+                    alert('Lỗi cập nhật: ' + (result.message || 'Không thể lưu'));
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Lưu Thay Đổi</span>';
+                }
+            } catch (err) {
+                alert('Lỗi kết nối máy chủ: ' + err.message);
+                btn.disabled = false;
+                btn.innerHTML = '<span>Lưu Thay Đổi</span>';
+            }
+        }
+    </script>
+</body>
+</html>

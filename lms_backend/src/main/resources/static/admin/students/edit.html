@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh Sửa Tài Khoản - EduFace LMS Admin</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#0068ff', 600: '#0054d1', 700: '#0043a8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    </style>
+</head>
+<body data-nav="students" class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
+
+    <!-- REUSABLE HEADER -->
+    <div id="admin-header"></div>
+
+    <div class="flex-1 flex min-h-[calc(100vh-65px)]">
+        <!-- REUSABLE SIDEBAR -->
+        <div id="admin-sidebar"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto max-w-3xl mx-auto w-full">
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
+                    <a href="../index.html" class="hover:text-blue-600 transition">Dashboard</a>
+                    <span>/</span>
+                    <a href="list.html" class="hover:text-blue-600 transition">Sinh viên &amp; Người dùng</a>
+                    <span>/</span>
+                    <span class="text-blue-600 font-medium">Chỉnh sửa</span>
+                </div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Chỉnh Sửa Tài Khoản</h1>
+                <p class="text-xs text-slate-500 mt-1">Cập nhật hồ sơ thông tin cá nhân, phân quyền vai trò và trạng thái tài khoản</p>
+            </div>
+
+            <!-- Edit Form Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
+                <div id="loadingUser" class="py-12 text-center text-slate-400 text-xs">
+                    Đang nạp thông tin người dùng...
+                </div>
+
+                <form id="editStudentForm" onsubmit="handleEditSubmit(event)" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Username (Readonly) -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                                Tên đăng nhập (Cố định)
+                            </label>
+                            <input type="text" id="usernameInput" readonly
+                                class="w-full bg-slate-100 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-500 cursor-not-allowed font-mono">
+                        </div>
+
+                        <!-- Reset Password -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Đổi mật khẩu mới
+                            </label>
+                            <input type="password" id="passwordInput" placeholder="Để trống nếu không đổi mật khẩu"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                        </div>
+
+                        <!-- Full Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Họ và tên đầy đủ <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="fullNameInput" required
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Địa chỉ Email <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" id="emailInput" required
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Số điện thoại
+                            </label>
+                            <input type="tel" id="phoneInput"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                        </div>
+
+                        <!-- Role -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Phân quyền vai trò <span class="text-red-500">*</span>
+                            </label>
+                            <select id="roleInput"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium">
+                                <option value="STUDENT">Sinh viên (STUDENT)</option>
+                                <option value="INSTRUCTOR">Giảng viên (INSTRUCTOR)</option>
+                                <option value="ADMIN">Quản trị viên (ADMIN)</option>
+                            </select>
+                        </div>
+
+                        <!-- Status -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Trạng thái hoạt động
+                            </label>
+                            <select id="statusInput"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium">
+                                <option value="ACTIVE">Kích hoạt (ACTIVE)</option>
+                                <option value="SUSPENDED">Tạm dừng (SUSPENDED)</option>
+                            </select>
+                        </div>
+
+                        <!-- MSSV -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Mã sinh viên (MSSV)
+                            </label>
+                            <input type="text" id="studentCodeInput"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-mono">
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+                        <a id="btnDeleteLink" href="#"
+                            class="px-4 py-2.5 rounded-xl border border-red-200 hover:bg-red-50 text-red-600 text-xs font-semibold transition">
+                            Xóa tài khoản này
+                        </a>
+                        <div class="flex items-center space-x-3">
+                            <a href="list.html"
+                                class="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                                Hủy &amp; Quay lại
+                            </a>
+                            <button type="submit" id="submitBtn"
+                                class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>Lưu Thay Đổi</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/admin-components.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!userId) {
+                alert('Không tìm thấy ID người dùng!');
+                location.href = 'list.html';
+                return;
+            }
+            document.getElementById('btnDeleteLink').href = `delete.html?id=${userId}`;
+            loadUserData(userId);
+        });
+
+        async function loadUserData(id) {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users`);
+                if (res.ok) {
+                    const result = await res.json();
+                    const users = result.data || [];
+                    const u = users.find(x => String(x.id) === String(id));
+                    if (!u) {
+                        document.getElementById('loadingUser').innerHTML = `
+                            <p class="text-red-500 font-semibold">Không tìm thấy tài khoản (ID: ${id})</p>
+                            <a href="list.html" class="inline-block mt-3 text-blue-600 underline">Quay lại danh sách</a>
+                        `;
+                        return;
+                    }
+
+                    document.getElementById('loadingUser').classList.add('hidden');
+                    document.getElementById('editStudentForm').classList.remove('hidden');
+
+                    document.getElementById('usernameInput').value = u.username || '';
+                    document.getElementById('fullNameInput').value = u.fullName || '';
+                    document.getElementById('emailInput').value = u.email || '';
+                    document.getElementById('phoneInput').value = u.phone || '';
+                    document.getElementById('roleInput').value = u.role || 'STUDENT';
+                    document.getElementById('statusInput').value = u.status || 'ACTIVE';
+                    document.getElementById('studentCodeInput').value = u.studentCode || '';
+                }
+            } catch (e) {
+                document.getElementById('loadingUser').innerHTML = `
+                    <p class="text-red-500">Lỗi khi tải dữ liệu: ${e.message}</p>
+                `;
+            }
+        }
+
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang lưu...</span>';
+
+            const payload = {
+                fullName: document.getElementById('fullNameInput').value.trim(),
+                email: document.getElementById('emailInput').value.trim(),
+                phone: document.getElementById('phoneInput').value.trim(),
+                role: document.getElementById('roleInput').value,
+                status: document.getElementById('statusInput').value,
+                studentCode: document.getElementById('studentCodeInput').value.trim(),
+                password: document.getElementById('passwordInput').value || null
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    showToast('Cập nhật tài khoản thành công!');
+                    setTimeout(() => {
+                        location.href = 'list.html';
+                    }, 800);
+                } else {
+                    alert('Lỗi cập nhật: ' + (result.message || 'Không thể lưu'));
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Lưu Thay Đổi</span>';
+                }
+            } catch (err) {
+                alert('Lỗi kết nối máy chủ: ' + err.message);
+                btn.disabled = false;
+                btn.innerHTML = '<span>Lưu Thay Đổi</span>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -21,8 +21,15 @@ public class ClassEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "major_id", nullable = false)
+    @JoinColumn(name = "faculty_id")
+    private Faculty faculty;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "major_id", nullable = true)
     private Major major;
+
+    @Column(name = "major_name", length = 150)
+    private String majorName;
 
     @Column(name = "class_code", nullable = false, unique = true, length = 50)
     private String classCode;
@@ -32,6 +39,9 @@ public class ClassEntity {
 
     @Column(name = "academic_year", nullable = false, length = 20)
     private String academicYear; // vd: 2023-2027
+
+    @Column(name = "homeroom_teacher", length = 150)
+    private String homeroomTeacher;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

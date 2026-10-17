@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CourseDocumentRepository extends JpaRepository<CourseDocument, Long> {
     List<CourseDocument> findByCourseId(Long courseId);
     Optional<CourseDocument> findByMongoDocId(String mongoDocId);
+    void deleteByCourseId(Long courseId);
 }

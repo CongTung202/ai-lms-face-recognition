@@ -3,149 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm Tài Khoản / Sinh Viên Mới - LMS Admin</title>
+    <title>Thêm Tài Khoản / Sinh Viên Mới - EduFace LMS Admin</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#0068ff', 600: '#0054d1', 700: '#0043a8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen">
+<body data-nav="students" class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
 
-    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
-        <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
-            <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3">
-                <div>
-                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Khởi Tạo Tài Khoản Người Dùng Mới</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Nhập đầy đủ thông tin định danh và phân quyền hệ thống</p>
+    <!-- REUSABLE HEADER -->
+    <div id="admin-header"></div>
+
+    <div class="flex-1 flex min-h-[calc(100vh-65px)]">
+        <!-- REUSABLE SIDEBAR -->
+        <div id="admin-sidebar"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto max-w-3xl mx-auto w-full">
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
+                    <a href="../index.html" class="hover:text-blue-600 transition">Dashboard</a>
+                    <span>/</span>
+                    <a href="list.html" class="hover:text-blue-600 transition">Sinh viên &amp; Người dùng</a>
+                    <span>/</span>
+                    <span class="text-blue-600 font-medium">Thêm mới</span>
                 </div>
-                <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
-                    Quay lại danh sách
-                </a>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Thêm Tài Khoản Mới</h1>
+                <p class="text-xs text-slate-500 mt-1">Khởi tạo thông tin người dùng, cấp quyền truy cập hệ thống và đăng ký mã sinh viên</p>
             </div>
 
-            <div class="p-4 sm:p-6">
-                <form id="createStudentForm" onsubmit="handleFormSubmit(event)">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tên đăng nhập (Username)</label>
-                            <input type="text" id="username" class="form-input" required>
-                            <span class="text-[11px] text-slate-400">Dùng cho đăng nhập, không chứa dấu cách</span>
+            <!-- Create Form Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
+                <form id="createStudentForm" onsubmit="handleCreateSubmit(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Username -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Tên đăng nhập (Username) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="usernameInput" required placeholder="ví dụ: sinhvien2026"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                            <span class="text-[11px] text-slate-400 mt-1 block">Dùng để đăng nhập cổng học tập và Face AI</span>
                         </div>
 
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mật khẩu khởi tạo</label>
-                            <input type="password" id="password" class="form-input" required value="123456">
-                            <span class="text-[11px] text-slate-400">Mặc định ban đầu là 123456</span>
+                        <!-- Password -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Mật khẩu ban đầu <span class="text-red-500">*</span>
+                            </label>
+                            <input type="password" id="passwordInput" required placeholder="Tối thiểu 6 ký tự"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
                         </div>
 
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Họ và tên đầy đủ</label>
-                            <input type="text" id="fullName" class="form-input" required>
-                            <span class="text-[11px] text-slate-400">Ghi đầy đủ họ và tên đệm tiếng Việt</span>
+                        <!-- Full Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Họ và tên đầy đủ <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="fullNameInput" required placeholder="Nguyễn Văn A"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
                         </div>
 
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Địa chỉ Email</label>
-                            <input type="email" id="email" class="form-input" required>
-                            <span class="text-[11px] text-slate-400">Email nhận thông báo và mã kích hoạt</span>
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Địa chỉ Email <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" id="emailInput" required placeholder="student@eduface.edu.vn"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
                         </div>
 
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Phân quyền vai trò</label>
-                            <select id="role" class="form-select" onchange="handleRoleChange(this.value)">
-                                <option value="STUDENT">Sinh viên (STUDENT)</option>
+                        <!-- Role -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Phân quyền vai trò <span class="text-red-500">*</span>
+                            </label>
+                            <select id="roleInput" onchange="toggleStudentFields(this.value)"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium">
+                                <option value="STUDENT" selected>Sinh viên (STUDENT)</option>
                                 <option value="INSTRUCTOR">Giảng viên (INSTRUCTOR)</option>
                                 <option value="ADMIN">Quản trị viên (ADMIN)</option>
                             </select>
-                            <span class="text-[11px] text-slate-400">Xác định quyền truy cập</span>
                         </div>
 
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Trạng thái kích hoạt</label>
-                            <select id="status" class="form-select">
-                                <option value="ACTIVE">Hoạt động bình thường</option>
-                                <option value="LOCKED">Tạm khóa tài khoản</option>
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Số điện thoại liên hệ
+                            </label>
+                            <input type="tel" id="phoneInput" placeholder="0912345678"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                        </div>
+
+                        <!-- Student Code (MSSV) -->
+                        <div id="studentCodeWrapper">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Mã sinh viên (MSSV)
+                            </label>
+                            <input type="text" id="studentCodeInput" placeholder="B22DCCN001"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-mono">
+                        </div>
+
+                        <!-- Class Selection -->
+                        <div id="studentClassWrapper">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Thuộc Lớp học
+                            </label>
+                            <select id="classIdSelect"
+                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium">
+                                <option value="">-- Chưa phân lớp --</option>
                             </select>
-                            <span class="text-[11px] text-slate-400">Tình trạng mở khóa đăng nhập</span>
-                        </div>
-
-                        <div class="flex flex-col gap-1.5" id="studentCodeGroup">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mã số sinh viên (MSSV)</label>
-                            <input type="text" id="studentCode" class="form-input">
-                            <span class="text-[11px] text-slate-400">Ví dụ: SV2026005</span>
-                        </div>
-
-                        <div class="flex flex-col gap-1.5" id="classCodeGroup">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mã lớp sinh hoạt</label>
-                            <input type="text" id="classCode" class="form-input">
-                            <span class="text-[11px] text-slate-400">Ví dụ: K23CNT1, D22CQCN02</span>
                         </div>
                     </div>
 
-                    <div class="mt-6 pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
-                        <a href="list.html" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
-                            Hủy bỏ
+                    <!-- Action Buttons -->
+                    <div class="pt-6 border-t border-slate-100 flex items-center justify-end space-x-3">
+                        <a href="list.html"
+                            class="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                            Hủy &amp; Quay lại danh sách
                         </a>
-                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
-                            Lưu và tạo tài khoản
+                        <button type="submit" id="submitBtn"
+                            class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Lưu Tài Khoản Mới</span>
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
-    <script src="../assets/js/store.js"></script>
+    <!-- Scripts -->
+    <script src="../assets/js/admin-components.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            renderMasterLayout('students', [
-                { label: 'Quản lý Sinh viên & Tài khoản', url: 'list.html' },
-                { label: 'Thêm mới' }
-            ]);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadClassesDropdown();
         });
 
-        function handleRoleChange(role) {
-            const isStudent = role === 'STUDENT';
-            document.getElementById('studentCodeGroup').style.display = isStudent ? 'flex' : 'none';
-            document.getElementById('classCodeGroup').style.display = isStudent ? 'flex' : 'none';
+        async function loadClassesDropdown() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/classes`);
+                if (res.ok) {
+                    const result = await res.json();
+                    const classes = result.data || [];
+                    const sel = document.getElementById('classIdSelect');
+                    classes.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.id;
+                        opt.textContent = `${c.classCode} - ${c.className}`;
+                        sel.appendChild(opt);
+                    });
+                }
+            } catch (e) {
+                console.warn('Lỗi tải danh sách lớp:', e);
+            }
         }
 
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            const store = Store.get();
-            const username = document.getElementById("username").value.trim();
-            const fullName = document.getElementById("fullName").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const role = document.getElementById("role").value;
-            const status = document.getElementById("status").value;
-            const studentCode = document.getElementById("studentCode").value.trim();
-            const classCode = document.getElementById("classCode").value.trim();
-
-            const isDuplicate = store.users.some(u => u.username.toLowerCase() === username.toLowerCase());
-            if (isDuplicate) {
-                alert("Tên đăng nhập này đã được sử dụng!");
-                return;
+        function toggleStudentFields(role) {
+            const scWrapper = document.getElementById('studentCodeWrapper');
+            const clWrapper = document.getElementById('studentClassWrapper');
+            if (role === 'STUDENT') {
+                scWrapper.style.display = 'block';
+                clWrapper.style.display = 'block';
+            } else {
+                scWrapper.style.display = 'none';
+                clWrapper.style.display = 'none';
             }
+        }
 
-            const newId = store.users.length ? Math.max(...store.users.map(u => u.id)) + 1 : 1;
-            const now = new Date();
-            const timeStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0') + " " + String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+        async function handleCreateSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang lưu...</span>';
 
-            store.users.push({
-                id: newId,
-                username: username,
-                fullName: fullName,
-                email: email,
+            const role = document.getElementById('roleInput').value;
+            const classVal = document.getElementById('classIdSelect').value;
+
+            const payload = {
+                username: document.getElementById('usernameInput').value.trim(),
+                password: document.getElementById('passwordInput').value,
+                fullName: document.getElementById('fullNameInput').value.trim(),
+                email: document.getElementById('emailInput').value.trim(),
+                phone: document.getElementById('phoneInput').value.trim(),
                 role: role,
-                status: status,
-                studentCode: role === 'STUDENT' ? (studentCode || "-") : "-",
-                classCode: role === 'STUDENT' ? (classCode || "-") : "-",
-                faceEnrolled: false,
-                avatarUrl: "",
-                createdAt: timeStr
-            });
+                studentCode: role === 'STUDENT' ? document.getElementById('studentCodeInput').value.trim() : null,
+                classId: (role === 'STUDENT' && classVal) ? parseInt(classVal, 10) : null
+            };
 
-            Store.save(store);
-            alert("Tạo người dùng mới thành công!");
-            window.location.href = "list.html";
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    showToast('Đã thêm tài khoản thành công!');
+                    setTimeout(() => {
+                        location.href = 'list.html';
+                    }, 800);
+                } else {
+                    alert('Lỗi tạo tài khoản: ' + (result.message || 'Không thể tạo'));
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Lưu Tài Khoản Mới</span>';
+                }
+            } catch (err) {
+                alert('Lỗi kết nối máy chủ: ' + err.message);
+                btn.disabled = false;
+                btn.innerHTML = '<span>Lưu Tài Khoản Mới</span>';
+            }
         }
     </script>
 </body>

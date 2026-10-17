@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xóa Tài Khoản - EduFace LMS Admin</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#0068ff', 600: '#0054d1', 700: '#0043a8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    </style>
+</head>
+<body data-nav="students" class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
+
+    <!-- REUSABLE HEADER -->
+    <div id="admin-header"></div>
+
+    <div class="flex-1 flex min-h-[calc(100vh-65px)]">
+        <!-- REUSABLE SIDEBAR -->
+        <div id="admin-sidebar"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto max-w-3xl mx-auto w-full">
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
+                    <a href="../index.html" class="hover:text-blue-600 transition">Dashboard</a>
+                    <span>/</span>
+                    <a href="list.html" class="hover:text-blue-600 transition">Sinh viên &amp; Người dùng</a>
+                    <span>/</span>
+                    <span class="text-red-600 font-medium">Xác nhận xóa</span>
+                </div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Xóa Tài Khoản</h1>
+                <p class="text-xs text-slate-500 mt-1">Xác nhận xóa bỏ tài khoản người dùng và thông tin nhận diện khuôn mặt liên quan</p>
+            </div>
+
+            <!-- Delete Confirmation Card -->
+            <div class="bg-white border border-red-200 rounded-2xl shadow-sm overflow-hidden">
+                <div class="p-6 bg-red-50/50 border-b border-red-100 flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-red-600 shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-red-800">Cảnh báo: Hành động này không thể hoàn tác!</h2>
+                        <p class="text-xs text-red-700 mt-1 leading-relaxed">
+                            Khi bạn xóa tài khoản này, toàn bộ hồ sơ điểm danh, dữ liệu học tập và vector khuôn mặt Face AI (nếu có) sẽ bị xóa vĩnh viễn khỏi hệ thống.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Thông Tin Người Dùng</h3>
+
+                    <div id="loadingUser" class="py-8 text-center text-slate-400 text-xs">
+                        Đang nạp thông tin tài khoản...
+                    </div>
+
+                    <div id="userDetailsContent" class="hidden space-y-4">
+                        <div class="flex items-center space-x-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <img id="userAvatar" src="" alt="Avatar" class="w-14 h-14 rounded-full object-cover bg-slate-200 ring-2 ring-slate-200">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span id="userRoleBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">STUDENT</span>
+                                    <span id="userCodeBadge" class="text-xs font-mono font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded">--</span>
+                                </div>
+                                <h4 id="userFullName" class="text-base font-bold text-slate-800 mt-1">--</h4>
+                                <div class="text-xs text-slate-500 font-mono mt-0.5" id="userEmail">--</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-xs text-slate-600">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block mb-0.5">Trạng thái tài khoản:</span>
+                                <span id="userStatus" class="font-bold text-slate-800">ACTIVE</span>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block mb-0.5">eKYC Face AI:</span>
+                                <span id="userFaceStatus" class="font-bold text-emerald-600">Đã nạp 512D</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="pt-6 border-t border-slate-100 flex items-center justify-end space-x-3">
+                            <a href="list.html"
+                                class="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                                Hủy &amp; Quay lại danh sách
+                            </a>
+                            <button type="button" id="confirmDeleteBtn" onclick="executeDeleteUser()"
+                                class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <span>Xác Nhận Xóa Tài Khoản</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/admin-components.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!userId) {
+                alert('Không tìm thấy ID người dùng cần xóa!');
+                location.href = 'list.html';
+                return;
+            }
+            loadUserInfo(userId);
+        });
+
+        async function loadUserInfo(id) {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users`);
+                if (res.ok) {
+                    const result = await res.json();
+                    const users = result.data || [];
+                    const u = users.find(x => String(x.id) === String(id));
+                    if (!u) {
+                        document.getElementById('loadingUser').innerHTML = `
+                            <p class="text-red-500 font-semibold">Không tìm thấy tài khoản (ID: ${id})</p>
+                            <a href="list.html" class="inline-block mt-3 text-blue-600 underline">Quay lại danh sách</a>
+                        `;
+                        return;
+                    }
+
+                    document.getElementById('loadingUser').classList.add('hidden');
+                    document.getElementById('userDetailsContent').classList.remove('hidden');
+
+                    document.getElementById('userAvatar').src = u.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80';
+                    document.getElementById('userFullName').textContent = u.fullName || u.username;
+                    document.getElementById('userEmail').textContent = `${u.email || ''} • @${u.username}`;
+                    document.getElementById('userRoleBadge').textContent = u.role || 'STUDENT';
+                    document.getElementById('userCodeBadge').textContent = u.studentCode ? `MSSV: ${u.studentCode}` : `#UID-${u.id}`;
+                    document.getElementById('userStatus').textContent = u.status || 'ACTIVE';
+                    document.getElementById('userFaceStatus').textContent = u.faceRegistered ? 'Đã đăng ký vector 512D' : 'Chưa đăng ký';
+                    document.getElementById('userFaceStatus').className = u.faceRegistered ? 'font-bold text-emerald-600' : 'font-medium text-slate-500';
+                }
+            } catch (err) {
+                document.getElementById('loadingUser').innerHTML = `
+                    <p class="text-red-500">Lỗi nạp thông tin: ${err.message}</p>
+                `;
+            }
+        }
+
+        async function executeDeleteUser() {
+            const btn = document.getElementById('confirmDeleteBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Đang xóa...</span>';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    showToast('Đã xóa thành công tài khoản!');
+                    setTimeout(() => {
+                        location.href = 'list.html';
+                    }, 800);
+                } else {
+                    alert('Lỗi xóa tài khoản: ' + (result.message || 'Không thể xóa'));
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Xác Nhận Xóa Tài Khoản</span>';
+                }
+            } catch (e) {
+                alert('Lỗi kết nối máy chủ: ' + e.message);
+                btn.disabled = false;
+                btn.innerHTML = '<span>Xác Nhận Xóa Tài Khoản</span>';
+            }
+        }
+    </script>
+</body>
+</html>

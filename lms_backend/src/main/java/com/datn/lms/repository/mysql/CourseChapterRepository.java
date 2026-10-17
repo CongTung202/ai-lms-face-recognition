@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CourseChapterRepository extends JpaRepository<CourseChapter, Long> {
     List<CourseChapter> findByCourseIdOrderByOrderIndexAsc(Long courseId);
+    void deleteByCourseId(Long courseId);
 }

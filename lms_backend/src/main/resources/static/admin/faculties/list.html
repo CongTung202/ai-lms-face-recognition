@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Khoa Đào Tạo - EduFace LMS Admin</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#0068ff', 600: '#0054d1', 700: '#0043a8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    </style>
+</head>
+<body data-nav="faculties" class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
+
+    <!-- REUSABLE HEADER -->
+    <div id="admin-header"></div>
+
+    <div class="flex-1 flex min-h-[calc(100vh-65px)]">
+        <!-- REUSABLE SIDEBAR -->
+        <div id="admin-sidebar"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 p-6 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
+            <!-- Header & Action -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div>
+                    <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
+                        <a href="../index.html" class="hover:text-blue-600 transition">Dashboard</a>
+                        <span>/</span>
+                        <span class="text-slate-700 font-medium">Khoa đào tạo</span>
+                    </div>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">Quản Lý Khoa Đào Tạo</h1>
+                    <p class="text-xs text-slate-500 mt-1">Danh mục các viện / khoa học viện, cơ cấu ngành học và các lớp trực thuộc</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="create.html"
+                        class="inline-flex items-center px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>Thêm Khoa Mới</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                <div class="relative w-full sm:w-96">
+                    <input type="text" id="facultySearchInput" placeholder="Tìm theo tên khoa hoặc mã khoa..."
+                        oninput="filterFaculties()"
+                        class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl pl-9 pr-3 py-2 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+
+                <div class="flex items-center space-x-2 text-xs text-slate-500 shrink-0">
+                    <span>Tổng số:</span>
+                    <span id="filteredFacultiesCount" class="font-bold text-slate-800">0</span>
+                    <span>khoa</span>
+                </div>
+            </div>
+
+            <!-- Faculties Table -->
+            <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold border-b border-slate-200 tracking-wider">
+                            <tr>
+                                <th class="p-3.5 pl-6 whitespace-nowrap">Mã Khoa</th>
+                                <th class="p-3.5 whitespace-nowrap">Tên Khoa Đào Tạo</th>
+                                <th class="p-3.5 whitespace-nowrap">Mô Tả Chức Năng</th>
+                                <th class="p-3.5 whitespace-nowrap">Số Lớp Trực Thuộc</th>
+                                <th class="p-3.5 pr-6 text-right whitespace-nowrap">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="facultiesTableBody" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="5" class="py-16 text-center text-slate-400">
+                                    <svg class="w-8 h-8 mx-auto animate-spin text-blue-500 mb-3" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                    </svg>
+                                    <p>Đang tải danh sách khoa đào tạo...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/admin-components.js"></script>
+    <script>
+        let allFaculties = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFaculties();
+        });
+
+        async function loadFaculties() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/faculties`);
+                if (res.ok) {
+                    const result = await res.json();
+                    allFaculties = result.data || [];
+                    renderFaculties(allFaculties);
+                } else {
+                    document.getElementById('facultiesTableBody').innerHTML = `
+                        <tr><td colspan="5" class="py-12 text-center text-red-500 font-semibold">Lỗi tải dữ liệu khoa (HTTP ${res.status}).</td></tr>
+                    `;
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('facultiesTableBody').innerHTML = `
+                    <tr><td colspan="5" class="py-12 text-center text-red-500 font-semibold">Lỗi kết nối máy chủ.</td></tr>
+                `;
+            }
+        }
+
+        function filterFaculties() {
+            const q = (document.getElementById('facultySearchInput').value || '').toLowerCase().trim();
+            const filtered = allFaculties.filter(f => {
+                return !q ||
+                    (f.facultyName && f.facultyName.toLowerCase().includes(q)) ||
+                    (f.name && f.name.toLowerCase().includes(q)) ||
+                    (f.facultyCode && f.facultyCode.toLowerCase().includes(q));
+            });
+            renderFaculties(filtered);
+        }
+
+        function renderFaculties(faculties) {
+            const tbody = document.getElementById('facultiesTableBody');
+            document.getElementById('filteredFacultiesCount').textContent = faculties.length;
+
+            if (faculties.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-16 text-center text-slate-400">
+                            <p class="font-bold text-slate-700 text-sm">Không tìm thấy khoa đào tạo phù hợp</p>
+                            <p class="text-xs mt-1">Vui lòng điều chỉnh từ khóa tìm kiếm.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = faculties.map(f => {
+                const totalClasses = (f.classesCount !== undefined) ? f.classesCount : (f.totalClasses || 0);
+
+                return `
+                    <tr class="hover:bg-slate-50/80 transition group">
+                        <td class="p-3.5 pl-6 whitespace-nowrap">
+                            <span class="font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg text-xs border border-blue-200">
+                                ${escapeHtml(f.facultyCode)}
+                            </span>
+                        </td>
+                        <td class="p-3.5 whitespace-nowrap">
+                            <div class="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition">
+                                ${escapeHtml(f.facultyName || f.name)}
+                            </div>
+                        </td>
+                        <td class="p-3.5">
+                            <div class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                                ${escapeHtml(f.description || 'Chưa có mô tả chi tiết.')}
+                            </div>
+                        </td>
+                        <td class="p-3.5 whitespace-nowrap">
+                            <a href="../classes/list.html?facultyId=${f.id}" class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs transition" title="Xem danh sách lớp của khoa">
+                                <span>${totalClasses}</span>
+                                <span class="font-normal text-[11px]">lớp học →</span>
+                            </a>
+                        </td>
+                        <td class="p-3.5 pr-6 text-right whitespace-nowrap">
+                            <div class="flex items-center justify-end space-x-1.5">
+                                <a href="edit.html?id=${f.id}"
+                                    class="px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-semibold transition" title="Chỉnh sửa khoa">
+                                    Sửa
+                                </a>
+                                <a href="delete.html?id=${f.id}"
+                                    class="px-2.5 py-1 rounded-lg border border-red-200 bg-white hover:bg-red-50 text-red-600 font-semibold transition" title="Xóa khoa">
+                                    Xóa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+            }).join('');
+        }
+    </script>
+</body>
+</html>

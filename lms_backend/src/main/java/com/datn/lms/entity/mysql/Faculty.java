@@ -29,6 +29,9 @@ public class Faculty {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "majors", columnDefinition = "TEXT")
+    private String majors;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

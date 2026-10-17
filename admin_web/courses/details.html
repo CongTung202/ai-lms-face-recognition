@@ -3,188 +3,1085 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi Tiết Khóa Học &amp; Bài Giảng - LMS Admin</title>
+    <title>Cấu Trúc Khóa Học &amp; Xếp Buổi Học - EduFace LMS</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#0068ff',
+                            600: '#0054d1',
+                            700: '#0043a8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .drag-ghost {
+            opacity: 0.4;
+            transform: scale(0.99);
+        }
+        .drag-over {
+            border-color: #0068ff !important;
+            background-color: #eff6ff !important;
+        }
+        .cursor-grab {
+            cursor: grab;
+        }
+        .cursor-grab:active {
+            cursor: grabbing;
+        }
+        .sidebar-item-active {
+            background-color: #eff6ff;
+            color: #0068ff;
+            font-weight: 600;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen">
+<body class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
 
-    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
-        <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
-            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                    <h2 class="text-base sm:text-lg font-bold text-slate-100" id="courseHeading">Chi Tiết Khóa Học</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Xem cấu trúc chương mục, bài giảng video và thông số học phí PayOS</p>
+    <!-- ===================================================================== -->
+    <!-- 1. TOP HEADER / NAVBAR -->
+    <!-- ===================================================================== -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 lg:px-6 py-2.5 flex items-center justify-between shadow-sm">
+        <div class="flex items-center space-x-4">
+            <button id="sidebarToggleBtn" onclick="toggleSidebar()"
+                class="p-1.5 rounded-md hover:bg-slate-100 text-slate-600 focus:outline-none"
+                title="Đóng/Mở thanh điều hướng">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <a href="../index.html" class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-amber-400 flex items-center justify-center text-white font-black text-lg shadow-sm">
+                    10
                 </div>
-                <div class="flex items-center gap-2">
-                    <a href="list.html" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Quay lại danh sách</a>
-                    <a id="btnEditLink" href="#" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">Chỉnh sửa khóa học</a>
+                <div class="flex items-baseline space-x-1">
+                    <span class="text-xl font-bold tracking-tight text-slate-800">EduFace</span>
+                    <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">LMS</span>
                 </div>
+            </a>
+            <span class="text-slate-300">/</span>
+            <div class="hidden sm:flex items-center space-x-2 text-xs">
+                <a href="../index.html#courses" class="text-slate-500 hover:text-blue-600 font-medium">Khóa học</a>
+                <span class="text-slate-300">/</span>
+                <span class="font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded" id="topBreadcrumbId">Chi tiết &amp; Sắp xếp</span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <div class="hidden sm:flex items-center px-2.5 py-1 rounded-full text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                <span>Kéo thả sắp xếp: Bật</span>
             </div>
 
-            <div class="p-4 sm:p-6">
-                <!-- GRID DETAILS (Responsive 1 col mobile, 2 col tablet, 4 col desktop) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã khóa học</div>
-                        <div class="text-sm sm:text-base font-bold text-slate-100 mt-1" id="valCode">-</div>
-                    </div>
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4 sm:col-span-2">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tiêu đề khóa học</div>
-                        <div class="text-sm sm:text-base font-bold text-slate-100 mt-1" id="valTitle">-</div>
-                    </div>
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Môn học đào tạo</div>
-                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valSubject">-</div>
-                    </div>
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Giảng viên phụ trách</div>
-                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valLecturer">-</div>
-                    </div>
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Học phí bán PayOS</div>
-                        <div class="text-sm sm:text-base font-extrabold text-slate-100 mt-1" id="valPrice">0 VND</div>
-                    </div>
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trạng thái phát hành</div>
-                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valStatus">-</div>
-                    </div>
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3.5 sm:p-4">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Quy mô chương / bài</div>
-                        <div class="text-sm font-semibold text-slate-200 mt-1" id="valScale">0 chương, 0 bài</div>
-                    </div>
-                </div>
+            <a id="btnEditCourse" href="#"
+               class="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                <span>Sửa Thông Tin Khóa</span>
+            </a>
 
-                <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4 mb-6">
-                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Mô tả tổng quan khóa học:</div>
-                    <div id="valDescription" class="text-xs sm:text-sm text-slate-300 leading-relaxed">-</div>
-                </div>
+            <a href="../index.html#courses"
+               class="text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+                ← Danh Sách Khóa Học
+            </a>
 
-                <!-- CHAPTERS & LESSONS LIST -->
-                <div class="border-t border-slate-800 pt-5">
-                    <div class="flex items-center justify-between gap-3 mb-3">
-                        <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200">
-                            Cấu Trúc Chương Mục &amp; Bài Học
-                        </h3>
-                        <button type="button" class="inline-flex items-center px-3 py-1.5 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" onclick="addLessonMock()">Thêm bài học mới</button>
-                    </div>
-
-                    <div class="overflow-x-auto border border-slate-800 rounded-lg">
-                        <table class="w-full text-left text-xs sm:text-sm">
-                            <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-bold border-b border-slate-800">
-                                <tr>
-                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">STT</th>
-                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Tiêu đề bài học</th>
-                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Định dạng</th>
-                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Thời lượng / Trang</th>
-                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Trạng thái tài nguyên</th>
-                                    <th class="p-3 sm:p-3.5 whitespace-nowrap">Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="lessonsTableBody" class="divide-y divide-slate-800/80">
-                                <!-- Rendered dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="flex items-center space-x-2 pl-2 border-l border-slate-200">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+                    alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-slate-300 shadow-sm">
+                <div class="hidden xl:block text-left">
+                    <div class="text-xs font-semibold text-slate-800 leading-tight">NGUYỄN CÔNG TÙNG</div>
+                    <div class="text-[10px] text-slate-500">Quản trị viên</div>
                 </div>
             </div>
         </div>
-    </main>
+    </header>
 
-    <script src="../assets/js/store.js"></script>
+    <!-- ===================================================================== -->
+    <!-- 2. MAIN LAYOUT: SIDEBAR + CONTENT -->
+    <!-- ===================================================================== -->
+    <div class="flex flex-1 overflow-hidden">
+
+        <!-- SIDEBAR NAVIGATION (ALWAYS PRESERVED, NEVER DISAPPEARS) -->
+        <aside id="mainSidebar"
+            class="w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col justify-between transition-all duration-300 z-30">
+            <div class="py-4 overflow-y-auto flex-1">
+                <div class="px-3 space-y-1">
+                    <a href="../index.html"
+                        class="sidebar-nav-item flex items-center px-3 py-2.5 text-sm rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+                        <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                            </path>
+                        </svg>
+                        <span>Bảng điều khiển</span>
+                    </a>
+
+                    <a href="../index.html#courses"
+                        class="sidebar-nav-item sidebar-item-active flex items-center justify-between px-3 py-2.5 text-sm rounded-lg transition-colors">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                </path>
+                            </svg>
+                            <span>Khóa học &amp; Buổi học</span>
+                        </div>
+                        <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Đang xếp</span>
+                    </a>
+
+                    <a href="../index.html#students"
+                        class="sidebar-nav-item flex items-center justify-between px-3 py-2.5 text-sm rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                            <span>Học viên &amp; Điểm danh</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-200 px-3">
+                    <div class="px-3 text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">HỆ SINH THÁI CLOUD &amp; AI</div>
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 bg-slate-50">
+                            <span class="flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2.5"></span>
+                                Cloudinary CDN
+                            </span>
+                            <span class="text-[10px] font-semibold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-mono">dhefmthim</span>
+                        </div>
+                        <div class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 bg-slate-50">
+                            <span class="flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-indigo-500 mr-2.5"></span>
+                                Face AI Engine
+                            </span>
+                            <span class="text-[10px] font-semibold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-mono">Port 8001</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTTOM TAB: CÀI ĐẶT & HỒ SƠ eKYC (MOVED DOWN TO BOTTOM AS REQUESTED) -->
+            <div class="border-t border-slate-200 p-3 space-y-2 bg-slate-50/50">
+                <a href="../index.html#profile"
+                    class="sidebar-nav-item flex items-center px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-200/60 transition-colors">
+                    <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span>Cài đặt &amp; Hồ sơ eKYC</span>
+                </a>
+
+                <div class="pt-2 border-t border-slate-200/80 text-xs text-slate-500 flex items-center justify-between px-1">
+                    <span>LMS Spring Boot 3</span>
+                    <span class="font-mono text-[11px] text-emerald-600 font-semibold" id="systemClock">--:--:--</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA (LIGHT THEME) -->
+        <main class="flex-1 overflow-y-auto bg-[#f8fafc] p-4 sm:p-6 lg:p-8 space-y-6 max-w-6xl">
+            
+            <!-- COURSE OVERVIEW BANNER (LIGHT CARD) -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
+                <div class="flex items-start sm:items-center space-x-4">
+                    <img id="courseThumbnail" src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=160&auto=format&fit=crop&q=80"
+                         alt="Course Thumb" class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-slate-200 flex-shrink-0 bg-slate-50 shadow-2xs">
+                    <div>
+                        <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                            <span class="text-xs font-bold text-blue-600 font-mono" id="courseSlug">#...</span>
+                            <span id="courseStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                PUBLISHED
+                            </span>
+                            <div id="courseMajorsBadges" class="flex items-center space-x-1"></div>
+                        </div>
+                        <h1 class="text-lg sm:text-xl font-bold text-slate-900 mt-1" id="courseTitle">Đang tải thông tin khóa học...</h1>
+                        <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-3">
+                            <span id="courseStatsChapters" class="font-medium text-slate-700">0 Buổi học</span>
+                            <span>•</span>
+                            <span id="courseStatsLessons" class="font-medium text-slate-700">0 Bài giảng</span>
+                            <span>•</span>
+                            <span id="coursePriceTag" class="font-bold text-emerald-600">Miễn phí</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3 self-end md:self-center">
+                    <button type="button" onclick="openAddChapterModal()"
+                            class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-colors flex items-center space-x-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>+ Thêm Buổi Học</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MAIN SECTION: CHAPTERS & SESSIONS WITH DRAG & DROP -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-6 shadow-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-wide uppercase flex items-center space-x-2">
+                            <span>Cấu Trúc Chương Trình &amp; Kéo Xếp Buổi Học</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Kéo biểu tượng <span class="text-blue-600 font-bold">⠿</span> để sắp xếp lại thứ tự các buổi học hoặc bài giảng. Thứ tự được lưu tự động vào CSDL.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button type="button" onclick="openAddChapterModal()"
+                                class="px-3.5 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors">
+                            + Thêm Buổi Mới (Tự điền số)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Draggable Chapters Container -->
+                <div id="chaptersListContainer" class="space-y-4">
+                    <!-- Chapters populated dynamically -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODALS (LIGHT THEME) -->
+    <!-- ===================================================================== -->
+
+    <!-- MODAL: BUỔI HỌC (CHAPTER) -->
+    <div id="chapterModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-900" id="chapterModalTitle">Thêm Buổi Học Mới</h3>
+                <button type="button" onclick="closeChapterModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+            </div>
+            <form id="chapterForm" onsubmit="submitChapterForm(event)" class="space-y-4">
+                <input type="hidden" id="formChapterId">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tên buổi học *</label>
+                    <input type="text" id="formChapterTitle" required placeholder="vd: Buổi 1: Giới thiệu kiến trúc..."
+                           class="w-full text-xs px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Số thứ tự hiển thị (#)</label>
+                    <input type="number" id="formChapterOrderIndex" min="1" value="1"
+                           class="w-full text-xs px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 font-mono">
+                    <span class="text-[11px] text-slate-500 mt-1 block">Hệ thống tự động tính số thứ tự tiếp theo</span>
+                </div>
+                <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeChapterModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Hủy</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">Lưu Buổi Học</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: BÀI HỌC (LESSON) -->
+    <div id="lessonModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-900" id="lessonModalTitle">Thêm Bài Giảng Mới</h3>
+                <button type="button" onclick="closeLessonModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+            </div>
+            <form id="lessonForm" onsubmit="submitLessonForm(event)" class="space-y-4">
+                <input type="hidden" id="formLessonId">
+                <input type="hidden" id="formLessonChapterId">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tên bài giảng *</label>
+                    <input type="text" id="formLessonTitle" required placeholder="vd: Bài 1.1: Cấu trúc cơ sở dữ liệu..."
+                           class="w-full text-xs px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Loại bài học</label>
+                        <select id="formLessonType" class="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500">
+                            <option value="VIDEO">Video Bài giảng</option>
+                            <option value="DOCUMENT">Tài liệu đọc</option>
+                            <option value="QUIZ">Trắc nghiệm Quiz</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Thời lượng (Phút)</label>
+                        <input type="number" id="formLessonDuration" min="1" value="15"
+                               class="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Số thứ tự bài (#)</label>
+                    <input type="number" id="formLessonOrderIndex" min="1" value="1"
+                           class="w-full text-xs px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 font-mono">
+                </div>
+                <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeLessonModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Hủy</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">Lưu Bài Giảng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: XÁC NHẬN XÓA (DELETE) -->
+    <div id="deleteModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto border border-red-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-slate-900" id="deleteModalTitle">Xác nhận xóa?</h3>
+                <p class="text-xs text-slate-500 mt-1" id="deleteModalMessage">Dữ liệu sẽ bị xóa vĩnh viễn.</p>
+            </div>
+            <div class="flex items-center justify-center space-x-3 pt-2">
+                <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Hủy</button>
+                <button type="button" id="confirmDeleteBtn" class="px-5 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm">Xác nhận Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: XEM VIDEO HTML5 (CLOUDINARY) -->
+    <div id="videoModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-black border border-slate-800 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl flex flex-col">
+            <div class="px-5 py-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="text-sm font-bold text-white" id="videoModalTitle">Video Bài Giảng Cloudinary</span>
+                </div>
+                <button type="button" onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+            </div>
+            <div class="aspect-video bg-black flex items-center justify-center">
+                <video id="videoPlayer" controls autoplay class="w-full h-full max-h-[70vh]">
+                    Trình duyệt không hỗ trợ video HTML5.
+                </video>
+            </div>
+            <div class="px-5 py-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                <span>Cloudinary CDN Ready • H.264 MP4</span>
+                <a id="videoDownloadLink" href="#" target="_blank" class="text-blue-400 hover:underline">Mở link CDN gốc</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERLAY: UPLOAD VIDEO CLOUDINARY LOADING -->
+    <div id="videoUploadOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-100 animate-spin">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-base font-bold text-slate-900">Đang tải video lên Cloudinary CDN</h3>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed" id="uploadOverlayText">
+                    Đang truyền tải lên máy chủ Cloudinary (<code class="text-blue-600 font-bold">dhefmthim</code>)... Vui lòng giữ kết nối.
+                </p>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                <div class="bg-blue-600 h-2 rounded-full animate-pulse" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Video File Input -->
+    <input type="file" id="videoFileInput" accept="video/mp4,video/mkv,video/quicktime,video/webm" class="hidden" onchange="handleVideoFileSelected(event)">
+
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="fixed top-5 right-5 z-50 hidden bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg border border-slate-700 text-xs font-semibold transition">
+        <span id="toastMessage">Thông báo</span>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- JAVASCRIPT LOGIC -->
+    <!-- ===================================================================== -->
     <script>
-        let currentCourseId = null;
+        const API_BASE = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
+            ? 'http://localhost:8080'
+            : window.location.origin;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            currentCourseId = parseInt(getQueryParam('id'), 10);
-            if (!currentCourseId) {
-                alert("Thiếu tham số mã khóa học!");
-                window.location.href = "list.html";
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id');
+
+        let courseData = null;
+        let chapters = [];
+        let draggedChapterIdx = null;
+        let draggedLessonIdx = null;
+        let currentUploadLessonId = null;
+        let deleteActionCallback = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSystemClock();
+            if (!courseId) {
+                alert('Không tìm thấy mã khóa học!');
+                location.href = '../index.html#courses';
                 return;
             }
-
-            renderMasterLayout('courses', [
-                { label: 'Quản lý Khóa học', url: 'list.html' },
-                { label: 'Chi tiết' }
-            ]);
-
-            loadDetails();
+            document.getElementById('btnEditCourse').href = `edit.html?id=${courseId}`;
+            loadCourseDetail();
         });
 
-        function loadDetails() {
-            const store = Store.get();
-            const c = store.courses.find(x => x.id === currentCourseId);
-            if (!c) {
-                alert("Không tìm thấy khóa học!");
-                window.location.href = "list.html";
+        function initSystemClock() {
+            setInterval(() => {
+                const now = new Date();
+                const clock = document.getElementById('systemClock');
+                if (clock) clock.textContent = now.toLocaleTimeString('vi-VN');
+            }, 1000);
+        }
+
+        function toggleSidebar() {
+            const sb = document.getElementById('mainSidebar');
+            if (sb) sb.classList.toggle('hidden');
+        }
+
+        async function loadCourseDetail() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/courses/${courseId}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const result = await res.json();
+                courseData = result.data;
+                chapters = courseData.chapters || [];
+
+                renderCourseHeader();
+                renderChaptersList();
+            } catch (err) {
+                showToast('Lỗi nạp dữ liệu: ' + err.message);
+            }
+        }
+
+        function renderCourseHeader() {
+            document.getElementById('topBreadcrumbId').textContent = `Khóa #${courseData.id}`;
+            document.getElementById('courseTitle').textContent = courseData.title || 'Khóa học';
+            document.getElementById('courseSlug').textContent = `#${courseData.id} • ${courseData.slug || '-'}`;
+            if (courseData.thumbnailUrl) {
+                document.getElementById('courseThumbnail').src = courseData.thumbnailUrl;
+            }
+
+            const isPub = courseData.status === 'PUBLISHED';
+            const badge = document.getElementById('courseStatusBadge');
+            badge.textContent = courseData.status || 'DRAFT';
+            badge.className = isPub 
+                ? 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200'
+                : 'text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200';
+
+            const chapCount = chapters.length;
+            const lessonCount = courseData.lessonsCount || 0;
+            document.getElementById('courseStatsChapters').textContent = `${chapCount} Buổi học`;
+            document.getElementById('courseStatsLessons').textContent = `${lessonCount} Bài giảng`;
+
+            const priceTag = document.getElementById('coursePriceTag');
+            if (courseData.isFree) {
+                priceTag.textContent = 'Miễn phí';
+                priceTag.className = 'font-bold text-emerald-600';
+            } else {
+                priceTag.textContent = `${(courseData.price || 0).toLocaleString('vi-VN')} VND`;
+                priceTag.className = 'font-bold text-slate-800';
+            }
+
+            // Render major badges
+            const majorsContainer = document.getElementById('courseMajorsBadges');
+            if (majorsContainer) {
+                const majors = courseData.majors || [];
+                if (majors.length > 0) {
+                    majorsContainer.innerHTML = majors.map(m => {
+                        let colorCls = 'bg-slate-100 text-slate-700 border-slate-200';
+                        switch (m.majorCode) {
+                            case 'AI': colorCls = 'bg-purple-50 text-purple-700 border-purple-200'; break;
+                            case 'SE': colorCls = 'bg-teal-50 text-teal-700 border-teal-200'; break;
+                            case 'CNTT': colorCls = 'bg-blue-50 text-blue-700 border-blue-200'; break;
+                            case 'ATTT': colorCls = 'bg-rose-50 text-rose-700 border-rose-200'; break;
+                            case 'IOT': colorCls = 'bg-amber-50 text-amber-700 border-amber-200'; break;
+                            case 'KHMT': colorCls = 'bg-emerald-50 text-emerald-700 border-emerald-200'; break;
+                        }
+                        return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${colorCls}" title="${escapeHtml(m.name || m.majorCode)}">${m.majorCode} • ${escapeHtml(m.name)}</span>`;
+                    }).join(' ');
+                } else {
+                    majorsContainer.innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">Chung / Đại cương</span>`;
+                }
+            }
+        }
+
+        // =====================================================================
+        // RENDER CHAPTERS & LESSONS (LIGHT THEME + DRAG & DROP REORDER)
+        // =====================================================================
+        function renderChaptersList() {
+            const container = document.getElementById('chaptersListContainer');
+            if (!container) return;
+
+            if (chapters.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-slate-400 border border-dashed border-slate-300 rounded-xl bg-slate-50">
+                        <p class="text-xs">Khóa học chưa có buổi học nào.</p>
+                        <button type="button" onclick="openAddChapterModal()" class="mt-2 text-xs font-bold text-blue-600 hover:underline">
+                            + Thêm Buổi 1 ngay
+                        </button>
+                    </div>`;
                 return;
             }
 
-            document.getElementById("courseHeading").innerText = "Khóa Học: " + c.title;
-            document.getElementById("btnEditLink").href = "edit.html?id=" + c.id;
+            container.innerHTML = chapters.map((chap, cIdx) => {
+                const lessons = chap.lessons || [];
+                return `
+                <div class="chapter-card border border-slate-200 bg-white rounded-xl p-4 sm:p-5 space-y-4 shadow-xs transition hover:border-slate-300"
+                     draggable="true"
+                     ondragstart="handleChapterDragStart(event, ${cIdx})"
+                     ondragover="handleChapterDragOver(event, ${cIdx})"
+                     ondragleave="handleChapterDragLeave(event)"
+                     ondrop="handleChapterDrop(event, ${cIdx})"
+                     ondragend="handleChapterDragEnd(event)"
+                     id="chap-card-${cIdx}">
+                    
+                    <!-- Chapter Header & Drag Handle -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                        <div class="flex items-center space-x-3">
+                            <div class="cursor-grab text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50 transition select-none flex items-center space-x-1.5"
+                                 title="Giữ và kéo để đổi thứ tự Buổi học">
+                                <span class="text-base font-bold">⠿</span>
+                                <span class="text-[11px] font-mono font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Buổi #${chap.orderIndex || (cIdx + 1)}</span>
+                            </div>
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900">${escapeHtml(chap.title)}</h3>
+                        </div>
 
-            document.getElementById("valCode").innerText = c.code;
-            document.getElementById("valTitle").innerText = c.title;
-            document.getElementById("valSubject").innerText = c.subject;
-            document.getElementById("valLecturer").innerText = c.lecturer;
-            document.getElementById("valPrice").innerText = c.price.toLocaleString("vi-VN") + " VND";
-            document.getElementById("valStatus").innerHTML = c.status === 'PUBLISHED'
-                ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã xuất bản (Công khai)</span>`
-                : `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-950 border border-amber-700 text-amber-200">Bản nháp</span>`;
-            document.getElementById("valScale").innerText = c.chaptersCount + " chương, " + (c.lessonsCount || (c.chaptersCount * 3)) + " bài";
-            document.getElementById("valDescription").innerText = c.description || "Chưa có mô tả chi tiết.";
+                        <div class="flex items-center space-x-2 self-end sm:self-center">
+                            <button type="button" onclick="openAddLessonModal(${chap.id}, '${escapeJs(chap.title)}', ${lessons.length + 1}, ${chap.orderIndex || (cIdx + 1)})"
+                                    class="px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-md transition shadow-2xs">
+                                + Thêm Bài
+                            </button>
+                            <button type="button" onclick="openEditChapterModal(${chap.id}, '${escapeJs(chap.title)}', ${chap.orderIndex || (cIdx + 1)})"
+                                    class="px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 bg-white border border-slate-200 rounded-md transition">
+                                Sửa
+                            </button>
+                            <button type="button" onclick="promptDeleteChapter(${chap.id}, '${escapeJs(chap.title)}')"
+                                    class="px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50 bg-white border border-red-200 rounded-md transition">
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
 
-            renderLessons();
+                    <!-- Lessons in this session (Sub-draggable) -->
+                    <div class="space-y-2.5 pl-2 sm:pl-4 border-l-2 border-blue-400">
+                        ${lessons.length === 0 ? `
+                            <div class="p-3 text-xs text-slate-500 italic bg-slate-50 rounded-lg border border-slate-200">
+                                Buổi học này chưa có bài giảng. Bấm "+ Thêm Bài" để khởi tạo video hoặc tài liệu.
+                            </div>
+                        ` : lessons.map((les, lIdx) => {
+                            const hasVideo = les.videoAsset && les.videoAsset.videoUrl;
+                            return `
+                            <div class="lesson-row flex flex-col md:flex-row md:items-center justify-between p-3 bg-slate-50/70 border border-slate-200 rounded-xl gap-3 transition hover:bg-white hover:border-slate-300 shadow-2xs"
+                                 draggable="true"
+                                 ondragstart="handleLessonDragStart(event, ${cIdx}, ${lIdx})"
+                                 ondragover="handleLessonDragOver(event, ${cIdx}, ${lIdx})"
+                                 ondragleave="handleLessonDragLeave(event)"
+                                 ondrop="handleLessonDrop(event, ${cIdx}, ${lIdx})"
+                                 ondragend="handleLessonDragEnd(event)"
+                                 id="les-card-${cIdx}-${lIdx}">
+                                
+                                <div class="flex items-start space-x-3">
+                                    <span class="cursor-grab text-slate-400 hover:text-blue-600 select-none text-sm font-bold pt-0.5 px-0.5" title="Kéo xếp thứ tự bài học">⠿</span>
+                                    <div class="w-7 h-7 rounded-lg ${hasVideo ? 'bg-blue-100 text-blue-600' : 'bg-slate-200 text-slate-500'} flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
+                                        ${les.lessonType === 'QUIZ' ? '?' : (les.lessonType === 'DOCUMENT' ? '📄' : '▶')}
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-xs font-bold text-slate-900">${escapeHtml(les.title)}</span>
+                                            <span class="px-1.5 py-0.2 rounded text-[10px] font-semibold ${les.lessonType === 'VIDEO' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}">
+                                                ${les.lessonType || 'VIDEO'}
+                                            </span>
+                                        </div>
+                                        <div class="text-[11px] text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
+                                            <span>Thời lượng: ${les.durationSeconds ? Math.floor(les.durationSeconds / 60) + ' phút' : '15 phút'}</span>
+                                            ${hasVideo ? `
+                                                <span>•</span>
+                                                <span class="text-emerald-600 font-semibold flex items-center">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>
+                                                    Cloudinary CDN Ready
+                                                </span>
+                                            ` : `
+                                                <span>•</span>
+                                                <span class="text-amber-600 font-medium italic">Chưa upload video</span>
+                                            `}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons: Video & Edit/Delete -->
+                                <div class="flex flex-wrap items-center gap-1.5 self-end md:self-center">
+                                    ${hasVideo ? `
+                                        <button type="button" onclick="playVideo('${escapeJs(les.title)}', '${les.videoAsset.videoUrl}')"
+                                                class="px-2.5 py-1 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition shadow-2xs flex items-center space-x-1">
+                                            <span>▶ Phát Video</span>
+                                        </button>
+                                        <button type="button" onclick="triggerUploadVideo(${les.id})"
+                                                class="px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 bg-white border border-slate-200 rounded-md transition" title="Đổi video khác">
+                                            Đổi Video
+                                        </button>
+                                        <button type="button" onclick="promptDeleteVideo(${les.id}, '${escapeJs(les.title)}')"
+                                                class="px-2 py-1 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-md transition" title="Xóa bỏ video">
+                                            Xóa Video
+                                        </button>
+                                    ` : `
+                                        <button type="button" onclick="triggerUploadVideo(${les.id})"
+                                                class="px-2.5 py-1 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition shadow-2xs flex items-center space-x-1">
+                                            <span>+ Upload Video</span>
+                                        </button>
+                                    `}
+                                    <button type="button" onclick="openEditLessonModal(${les.id}, ${chap.id}, '${escapeJs(les.title)}', '${les.lessonType || 'VIDEO'}', ${les.durationSeconds || 900}, ${les.orderIndex || 1})"
+                                            class="px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 bg-white border border-slate-200 rounded-md transition">
+                                        Sửa
+                                    </button>
+                                    <button type="button" onclick="promptDeleteLesson(${les.id}, '${escapeJs(les.title)}')"
+                                            class="px-2 py-1 text-xs font-semibold text-red-600 bg-white border border-red-200 hover:bg-red-50 rounded-md transition">
+                                        Xóa
+                                    </button>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+            }).join('');
         }
 
-        function renderLessons() {
-            const tbody = document.getElementById("lessonsTableBody");
-            tbody.innerHTML = `
-                <tr class="hover:bg-slate-800/40 transition-colors">
-                    <td class="p-3 sm:p-3.5 font-bold text-slate-300">1</td>
-                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">Bài 1: Giới thiệu kiến trúc tổng quan &amp; Khởi tạo dự án</td>
-                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-950 border border-blue-700 text-blue-200">VIDEO MP4</span></td>
-                    <td class="p-3 sm:p-3.5 text-slate-300">25 phút (1.500 giây)</td>
-                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã nén chuẩn 720p H.264</span></td>
-                    <td class="p-3 sm:p-3.5"><a href="../videos/details.html?id=1" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Mở video</a></td>
-                </tr>
-                <tr class="hover:bg-slate-800/40 transition-colors">
-                    <td class="p-3 sm:p-3.5 font-bold text-slate-300">2</td>
-                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">Bài 2: Thiết kế Cơ sở Dữ liệu &amp; Thực hành JPA Hibernate</td>
-                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-950 border border-blue-700 text-blue-200">VIDEO MP4</span></td>
-                    <td class="p-3 sm:p-3.5 text-slate-300">40 phút (2.420 giây)</td>
-                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã phát Cloudinary CDN</span></td>
-                    <td class="p-3 sm:p-3.5"><a href="../videos/details.html?id=2" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Mở video</a></td>
-                </tr>
-                <tr class="hover:bg-slate-800/40 transition-colors">
-                    <td class="p-3 sm:p-3.5 font-bold text-slate-300">3</td>
-                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">Bài 3: Tài liệu Giáo trình Chuẩn hóa 3NF &amp; Hệ thống câu hỏi</td>
-                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">TÀI LIỆU PDF</span></td>
-                    <td class="p-3 sm:p-3.5 text-slate-300">45 trang</td>
-                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã nạp vào MongoDB RAG</span></td>
-                    <td class="p-3 sm:p-3.5"><a href="../documents/details.html?id=1" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Xem giáo trình</a></td>
-                </tr>
-            `;
+        // =====================================================================
+        // CHAPTER DRAG & DROP HANDLERS WITH LIVE REORDER API
+        // =====================================================================
+        function handleChapterDragStart(e, idx) {
+            e.stopPropagation();
+            draggedChapterIdx = idx;
+            e.target.classList.add('drag-ghost');
+            e.dataTransfer.effectAllowed = 'move';
         }
 
-        function addLessonMock() {
-            const name = prompt("Nhập tiêu đề bài học mới cần bổ sung:");
-            if (name && name.trim()) {
-                const tbody = document.getElementById("lessonsTableBody");
-                const rowCount = tbody.children.length + 1;
-                const tr = document.createElement("tr");
-                tr.className = "hover:bg-slate-800/40 transition-colors";
-                tr.innerHTML = `
-                    <td class="p-3 sm:p-3.5 font-bold text-slate-300">${rowCount}</td>
-                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">${escapeHtml(name.trim())}</td>
-                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-950 border border-blue-700 text-blue-200">VIDEO MP4</span></td>
-                    <td class="p-3 sm:p-3.5 text-slate-300">20 phút (1.200 giây)</td>
-                    <td class="p-3 sm:p-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">Chờ tải lên tệp video</span></td>
-                    <td class="p-3 sm:p-3.5"><a href="../videos/create.html" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Gán video</a></td>
-                `;
-                tbody.appendChild(tr);
-                showToast("Đã bổ sung bài học mới vào khóa học!");
+        function handleChapterDragOver(e, idx) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (draggedChapterIdx === null || draggedChapterIdx === idx) return;
+            const el = document.getElementById(`chap-card-${idx}`);
+            if (el) el.classList.add('drag-over');
+        }
+
+        function handleChapterDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        async function handleChapterDrop(e, targetIdx) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.remove('drag-over');
+
+            if (draggedChapterIdx !== null && draggedChapterIdx !== targetIdx) {
+                const movedChapter = chapters.splice(draggedChapterIdx, 1)[0];
+                chapters.splice(targetIdx, 0, movedChapter);
+
+                // Re-calculate orderIndex
+                const reorderPayload = chapters.map((ch, idx) => {
+                    ch.orderIndex = idx + 1;
+                    return { id: ch.id, orderIndex: ch.orderIndex };
+                });
+
+                renderChaptersList();
+                showToast(`Đang lưu thứ tự mới của các Buổi học...`);
+
+                // Call Reorder API
+                try {
+                    await fetch(`${API_BASE}/api/admin/chapters/reorder`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(reorderPayload)
+                    });
+                    showToast(`Đã lưu thứ tự Buổi học vào CSDL thành công!`);
+                } catch (err) {
+                    showToast('Lỗi lưu thứ tự: ' + err.message);
+                }
             }
+            draggedChapterIdx = null;
+        }
+
+        function handleChapterDragEnd(e) {
+            e.target.classList.remove('drag-ghost');
+            document.querySelectorAll('.chapter-card').forEach(el => el.classList.remove('drag-over'));
+            draggedChapterIdx = null;
+        }
+
+        // =====================================================================
+        // LESSON DRAG & DROP HANDLERS WITH LIVE REORDER API
+        // =====================================================================
+        function handleLessonDragStart(e, cIdx, lIdx) {
+            e.stopPropagation();
+            draggedLessonIdx = { chapIndex: cIdx, lessonIndex: lIdx };
+            e.target.classList.add('drag-ghost');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleLessonDragOver(e, cIdx, lIdx) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!draggedLessonIdx) return;
+            const el = document.getElementById(`les-card-${cIdx}-${lIdx}`);
+            if (el) el.classList.add('drag-over');
+        }
+
+        function handleLessonDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        async function handleLessonDrop(e, targetCIdx, targetLIdx) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.remove('drag-over');
+
+            if (draggedLessonIdx) {
+                const srcC = draggedLessonIdx.chapIndex;
+                const srcL = draggedLessonIdx.lessonIndex;
+
+                if (srcC === targetCIdx && srcL !== targetLIdx) {
+                    const movedLesson = chapters[srcC].lessons.splice(srcL, 1)[0];
+                    chapters[targetCIdx].lessons.splice(targetLIdx, 0, movedLesson);
+
+                    const reorderPayload = chapters[targetCIdx].lessons.map((l, idx) => {
+                        l.orderIndex = idx + 1;
+                        return { id: l.id, orderIndex: l.orderIndex, chapterId: chapters[targetCIdx].id };
+                    });
+
+                    renderChaptersList();
+                    showToast('Đang lưu thứ tự bài học...');
+
+                    try {
+                        await fetch(`${API_BASE}/api/admin/lessons/reorder`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(reorderPayload)
+                        });
+                        showToast('Đã lưu thứ tự bài giảng thành công!');
+                    } catch (err) {
+                        showToast('Lỗi lưu thứ tự: ' + err.message);
+                    }
+                }
+            }
+            draggedLessonIdx = null;
+        }
+
+        function handleLessonDragEnd(e) {
+            e.target.classList.remove('drag-ghost');
+            document.querySelectorAll('.lesson-row').forEach(el => el.classList.remove('drag-over'));
+            draggedLessonIdx = null;
+        }
+
+        // =====================================================================
+        // CHAPTER MODAL & CRUD
+        // =====================================================================
+        function openAddChapterModal() {
+            document.getElementById('chapterForm').reset();
+            document.getElementById('formChapterId').value = '';
+            document.getElementById('chapterModalTitle').textContent = 'Thêm Buổi Học Mới';
+
+            // AUTO-CALCULATE ORDER & AUTO-FILL TITLE
+            const nextOrder = chapters.length + 1;
+            document.getElementById('formChapterOrderIndex').value = nextOrder;
+            document.getElementById('formChapterTitle').value = `Buổi ${nextOrder}: `;
+            document.getElementById('chapterModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('formChapterTitle').focus(), 100);
+        }
+
+        function openEditChapterModal(id, title, orderIndex) {
+            document.getElementById('formChapterId').value = id;
+            document.getElementById('formChapterTitle').value = title;
+            document.getElementById('formChapterOrderIndex').value = orderIndex;
+            document.getElementById('chapterModalTitle').textContent = `Sửa Buổi Học #${id}`;
+            document.getElementById('chapterModal').classList.remove('hidden');
+        }
+
+        function closeChapterModal() {
+            document.getElementById('chapterModal').classList.add('hidden');
+        }
+
+        async function submitChapterForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('formChapterId').value;
+            const title = document.getElementById('formChapterTitle').value.trim();
+            const orderIndex = parseInt(document.getElementById('formChapterOrderIndex').value, 10) || 1;
+
+            const isEdit = !!id;
+            const url = isEdit ? `${API_BASE}/api/admin/chapters/${id}` : `${API_BASE}/api/admin/chapters`;
+            const method = isEdit ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        courseId: parseInt(courseId, 10),
+                        title: title,
+                        orderIndex: orderIndex
+                    })
+                });
+                if (res.ok) {
+                    showToast(isEdit ? 'Cập nhật buổi học thành công!' : 'Thêm buổi học thành công!');
+                    closeChapterModal();
+                    loadCourseDetail();
+                } else {
+                    const err = await res.json();
+                    showToast('Lỗi: ' + (err.message || 'Không thể lưu buổi học'));
+                }
+            } catch (err) {
+                showToast('Lỗi mạng: ' + err.message);
+            }
+        }
+
+        function promptDeleteChapter(id, title) {
+            openDeleteModal(
+                'Xóa Buổi Học Này?',
+                `Buổi học <strong>"${escapeHtml(title)}"</strong> và toàn bộ bài học bên trong sẽ bị xóa.`,
+                async () => {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/admin/chapters/${id}`, { method: 'DELETE' });
+                        if (res.ok) {
+                            showToast('Đã xóa buổi học!');
+                            closeDeleteModal();
+                            loadCourseDetail();
+                        } else {
+                            const err = await res.json();
+                            showToast('Lỗi: ' + err.message);
+                        }
+                    } catch (e) {
+                        showToast('Lỗi mạng: ' + e.message);
+                    }
+                }
+            );
+        }
+
+        // =====================================================================
+        // LESSON MODAL & CRUD
+        // =====================================================================
+        function openAddLessonModal(chapterId, chapterTitle, nextLessonOrder, chapOrder) {
+            document.getElementById('lessonForm').reset();
+            document.getElementById('formLessonId').value = '';
+            document.getElementById('formLessonChapterId').value = chapterId;
+            document.getElementById('lessonModalTitle').textContent = `Thêm Bài Giảng vào ${chapterTitle}`;
+
+            // AUTO-FILL LESSON ORDER & TITLE
+            document.getElementById('formLessonOrderIndex').value = nextLessonOrder || 1;
+            document.getElementById('formLessonTitle').value = `Bài ${chapOrder || 1}.${nextLessonOrder || 1}: `;
+            document.getElementById('lessonModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('formLessonTitle').focus(), 100);
+        }
+
+        function openEditLessonModal(id, chapterId, title, type, durationSeconds, orderIndex) {
+            document.getElementById('formLessonId').value = id;
+            document.getElementById('formLessonChapterId').value = chapterId;
+            document.getElementById('formLessonTitle').value = title;
+            document.getElementById('formLessonType').value = type || 'VIDEO';
+            document.getElementById('formLessonDuration').value = durationSeconds ? Math.floor(durationSeconds / 60) : 15;
+            document.getElementById('formLessonOrderIndex').value = orderIndex || 1;
+            document.getElementById('lessonModalTitle').textContent = `Sửa Bài Giảng #${id}`;
+            document.getElementById('lessonModal').classList.remove('hidden');
+        }
+
+        function closeLessonModal() {
+            document.getElementById('lessonModal').classList.add('hidden');
+        }
+
+        async function submitLessonForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('formLessonId').value;
+            const chapterId = document.getElementById('formLessonChapterId').value;
+            const title = document.getElementById('formLessonTitle').value.trim();
+            const type = document.getElementById('formLessonType').value;
+            const durationMin = parseInt(document.getElementById('formLessonDuration').value, 10) || 15;
+            const orderIndex = parseInt(document.getElementById('formLessonOrderIndex').value, 10) || 1;
+
+            const isEdit = !!id;
+            const url = isEdit ? `${API_BASE}/api/admin/lessons/${id}` : `${API_BASE}/api/admin/lessons`;
+            const method = isEdit ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chapterId: parseInt(chapterId, 10),
+                        title: title,
+                        lessonType: type,
+                        durationSeconds: durationMin * 60,
+                        orderIndex: orderIndex
+                    })
+                });
+                if (res.ok) {
+                    showToast(isEdit ? 'Cập nhật bài giảng thành công!' : 'Thêm bài giảng thành công!');
+                    closeLessonModal();
+                    loadCourseDetail();
+                } else {
+                    const err = await res.json();
+                    showToast('Lỗi: ' + (err.message || 'Không thể lưu bài học'));
+                }
+            } catch (err) {
+                showToast('Lỗi mạng: ' + err.message);
+            }
+        }
+
+        function promptDeleteLesson(id, title) {
+            openDeleteModal(
+                'Xóa Bài Giảng Này?',
+                `Bài giảng <strong>"${escapeHtml(title)}"</strong> và video asset liên quan sẽ bị xóa hoàn toàn.`,
+                async () => {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/admin/lessons/${id}`, { method: 'DELETE' });
+                        if (res.ok) {
+                            showToast('Đã xóa bài giảng!');
+                            closeDeleteModal();
+                            loadCourseDetail();
+                        } else {
+                            const err = await res.json();
+                            showToast('Lỗi: ' + err.message);
+                        }
+                    } catch (e) {
+                        showToast('Lỗi mạng: ' + e.message);
+                    }
+                }
+            );
+        }
+
+        // =====================================================================
+        // VIDEO MANAGEMENT: UPLOAD & DELETE (CLOUDINARY CDN)
+        // =====================================================================
+        function triggerUploadVideo(lessonId) {
+            currentUploadLessonId = lessonId;
+            const input = document.getElementById('videoFileInput');
+            input.value = '';
+            input.click();
+        }
+
+        async function handleVideoFileSelected(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file || !currentUploadLessonId) return;
+
+            const overlay = document.getElementById('videoUploadOverlay');
+            const overlayText = document.getElementById('uploadOverlayText');
+            overlayText.innerHTML = `Đang nén file <strong>"${escapeHtml(file.name)}"</strong> (${(file.size / (1024 * 1024)).toFixed(1)} MB) và truyền tải lên máy chủ Cloudinary CDN (<code class="text-blue-600 font-bold">dhefmthim</code>)...<br>Vui lòng không tắt hoặc tải lại trang!`;
+            overlay.classList.remove('hidden');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/lessons/${currentUploadLessonId}/video`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await res.json();
+                overlay.classList.add('hidden');
+                if (res.ok) {
+                    showToast('Tải lên và đồng bộ video Cloudinary CDN thành công!');
+                    loadCourseDetail();
+                } else {
+                    showToast('Lỗi upload: ' + (result.message || 'Không thể upload video'));
+                }
+            } catch (err) {
+                overlay.classList.add('hidden');
+                showToast('Lỗi mạng khi upload video: ' + err.message);
+            } finally {
+                currentUploadLessonId = null;
+            }
+        }
+
+        function promptDeleteVideo(lessonId, lessonTitle) {
+            openDeleteModal(
+                'Gỡ Bỏ Video Bài Giảng?',
+                `Video của bài học <strong>"${escapeHtml(lessonTitle)}"</strong> sẽ bị gỡ bỏ khỏi Cloudinary CDN. Trạng thái bài học sẽ trở về "Chưa upload video".`,
+                async () => {
+                    try {
+                        const res = await fetch(`${API_BASE}/api/admin/lessons/${lessonId}/video`, { method: 'DELETE' });
+                        if (res.ok) {
+                            showToast('Đã gỡ bỏ video khỏi bài học!');
+                            closeDeleteModal();
+                            loadCourseDetail();
+                        } else {
+                            const err = await res.json();
+                            showToast('Lỗi: ' + err.message);
+                        }
+                    } catch (e) {
+                        showToast('Lỗi mạng: ' + e.message);
+                    }
+                }
+            );
+        }
+
+        // =====================================================================
+        // VIDEO PLAYER MODAL (HTML5)
+        // =====================================================================
+        function playVideo(title, url) {
+            document.getElementById('videoModalTitle').textContent = title;
+            const player = document.getElementById('videoPlayer');
+            player.src = url;
+            document.getElementById('videoDownloadLink').href = url;
+            document.getElementById('videoModal').classList.remove('hidden');
+        }
+
+        function closeVideoModal() {
+            const player = document.getElementById('videoPlayer');
+            player.pause();
+            player.src = '';
+            document.getElementById('videoModal').classList.add('hidden');
+        }
+
+        // =====================================================================
+        // UNIVERSAL DELETE CONFIRMATION MODAL HELPER
+        // =====================================================================
+        function openDeleteModal(title, htmlMessage, onConfirm) {
+            document.getElementById('deleteModalTitle').textContent = title;
+            document.getElementById('deleteModalMessage').innerHTML = htmlMessage;
+            deleteActionCallback = onConfirm;
+            document.getElementById('confirmDeleteBtn').onclick = () => {
+                if (typeof deleteActionCallback === 'function') deleteActionCallback();
+            };
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            deleteActionCallback = null;
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toastNotification');
+            const m = document.getElementById('toastMessage');
+            m.textContent = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3500);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+
+        function escapeJs(str) {
+            if (!str) return '';
+            return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
         }
     </script>
 </body>

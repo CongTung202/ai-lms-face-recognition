@@ -1,17 +1,30 @@
 @echo off
-chcp 65001 >nul
-title Python Face AI Microservice - ArcFace 512D (Port 8001)
+title Python Face AI Microservice - ArcFace 512D [Port 8001]
 setlocal enabledelayedexpansion
 
 cd /d "%~dp0"
 
 echo ==============================================================================
-echo        DỊCH VỤ NHẬN DIỆN KHUÔN MẶT & GIÁM SÁT THI (PYTHON FASTAPI)
+echo        DICH VU NHAN DIEN KHUON MAT VA GIAM SAT THI [PYTHON FASTAPI]
 echo ==============================================================================
 
-:: 1. Tự động nạp biến môi trường từ .env
+:: 1. Tu dong kiem tra va giai phong cong 8001 neu dang bi chiem dung
+set "PORT_8001_PID="
+for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":8001" ^| findstr "LISTENING"') do (
+    set "PORT_8001_PID=%%P"
+)
+if defined PORT_8001_PID (
+    echo [!] Phat hien tien trinh cu dang chiem cong 8001 PID !PORT_8001_PID!
+    echo [*] Dang giai phong cong 8001 de khoi dong lai dich vu...
+    taskkill /F /PID !PORT_8001_PID! >nul 2>&1
+    ping 127.0.0.1 -n 2 >nul
+    echo [v] Da giai phong cong 8001 thanh cong.
+    echo.
+)
+
+:: 2. Tu dong nap bien moi truong tu .env
 if exist "%~dp0..\.env" (
-    echo [i] Đang nạp cấu hình bảo mật từ: %~dp0..\.env
+    echo [i] Dang nap cau hinh bao mat tu: %~dp0..\.env
     for /f "usebackq tokens=1,* delims==" %%A in ("%~dp0..\.env") do (
         set "line=%%A"
         if not "!line:~0,1!"=="#" (
@@ -20,7 +33,7 @@ if exist "%~dp0..\.env" (
     )
 )
 
-:: 2. Kiểm tra Python
+:: 3. Kiem tra Python
 set "PY_CMD=python"
 if exist "%~dp0.venv\Scripts\python.exe" (
     set "PY_CMD=%~dp0.venv\Scripts\python.exe"
@@ -28,28 +41,28 @@ if exist "%~dp0.venv\Scripts\python.exe" (
     set "PY_CMD=%~dp0venv\Scripts\python.exe"
 )
 
-:: 3. Kiểm tra mô hình AI YuNet ONNX
+:: 4. Kiem tra mo hinh AI YuNet ONNX
 if not exist "%~dp0data\models\face_detection_yunet.onnx" (
-    echo [!] Chưa tìm thấy mô hình YuNet. Đang tự động tải về...
+    echo [!] Chua tim thay mo hinh YuNet. Dang tu dong tai ve...
     %PY_CMD% download_models.py
 )
 
 echo ------------------------------------------------------------------------------
-echo [THÔNG SỐ MÔ HÌNH THỊ GIÁC AI]:
-echo - Thuật toán phát hiện : OpenCV YuNet ONNX (Face Detection)
-echo - Vector đặc trưng     : ArcFace ResNet100 512 Chiều
-echo - Kiểm tra góc 3D      : 3D Head Pose (Pitch, Yaw, Roll)
-echo - Chống giả mạo        : Anti-Spoofing Liveness Detection
-echo - Lưu trữ CDN ảnh      : Cloudinary (Thư mục: lms_datn/faces)
+echo [THONG SO MO HINH THI GIAC AI]:
+echo - Thuat toan phat hien : OpenCV YuNet ONNX [Face Detection]
+echo - Vector dac trung     : ArcFace ResNet100 512 Chieu
+echo - Kiem tra goc 3D      : 3D Head Pose [Pitch, Yaw, Roll]
+echo - Chong gia mao        : Anti-Spoofing Liveness Detection
+echo - Luu tru CDN anh      : Cloudinary [Thu muc: lms_datn/faces]
 echo.
-echo [ĐỊA CHỈ TRUY CẬP DỊCH VỤ AI]:
-echo - Dịch vụ API gốc      : http://localhost:8001
-echo - Tài liệu Swagger UI  : http://localhost:8001/docs
-echo - Endpoint Đăng ký     : http://localhost:8001/api/v1/face/enroll
-echo - Endpoint Đối soát    : http://localhost:8001/api/v1/face/verify
+echo [DIA CHI TRUY CAP DICH VU AI]:
+echo - Dich vu API goc      : http://localhost:8001
+echo - Tai lieu Swagger UI  : http://localhost:8001/docs
+echo - Endpoint Dang ky     : http://localhost:8001/api/v1/face/enroll
+echo - Endpoint Doi soat    : http://localhost:8001/api/v1/face/verify
 echo - Endpoint Head-Pose   : http://localhost:8001/api/v1/face/head-pose
 echo ==============================================================================
-echo [*] Đang khởi chạy Uvicorn server trên cổng 8001...
+echo [*] Dang khoi chay Uvicorn server tren cong 8001...
 echo.
 
 %PY_CMD% -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload

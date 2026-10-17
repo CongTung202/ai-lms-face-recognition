@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface VideoAssetRepository extends JpaRepository<VideoAsset, Long> {
     Optional<VideoAsset> findByLessonId(Long lessonId);
+    void deleteByLessonId(Long lessonId);
 }

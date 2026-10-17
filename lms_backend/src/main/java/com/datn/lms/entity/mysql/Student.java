@@ -32,7 +32,10 @@ public class Student {
     @Column(name = "class_id", nullable = false)
     private Long classId;
 
-    @Column(name = "major_id", nullable = false)
+    @Column(name = "faculty_id")
+    private Long facultyId;
+
+    @Column(name = "major_id")
     private Long majorId;
 
     @Column(name = "date_of_birth")
