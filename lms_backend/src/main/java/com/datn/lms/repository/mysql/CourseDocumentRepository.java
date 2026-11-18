@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface CourseDocumentRepository extends JpaRepository<CourseDocument, Long> {
     List<CourseDocument> findByCourseId(Long courseId);
+    List<CourseDocument> findByLessonId(Long lessonId);
     Optional<CourseDocument> findByMongoDocId(String mongoDocId);
     void deleteByCourseId(Long courseId);
 }

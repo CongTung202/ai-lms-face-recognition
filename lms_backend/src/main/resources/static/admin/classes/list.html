@@ -1,282 +1,1117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Lớp Học - EduFace LMS Admin</title>
-    <!-- Google Fonts Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS v3 Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#0068ff', 600: '#0054d1', 700: '#0043a8' }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quản Lý Lớp Học &amp; TKB — Trường Đại Học Nguyễn Trãi (NTU)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg: #f6fbfe;
+    --surface: #ffffff;
+    --tint: #e5f7ff;
+    --ink: #0b2540;
+    --ink-2: #163a5c;
+    --sky: #33ccff;
+    --sky-deep: #0679a8;
+    --ntu-blue: #00539F;
+    --ntu-red: #DA291C;
+    --line: rgba(11,37,64,.08);
+    --muted: #55677c;
+    --ok: #0f9d76;
+    --ok-bg: #e3f7f0;
+    --warn: #b26a00;
+    --warn-bg: #fff4e0;
+    --danger: #d6455d;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    --ease: cubic-bezier(.2,.7,.1,1);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { zoom: 0.85; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  svg { width: 18px; height: 18px; stroke-width: 1.8; flex-shrink: 0; }
+  em { font-style: italic; color: var(--sky-deep); }
+  .serif { font-family: var(--serif); }
+  .app { display: flex; min-height: 100vh; }
+
+  /* ambient drift orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: .45;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .orb.a { width: 420px; height: 420px; background: #bfeeff; top: -140px; right: -80px; }
+  .orb.b { width: 340px; height: 340px; background: #d9f4ff; bottom: -100px; left: 15%; animation-delay: -6s; }
+  @keyframes drift { to { transform: translate(-50px, 30px) scale(1.08); } }
+
+  /* Sidebar */
+  .side {
+    width: 320px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 18px;
+    position: sticky;
+    top: 0;
+    height: calc(100vh / 0.85);
+    min-height: calc(100vh / 0.85);
+    transition: transform .5s var(--ease);
+    z-index: 30;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 6px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand-logo-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    object-fit: contain;
+    background: #fff;
+    padding: 2px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 14px -4px rgba(0,83,159,.3);
+  }
+  .brand b {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.12rem;
+    letter-spacing: -.01em;
+    color: var(--ntu-blue);
+  }
+  .brand small { font-size: .75rem; color: var(--muted); display: block; }
+  .office {
+    margin: 16px 0 6px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: var(--tint);
+  }
+  .office .av {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--sky);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .office b { display: block; font-size: .88rem; font-weight: 700; color: var(--ink); }
+  .office small { font-size: .74rem; color: var(--muted); display: block; }
+  .label {
+    font-size: .7rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--sky-deep);
+    font-weight: 700;
+    padding: 16px 10px 8px;
+  }
+  .side nav { display: flex; flex-direction: column; gap: 4px; }
+  .side nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 500;
+    position: relative;
+    transition: background .3s, transform .3s var(--ease), color .3s;
+  }
+  .side nav a:hover { background: var(--tint); transform: translateX(4px); }
+  .side nav a .count {
+    margin-left: auto;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--tint);
+    font-size: .74rem;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: var(--sky-deep);
+    padding: 0 6px;
+  }
+  .side nav a.active {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 12px 24px -12px rgba(11,37,64,.6);
+  }
+  .side nav a.active svg { color: var(--sky); }
+  .side nav a.active .count { background: var(--sky); color: var(--ink); }
+  .side-foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .78rem;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--bg);
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
+  .side-foot span { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .side-foot b { color: var(--ntu-blue); font-weight: 700; }
+
+  /* Main */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; z-index: 1; }
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 28px;
+    background: rgba(246,251,254,.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .menu-btn {
+    display: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    place-items: center;
+  }
+  .search {
+    flex: 1;
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    transition: box-shadow .3s, border-color .3s;
+  }
+  .search:focus-within { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(51,204,255,.18); }
+  .search input { flex: 1; border: 0; outline: 0; background: none; font-size: .88rem; min-width: 0; }
+  .search kbd {
+    font-family: inherit;
+    font-size: .7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--tint);
+    color: var(--sky-deep);
+  }
+  .term {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .term select { border: 0; outline: 0; background: none; font-weight: 600; cursor: pointer; }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--ok-bg);
+    color: var(--ok);
+    white-space: nowrap;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .icon-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    transition: transform .3s var(--ease), background .3s;
+  }
+  .icon-btn:hover { transform: translateY(-2px); background: var(--tint); }
+  .icon-btn .badge {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: 2px solid #fff;
+  }
+  .user { display: flex; align-items: center; gap: 12px; margin-left: auto; text-align: right; }
+  .user b { display: block; font-size: .88rem; font-weight: 700; color: var(--ink); }
+  .user small { font-size: .74rem; color: var(--muted); }
+  .user .av {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--sky), var(--ntu-blue));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(51,204,255,.35);
+  }
+  .spacer { flex: 1; }
+
+  /* Content */
+  .content { padding: 28px; display: flex; flex-direction: column; gap: 22px; }
+  .crumbs {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: .84rem !important;
+    color: var(--muted) !important;
+    flex-wrap: wrap !important;
+    line-height: 1.5 !important;
+  }
+  .crumbs a, .crumbs span, .crumbs b {
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+  .crumbs a { color: inherit !important; text-decoration: none !important; }
+  .crumbs a:hover { color: var(--ntu-blue) !important; }
+  .crumbs b { color: var(--ink) !important; font-weight: 600 !important; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    letter-spacing: -.02em;
+    line-height: 1.3;
+    margin-top: 6px;
+    color: var(--ink);
+    word-break: break-word;
+  }
+  .head p { color: var(--muted); font-size: .92rem; margin-top: 8px; max-width: 65ch; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 46px;
+    padding: 0 20px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: .9rem;
+    transition: transform .3s var(--ease), box-shadow .3s, background .3s;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 14px 28px -14px rgba(11,37,64,.7);
+  }
+  .btn-primary svg { color: var(--sky); }
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 32px -14px rgba(6,121,168,.7);
+    background: var(--ntu-blue);
+  }
+  .btn-ghost { background: var(--tint); color: var(--sky-deep); }
+  .btn-ghost:hover { background: #d0f0ff; }
+
+  /* KPIs */
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .kpi {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: transform .45s var(--ease), box-shadow .45s;
+    box-shadow: 0 1px 0 rgba(11,37,64,.02);
+  }
+  .kpi:hover { transform: translateY(-4px); box-shadow: 0 24px 40px -24px rgba(6,121,168,.4); }
+  .kpi::after {
+    content: "";
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(51,204,255,.25), transparent 70%);
+    transition: transform .6s var(--ease);
+  }
+  .kpi:hover::after { transform: scale(1.6); }
+  .kpi .ic {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: var(--tint);
+    color: var(--sky-deep);
+    display: grid;
+    place-items: center;
+  }
+  .kpi .val {
+    font-family: var(--serif);
+    font-size: 2.1rem;
+    font-weight: 600;
+    margin-top: 14px;
+    letter-spacing: -.02em;
+    color: var(--ink);
+  }
+  .kpi .lbl { font-size: .84rem; color: var(--muted); margin-top: 2px; }
+  .kpi .trend {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: .74rem;
+    font-weight: 700;
+    color: var(--ok);
+    background: var(--ok-bg);
+    padding: 4px 10px;
+    border-radius: 999px;
+    z-index: 1;
+  }
+
+  /* Chips */
+  .chips-label {
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--sky-deep);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    transition: all .35s var(--ease);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chip:hover { border-color: var(--sky); transform: translateY(-2px); }
+  .chip.on {
+    background: var(--sky);
+    border-color: var(--sky);
+    color: var(--ink);
+    box-shadow: 0 10px 20px -10px rgba(51,204,255,.9);
+  }
+
+  /* Table Panel */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 0 rgba(11,37,64,.02), 0 20px 40px -30px rgba(11,37,64,.2);
+    overflow: hidden;
+  }
+  .filters { display: flex; gap: 12px; align-items: center; padding: 16px; flex-wrap: wrap; }
+  .filters .search { max-width: 360px; background: var(--bg); }
+  .select {
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    outline: 0;
+    min-width: 220px;
+    font-size: .88rem;
+    font-weight: 500;
+  }
+  .select:focus { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(51,204,255,.18); }
+  .total { margin-left: auto; font-size: .86rem; color: var(--muted); font-weight: 500; }
+  .total b { color: var(--ink); font-family: var(--serif); font-size: 1.15rem; padding: 0 4px; font-weight: 600; }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 860px; }
+  th {
+    text-align: left;
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    background: #fbfdff;
+  }
+  td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    font-size: .88rem;
+    vertical-align: middle;
+  }
+  tbody tr { transition: background .2s; }
+  tbody tr:hover { background: #f7fcff; }
+  .code-pill {
+    font-family: "Geist Mono", monospace;
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--ntu-blue);
+    background: var(--tint);
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(51,204,255,.3);
+    display: inline-block;
+  }
+  .class-title {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: .95rem;
+  }
+  .tag-pill {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: .74rem;
+    font-weight: 600;
+    background: var(--tint);
+    color: var(--sky-deep);
+  }
+  .action-btn {
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: .78rem;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all .2s;
+  }
+  .action-btn:hover { background: var(--tint); border-color: var(--sky); }
+  .action-btn.del { color: var(--danger); }
+  .action-btn.del:hover { background: #fee2e2; border-color: #fca5a5; }
+
+  /* Modal Dialog */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,37,64,.55);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s var(--ease);
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    width: 100%;
+    max-width: 580px;
+    background: #fff;
+    border-radius: 24px;
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(11,37,64,.4);
+    padding: 28px;
+    transform: translateY(20px) scale(.98);
+    transition: transform .35s var(--ease);
+  }
+  .overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .modal-head h3 { font-family: var(--serif); font-size: 1.45rem; font-weight: 600; color: var(--ink); }
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: var(--tint);
+    color: var(--sky-deep);
+  }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: span 2; }
+  .field label { font-size: .8rem; font-weight: 700; color: var(--ink-2); }
+  .field input, .field select {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    outline: none;
+    font-size: .88rem;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--sky);
+    box-shadow: 0 0 0 3px rgba(51,204,255,.2);
+  }
+  .modal-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translate(-50%, 40px);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-size: .86rem;
+    font-weight: 600;
+    box-shadow: 0 16px 32px -8px rgba(11,37,64,.6);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .4s var(--ease);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* Animation */
+  .reveal { opacity: 0; transform: translateY(16px); animation: rowIn .7s var(--ease) forwards; }
+  @keyframes rowIn { to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 1024px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .side { position: fixed; transform: translateX(-100%); }
+    .side.open { transform: translateX(0); }
+    .menu-btn { display: grid; }
+  }
+  @media (max-width: 640px) {
+    .kpis { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: span 1; }
+    .head { flex-direction: column; align-items: flex-start; }
+  }
+</style>
 </head>
-<body data-nav="classes" class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
+<body>
+<div class="orb a"></div><div class="orb b"></div>
 
-    <!-- REUSABLE HEADER -->
-    <div id="admin-header"></div>
-
-    <div class="flex-1 flex min-h-[calc(100vh-65px)]">
-        <!-- REUSABLE SIDEBAR -->
-        <div id="admin-sidebar"></div>
-
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 p-6 lg:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
-            <!-- Header & Action -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                <div>
-                    <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-                        <a href="../index.html" class="hover:text-blue-600 transition">Dashboard</a>
-                        <span>/</span>
-                        <span class="text-slate-700 font-medium">Lớp học</span>
-                    </div>
-                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">Quản Lý Lớp Học</h1>
-                    <p class="text-xs text-slate-500 mt-1">Danh sách lớp sinh hoạt, phân bổ niên khóa, khoa đào tạo và giáo viên chủ nhiệm</p>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <a href="create.html"
-                        class="inline-flex items-center px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        <span>Thêm Lớp Mới</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Filters Bar -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm mb-6 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
-                <div class="flex-1 flex flex-col sm:flex-row items-center gap-3">
-                    <div class="relative w-full sm:w-80">
-                        <input type="text" id="classSearchInput" placeholder="Tìm theo tên hoặc mã lớp..."
-                            oninput="filterClasses()"
-                            class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl pl-9 pr-3 py-2 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
-
-                    <!-- Faculty Filter -->
-                    <div class="w-full sm:w-56">
-                        <select id="facultyFilterSelect" onchange="filterClasses()"
-                            class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium">
-                            <option value="ALL">Tất cả khoa</option>
-                        </select>
-                    </div>
-
-                    <!-- Academic Year Filter -->
-                    <div class="w-full sm:w-44">
-                        <select id="yearFilterSelect" onchange="filterClasses()"
-                            class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium">
-                            <option value="ALL">Tất cả niên khóa</option>
-                            <option value="2022-2026">2022-2026</option>
-                            <option value="2023-2027">2023-2027</option>
-                            <option value="2024-2028">2024-2028</option>
-                            <option value="2025-2029">2025-2029</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex items-center space-x-2 text-xs text-slate-500 shrink-0">
-                    <span>Tổng số:</span>
-                    <span id="filteredClassesCount" class="font-bold text-slate-800">0</span>
-                    <span>lớp học</span>
-                </div>
-            </div>
-
-            <!-- Classes Table -->
-            <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold border-b border-slate-200 tracking-wider">
-                            <tr>
-                                <th class="p-3.5 pl-6 whitespace-nowrap">Mã Lớp</th>
-                                <th class="p-3.5 whitespace-nowrap">Tên Lớp Học</th>
-                                <th class="p-3.5 whitespace-nowrap">Khoa Trực Thuộc</th>
-                                <th class="p-3.5 whitespace-nowrap">Niên Khóa</th>
-                                <th class="p-3.5 whitespace-nowrap">GV Chủ Nhiệm</th>
-                                <th class="p-3.5 whitespace-nowrap">Sĩ Số</th>
-                                <th class="p-3.5 pr-6 text-right whitespace-nowrap">Hành Động</th>
-                            </tr>
-                        </thead>
-                        <tbody id="classesTableBody" class="divide-y divide-slate-100">
-                            <tr>
-                                <td colspan="7" class="py-16 text-center text-slate-400">
-                                    <svg class="w-8 h-8 mx-auto animate-spin text-blue-500 mb-3" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                                    </svg>
-                                    <p>Đang tải danh sách lớp học...</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
+<div class="app">
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="side" id="side" aria-label="Menu quản trị">
+    <div class="brand">
+      <img src="/portal/assets/images/logo-ntu.jpg" alt="Logo NTU" class="brand-logo-img" />
+      <div>
+        <b>ĐH NGUYỄN TRÃI</b>
+        <small>Cổng Quản Trị Đào Tạo</small>
+      </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="../assets/js/admin-components.js"></script>
-    <script>
-        let allClasses = [];
-        let allFaculties = [];
+    <div class="office">
+      <div class="av"><i data-lucide="landmark"></i></div>
+      <div>
+        <b>Phòng Quản Lý Đào Tạo</b>
+        <small>admin@daihocnguyentrai.edu.vn</small>
+      </div>
+    </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFacultiesAndClasses();
-        });
+    <div class="label">HỆ THỐNG ĐÀO TẠO</div>
+    <nav>
+      <a href="/admin/index.html" class="nav-item" id="navIndex"><i data-lucide="layout-dashboard"></i>Tổng quan<span class="count" id="navCountDashboard">--</span></a>
+      <a href="/admin/majors/list.html" class="nav-item" id="navMajors"><i data-lucide="layers"></i>Chuyên ngành đào tạo<span class="count" id="navCountMajors">6</span></a>
+      <a href="/admin/courses/list.html" class="nav-item" id="navCourses"><i data-lucide="book-open"></i>Khóa học &amp; Học phần<span class="count" id="navCountCourses">2</span></a>
+      <a href="/admin/quizzes/list.html" class="nav-item" id="navQuizzes"><i data-lucide="list-checks"></i>Quản lý câu hỏi<span class="count" id="navCountQuizzes">--</span></a>
+      <a href="/admin/documents/list.html" class="nav-item" id="navDocuments"><i data-lucide="folder-git-2"></i>Quản lý tài liệu theo ngành<span class="count" id="navCountDocuments">--</span></a>
+      <a href="/admin/orders/list.html" class="nav-item" id="navOrders"><i data-lucide="receipt"></i>Hoá đơn thanh toán<span class="count" id="navCountOrders">--</span></a>
+      <a href="/admin/faculties/list.html" class="nav-item" id="navFaculties"><i data-lucide="building-2"></i>Khoa &amp; Viện đào tạo<span class="count" id="navCountFaculties">3</span></a>
+      <a href="/admin/students/list.html?type=student" class="nav-item" id="navStudents"><i data-lucide="users"></i>Sinh viên &amp; Hồ sơ<span class="count" id="navCountStudents">3</span></a>
+      <a href="/admin/students/list.html?type=staff" class="nav-item" id="navStaff"><i data-lucide="badge-check"></i>Cán bộ &amp; Giảng viên<span class="count" id="navCountStaff">2</span></a>
+      <a href="/admin/classes/list.html" class="nav-item active" id="navClasses"><i data-lucide="calendar-days"></i>Lớp học &amp; TKB<span class="count" id="navCountClasses">6</span></a>
+      <a href="/admin/announcements/list.html" class="nav-item" id="navAnnouncements"><i data-lucide="megaphone"></i>Tin tức &amp; Thông báo<span class="count" id="navCountAnnouncements">7</span></a>
+      <a href="/admin/profile.html" class="nav-item" id="navProfile"><i data-lucide="settings"></i>Cài đặt hệ thống</a>
+      <a href="/portal/index.html" style="margin-top: 6px; border-top: 1px dashed var(--line);"><i data-lucide="external-link"></i>Về Cổng Sinh Viên</a>
+    </nav>
 
-        async function loadFacultiesAndClasses() {
-            try {
-                // Fetch faculties for filter
-                const fRes = await fetch(`${API_BASE}/api/admin/faculties`);
-                if (fRes.ok) {
-                    const fResult = await fRes.json();
-                    allFaculties = fResult.data || [];
-                    populateFacultyFilter();
-                }
+    <div class="side-foot">
+      <span><i class="dot" style="color:var(--ok)"></i>Hệ thống NTU S-Portal</span>
+      <b>v2.4.0</b>
+    </div>
+  </aside>
 
-                // Fetch classes
-                const cRes = await fetch(`${API_BASE}/api/admin/classes`);
-                if (cRes.ok) {
-                    const cResult = await cRes.json();
-                    allClasses = cResult.data || [];
-                    renderClasses(allClasses);
-                } else {
-                    document.getElementById('classesTableBody').innerHTML = `
-                        <tr><td colspan="7" class="py-12 text-center text-red-500 font-semibold">Lỗi tải dữ liệu lớp (HTTP ${cRes.status}).</td></tr>
-                    `;
-                }
-            } catch (e) {
-                console.error(e);
-                document.getElementById('classesTableBody').innerHTML = `
-                    <tr><td colspan="7" class="py-12 text-center text-red-500 font-semibold">Lỗi kết nối máy chủ.</td></tr>
-                `;
-            }
-        }
+  <!-- MAIN AREA -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="top">
+      <button class="menu-btn" id="menuBtn" aria-label="Mở menu"><i data-lucide="menu"></i></button>
+      <label class="search">
+        <i data-lucide="search"></i>
+        <input id="globalSearch" placeholder="Tìm kiếm lớp học, mã lớp (K23CNT3), giáo viên..." />
+        <kbd>Ctrl K</kbd>
+      </label>
+      <div class="term">
+        <i data-lucide="calendar"></i>
+        <select aria-label="Kỳ học hiện tại">
+          <option>Học kỳ 1 · Năm học 2026–2027</option>
+          <option>Học kỳ 2 · Năm học 2025–2026</option>
+          <option>Học kỳ Hè · Năm học 2025–2026</option>
+        </select>
+      </div>
+      <div class="spacer"></div>
+      <span class="status"><i class="dot"></i>CSDL trực tuyến · Spring Boot 3</span>
+      <button class="icon-btn help" title="Trợ giúp" aria-label="Trợ giúp" onclick="toast('Hỗ trợ: Liên hệ hotro@daihocnguyentrai.edu.vn')"><i data-lucide="circle-help"></i></button>
+      <button class="icon-btn" title="Thông báo" aria-label="Thông báo" onclick="toast('Thông báo: Đồng bộ 100% dữ liệu lớp học & TKB.')"><i data-lucide="bell"></i><span class="badge"></span></button>
+      <div class="user">
+        <div>
+          <b>Ban Giám Hiệu</b>
+          <small>Quản trị Cấp cao</small>
+        </div>
+        <div class="av">NTU</div>
+      </div>
+    </header>
 
-        function populateFacultyFilter() {
-            const sel = document.getElementById('facultyFilterSelect');
-            sel.innerHTML = '<option value="ALL">Tất cả khoa</option>';
-            allFaculties.forEach(f => {
-                const opt = document.createElement('option');
-                opt.value = f.id;
-                opt.textContent = `${f.facultyCode} - ${f.facultyName}`;
-                sel.appendChild(opt);
-            });
-        }
+    <!-- CONTENT WRAPPER -->
+    <main class="content">
+      <div class="reveal">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/admin/index.html">Trang chủ</a>
+          <span>/</span>
+          <span>Đào tạo</span>
+          <span>/</span>
+          <b id="crumbCurrent">Lớp học &amp; TKB</b>
+        </nav>
+        <div class="head">
+          <div>
+            <h1 id="pageTitle">Quản Lý <em>Lớp Học &amp; Thời Khóa Biểu</em></h1>
+            <p id="pageDesc">Danh sách lớp sinh hoạt niên chế, phân bổ khoa đào tạo, giáo viên chủ nhiệm và sĩ số sinh viên.</p>
+          </div>
+          <button class="btn btn-primary" id="openModalBtn"><i data-lucide="plus"></i>Thêm Lớp Mới</button>
+        </div>
+      </div>
 
-        function filterClasses() {
-            const q = (document.getElementById('classSearchInput').value || '').toLowerCase().trim();
-            const facultyId = document.getElementById('facultyFilterSelect').value;
-            const year = document.getElementById('yearFilterSelect').value;
+      <!-- 4 BENTO KPIS -->
+      <section class="kpis reveal" aria-label="Chỉ số chính">
+        <div class="kpi">
+          <span class="trend">Chuẩn NTU</span>
+          <div class="ic"><i data-lucide="calendar-days"></i></div>
+          <div class="val" id="kpiClasses" data-count="6">6</div>
+          <div class="lbl">Lớp học niên khóa</div>
+        </div>
+        <div class="kpi">
+          <span class="trend">Khóa mới</span>
+          <div class="ic"><i data-lucide="award"></i></div>
+          <div class="val">K23</div>
+          <div class="lbl">Niên khóa đào tạo</div>
+        </div>
+        <div class="kpi">
+          <span class="trend">Đã đồng bộ</span>
+          <div class="ic"><i data-lucide="users"></i></div>
+          <div class="val" id="kpiStudents" data-count="3">3</div>
+          <div class="lbl">Sinh viên trong lớp</div>
+        </div>
+        <div class="kpi">
+          <span class="trend">Realtime</span>
+          <div class="ic"><i data-lucide="scan-face"></i></div>
+          <div class="val">96.8%</div>
+          <div class="lbl">Điểm danh Face AI</div>
+        </div>
+      </section>
 
-            const filtered = allClasses.filter(c => {
-                const matchQ = !q ||
-                    (c.className && c.className.toLowerCase().includes(q)) ||
-                    (c.classCode && c.classCode.toLowerCase().includes(q));
+      <!-- FACULTY FILTER CHIPS -->
+      <section class="reveal">
+        <div class="chips-label">Lọc Theo Khoa Đào Tạo:</div>
+        <div class="chips" id="facultyChips" role="tablist">
+          <button class="chip on" data-faculty="ALL"><i data-lucide="sparkles"></i>Tất cả khoa</button>
+        </div>
+      </section>
 
-                let matchFaculty = true;
-                if (facultyId !== 'ALL') {
-                    matchFaculty = String(c.facultyId) === String(facultyId);
-                }
+      <!-- TABLE PANEL -->
+      <section class="panel reveal">
+        <div class="filters">
+          <label class="search">
+            <i data-lucide="search"></i>
+            <input id="searchInput" placeholder="Tìm theo tên lớp hoặc mã lớp (K23CNT3, SE, AI...)" />
+          </label>
+          <div class="total">Hiển thị <b id="totalFiltered">0</b> lớp học</div>
+        </div>
 
-                let matchYear = true;
-                if (year !== 'ALL') {
-                    matchYear = c.academicYear === year;
-                }
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Mã Lớp</th>
+                <th>Tên Lớp Học</th>
+                <th>Khoa Trực Thuộc</th>
+                <th>Niên Khóa</th>
+                <th>GV Chủ Nhiệm</th>
+                <th>Sĩ Số</th>
+                <th style="text-align: right;">Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="classesTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
 
-                return matchQ && matchFaculty && matchYear;
-            });
+<!-- MODAL ADD / EDIT CLASS -->
+<div class="overlay" id="classModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 id="modalHeading">Thêm Lớp Học Mới</h3>
+      <button class="modal-close" id="closeModalBtn" aria-label="Đóng"><i data-lucide="x"></i></button>
+    </div>
+    <form id="classForm">
+      <input type="hidden" id="classId" />
+      <div class="form-grid">
+        <div class="field">
+          <label>Mã Lớp *</label>
+          <input id="formClassCode" placeholder="VD: K23CNT3, K23SE1..." required />
+        </div>
+        <div class="field">
+          <label>Niên Khóa *</label>
+          <input id="formAcademicYear" placeholder="VD: 2023-2027 (K23)" required />
+        </div>
+        <div class="field full">
+          <label>Tên Lớp Học *</label>
+          <input id="formClassName" placeholder="VD: Lớp K23 Công Nghệ Thông Tin 3" required />
+        </div>
+        <div class="field">
+          <label>Khoa Trực Thuộc</label>
+          <select id="formFacultyId">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+        <div class="field">
+          <label>Giảng Viên Chủ Nhiệm</label>
+          <input id="formAdvisorName" placeholder="VD: TS. Nguyễn Văn A" />
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="cancelModalBtn">Hủy Bỏ</button>
+        <button type="submit" class="btn btn-primary" id="saveClassBtn"><i data-lucide="check"></i>Lưu Lớp Học</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-            renderClasses(filtered);
-        }
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i data-lucide="check-circle-2"></i>
+  <span id="toastMsg">Thao tác thành công</span>
+</div>
 
-        function renderClasses(classes) {
-            const tbody = document.getElementById('classesTableBody');
-            document.getElementById('filteredClassesCount').textContent = classes.length;
+<script>
+  const API_BASE = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
+      ? 'http://localhost:8080'
+      : window.location.origin;
 
-            if (classes.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="py-16 text-center text-slate-400">
-                            <p class="font-bold text-slate-700 text-sm">Không tìm thấy lớp học phù hợp</p>
-                            <p class="text-xs mt-1">Vui lòng điều chỉnh tiêu chí lọc.</p>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
+  let allClasses = [];
+  let allFaculties = [];
+  let activeFacultyId = 'ALL';
 
-            tbody.innerHTML = classes.map(c => {
-                return `
-                    <tr class="hover:bg-slate-50/80 transition group">
-                        <td class="p-3.5 pl-6 whitespace-nowrap">
-                            <span class="font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg text-xs border border-blue-200">
-                                ${escapeHtml(c.classCode)}
-                            </span>
-                        </td>
-                        <td class="p-3.5 whitespace-nowrap font-bold text-slate-800 text-sm group-hover:text-blue-600 transition">
-                            ${escapeHtml(c.className)}
-                        </td>
-                        <td class="p-3.5 whitespace-nowrap">
-                            <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-semibold">
-                                ${escapeHtml(c.facultyName || 'Khoa Đào tạo')}
-                            </span>
-                        </td>
-                        <td class="p-3.5 whitespace-nowrap font-mono text-slate-600 text-xs">
-                            ${escapeHtml(c.academicYear || '--')}
-                        </td>
-                        <td class="p-3.5 whitespace-nowrap text-slate-700">
-                            ${escapeHtml(c.homeroomTeacher || 'Chưa phân công')}
-                        </td>
-                        <td class="p-3.5 whitespace-nowrap">
-                            <a href="details.html?id=${c.id}" class="group/std inline-flex items-center space-x-1 hover:text-blue-600 transition" title="Bấm để xem & quản lý sinh viên">
-                                <span class="font-bold text-slate-800 group-hover/std:text-blue-600">${c.totalStudents || 0}</span>
-                                <span class="text-slate-400 text-[11px]"> SV</span>
-                                <svg class="w-3.5 h-3.5 text-slate-400 group-hover/std:text-blue-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </a>
-                        </td>
-                        <td class="p-3.5 pr-6 text-right whitespace-nowrap">
-                            <div class="flex items-center justify-end space-x-1.5">
-                                <a href="details.html?id=${c.id}"
-                                    class="px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-700 font-semibold transition flex items-center space-x-1" title="Quản lý sinh viên trong lớp">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                    </svg>
-                                    <span>Quản lý SV</span>
-                                </a>
-                                <a href="edit.html?id=${c.id}"
-                                    class="px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-semibold transition" title="Chỉnh sửa lớp">
-                                    Sửa
-                                </a>
-                                <a href="delete.html?id=${c.id}"
-                                    class="px-2.5 py-1 rounded-lg border border-red-200 bg-white hover:bg-red-50 text-red-600 font-semibold transition" title="Xóa lớp">
-                                    Xóa
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-    </script>
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+
+  function toast(msg) {
+    const t = $("#toast");
+    $("#toastMsg").textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2800);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  async function loadInitialData() {
+    try {
+      // 1. Fetch faculties for chips & dropdown
+      const fRes = await fetch(`${API_BASE}/api/admin/faculties`);
+      if (fRes.ok) {
+        const fJson = await fRes.json();
+        allFaculties = fJson.data || [];
+        renderFacultyChips();
+        populateFacultyDropdown();
+        if ($("#navCountFaculties")) $("#navCountFaculties").textContent = allFaculties.length;
+      }
+
+      // 2. Fetch stats
+      const sRes = await fetch(`${API_BASE}/api/admin/stats`);
+      if (sRes.ok) {
+        const sJson = await sRes.json();
+        const s = sJson.data || {};
+        if (s.totalMajors && $("#navCountMajors")) $("#navCountMajors").textContent = s.totalMajors;
+        if (s.totalCourses && $("#navCountCourses")) $("#navCountCourses").textContent = s.totalCourses;
+        if (s.totalUsers && $("#kpiStudents")) $("#kpiStudents").textContent = s.totalUsers;
+        if (s.totalUsers && $("#navCountStudents")) $("#navCountStudents").textContent = s.totalUsers;
+      }
+
+      // 3. Fetch classes
+      await loadClasses();
+    } catch (e) {
+      console.error(e);
+      toast("Lỗi kết nối khi tải danh sách lớp học.");
+    }
+  }
+
+  function renderFacultyChips() {
+    const wrap = $("#facultyChips");
+    wrap.innerHTML = `<button class="chip ${activeFacultyId === 'ALL' ? 'on' : ''}" data-faculty="ALL"><i data-lucide="sparkles"></i>Tất cả khoa</button>` +
+      allFaculties.map(f => `
+        <button class="chip ${activeFacultyId === String(f.id) ? 'on' : ''}" data-faculty="${f.id}">
+          <i data-lucide="building-2"></i>${escapeHtml(f.facultyName || f.name || f.facultyCode)}
+        </button>
+      `).join('');
+    lucide.createIcons();
+  }
+
+  function populateFacultyDropdown() {
+    const sel = $("#formFacultyId");
+    sel.innerHTML = '<option value="">-- Không chọn / Đại cương --</option>' +
+      allFaculties.map(f => `<option value="${f.id}">${escapeHtml(f.facultyCode)} - ${escapeHtml(f.facultyName || f.name)}</option>`).join('');
+  }
+
+  async function loadClasses() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/classes`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      allClasses = json.data || [];
+
+      $("#kpiClasses").textContent = allClasses.length;
+      $("#navCountClasses").textContent = allClasses.length;
+
+      const totalStudentsInClasses = allClasses.reduce((acc, c) => acc + (c.studentsCount || c.totalStudents || 0), 0);
+      if ($("#kpiStudents")) $("#kpiStudents").textContent = totalStudentsInClasses;
+
+      renderClasses();
+    } catch (e) {
+      console.error(e);
+      $("#classesTableBody").innerHTML = `
+        <tr><td colspan="7" style="text-align:center; padding:32px; color:var(--danger); font-weight:700;">
+          Lỗi nạp danh sách lớp từ CSDL: ${e.message}
+        </td></tr>
+      `;
+    }
+  }
+
+  function renderClasses() {
+    const q = ($("#searchInput").value || '').toLowerCase().trim();
+
+    const filtered = allClasses.filter(c => {
+      const name = (c.className || c.name || '').toLowerCase();
+      const code = (c.classCode || '').toLowerCase();
+      const matchQ = !q || name.includes(q) || code.includes(q);
+
+      let matchFac = true;
+      if (activeFacultyId !== 'ALL') {
+        const fid = Number(activeFacultyId);
+        matchFac = (c.faculty && c.faculty.id === fid) || c.facultyId === fid;
+      }
+      return matchQ && matchFac;
+    });
+
+    $("#totalFiltered").textContent = filtered.length;
+    const tbody = $("#classesTableBody");
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr><td colspan="7" style="text-align:center; padding:48px; color:var(--muted);">
+          <p style="font-weight:700;">Không tìm thấy lớp học nào phù hợp</p>
+        </td></tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(c => {
+      const facName = c.faculty ? (c.faculty.facultyName || c.faculty.name || c.faculty.facultyCode) : (c.facultyName || 'Đại cương');
+      const year = c.academicYear || 'K23 (2023-2027)';
+      const advisor = c.advisorName || c.homeroomTeacher || 'Chưa phân công';
+      const count = (c.studentsCount !== undefined && c.studentsCount !== null)
+        ? c.studentsCount
+        : ((c.totalStudents !== undefined && c.totalStudents !== null)
+            ? c.totalStudents
+            : ((c.studentCount !== undefined && c.studentCount !== null)
+                ? c.studentCount
+                : (c.students ? c.students.length : 0)));
+
+      const countBadge = count > 0
+        ? `<span class="code-pill" style="color:var(--ok); background:var(--ok-bg); border-color:#a7f3d0; font-weight:700;">${count} SV</span>`
+        : `<span class="code-pill" style="color:var(--muted); opacity:.7;">0 SV</span>`;
+
+      return `
+        <tr>
+          <td><span class="code-pill">${escapeHtml(c.classCode)}</span></td>
+          <td>
+            <div class="class-title"><a href="details.html?id=${c.id}" style="color:inherit; text-decoration:none;">${escapeHtml(c.className || c.name)}</a></div>
+          </td>
+          <td><span class="tag-pill">${escapeHtml(facName)}</span></td>
+          <td><b>${escapeHtml(year)}</b></td>
+          <td>${escapeHtml(advisor)}</td>
+          <td>${countBadge}</td>
+          <td style="text-align: right;">
+            <div style="display:inline-flex; gap:6px;">
+              <a href="details.html?id=${c.id}" class="action-btn" title="Xem danh sách sinh viên"><i data-lucide="users"></i>Sinh viên</a>
+              <button class="action-btn" onclick="openEditModal(${c.id})"><i data-lucide="edit-3"></i>Sửa</button>
+              <button class="action-btn del" onclick="deleteClass(${c.id}, '${escapeHtml(c.className || c.name)}')"><i data-lucide="trash-2"></i>Xóa</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    lucide.createIcons();
+  }
+
+  // Delete Class
+  async function deleteClass(id, name) {
+    if (!confirm(`Bạn có chắc muốn xóa lớp "${name}" không?`)) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/classes/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      toast(`Đã xóa thành công lớp: ${name}`);
+      await loadClasses();
+    } catch (e) {
+      toast(`Không thể xóa lớp: ${e.message}`);
+    }
+  }
+
+  // Modal Actions
+  const modalOverlay = $("#classModalOverlay");
+  function openModal(isEdit = false) {
+    $("#modalHeading").textContent = isEdit ? "Chỉnh Sửa Lớp Học" : "Thêm Lớp Học Mới";
+    modalOverlay.classList.add("open");
+  }
+  function closeModal() {
+    modalOverlay.classList.remove("open");
+    $("#classForm").reset();
+    $("#classId").value = "";
+  }
+
+  function openEditModal(id) {
+    const c = allClasses.find(x => x.id === id);
+    if (!c) return;
+    $("#classId").value = c.id;
+    $("#formClassCode").value = c.classCode || '';
+    $("#formClassName").value = c.className || c.name || '';
+    $("#formAcademicYear").value = c.academicYear || '';
+    $("#formFacultyId").value = c.faculty ? c.faculty.id : (c.facultyId || '');
+    $("#formAdvisorName").value = c.advisorName || c.homeroomTeacher || '';
+    openModal(true);
+  }
+
+  // Form Submit
+  $("#classForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = $("#classId").value;
+    const isEdit = !!id;
+
+    const payload = {
+      classCode: $("#formClassCode").value.trim(),
+      className: $("#formClassName").value.trim(),
+      academicYear: $("#formAcademicYear").value.trim(),
+      advisorName: $("#formAdvisorName").value.trim(),
+      facultyId: $("#formFacultyId").value ? Number($("#formFacultyId").value) : null
+    };
+
+    try {
+      const url = isEdit ? `${API_BASE}/api/admin/classes/${id}` : `${API_BASE}/api/admin/classes`;
+      const method = isEdit ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      closeModal();
+      toast(isEdit ? "Đã cập nhật lớp thành công!" : "Đã thêm lớp mới thành công!");
+      await loadClasses();
+    } catch (err) {
+      toast(`Lỗi khi lưu lớp học: ${err.message}`);
+    }
+  });
+
+  // Event Listeners
+  $("#openModalBtn").addEventListener("click", () => openModal(false));
+  $("#closeModalBtn").addEventListener("click", closeModal);
+  $("#cancelModalBtn").addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", e => { if (e.target === modalOverlay) closeModal(); });
+
+  $("#facultyChips").addEventListener("click", e => {
+    const btn = e.target.closest(".chip");
+    if (!btn) return;
+    activeFacultyId = btn.dataset.faculty;
+    renderFacultyChips();
+    renderClasses();
+  });
+
+  $("#searchInput").addEventListener("input", renderClasses);
+
+  $("#menuBtn").addEventListener("click", () => $("#side").classList.toggle("open"));
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      $("#globalSearch").focus();
+    }
+    if (e.key === 'Escape') {
+      closeModal();
+      $("#side").classList.remove("open");
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    lucide.createIcons();
+    loadInitialData();
+  });
+</script>
 </body>
 </html>

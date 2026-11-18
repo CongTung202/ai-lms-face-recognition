@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface MajorRepository extends JpaRepository<Major, Long> {
     Optional<Major> findByMajorCode(String majorCode);
+    boolean existsByMajorCode(String majorCode);
     List<Major> findByFacultyId(Long facultyId);
     long countByFacultyId(Long facultyId);
 }

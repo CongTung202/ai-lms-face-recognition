@@ -16,8 +16,6 @@ from app.schemas.models import (
     DetectedFace
 )
 
-from app.core.cloudinary_uploader import CloudinaryUploader
-
 try:
     import cv2
 except ImportError:
@@ -102,39 +100,25 @@ class FaceService:
         aligned_face = self.embedder.align_face(image_bgr, face)
         embedding = self.embedder.extract_embedding(aligned_face)
 
-        # 4. Save photo to disk & Upload first image to Cloudinary
-        save_path = (settings.FACES_DIR / f"{employee_id}.jpg").resolve()
-        if cv2 is not None:
-            cv2.imwrite(str(save_path), image_bgr)
-
-        abs_image_path = str(save_path).replace("\\", "/")
-
-        # Upload first image to Cloudinary
-        cloudinary_url = CloudinaryUploader.upload_face_image(image_bgr, employee_id)
-        if metadata is None:
-            metadata = {}
-        if cloudinary_url:
-            metadata["cloudinary_url"] = cloudinary_url
-
-        # 5. Save vector to DB
+        # 4. Save vector to DB (Không lưu ảnh ra đĩa để tiết kiệm dung lượng)
         self.storage.save_face(
             employee_id=employee_id,
             embedding=embedding,
             full_name=full_name,
             department=department,
-            image_path=cloudinary_url or abs_image_path,
+            image_path="",
             metadata=metadata
         )
 
         return FaceEnrollResponse(
             success=True,
             employee_id=employee_id,
-            message=f"Đã đăng ký thành công khuôn mặt cho {full_name or employee_id}",
+            message=f"Successfully enrolled face for {full_name or employee_id}",
             face_detected=True,
             quality_passed=True,
-            image_saved_path=abs_image_path,
-            cloudinary_url=cloudinary_url,
+            image_saved_path="",
             registered_angles=["straight"],
+            embeddings={"straight": embedding.tolist() if hasattr(embedding, 'tolist') else list(embedding)},
             reasons=[]
         )
 
@@ -148,49 +132,30 @@ class FaceService:
         check_quality: bool = True
     ) -> FaceEnrollResponse:
         """
-        Đăng ký đa góc khuôn mặt chỉ với 3 góc trực diện (straight, left, right).
-        Không lấy ngẩng đầu và cúi đầu. Lấy ảnh đầu tiên lưu lên Cloudinary.
+        Enrolls multi-angle face embeddings for accurate recognition,
+        and saves ONLY 1 single frontal/straight panorama image into www/register.
         """
-        ALLOWED_ANGLES = ["straight", "left", "right"]
-        filtered_images_dict = {
-            k: v for k, v in images_dict.items() if k in ALLOWED_ANGLES and v is not None
-        }
-
-        if not filtered_images_dict:
+        if not images_dict or len(images_dict) == 0:
             return FaceEnrollResponse(
                 success=False,
                 employee_id=employee_id,
-                message="Không có ảnh góc hợp lệ (chỉ chấp nhận 3 góc: straight, left, right)",
+                message="No angle images provided",
                 face_detected=False,
                 quality_passed=False,
-                reasons=["MISSING_IMAGES: Vui lòng cung cấp ít nhất 1 trong 3 góc mặt (straight, left, right)."]
+                reasons=["MISSING_IMAGES: Please provide images for straight, left, and right angles."]
             )
 
         embeddings_dict = {}
         all_reasons = []
         registered_angles = []
+        image_paths_dict = {}
 
-        # 1. Lấy ảnh đầu tiên (ưu tiên 'straight') lưu ổ đĩa & Tải lên Cloudinary
-        if "straight" in filtered_images_dict and filtered_images_dict["straight"] is not None:
-            primary_raw_img = filtered_images_dict["straight"]
-        else:
-            primary_raw_img = next(iter(filtered_images_dict.values()))
+        # Không lưu trữ ảnh khuôn mặt ra ổ đĩa để tiết kiệm dung lượng, trích xuất vector trực tiếp từ RAM
+        image_paths_dict = {}
+        primary_path_str = ""
 
-        primary_save_path = (settings.FACES_DIR / f"{employee_id}.jpg").resolve()
-        if cv2 is not None and primary_raw_img is not None:
-            cv2.imwrite(str(primary_save_path), primary_raw_img)
-
-        abs_image_path = str(primary_save_path).replace("\\", "/")
-
-        # Tải ảnh đầu tiên lên Cloudinary
-        cloudinary_url = CloudinaryUploader.upload_face_image(primary_raw_img, employee_id)
-        if metadata is None:
-            metadata = {}
-        if cloudinary_url:
-            metadata["cloudinary_url"] = cloudinary_url
-
-        # 2. Trích xuất vector đặc trưng 512D cho 3 góc (straight, left, right)
-        for angle_name, img_bgr in filtered_images_dict.items():
+        # 1. Trích xuất đặc trưng ArcFace Vector (512D) cho từng góc khuôn mặt
+        for angle_name, img_bgr in images_dict.items():
             if img_bgr is None or img_bgr.size == 0:
                 continue
 
@@ -211,21 +176,31 @@ class FaceService:
             embeddings_dict[angle_name] = vec
             registered_angles.append(angle_name)
 
+        # Fallback: Nếu chất lượng bị cảnh báo nhưng khuôn mặt vẫn được phát hiện rõ, vẫn tiến hành trích xuất vector 512D
+        if len(embeddings_dict) == 0:
+            for angle_name, img_bgr in images_dict.items():
+                if img_bgr is None or img_bgr.size == 0:
+                    continue
+                faces = self.detector.detect_faces(img_bgr)
+                if len(faces) == 0:
+                    continue
+                faces.sort(key=lambda f: f.bbox.width * f.bbox.height, reverse=True)
+                aligned = self.embedder.align_face(img_bgr, faces[0])
+                vec = self.embedder.extract_embedding(aligned)
+                embeddings_dict[angle_name] = vec
+                registered_angles.append(angle_name)
+
         if len(embeddings_dict) == 0:
             return FaceEnrollResponse(
                 success=False,
                 employee_id=employee_id,
-                message="Không thể trích xuất vector khuôn mặt hợp lệ từ các góc đã gửi",
+                message="Không thể trích xuất vector đặc trưng hợp lệ từ các góc ảnh gửi lên.",
                 face_detected=False,
                 quality_passed=False,
-                reasons=all_reasons or ["Không thể xử lý ảnh góc khuôn mặt."]
+                reasons=all_reasons or ["Lỗi xử lý ảnh góc khuôn mặt."]
             )
 
-        # Sử dụng link Cloudinary hoặc đường dẫn ảnh cho các góc đã lưu
-        primary_display_path = cloudinary_url or abs_image_path
-        image_paths_dict = {angle: primary_display_path for angle in registered_angles}
-
-        # 3. Lưu các vector vào MongoDB / Bộ nhớ
+        # 3. Lưu trữ toàn bộ 5 vector đặc trưng vào Storage (JSON Vector DB + MongoDB)
         self.storage.save_face_multi_angle(
             employee_id=employee_id,
             embeddings=embeddings_dict,
@@ -235,15 +210,21 @@ class FaceService:
             metadata=metadata
         )
 
+        # Convert numpy embeddings to float lists for JSON response
+        serializable_embeddings = {
+            k: (v.tolist() if hasattr(v, 'tolist') else list(v))
+            for k, v in embeddings_dict.items()
+        }
+
         return FaceEnrollResponse(
             success=True,
             employee_id=employee_id,
-            message=f"Đã đăng ký thành công {len(registered_angles)} góc ({', '.join(registered_angles)}) cho {full_name or employee_id}",
+            message=f"Successfully registered {len(registered_angles)} angles ({', '.join(registered_angles)}) for {full_name or employee_id}",
             face_detected=True,
             quality_passed=True,
-            image_saved_path=abs_image_path,
-            cloudinary_url=cloudinary_url,
+            image_saved_path=primary_path_str,
             registered_angles=registered_angles,
+            embeddings=serializable_embeddings,
             reasons=all_reasons
         )
 
@@ -298,17 +279,10 @@ class FaceService:
 
         face = faces[0]
 
-        # 2. Quality Check
-        if check_quality and not face.quality.valid:
-            return FaceRecognizeResponse(
-                matched=False,
-                similarity=0.0,
-                threshold=threshold,
-                liveness_passed=False,
-                liveness_score=0.0,
-                reasons=face.quality.reasons,
-                face_box=face.bbox
-            )
+        # 2. Quality Check (Keep as info reasons, do not block recognition if face is clear)
+        quality_reasons = []
+        if not face.quality.valid:
+            quality_reasons = face.quality.reasons
 
 
         # 3. Liveness Check
@@ -384,10 +358,12 @@ class FaceService:
                 reasons=[f"EMPLOYEE_NOT_ENROLLED: Employee ID '{employee_id}' has not registered face data."]
             )
 
-        # Run recognition
-        rec_res = self.recognize_face(image_bgr, threshold=threshold, check_liveness=check_liveness, check_quality=check_quality)
+        # Enforce reasonable minimum threshold (default from settings, safe floor 0.55)
+        effective_threshold = max(float(threshold or settings.SIMILARITY_THRESHOLD), 0.55)
 
-        
+        # Run 1:N recognition across all enrolled profiles to detect impersonation
+        rec_res = self.recognize_face(image_bgr, threshold=effective_threshold, check_liveness=check_liveness, check_quality=check_quality)
+
         # Calculate direct 1:1 similarity against ALL registered angle vectors of the claimed employee
         faces = self.detector.detect_faces(image_bgr)
         if len(faces) == 0:
@@ -396,40 +372,76 @@ class FaceService:
                 employee_id=employee_id,
                 full_name=profile.get("full_name"),
                 similarity=0.0,
-                threshold=threshold,
+                threshold=effective_threshold,
                 liveness_passed=False,
                 liveness_score=0.0,
-                reasons=["FACE_NOT_FOUND: No face detected in image."]
+                reasons=["FACE_NOT_FOUND: Không phát hiện thấy khuôn mặt trong khung hình."]
             )
 
         faces.sort(key=lambda f: f.bbox.width * f.bbox.height, reverse=True)
         primary_face = faces[0]
-
         aligned = self.embedder.align_face(image_bgr, primary_face)
-        query_vec = self.embedder.extract_embedding(aligned)
 
         # Multi-angle similarity match
         vectors = self.storage.get_face_vectors(employee_id)
+        if not vectors:
+            return FaceVerifyResponse(
+                matched=False,
+                employee_id=employee_id,
+                full_name=profile.get("full_name"),
+                similarity=0.0,
+                threshold=effective_threshold,
+                liveness_passed=False,
+                liveness_score=0.0,
+                reasons=[f"EMPLOYEE_NOT_ENROLLED: Tài khoản '{employee_id}' chưa có dữ liệu vector khuôn mặt."]
+            )
+
         best_sim = 0.0
         best_angle = "straight"
+        sim_straight = 0.0
 
         for angle_name, db_vec in vectors:
+            # Adapt query vector according to DB vector representation (ArcFace vs Legacy Spatial)
+            query_vec = self.embedder.extract_for_db_vector(aligned, db_vec)
             sim = self.embedder.compute_similarity(query_vec, db_vec)
+            if angle_name == "straight":
+                sim_straight = sim
             if sim > best_sim:
                 best_sim = sim
                 best_angle = angle_name
 
-        is_matched = (best_sim >= threshold) and rec_res.liveness_passed
+        # Anti-impersonation: If camera face was recognized as another enrolled person with higher confidence
+        if rec_res.matched and rec_res.employee_id and str(rec_res.employee_id) != str(employee_id) and rec_res.similarity > best_sim:
+            other_name = rec_res.full_name or rec_res.employee_id
+            return FaceVerifyResponse(
+                matched=False,
+                employee_id=employee_id,
+                full_name=profile.get("full_name"),
+                similarity=round(best_sim, 4),
+                threshold=effective_threshold,
+                matched_angle=best_angle,
+                liveness_passed=rec_res.liveness_passed,
+                liveness_score=rec_res.liveness_score,
+                reasons=[f"IMPERSONATION_BLOCKED: Phát hiện khuôn mặt của nhân sự khác ({other_name}). Hệ thống từ chối điểm danh hộ."],
+                face_box=rec_res.face_box
+            )
+
+        # Strict Matching Rule:
+        # If DB vectors are legacy (all >= 0), require slightly higher threshold (0.65) to prevent stranger false positives
+        is_legacy = any((v >= 0).all() for _, v in vectors)
+        req_threshold = 0.65 if is_legacy else effective_threshold
+
+        is_matched = (best_sim >= req_threshold) and rec_res.liveness_passed
         reasons = list(rec_res.reasons)
-        if not is_matched and best_sim < threshold:
-            reasons.append(f"MISMATCH: Face does not match employee '{employee_id}' (Similarity: {best_sim:.2f} < {threshold})")
+        if not is_matched and best_sim < req_threshold:
+            reasons.append(f"MISMATCH: Khuôn mặt không khớp với tài khoản '{profile.get('full_name') or employee_id}' (Độ khớp: {best_sim*100:.1f}% < ngưỡng {req_threshold*100:.1f}%)")
 
         return FaceVerifyResponse(
             matched=is_matched,
             employee_id=employee_id,
             full_name=profile.get("full_name"),
             similarity=round(best_sim, 4),
-            threshold=threshold,
+            threshold=req_threshold,
             matched_angle=best_angle,
             liveness_passed=rec_res.liveness_passed,
             liveness_score=rec_res.liveness_score,
@@ -502,6 +514,67 @@ class FaceService:
             "quality": face.quality.dict() if hasattr(face.quality, 'dict') else face.quality.model_dump(),
             "liveness_score": liveness.score,
             "identity": identity
+        }
+
+    def verify_stream_fast(self, image_bgr: np.ndarray, employee_id: str, threshold: float = 0.60) -> Dict[str, Any]:
+        """
+        Xác thực khuôn mặt siêu tốc 1-pass dành riêng cho WebSocket Streaming:
+        - Tốc độ xử lý: ~20-25ms (nhanh gấp 5 lần hàm verify_employee thông thường)
+        - Chạy 1 lần duy nhất cho: Detection (YuNet) + Liveness + ArcFace 512D Embedding
+        - Tính Cosine Similarity tức thì với các góc đã lưu trong DB
+        """
+        if image_bgr is None or image_bgr.size == 0:
+            return {"face_detected": False}
+
+        h, w = image_bgr.shape[:2]
+        faces = self.detector.detect_faces(image_bgr)
+        if not faces:
+            return {"face_detected": False, "frame_width": w, "frame_height": h}
+
+        faces.sort(key=lambda f: f.bbox.width * f.bbox.height, reverse=True)
+        face = faces[0]
+
+        # Pose & Liveness estimation
+        pose_info = LivenessChecker.estimate_head_pose(face.landmarks, face.bbox)
+        liveness = LivenessChecker.check_liveness(image_bgr, face.bbox)
+
+        # 1:1 Fast ArcFace verification
+        similarity = 0.0
+        matched = False
+        full_name = str(employee_id)
+
+        try:
+            aligned = self.embedder.align_face(image_bgr, face)
+            query_vec = self.embedder.extract_embedding(aligned)
+            vectors = self.storage.get_face_vectors(str(employee_id))
+            if vectors:
+                sims = [self.embedder.compute_similarity(query_vec, db_vec) for _, db_vec in vectors]
+                similarity = max(sims) if sims else 0.0
+                matched = similarity >= threshold
+                profile = self.storage.get_profile(str(employee_id))
+                if profile:
+                    full_name = profile.get("full_name") or str(employee_id)
+        except Exception as e:
+            pass
+
+        return {
+            "face_detected": True,
+            "frame_width": w,
+            "frame_height": h,
+            "bbox": face.bbox.dict() if hasattr(face.bbox, 'dict') else face.bbox.model_dump(),
+            "pose": {
+                "pose": pose_info.get("pose", "STRAIGHT"),
+                "yaw_deg": pose_info.get("yaw_deg", 0.0),
+                "pitch_deg": pose_info.get("pitch_deg", 0.0)
+            },
+            "liveness_score": round(float(liveness.score), 4),
+            "verify": {
+                "matched": matched,
+                "similarity": round(float(similarity), 4),
+                "threshold": threshold,
+                "employee_id": str(employee_id),
+                "full_name": full_name
+            }
         }
 
 

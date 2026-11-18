@@ -67,22 +67,24 @@ async def enroll_face(
     )
     return response
 
-@router.post("/face/enroll-multi-angle", response_model=FaceEnrollResponse, summary="Đăng ký 3 góc khuôn mặt trực diện (Chính diện, Trái, Phải)")
+@router.post("/face/enroll-multi-angle", response_model=FaceEnrollResponse, summary="Đăng ký 5 góc khuôn mặt (Chính diện, Trái, Phải, Trên, Dưới)")
 async def enroll_face_multi_angle(
-    image_straight: Optional[UploadFile] = File(None, description="Ảnh góc trực diện (Straight/Frontal) - Lấy lưu Cloudinary"),
+    image_straight: Optional[UploadFile] = File(None, description="Ảnh góc trực diện (Straight/Frontal)"),
     image_left: Optional[UploadFile] = File(None, description="Ảnh nghiêng trái (Turn Left)"),
     image_right: Optional[UploadFile] = File(None, description="Ảnh nghiêng phải (Turn Right)"),
+    image_up: Optional[UploadFile] = File(None, description="Ảnh ngước lên (Look Up)"),
+    image_down: Optional[UploadFile] = File(None, description="Ảnh cúi xuống (Look Down)"),
     image: Optional[UploadFile] = File(None, description="Ảnh đơn (Fallback góc chính diện)"),
-    employee_id: str = Form(..., description="Mã sinh viên / UID số duy nhất"),
-    full_name: Optional[str] = Form(None, description="Họ và tên sinh viên"),
-    department: Optional[str] = Form(None, description="Lớp / Khoa / Chuyên ngành"),
+    employee_id: str = Form(..., description="Mã nhân viên duy nhất (ví dụ: EMP001)"),
+    full_name: Optional[str] = Form(None, description="Họ và tên nhân viên"),
+    department: Optional[str] = Form(None, description="Phòng ban / Bộ phận"),
     check_quality: bool = Query(True, description="Kiểm tra chất lượng ảnh cho từng góc")
 ):
     """
-    Đăng ký 3 góc khuôn mặt trực diện (straight, left, right) - Không lấy ngẩng đầu và cúi đầu:
+    Đăng ký đa góc khuôn mặt (Hỗ trợ tối đa 5 góc: straight, left, right, up, down):
     - Trích xuất đặc trưng vector ArcFace 512 chiều riêng cho từng góc
-    - Tự động lấy ảnh đầu tiên (trực diện) lưu trữ an toàn trên Cloudinary CDN
-    - Lưu vector đặc trưng vào cơ sở dữ liệu phục vụ nhận diện và giám sát thi trực tuyến
+    - Lưu trữ đồng bộ vào PostgreSQL (bảng employees, face_embeddings) và Vector Index
+    - Giúp nhận diện cực kỳ chính xác ở mọi tư thế camera
     """
     images_dict: Dict[str, np.ndarray] = {}
 
@@ -109,8 +111,20 @@ async def enroll_face_multi_angle(
         if img is not None:
             images_dict["right"] = img
 
+    if image_up:
+        b = await image_up.read()
+        img = decode_image_file(b)
+        if img is not None:
+            images_dict["up"] = img
+
+    if image_down:
+        b = await image_down.read()
+        img = decode_image_file(b)
+        if img is not None:
+            images_dict["down"] = img
+
     if len(images_dict) == 0:
-        raise HTTPException(status_code=400, detail="Vui lòng cung cấp ít nhất 1 ảnh khuôn mặt hợp lệ (chấp nhận 3 góc: straight, left, right).")
+        raise HTTPException(status_code=400, detail="Vui lòng cung cấp ít nhất 1 ảnh khuôn mặt hợp lệ (khuyên dùng đủ 5 góc: straight, left, right, up, down).")
 
     response = face_service.enroll_employee_multi_angle(
         images_dict=images_dict,
@@ -193,6 +207,66 @@ async def detect_face_pose(
 
 # ====================================================================
 # WEBSOCKET REALTIME STREAMING FOR LIVE CAMERA ENROLLMENT & TRACKING
+def annotate_face_frame(img_bgr: np.ndarray, action_res: dict) -> str:
+    """
+    Vẽ khung bo góc (Corner Brackets) chuẩn biometric trực tiếp từ Python (OpenCV):
+    - Chỉ vẽ 4 góc bo công nghệ ôm khít khuôn mặt (tối giản, không vẽ vector/lưới hay id bên trong)
+    - Tự động lật gương (selfie mode) khớp 100% từng pixel
+    """
+    if img_bgr is None or cv2 is None:
+        return ""
+    
+    H, W = img_bgr.shape[:2]
+    # Lật gương trục X để nhìn như gương soi tự nhiên
+    img_display = cv2.flip(img_bgr, 1)
+
+    face_detected = action_res.get("face_detected", False)
+    bbox = action_res.get("bbox")
+    verify = action_res.get("verify", {})
+    is_matched = verify.get("matched", False)
+
+    # Màu sắc: Xanh ngọc lục bảo khi khớp >= 60%, Xanh Sky NTU khi đang quét
+    color_bgr = (129, 185, 16) if is_matched else (255, 162, 0)
+
+    if face_detected and bbox:
+        x, y, w, h = int(bbox["x"]), int(bbox["y"]), int(bbox["width"]), int(bbox["height"])
+        # Tọa độ phản chiếu đối xứng trong ảnh đã lật gương:
+        mx = W - 1 - (x + w)
+        my = y
+
+        # Giới hạn tọa độ trong ảnh
+        mx = max(0, min(W - 1, mx))
+        my = max(0, min(H - 1, my))
+        w = max(10, min(W - mx, w))
+        h = max(10, min(H - my, h))
+
+        # Bốn góc bo công nghệ chuẩn Biometric (Corner Brackets)
+        corner_len = max(18, int(min(w, h) * 0.22))
+        thick = 3
+        
+        # Góc Trên - Trái
+        cv2.line(img_display, (mx, my), (mx + corner_len, my), color_bgr, thick, cv2.LINE_AA)
+        cv2.line(img_display, (mx, my), (mx, my + corner_len), color_bgr, thick, cv2.LINE_AA)
+        # Góc Trên - Phải
+        cv2.line(img_display, (mx + w, my), (mx + w - corner_len, my), color_bgr, thick, cv2.LINE_AA)
+        cv2.line(img_display, (mx + w, my), (mx + w, my + corner_len), color_bgr, thick, cv2.LINE_AA)
+        # Góc Dưới - Trái
+        cv2.line(img_display, (mx, my + h), (mx + corner_len, my + h), color_bgr, thick, cv2.LINE_AA)
+        cv2.line(img_display, (mx, my + h), (mx, my + h - corner_len), color_bgr, thick, cv2.LINE_AA)
+        # Góc Dưới - Phải
+        cv2.line(img_display, (mx + w, my + h), (mx + w - corner_len, my + h), color_bgr, thick, cv2.LINE_AA)
+        cv2.line(img_display, (mx + w, my + h), (mx + w, my + h - corner_len), color_bgr, thick, cv2.LINE_AA)
+
+        # Viền mỏng bao quanh nhẹ nhàng
+        cv2.rectangle(img_display, (mx, my), (mx + w, my + h), color_bgr, 1, cv2.LINE_AA)
+
+    # Encode sang JPEG Base64
+    _, buf = cv2.imencode('.jpg', img_display, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
+    b64 = base64.b64encode(buf).decode('utf-8')
+    return f"data:image/jpeg;base64,{b64}"
+    b64 = base64.b64encode(buf).decode('utf-8')
+    return f"data:image/jpeg;base64,{b64}"
+
 # ====================================================================
 @router.websocket("/ws/face-stream")
 async def websocket_face_stream(websocket: WebSocket):
@@ -209,8 +283,12 @@ async def websocket_face_stream(websocket: WebSocket):
             frame_base64 = data.get("frame")
             target_angle = data.get("target_angle") # straight, left, right, up, down
 
+            if data.get("type") == "ping" or data.get("action") == "ping":
+                await websocket.send_json({"type": "pong", "status": "connected"})
+                continue
+
             if not frame_base64:
-                await websocket.send_json({"error": "Missing frame data"})
+                await websocket.send_json({"face_detected": False, "error": "Missing frame data"})
                 continue
 
             img_bgr = decode_base64_image(frame_base64)
@@ -218,9 +296,15 @@ async def websocket_face_stream(websocket: WebSocket):
                 await websocket.send_json({"face_detected": False, "error": "Invalid frame"})
                 continue
 
-            action_res = face_service.detect_face_action(img_bgr)
+            emp_id = data.get("student_code") or data.get("employee_id") or data.get("studentCode")
+            if emp_id and data.get("action") == "verify":
+                # Single-pass 1:1 verify siêu tốc (~20ms) loại bỏ hoàn toàn độ trễ
+                threshold = float(data.get("threshold", 0.60))
+                action_res = face_service.verify_stream_fast(img_bgr, str(emp_id), threshold)
+            else:
+                action_res = face_service.detect_face_action(img_bgr)
 
-            # Check if current pose matches target angle for enrollment
+            # Check if current pose matches target angle
             target_matched = False
             pose_str = action_res.get("pose", {}).get("pose", "NONE") if action_res.get("face_detected") else "NONE"
             
@@ -240,33 +324,12 @@ async def websocket_face_stream(websocket: WebSocket):
             action_res["target_angle"] = target_angle
             action_res["target_matched"] = target_matched
 
-            # Realtime Check-in 1:1 Verification Mode
-            employee_id = data.get("employee_id")
-            mode = data.get("mode") # "verify" | "enroll" | "recognize"
-
-            if (mode == "verify" or employee_id) and employee_id and action_res.get("face_detected"):
+            # Tùy chọn render frame có hình nếu client yêu cầu (mặc định gửi JSON siêu nhẹ ~200B để zero delay)
+            if data.get("return_annotated"):
                 try:
-                    verify_res = face_service.verify_employee(
-                        img_bgr,
-                        employee_id=employee_id.strip(),
-                        threshold=float(data.get("threshold", 0.65)),
-                        check_liveness=True,
-                        check_quality=False
-                    )
-                    action_res["verification"] = {
-                        "matched": bool(verify_res.matched),
-                        "similarity": float(verify_res.similarity),
-                        "threshold": float(verify_res.threshold),
-                        "liveness_passed": bool(verify_res.liveness_passed),
-                        "full_name": verify_res.full_name,
-                        "employee_id": verify_res.employee_id
-                    }
-                except Exception as ve:
-                    action_res["verification"] = {
-                        "matched": False,
-                        "similarity": 0.0,
-                        "error": str(ve)
-                    }
+                    action_res["annotated_frame"] = annotate_face_frame(img_bgr, action_res)
+                except Exception:
+                    action_res["annotated_frame"] = None
 
             await websocket.send_json(action_res)
     except WebSocketDisconnect:

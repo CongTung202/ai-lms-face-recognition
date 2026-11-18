@@ -24,7 +24,7 @@ public class FaceAttendanceLog {
     private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id", nullable = false)
+    @JoinColumn(name = "lesson_id", nullable = true)
     private Lesson lesson;
 
     @CreationTimestamp

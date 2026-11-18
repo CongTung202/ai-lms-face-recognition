@@ -39,4 +39,12 @@ public class Faculty {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public String getFacultyName() {
+        return this.name;
+    }
+
+    public void setFacultyName(String facultyName) {
+        this.name = facultyName;
+    }
 }

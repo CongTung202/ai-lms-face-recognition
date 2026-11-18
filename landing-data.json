@@ -1,0 +1,262 @@
+{
+  "topbar": {
+    "hotlineLabel": "Hotline Tuyển sinh & Học vụ NTU:",
+    "hotline": "0981 924 302 - 098 192 26 41",
+    "email": "tuyensinh@ntu-hn.edu.vn",
+    "degreeLookupText": "Cổng thông tin Đại học Nguyễn Trãi",
+    "degreeLookupUrl": "https://daihocnguyentrai.edu.vn/",
+    "languages": ["VIE", "ENG"]
+  },
+  "brand": {
+    "logoLetter": "NTU",
+    "name": "ĐẠI HỌC NGUYỄN TRÃI",
+    "subtitle": "Nguyen Trai University • Smart LMS"
+  },
+  "navLinks": [
+    { "label": "Trang chủ", "url": "#", "active": true },
+    { "label": "Các Khoa Ngành", "url": "portal/index.html#schools", "active": false },
+    { "label": "Khóa học Trực tuyến", "url": "portal/index.html#coursesSection", "active": false },
+    { "label": "Phòng Học Bài Giảng", "url": "portal/study.html", "active": false },
+    { "label": "Website NTU", "url": "https://daihocnguyentrai.edu.vn/", "active": false }
+  ],
+  "authButtons": {
+    "studentPortal": {
+      "label": "Cổng Sinh Viên NTU",
+      "url": "portal/index.html"
+    },
+    "facultyPortal": {
+      "label": "Cán Bộ & Quản Trị",
+      "url": "admin/index.html"
+    }
+  },
+  "hero": {
+    "badge": "Cổng Thông Tin Học Vụ & Đào Tạo Số NTU",
+    "subheading": "Trường Đại học Nguyễn Trãi • Mô hình Đại học Ứng dụng & Khởi nghiệp",
+    "title": "Cổng Đào Tạo Trực Tuyến & Học Tập Số NTU",
+    "slogan": "\"Sinh viên là số 1 — Khát vọng thanh xuân, khát vọng khởi nghiệp\"",
+    "description": "Nền tảng quản trị học tập số thông minh tích hợp trí tuệ nhân tạo (AI FaceID ArcFace không chạm, trợ lý AI RAG giải đáp giáo trình siêu tốc <10ms) phục vụ toàn thể sinh viên và giảng viên Trường Đại học Nguyễn Trãi.",
+    "kpis": [
+      {
+        "value": "98.5%",
+        "label": "Sinh viên có việc làm sau tốt nghiệp",
+        "color": "primary"
+      },
+      {
+        "value": "100%",
+        "label": "Điểm danh Face eKYC chuẩn ArcFace",
+        "color": "secondary"
+      },
+      {
+        "value": "24/7",
+        "label": "Trợ lý AI RAG giải đáp giáo trình",
+        "color": "on-surface"
+      }
+    ],
+    "campusCard": {
+      "imageUrl": "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1000&auto=format&fit=crop&q=80",
+      "title": "Trụ Sở Đào Tạo Đại Học Nguyễn Trãi",
+      "subtitle": "Tòa nhà 28A Lê Trọng Tấn, Phường La Khê, Quận Hà Đông, TP. Hà Nội"
+    }
+  },
+  "campuses": [
+    "Trụ sở chính: 28A Lê Trọng Tấn, La Khê, Hà Đông, Hà Nội",
+    "Cơ sở Đào tạo Khởi nghiệp & Đổi mới Sáng tạo NTU",
+    "Viện Đào tạo Quốc tế & Sau Đại học NTU"
+  ],
+  "quickServices": [
+    {
+      "id": "schedule",
+      "icon": "calendar_month",
+      "iconBg": "bg-primary-fixed",
+      "iconColor": "text-primary",
+      "title": "Tra cứu Lịch Học & Thi NTU",
+      "description": "Xem thời khóa biểu lớp tín chỉ, phòng thi, ca thi cá nhân của sinh viên.",
+      "hasInput": true,
+      "inputPlaceholder": "Nhập MSSV (VD: 2310900051...)",
+      "linkText": "Xem phòng học trực tuyến",
+      "linkUrl": "portal/study.html"
+    },
+    {
+      "id": "forms",
+      "icon": "description",
+      "iconBg": "bg-secondary-fixed",
+      "iconColor": "text-secondary",
+      "title": "Thủ tục & Đơn Từ Một Cửa",
+      "description": "Tải và nộp trực tuyến: hoãn thi, giấy chứng nhận sinh viên, cấp bảng điểm.",
+      "tags": ["Đơn hoãn thi", "Giấy xác nhận", "Bảng điểm"],
+      "linkText": "Kho biểu mẫu học vụ NTU",
+      "linkUrl": "https://daihocnguyentrai.edu.vn/"
+    },
+    {
+      "id": "degree",
+      "icon": "workspace_premium",
+      "iconBg": "bg-surface-container",
+      "iconColor": "text-on-surface",
+      "title": "Định Danh Sinh Trắc Học FaceID",
+      "description": "Quét 3 góc khuôn mặt để điểm danh an toàn và chống gian lận trong giờ học.",
+      "badge": "ArcFace AI Engine 8001",
+      "badgeIcon": "qr_code_scanner",
+      "linkText": "Đăng ký FaceID 3D ngay",
+      "linkUrl": "portal/face_enrollment.html"
+    },
+    {
+      "id": "tuition",
+      "icon": "account_balance_wallet",
+      "iconBg": "bg-primary-fixed-dim",
+      "iconColor": "text-on-primary-fixed",
+      "title": "Nộp Học Phí Trực Tuyến PayOS",
+      "description": "Gạch nợ học phí tự động tức thì 24/7 qua mã VietQR Ngân hàng chuẩn Napas247.",
+      "badge": "VietQR Tự Động",
+      "badgeIcon": "verified",
+      "linkText": "Tra cứu học phí & Lấy mã QR",
+      "linkUrl": "portal/index.html"
+    }
+  ],
+  "newsSection": {
+    "titleBadge": "Bảng Tin Đại Học Nguyễn Trãi",
+    "title": "Thông Báo Mới Nhất & Kế Hoạch Đào Tạo NTU",
+    "categories": [
+      { "id": "all", "label": "Tất cả", "active": true },
+      { "id": "academic", "label": "Phòng Đào tạo", "active": false },
+      { "id": "exam", "label": "Khảo thí & ĐBCL", "active": false },
+      { "id": "student_affairs", "label": "Công tác Sinh viên", "active": false },
+      { "id": "startup", "label": "Khởi nghiệp NTU", "active": false }
+    ],
+    "featured": {
+      "tag": "Khẩn • Trường Đại học Nguyễn Trãi",
+      "updatedAt": "Cập nhật: Hôm nay",
+      "date": "08/11/2026",
+      "views": "5.620 lượt đọc",
+      "title": "Triển khai Cổng đào tạo trực tuyến thông minh và hệ thống nhận diện khuôn mặt Face eKYC cho sinh viên toàn trường",
+      "description": "Nhằm hiện đại hóa công tác dạy và học theo mô hình Đại học Thông minh, Ban Giám hiệu Trường Đại học Nguyễn Trãi thông báo đưa vào hoạt động chính thức Cổng đào tạo trực tuyến tích hợp trí tuệ nhân tạo (AI FaceID và Trợ lý RAG giáo trình). Toàn thể sinh viên các khóa thực hiện đăng ký khuôn mặt sinh trắc học để tham gia lớp học số.",
+      "imageUrl": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=80",
+      "linkText": "Vào Cổng Sinh Viên trải nghiệm ngay",
+      "linkUrl": "portal/index.html"
+    },
+    "urgentNotices": [
+      {
+        "category": "Đào tạo & CNTT",
+        "date": "05/11/2026",
+        "badgeBg": "bg-[#00539F]/10 text-[#00539F]",
+        "title": "Hướng dẫn sử dụng Cổng học tập trực tuyến và trợ lý AI RAG hỏi đáp tài liệu môn học",
+        "description": "Sinh viên truy cập cổng học tập để xem video bài giảng nén chất lượng cao 720p, tải giáo trình PDF và hỏi đáp ngữ nghĩa tức thì cùng AI trợ giảng.",
+        "attachmentText": "Vào phòng học bài giảng",
+        "linkUrl": "portal/study.html"
+      },
+      {
+        "category": "Khởi nghiệp NTU",
+        "date": "02/11/2026",
+        "badgeBg": "bg-[#DA291C]/10 text-[#DA291C]",
+        "title": "Ngày hội Khởi nghiệp NTU Startup Day 2026: Ươm mầm sáng tạo và kết nối nhà đầu tư",
+        "description": "Phát động cuộc thi ý tưởng khởi nghiệp sáng tạo dành cho sinh viên tất cả các khoa. Quỹ ươm mầm khởi nghiệp NTU bảo trợ vốn hạt giống lên tới 500 triệu đồng.",
+        "attachmentText": "Xem thể lệ cuộc thi",
+        "linkUrl": "https://daihocnguyentrai.edu.vn/"
+      },
+      {
+        "category": "Học bổng & Hỗ trợ",
+        "date": "28/10/2026",
+        "badgeBg": "bg-emerald-50 text-emerald-700",
+        "title": "Trao học bổng khuyến khích học tập 'Sinh viên là số 1' học kỳ I năm học 2026 - 2027",
+        "description": "Vinh danh những gương mặt sinh viên có thành tích học tập xuất sắc và hoạt động phong trào tiêu biểu đại diện cho tinh thần Đại học Nguyễn Trãi.",
+        "attachmentText": "Tra cứu danh sách khen thưởng",
+        "linkUrl": "https://daihocnguyentrai.edu.vn/"
+      }
+    ],
+    "viewAllText": "Xem thêm tin tức trên website chính thức daihocnguyentrai.edu.vn",
+    "viewAllUrl": "https://daihocnguyentrai.edu.vn/"
+  },
+  "supportSection": {
+    "titleBadge": "Hỗ Trợ Sinh Viên & Giảng Viên NTU",
+    "title": "Trung tâm Hỗ trợ Kỹ thuật & Tư vấn Học vụ",
+    "description": "Đội ngũ cán bộ kỹ thuật và cố vấn học tập Trường Đại học Nguyễn Trãi sẵn sàng hỗ trợ bạn 24/7 trong suốt quá trình học tập và rèn luyện.",
+    "channels": [
+      {
+        "icon": "phone_in_talk",
+        "iconBg": "bg-[#00539F]/10 text-[#00539F]",
+        "title": "Hotline Tuyển Sinh & Đào Tạo",
+        "subtitle": "Giải đáp lịch học, tín chỉ, kết quả học tập",
+        "contactHighlight": "0981 924 302",
+        "contactDetail": "Hotline 2: 098 192 26 41 (08:00 - 18:00)"
+      },
+      {
+        "icon": "outgoing_mail",
+        "iconBg": "bg-[#DA291C]/10 text-[#DA291C]",
+        "title": "Email Tiếp Nhận & Hỗ Trợ",
+        "subtitle": "Học bổng, thủ tục sinh viên, điểm danh FaceID",
+        "contactHighlight": "tuyensinh@ntu-hn.edu.vn",
+        "contactDetail": "daihocnguyentrai@gmail.com"
+      },
+      {
+        "icon": "forum",
+        "iconBg": "bg-surface-container text-[#00539F]",
+        "title": "Cổng Tư Vấn Trực Tuyến NTU",
+        "subtitle": "Hỗ trợ kỹ thuật phần mềm LMS, reset mật khẩu",
+        "contactHighlight": "daihocnguyentrai.edu.vn",
+        "contactDetail": "Hỗ trợ trực tuyến mọi lúc",
+        "hasQr": false
+      },
+      {
+        "icon": "room_service",
+        "iconBg": "bg-surface-container-high text-on-surface",
+        "title": "Văn Phòng Tiếp Nhận Học Vụ",
+        "subtitle": "Nhận bằng, bảng điểm, hỗ trợ hồ sơ giấy tờ",
+        "contactHighlight": "Tòa nhà 28A Lê Trọng Tấn",
+        "contactDetail": "La Khê, Hà Đông, TP. Hà Nội"
+      }
+    ],
+    "guideSteps": [
+      {
+        "step": 1,
+        "title": "Đăng nhập tài khoản sinh viên NTU",
+        "detail": "Sử dụng Mã số sinh viên (MSSV) hoặc Email trường cấp. Mật khẩu mặc định là số điện thoại hoặc 123456.",
+        "badgeBg": "bg-[#00539F] text-white"
+      },
+      {
+        "step": 2,
+        "title": "Quét 3 góc mặt sinh trắc học FaceID",
+        "detail": "Kích hoạt Webcam chụp 3 góc mặt (Trực diện, Trái, Phải) để hệ thống AI ArcFace ghi nhớ khuôn mặt phục vụ điểm danh không chạm.",
+        "badgeBg": "bg-[#00539F] text-white"
+      },
+      {
+        "step": 3,
+        "title": "Vào phòng học & Video bài giảng",
+        "detail": "Theo dõi bài học trực tuyến, hệ thống tự động ghi nhận tiến độ % học tập và cho phép tiếp tục xem từ giây đã dừng.",
+        "badgeBg": "bg-[#00539F] text-white"
+      },
+      {
+        "step": 4,
+        "title": "Hỏi đáp giáo trình cùng Trợ lý AI",
+        "detail": "Sử dụng công nghệ AI RAG để tra cứu nhanh kiến thức trong toàn bộ sách và tài liệu PDF môn học với thời gian phản hồi dưới 10ms.",
+        "badgeBg": "bg-[#DA291C] text-white"
+      }
+    ],
+    "handbookText": "Truy cập Website Đại học Nguyễn Trãi",
+    "handbookUrl": "https://daihocnguyentrai.edu.vn/",
+    "handbookNote": "Mô hình Đại học Ứng dụng - Khát vọng khởi nghiệp"
+  },
+  "footer": {
+    "brandName": "ĐẠI HỌC NGUYỄN TRÃI (NTU)",
+    "description": "Trường Đại học Nguyễn Trãi - Đào tạo công dân toàn cầu, đại học ứng dụng gắn liền đổi mới sáng tạo và tinh thần khởi nghiệp.",
+    "address": "Tòa nhà số 28A, đường Lê Trọng Tấn, phường La Khê, quận Hà Đông, TP. Hà Nội",
+    "department": {
+      "title": "Phòng Quản lý Đào tạo & Quản trị Hệ thống LMS",
+      "line1": "Bộ phận Tiếp nhận & Xử lý học vụ sinh viên NTU",
+      "line2": "Điện thoại: 0981 924 302 - 098 192 26 41",
+      "line3": "Thời gian làm việc: 08:00 - 17:30 (Thứ 2 - Thứ 7)",
+      "line4": "Email: tuyensinh@ntu-hn.edu.vn • daotao@daihocnguyentrai.edu.vn"
+    },
+    "systemLinks": [
+      { "label": "Cổng Sinh Viên NTU LMS", "url": "portal/index.html" },
+      { "label": "Phòng Học Trực Tuyến", "url": "portal/study.html" },
+      { "label": "Điểm Danh Face eKYC 3D", "url": "portal/login.html" },
+      { "label": "Cổng Quản Trị Hệ Thống", "url": "admin/index.html" }
+    ],
+    "legalLinks": [
+      { "label": "Quy chế đào tạo Đại học Nguyễn Trãi", "url": "https://daihocnguyentrai.edu.vn/" },
+      { "label": "Cam kết chuẩn đầu ra sinh viên", "url": "https://daihocnguyentrai.edu.vn/" },
+      { "label": "Chính sách học bổng & Hỗ trợ", "url": "https://daihocnguyentrai.edu.vn/" },
+      { "label": "Bảo mật dữ liệu sinh trắc học", "url": "https://daihocnguyentrai.edu.vn/" }
+    ],
+    "copyright": "© 2026 Trường Đại học Nguyễn Trãi (NTU). Bản quyền thuộc về Trung tâm Đào tạo & Chuyển giao Công nghệ."
+  }
+}

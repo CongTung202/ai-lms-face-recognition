@@ -1,0 +1,233 @@
+<?xml version="1.0" ?>
+<mxfile host="app.diagrams.net" modified="2026-11-18T22:20:00.000Z" agent="Antigravity" version="24.0.0" type="device">
+  <diagram id="erd-core" name="ERD_Trong_Tam">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="banner" value="HÌNH 3.6. BIỂU ĐỒ THỰC THỂ LIÊN KẾT TRỌNG TÂM (CORE E-R DIAGRAM)&#10;EduFace: Phân hệ Đào tạo LMS, Điểm danh sinh trắc học Face AI và Thanh toán PayOS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F9FF;strokeColor=#0284C7;strokeWidth=2;fontSize=15;fontStyle=1;fontColor=#00539F;align=center;" vertex="1" parent="1">
+          <mxGeometry x="50" y="20" width="1240" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="users" value="&lt;b&gt;USERS (Người dùng)&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#00539F;strokeColor=#00539F;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="100" width="360" height="268" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r0" value="&lt;b&gt;🔑 id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0369A1&quot;&gt;&lt;b&gt;[PK]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#E0F2FE;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="32" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r1" value="&lt;b&gt;username&lt;/b&gt; : VARCHAR(100) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0284C7&quot;&gt;&lt;b&gt;[UK, Not Null]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="58" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r2" value="&lt;b&gt;password&lt;/b&gt; : VARCHAR(255) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[BCrypt]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="84" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r3" value="&lt;b&gt;full_name&lt;/b&gt; : VARCHAR(150) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Not Null]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="110" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r4" value="&lt;b&gt;email&lt;/b&gt; : VARCHAR(150) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0284C7&quot;&gt;&lt;b&gt;[UK, Nullable]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="136" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r5" value="&lt;b&gt;phone&lt;/b&gt; : VARCHAR(20) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Nullable]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="162" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r6" value="&lt;b&gt;role&lt;/b&gt; : VARCHAR(30) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0F172A&quot;&gt;&lt;b&gt;[ADMIN/TEACHER/STUDENT]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="188" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r7" value="&lt;b&gt;is_active&lt;/b&gt; : TINYINT(1) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[1: Active, 0: Lock]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="214" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="users_r8" value="&lt;b&gt;is_face_registered&lt;/b&gt; : TINYINT(1) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[1: Có, 0: Chưa]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="users">
+          <mxGeometry y="240" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="students" value="&lt;b&gt;STUDENTS (Hồ sơ Sinh viên)&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#0284C7;strokeColor=#0284C7;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="440" width="360" height="242" as="geometry"/>
+        </mxCell>
+        <mxCell id="students_r0" value="&lt;b&gt;🔑 id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0369A1&quot;&gt;&lt;b&gt;[PK]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#E0F2FE;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="students">
+          <mxGeometry y="32" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="students_r1" value="&lt;b&gt;🔗 user_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK, UK - 1:1]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="students">
+          <mxGeometry y="58" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="students_r2" value="&lt;b&gt;student_code&lt;/b&gt; : VARCHAR(50) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0284C7&quot;&gt;&lt;b&gt;[UK, Not Null]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="students">
+          <mxGeometry y="84" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="students_r3" value="&lt;b&gt;class_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[FK, Nullable]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="students">
+          <mxGeometry y="110" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="students_r4" value="&lt;b&gt;faculty_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[FK, Nullable]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="students">
+          <mxGeometry y="136" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="students_r5" value="&lt;b&gt;face_embedding&lt;/b&gt; : MEDIUMTEXT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#B45309&quot;&gt;&lt;b&gt;[Vector 512D ArcFace]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FEF3C7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="students">
+          <mxGeometry y="162" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="students_r6" value="&lt;b&gt;face_confidence&lt;/b&gt; : DOUBLE &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Ngưỡng tin cậy]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="students">
+          <mxGeometry y="188" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="students_r7" value="&lt;b&gt;dob&lt;/b&gt; : DATE &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Ngày sinh]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="students">
+          <mxGeometry y="214" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses" value="&lt;b&gt;COURSES (Khóa học &amp; Học phần)&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#00539F;strokeColor=#00539F;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="100" width="360" height="242" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses_r0" value="&lt;b&gt;🔑 id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0369A1&quot;&gt;&lt;b&gt;[PK]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#E0F2FE;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="courses">
+          <mxGeometry y="32" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses_r1" value="&lt;b&gt;code&lt;/b&gt; : VARCHAR(50) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0284C7&quot;&gt;&lt;b&gt;[UK, Not Null]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="courses">
+          <mxGeometry y="58" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses_r2" value="&lt;b&gt;title&lt;/b&gt; : VARCHAR(255) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0F172A&quot;&gt;&lt;b&gt;[Not Null]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="courses">
+          <mxGeometry y="84" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses_r3" value="&lt;b&gt;credits&lt;/b&gt; : INT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Số tín chỉ]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="courses">
+          <mxGeometry y="110" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses_r4" value="&lt;b&gt;price&lt;/b&gt; : DECIMAL(12,2) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#B45309&quot;&gt;&lt;b&gt;[0 = Miễn phí]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FEF3C7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="courses">
+          <mxGeometry y="136" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses_r5" value="&lt;b&gt;status&lt;/b&gt; : VARCHAR(30) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[PUBLISHED/DRAFT]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="courses">
+          <mxGeometry y="162" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses_r6" value="&lt;b&gt;🔗 instructor_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK trỏ USERS]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="courses">
+          <mxGeometry y="188" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="courses_r7" value="&lt;b&gt;created_at&lt;/b&gt; : DATETIME &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Not Null]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="courses">
+          <mxGeometry y="214" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="chapters" value="&lt;b&gt;CHAPTERS (Chương mục Khóa học)&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#0284C7;strokeColor=#0284C7;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="410" width="360" height="164" as="geometry"/>
+        </mxCell>
+        <mxCell id="chapters_r0" value="&lt;b&gt;🔑 id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0369A1&quot;&gt;&lt;b&gt;[PK]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#E0F2FE;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="chapters">
+          <mxGeometry y="32" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="chapters_r1" value="&lt;b&gt;🔗 course_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK trỏ COURSES]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="chapters">
+          <mxGeometry y="58" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="chapters_r2" value="&lt;b&gt;title&lt;/b&gt; : VARCHAR(255) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0F172A&quot;&gt;&lt;b&gt;[Tiêu đề chương]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="chapters">
+          <mxGeometry y="84" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="chapters_r3" value="&lt;b&gt;order_index&lt;/b&gt; : INT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Thứ tự hiển thị]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="chapters">
+          <mxGeometry y="110" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="chapters_r4" value="&lt;b&gt;created_at&lt;/b&gt; : DATETIME &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Not Null]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="chapters">
+          <mxGeometry y="136" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="lessons" value="&lt;b&gt;LESSONS (Bài giảng &amp; Video)&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#0369A1;strokeColor=#0369A1;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="640" width="360" height="216" as="geometry"/>
+        </mxCell>
+        <mxCell id="lessons_r0" value="&lt;b&gt;🔑 id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0369A1&quot;&gt;&lt;b&gt;[PK]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#E0F2FE;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="lessons">
+          <mxGeometry y="32" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="lessons_r1" value="&lt;b&gt;🔗 chapter_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK trỏ CHAPTERS]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="lessons">
+          <mxGeometry y="58" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="lessons_r2" value="&lt;b&gt;title&lt;/b&gt; : VARCHAR(255) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0F172A&quot;&gt;&lt;b&gt;[Tiêu đề bài học]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="lessons">
+          <mxGeometry y="84" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="lessons_r3" value="&lt;b&gt;video_url&lt;/b&gt; : VARCHAR(500) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Cloudinary HLS/MP4]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="lessons">
+          <mxGeometry y="110" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="lessons_r4" value="&lt;b&gt;duration&lt;/b&gt; : INT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Thời lượng (giây)]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="lessons">
+          <mxGeometry y="136" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="lessons_r5" value="&lt;b&gt;order_index&lt;/b&gt; : INT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Thứ tự bài học]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="lessons">
+          <mxGeometry y="162" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="lessons_r6" value="&lt;b&gt;created_at&lt;/b&gt; : DATETIME &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Not Null]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="lessons">
+          <mxGeometry y="188" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders" value="&lt;b&gt;ORDERS (Thanh toán PayOS VietQR)&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#B91C1C;strokeColor=#B91C1C;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="100" width="360" height="242" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders_r0" value="&lt;b&gt;🔑 id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#991B1B&quot;&gt;&lt;b&gt;[PK]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FEE2E2;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="orders">
+          <mxGeometry y="32" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders_r1" value="&lt;b&gt;order_code&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#991B1B&quot;&gt;&lt;b&gt;[UK - Mã PayOS]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="orders">
+          <mxGeometry y="58" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders_r2" value="&lt;b&gt;🔗 user_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK trỏ USERS]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="orders">
+          <mxGeometry y="84" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders_r3" value="&lt;b&gt;🔗 course_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK trỏ COURSES]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="orders">
+          <mxGeometry y="110" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders_r4" value="&lt;b&gt;amount&lt;/b&gt; : DECIMAL(12,2) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0F172A&quot;&gt;&lt;b&gt;[Số tiền (VND)]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="orders">
+          <mxGeometry y="136" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders_r5" value="&lt;b&gt;status&lt;/b&gt; : VARCHAR(30) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[PENDING/PAID]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#DCFCE7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="orders">
+          <mxGeometry y="162" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders_r6" value="&lt;b&gt;payment_link_id&lt;/b&gt; : VARCHAR(150) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Mã link]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="orders">
+          <mxGeometry y="188" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders_r7" value="&lt;b&gt;paid_at&lt;/b&gt; : DATETIME &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Thời gian Webhook]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="orders">
+          <mxGeometry y="214" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="attendances" value="&lt;b&gt;ATTENDANCES (Điểm danh Face AI)&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#4F46E5;strokeColor=#4F46E5;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="410" width="360" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="attendances_r0" value="&lt;b&gt;🔑 id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#4338CA&quot;&gt;&lt;b&gt;[PK]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#EDE9FE;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="attendances">
+          <mxGeometry y="32" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="attendances_r1" value="&lt;b&gt;🔗 student_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK trỏ STUDENTS]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="attendances">
+          <mxGeometry y="58" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="attendances_r2" value="&lt;b&gt;🔗 lesson_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK trỏ LESSONS]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="attendances">
+          <mxGeometry y="84" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="attendances_r3" value="&lt;b&gt;similarity_score&lt;/b&gt; : DOUBLE &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#B45309&quot;&gt;&lt;b&gt;[Cosine Sim &gt;= 0.70]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FEF3C7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="attendances">
+          <mxGeometry y="110" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="attendances_r4" value="&lt;b&gt;status&lt;/b&gt; : VARCHAR(30) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#4338CA&quot;&gt;&lt;b&gt;[PRESENT/SUSPICIOUS]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="attendances">
+          <mxGeometry y="136" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="attendances_r5" value="&lt;b&gt;checked_at&lt;/b&gt; : DATETIME &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Mốc thời gian chụp]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="attendances">
+          <mxGeometry y="162" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="quizzes" value="&lt;b&gt;QUIZZES (Trắc nghiệm điều kiện)&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#0D9488;strokeColor=#0D9488;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;rounded=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="930" y="670" width="360" height="164" as="geometry"/>
+        </mxCell>
+        <mxCell id="quizzes_r0" value="&lt;b&gt;🔑 id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0F766E&quot;&gt;&lt;b&gt;[PK]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#CCFBF1;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="quizzes">
+          <mxGeometry y="32" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="quizzes_r1" value="&lt;b&gt;🔗 lesson_id&lt;/b&gt; : BIGINT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#15803D&quot;&gt;&lt;b&gt;[FK, UK - 1:1]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#F0FDF4;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="quizzes">
+          <mxGeometry y="58" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="quizzes_r2" value="&lt;b&gt;title&lt;/b&gt; : VARCHAR(255) &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0F172A&quot;&gt;&lt;b&gt;[Tiêu đề bài thi]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="quizzes">
+          <mxGeometry y="84" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="quizzes_r3" value="&lt;b&gt;passing_score&lt;/b&gt; : INT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0F766E&quot;&gt;&lt;b&gt;[Điểm đạt: 80/100]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FEF3C7;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="quizzes">
+          <mxGeometry y="110" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="quizzes_r4" value="&lt;b&gt;time_limit_minutes&lt;/b&gt; : INT &amp;nbsp;&amp;nbsp;&lt;font color=&quot;#64748B&quot;&gt;&lt;b&gt;[Thời gian làm bài]&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=10;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;fontColor=#0F172A;" vertex="1" parent="quizzes">
+          <mxGeometry y="136" width="360" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_u_s" value="1 - 1 (Profile &amp; Face)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;startArrow=ERone;endArrow=ERone;" edge="1" parent="1" source="users" target="students">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_u_c" value="1 - N (Giảng viên)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="users" target="courses">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_c_ch" value="1 - N (Chương mục)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="courses" target="chapters">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_ch_l" value="1 - N (Bài học video)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;" edge="1" parent="1" source="chapters" target="lessons">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_l_q" value="1 - 1 (Trắc nghiệm)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;startArrow=ERone;endArrow=ERone;strokeColor=#0D9488;" edge="1" parent="1" source="lessons" target="quizzes">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_s_a" value="1 - N (Điểm danh)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;strokeColor=#4F46E5;" edge="1" parent="1" source="students" target="attendances">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_l_a" value="1 - N (Logs)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;strokeColor=#4F46E5;" edge="1" parent="1" source="lessons" target="attendances">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_u_o" value="1 - N (Người mua)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;strokeColor=#B91C1C;exitX=0.5;exitY=0;entryX=0.5;entryY=0;" edge="1" parent="1" source="users" target="orders">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_c_o" value="1 - N (Đơn hàng)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0284C7;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#00539F;labelBackgroundColor=#FFFFFF;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;strokeColor=#B91C1C;" edge="1" parent="1" source="courses" target="orders">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

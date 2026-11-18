@@ -1,5 +1,6 @@
 package com.datn.lms.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;
@@ -17,6 +18,22 @@ public class RagAskResponse {
     private List<RagSourceChunkDto> sources;
     private Long executionTimeMs;
 
+    @JsonProperty("references")
+    public List<RagSourceChunkDto> getReferences() {
+        return sources;
+    }
+
+    @JsonProperty("citedPages")
+    public List<Integer> getCitedPages() {
+        if (sources == null) return List.of();
+        return sources.stream()
+                .map(RagSourceChunkDto::getPageNumber)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .sorted()
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -27,5 +44,11 @@ public class RagAskResponse {
         private Integer pageNumber;
         private Double similarityScore;
         private String snippet;
+        private String documentName;
+
+        @JsonProperty("score")
+        public Double getScore() {
+            return similarityScore;
+        }
     }
 }

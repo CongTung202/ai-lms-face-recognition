@@ -19,7 +19,11 @@ public class CourseDto {
     private Boolean isFree;
     private String status;
     private String enrollmentType;
+    private Long facultyId;
     private Long subjectId;
     private Long lecturerId;
     private java.util.List<Long> majorIds;
+    private java.time.LocalDate startDate;
+    private java.time.LocalDate endDate;
+    private Boolean isSequentialLearning;
 }

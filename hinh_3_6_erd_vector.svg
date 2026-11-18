@@ -1,0 +1,347 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1150" width="1800" height="1150" style="background:#ffffff; font-family:'Segoe UI', Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="112%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    
+    <!-- Marker for 1 (One) relationship: two parallel lines or perpendicular bar -->
+    <marker id="one-start" viewBox="0 0 12 12" refX="0" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+      <line x1="4" y1="1" x2="4" y2="11" stroke="#0284c7" stroke-width="2"/>
+      <line x1="8" y1="1" x2="8" y2="11" stroke="#0284c7" stroke-width="2"/>
+    </marker>
+    <!-- Marker for Many (Crow's foot) -->
+    <marker id="many-end" viewBox="0 0 16 16" refX="16" refY="8" markerWidth="14" markerHeight="14" orient="auto">
+      <path d="M 0 0 L 16 8 L 0 16 M 16 0 L 16 16" fill="none" stroke="#0284c7" stroke-width="2"/>
+    </marker>
+    <!-- Arrow marker for general flows -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#0284c7" />
+    </marker>
+  </defs>
+
+  <!-- BANNER HEADER -->
+  <rect x="40" y="25" width="1720" height="70" rx="8" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1.5"/>
+  <text x="900" y="58" font-size="22" font-weight="700" fill="#00539F" text-anchor="middle" letter-spacing="0.5">HÌNH 3.6. BIỂU ĐỒ THỰC THỂ LIÊN KẾT TRỌNG TÂM (CORE E-R DIAGRAM)</text>
+  <text x="900" y="80" font-size="13" font-style="italic" fill="#475569" text-anchor="middle">Mô hình dữ liệu quan hệ rút gọn 8 thực thể nòng cốt: Đào tạo LMS, Điểm danh sinh trắc học Face AI và Thanh toán PayOS</text>
+
+  <!-- ========================================== -->
+  <!-- 1. USERS (Top Left: x=50, y=130) -->
+  <!-- ========================================== -->
+  <g transform="translate(50, 130)" filter="url(#shadow)">
+    <rect x="0" y="0" width="350" height="38" rx="6" fill="#00539F"/>
+    <text x="175" y="25" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">USERS (Người dùng)</text>
+    <rect x="0" y="38" width="350" height="235" fill="#f8fafc" stroke="#00539F" stroke-width="1.5"/>
+    
+    <!-- Attributes -->
+    <rect x="1" y="39" width="348" height="26" fill="#e0f2fe"/>
+    <text x="15" y="57" font-size="13" font-weight="700" fill="#0369a1">🔑 id : BIGINT</text>
+    <text x="335" y="57" font-size="11" font-weight="700" fill="#0369a1" text-anchor="end">[PK]</text>
+    
+    <text x="15" y="83" font-size="12.5" font-weight="600" fill="#0f172a">username : VARCHAR(100)</text>
+    <text x="335" y="83" font-size="11" fill="#0284c7" text-anchor="end">[UK, Not Null]</text>
+
+    <text x="15" y="108" font-size="12.5" fill="#334155">password : VARCHAR(255)</text>
+    <text x="335" y="108" font-size="11" fill="#64748b" text-anchor="end">[BCrypt, Not Null]</text>
+
+    <text x="15" y="133" font-size="12.5" fill="#334155">full_name : VARCHAR(150)</text>
+    <text x="335" y="133" font-size="11" fill="#64748b" text-anchor="end">[Not Null]</text>
+
+    <text x="15" y="158" font-size="12.5" fill="#334155">email : VARCHAR(150)</text>
+    <text x="335" y="158" font-size="11" fill="#0284c7" text-anchor="end">[UK, Nullable]</text>
+
+    <text x="15" y="183" font-size="12.5" font-weight="600" fill="#0f172a">role : VARCHAR(30)</text>
+    <text x="335" y="183" font-size="11" fill="#64748b" text-anchor="end">[ADMIN/TEACHER/STUDENT]</text>
+
+    <text x="15" y="208" font-size="12.5" fill="#334155">is_active : TINYINT(1)</text>
+    <text x="335" y="208" font-size="11" fill="#64748b" text-anchor="end">[1: Active, 0: Lock]</text>
+
+    <text x="15" y="233" font-size="12.5" fill="#334155">is_face_registered : TINYINT(1)</text>
+    <text x="335" y="233" font-size="11" fill="#64748b" text-anchor="end">[1: Registered, 0: None]</text>
+
+    <text x="15" y="258" font-size="12.5" fill="#334155">created_at : DATETIME</text>
+    <text x="335" y="258" font-size="11" fill="#64748b" text-anchor="end">[Not Null]</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 2. STUDENTS (Bottom Left: x=50, y=470) -->
+  <!-- ========================================== -->
+  <g transform="translate(50, 470)" filter="url(#shadow)">
+    <rect x="0" y="0" width="350" height="38" rx="6" fill="#0284c7"/>
+    <text x="175" y="25" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">STUDENTS (Hồ sơ Sinh viên)</text>
+    <rect x="0" y="38" width="350" height="205" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5"/>
+
+    <rect x="1" y="39" width="348" height="26" fill="#e0f2fe"/>
+    <text x="15" y="57" font-size="13" font-weight="700" fill="#0369a1">🔑 id : BIGINT</text>
+    <text x="335" y="57" font-size="11" font-weight="700" fill="#0369a1" text-anchor="end">[PK]</text>
+
+    <rect x="1" y="65" width="348" height="26" fill="#f0fdf4"/>
+    <text x="15" y="83" font-size="12.5" font-weight="700" fill="#15803d">🔗 user_id : BIGINT</text>
+    <text x="335" y="83" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK, UK - 1:1 USERS]</text>
+
+    <text x="15" y="113" font-size="12.5" font-weight="600" fill="#0f172a">student_code : VARCHAR(50)</text>
+    <text x="335" y="113" font-size="11" fill="#0284c7" text-anchor="end">[UK, Not Null]</text>
+
+    <text x="15" y="138" font-size="12.5" fill="#334155">class_id : BIGINT</text>
+    <text x="335" y="138" font-size="11" fill="#64748b" text-anchor="end">[FK, Nullable]</text>
+
+    <text x="15" y="163" font-size="12.5" fill="#334155">faculty_id : BIGINT</text>
+    <text x="335" y="163" font-size="11" fill="#64748b" text-anchor="end">[FK, Nullable]</text>
+
+    <text x="15" y="188" font-size="12.5" font-weight="600" fill="#7c2d12">face_embedding : MEDIUMTEXT</text>
+    <text x="335" y="188" font-size="11" fill="#b45309" text-anchor="end">[Vector 512D ArcFace]</text>
+
+    <text x="15" y="213" font-size="12.5" fill="#334155">face_confidence : DOUBLE</text>
+    <text x="335" y="213" font-size="11" fill="#64748b" text-anchor="end">[Confidence Threshold]</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 3. COURSES (Top Middle: x=540, y=130) -->
+  <!-- ========================================== -->
+  <g transform="translate(540, 130)" filter="url(#shadow)">
+    <rect x="0" y="0" width="360" height="38" rx="6" fill="#00539F"/>
+    <text x="180" y="25" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">COURSES (Khóa học & Học phần)</text>
+    <rect x="0" y="38" width="360" height="235" fill="#f8fafc" stroke="#00539F" stroke-width="1.5"/>
+
+    <rect x="1" y="39" width="358" height="26" fill="#e0f2fe"/>
+    <text x="15" y="57" font-size="13" font-weight="700" fill="#0369a1">🔑 id : BIGINT</text>
+    <text x="345" y="57" font-size="11" font-weight="700" fill="#0369a1" text-anchor="end">[PK]</text>
+
+    <text x="15" y="83" font-size="12.5" font-weight="600" fill="#0f172a">code : VARCHAR(50)</text>
+    <text x="345" y="83" font-size="11" fill="#0284c7" text-anchor="end">[UK, Not Null]</text>
+
+    <text x="15" y="108" font-size="12.5" font-weight="600" fill="#0f172a">title : VARCHAR(255)</text>
+    <text x="345" y="108" font-size="11" fill="#64748b" text-anchor="end">[Not Null]</text>
+
+    <text x="15" y="133" font-size="12.5" fill="#334155">credits : INT</text>
+    <text x="345" y="133" font-size="11" fill="#64748b" text-anchor="end">[Số tín chỉ]</text>
+
+    <text x="15" y="158" font-size="12.5" font-weight="600" fill="#b45309">price : DECIMAL(12,2)</text>
+    <text x="345" y="158" font-size="11" fill="#b45309" text-anchor="end">[0 = Miễn phí]</text>
+
+    <text x="15" y="183" font-size="12.5" fill="#334155">status : VARCHAR(30)</text>
+    <text x="345" y="183" font-size="11" fill="#64748b" text-anchor="end">[PUBLISHED/DRAFT]</text>
+
+    <rect x="1" y="195" width="358" height="26" fill="#f0fdf4"/>
+    <text x="15" y="213" font-size="12.5" font-weight="700" fill="#15803d">🔗 instructor_id : BIGINT</text>
+    <text x="345" y="213" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK trỏ USERS]</text>
+
+    <text x="15" y="243" font-size="12.5" fill="#334155">created_at : DATETIME</text>
+    <text x="345" y="243" font-size="11" fill="#64748b" text-anchor="end">[Not Null]</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 4. CHAPTERS (Middle Middle: x=540, y=470) -->
+  <!-- ========================================== -->
+  <g transform="translate(540, 470)" filter="url(#shadow)">
+    <rect x="0" y="0" width="360" height="38" rx="6" fill="#0284c7"/>
+    <text x="180" y="25" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">CHAPTERS (Chương mục Khóa học)</text>
+    <rect x="0" y="38" width="360" height="150" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5"/>
+
+    <rect x="1" y="39" width="358" height="26" fill="#e0f2fe"/>
+    <text x="15" y="57" font-size="13" font-weight="700" fill="#0369a1">🔑 id : BIGINT</text>
+    <text x="345" y="57" font-size="11" font-weight="700" fill="#0369a1" text-anchor="end">[PK]</text>
+
+    <rect x="1" y="65" width="358" height="26" fill="#f0fdf4"/>
+    <text x="15" y="83" font-size="12.5" font-weight="700" fill="#15803d">🔗 course_id : BIGINT</text>
+    <text x="345" y="83" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK trỏ COURSES]</text>
+
+    <text x="15" y="113" font-size="12.5" font-weight="600" fill="#0f172a">title : VARCHAR(255)</text>
+    <text x="345" y="113" font-size="11" fill="#64748b" text-anchor="end">[Tiêu đề chương]</text>
+
+    <text x="15" y="138" font-size="12.5" fill="#334155">order_index : INT</text>
+    <text x="345" y="138" font-size="11" fill="#64748b" text-anchor="end">[Thứ tự hiển thị]</text>
+
+    <text x="15" y="163" font-size="12.5" fill="#334155">created_at : DATETIME</text>
+    <text x="345" y="163" font-size="11" fill="#64748b" text-anchor="end">[Not Null]</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 5. LESSONS (Bottom Middle: x=540, y=710) -->
+  <!-- ========================================== -->
+  <g transform="translate(540, 710)" filter="url(#shadow)">
+    <rect x="0" y="0" width="360" height="38" rx="6" fill="#0369a1"/>
+    <text x="180" y="25" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">LESSONS (Buổi học & Video Bài giảng)</text>
+    <rect x="0" y="38" width="360" height="205" fill="#f8fafc" stroke="#0369a1" stroke-width="1.5"/>
+
+    <rect x="1" y="39" width="358" height="26" fill="#e0f2fe"/>
+    <text x="15" y="57" font-size="13" font-weight="700" fill="#0369a1">🔑 id : BIGINT</text>
+    <text x="345" y="57" font-size="11" font-weight="700" fill="#0369a1" text-anchor="end">[PK]</text>
+
+    <rect x="1" y="65" width="358" height="26" fill="#f0fdf4"/>
+    <text x="15" y="83" font-size="12.5" font-weight="700" fill="#15803d">🔗 chapter_id : BIGINT</text>
+    <text x="345" y="83" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK trỏ CHAPTERS]</text>
+
+    <text x="15" y="113" font-size="12.5" font-weight="600" fill="#0f172a">title : VARCHAR(255)</text>
+    <text x="345" y="113" font-size="11" fill="#64748b" text-anchor="end">[Tiêu đề bài giảng]</text>
+
+    <text x="15" y="138" font-size="12.5" fill="#334155">video_url : VARCHAR(500)</text>
+    <text x="345" y="138" font-size="11" fill="#64748b" text-anchor="end">[Cloudinary HLS/MP4]</text>
+
+    <text x="15" y="163" font-size="12.5" fill="#334155">duration : INT</text>
+    <text x="345" y="163" font-size="11" fill="#64748b" text-anchor="end">[Thời lượng (giây)]</text>
+
+    <text x="15" y="188" font-size="12.5" fill="#334155">order_index : INT</text>
+    <text x="345" y="188" font-size="11" fill="#64748b" text-anchor="end">[Thứ tự bài học]</text>
+
+    <text x="15" y="213" font-size="12.5" fill="#334155">created_at : DATETIME</text>
+    <text x="345" y="213" font-size="11" fill="#64748b" text-anchor="end">[Not Null]</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 6. QUIZZES (Bottom Right: x=1030, y=710) -->
+  <!-- ========================================== -->
+  <g transform="translate(1030, 710)" filter="url(#shadow)">
+    <rect x="0" y="0" width="350" height="38" rx="6" fill="#0d9488"/>
+    <text x="175" y="25" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">QUIZZES (Bài kiểm tra Trắc nghiệm)</text>
+    <rect x="0" y="38" width="350" height="175" fill="#f8fafc" stroke="#0d9488" stroke-width="1.5"/>
+
+    <rect x="1" y="39" width="348" height="26" fill="#ccfbf1"/>
+    <text x="15" y="57" font-size="13" font-weight="700" fill="#0f766e">🔑 id : BIGINT</text>
+    <text x="335" y="57" font-size="11" font-weight="700" fill="#0f766e" text-anchor="end">[PK]</text>
+
+    <rect x="1" y="65" width="348" height="26" fill="#f0fdf4"/>
+    <text x="15" y="83" font-size="12.5" font-weight="700" fill="#15803d">🔗 lesson_id : BIGINT</text>
+    <text x="335" y="83" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK, UK - 1:1 LESSONS]</text>
+
+    <text x="15" y="113" font-size="12.5" font-weight="600" fill="#0f172a">title : VARCHAR(255)</text>
+    <text x="335" y="113" font-size="11" fill="#64748b" text-anchor="end">[Tiêu đề bài thi]</text>
+
+    <text x="15" y="138" font-size="12.5" font-weight="600" fill="#0f766e">passing_score : INT</text>
+    <text x="335" y="138" font-size="11" fill="#0f766e" text-anchor="end">[Điểm đạt (80/100)]</text>
+
+    <text x="15" y="163" font-size="12.5" fill="#334155">time_limit_minutes : INT</text>
+    <text x="335" y="163" font-size="11" fill="#64748b" text-anchor="end">[Thời gian làm bài]</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 7. ATTENDANCES (Middle Right: x=1030, y=410) -->
+  <!-- ========================================== -->
+  <g transform="translate(1030, 410)" filter="url(#shadow)">
+    <rect x="0" y="0" width="360" height="38" rx="6" fill="#4f46e5"/>
+    <text x="180" y="25" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">ATTENDANCES (Điểm danh Face AI)</text>
+    <rect x="0" y="38" width="360" height="210" fill="#f8fafc" stroke="#4f46e5" stroke-width="1.5"/>
+
+    <rect x="1" y="39" width="358" height="26" fill="#ede9fe"/>
+    <text x="15" y="57" font-size="13" font-weight="700" fill="#4338ca">🔑 id : BIGINT</text>
+    <text x="345" y="57" font-size="11" font-weight="700" fill="#4338ca" text-anchor="end">[PK]</text>
+
+    <rect x="1" y="65" width="358" height="26" fill="#f0fdf4"/>
+    <text x="15" y="83" font-size="12.5" font-weight="700" fill="#15803d">🔗 student_id : BIGINT</text>
+    <text x="345" y="83" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK trỏ STUDENTS]</text>
+
+    <rect x="1" y="91" width="358" height="26" fill="#f0fdf4"/>
+    <text x="15" y="109" font-size="12.5" font-weight="700" fill="#15803d">🔗 lesson_id : BIGINT</text>
+    <text x="345" y="109" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK trỏ LESSONS]</text>
+
+    <text x="15" y="139" font-size="12.5" font-weight="700" fill="#7c2d12">similarity_score : DOUBLE</text>
+    <text x="345" y="139" font-size="11" fill="#b45309" text-anchor="end">[Cosine Sim >= 0.70]</text>
+
+    <text x="15" y="164" font-size="12.5" font-weight="600" fill="#0f172a">status : VARCHAR(30)</text>
+    <text x="345" y="164" font-size="11" fill="#4338ca" text-anchor="end">[PRESENT / SUSPICIOUS]</text>
+
+    <text x="15" y="189" font-size="12.5" fill="#334155">checked_at : DATETIME</text>
+    <text x="345" y="189" font-size="11" fill="#64748b" text-anchor="end">[Mốc thời gian chụp AI]</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- 8. ORDERS (Top Right: x=1430, y=130) -->
+  <!-- ========================================== -->
+  <g transform="translate(1430, 130)" filter="url(#shadow)">
+    <rect x="0" y="0" width="340" height="38" rx="6" fill="#b91c1c"/>
+    <text x="170" y="25" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">ORDERS (Thanh toán PayOS VietQR)</text>
+    <rect x="0" y="38" width="340" height="235" fill="#f8fafc" stroke="#b91c1c" stroke-width="1.5"/>
+
+    <rect x="1" y="39" width="338" height="26" fill="#fee2e2"/>
+    <text x="15" y="57" font-size="13" font-weight="700" fill="#991b1b">🔑 id : BIGINT</text>
+    <text x="325" y="57" font-size="11" font-weight="700" fill="#991b1b" text-anchor="end">[PK]</text>
+
+    <text x="15" y="83" font-size="12.5" font-weight="700" fill="#991b1b">order_code : BIGINT</text>
+    <text x="325" y="83" font-size="11" fill="#991b1b" text-anchor="end">[UK - Mã PayOS]</text>
+
+    <rect x="1" y="93" width="338" height="26" fill="#f0fdf4"/>
+    <text x="15" y="111" font-size="12.5" font-weight="700" fill="#15803d">🔗 user_id : BIGINT</text>
+    <text x="325" y="111" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK trỏ USERS]</text>
+
+    <rect x="1" y="121" width="338" height="26" fill="#f0fdf4"/>
+    <text x="15" y="139" font-size="12.5" font-weight="700" fill="#15803d">🔗 course_id : BIGINT</text>
+    <text x="325" y="139" font-size="11" font-weight="700" fill="#15803d" text-anchor="end">[FK trỏ COURSES]</text>
+
+    <text x="15" y="167" font-size="12.5" font-weight="600" fill="#0f172a">amount : DECIMAL(12,2)</text>
+    <text x="325" y="167" font-size="11" fill="#64748b" text-anchor="end">[Số tiền (VND)]</text>
+
+    <text x="15" y="192" font-size="12.5" font-weight="600" fill="#047857">status : VARCHAR(30)</text>
+    <text x="325" y="192" font-size="11" fill="#047857" text-anchor="end">[PENDING / PAID]</text>
+
+    <text x="15" y="217" font-size="12.5" fill="#334155">payment_link_id : VARCHAR(150)</text>
+    <text x="325" y="217" font-size="11" fill="#64748b" text-anchor="end">[Mã link PayOS]</text>
+
+    <text x="15" y="242" font-size="12.5" fill="#334155">paid_at : DATETIME</text>
+    <text x="325" y="242" font-size="11" fill="#64748b" text-anchor="end">[Xác nhận Webhook]</text>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- RELATIONSHIP CONNECTORS -->
+  <!-- ========================================== -->
+  
+  <!-- 1. USERS -> STUDENTS (1 - 1) -->
+  <path d="M 225 403 L 225 470" fill="none" stroke="#00539F" stroke-width="2.2" marker-start="url(#one-start)" marker-end="url(#arrow)"/>
+  <rect x="180" y="423" width="90" height="22" rx="4" fill="#ffffff" stroke="#00539F"/>
+  <text x="225" y="438" font-size="11" font-weight="700" fill="#00539F" text-anchor="middle">1 - 1 (Profile)</text>
+
+  <!-- 2. USERS -> COURSES (1 - N: Giảng viên phụ trách) -->
+  <path d="M 400 240 L 540 240" fill="none" stroke="#00539F" stroke-width="2.2" marker-start="url(#one-start)" marker-end="url(#many-end)"/>
+  <rect x="435" y="228" width="70" height="22" rx="4" fill="#ffffff" stroke="#00539F"/>
+  <text x="470" y="243" font-size="11" font-weight="700" fill="#00539F" text-anchor="middle">1 - N</text>
+
+  <!-- 3. COURSES -> CHAPTERS (1 - N: Composition) -->
+  <path d="M 720 403 L 720 470" fill="none" stroke="#0284c7" stroke-width="2.2" marker-start="url(#one-start)" marker-end="url(#many-end)"/>
+  <rect x="685" y="423" width="70" height="22" rx="4" fill="#ffffff" stroke="#0284c7"/>
+  <text x="720" y="438" font-size="11" font-weight="700" fill="#0284c7" text-anchor="middle">1 - N</text>
+
+  <!-- 4. CHAPTERS -> LESSONS (1 - N: Composition) -->
+  <path d="M 720 658 L 720 710" fill="none" stroke="#0284c7" stroke-width="2.2" marker-start="url(#one-start)" marker-end="url(#many-end)"/>
+  <rect x="685" y="673" width="70" height="22" rx="4" fill="#ffffff" stroke="#0284c7"/>
+  <text x="720" y="688" font-size="11" font-weight="700" fill="#0284c7" text-anchor="middle">1 - N</text>
+
+  <!-- 5. LESSONS -> QUIZZES (1 - 1 / 1 - 0..1: Bài trắc nghiệm điều kiện) -->
+  <path d="M 900 810 L 1030 810" fill="none" stroke="#0d9488" stroke-width="2.2" marker-start="url(#one-start)" marker-end="url(#arrow)"/>
+  <rect x="930" y="798" width="70" height="22" rx="4" fill="#ffffff" stroke="#0d9488"/>
+  <text x="965" y="813" font-size="11" font-weight="700" fill="#0d9488" text-anchor="middle">1 - 0..1</text>
+
+  <!-- 6. STUDENTS -> ATTENDANCES (1 - N: Sinh viên điểm danh) -->
+  <!-- From STUDENTS right side (x=400, y=550) to ATTENDANCES left side (x=1030, y=500) -->
+  <path d="M 400 570 C 470 570, 480 500, 1030 500" fill="none" stroke="#4f46e5" stroke-width="2" marker-start="url(#one-start)" marker-end="url(#many-end)"/>
+  <rect x="460" y="525" width="85" height="22" rx="4" fill="#ffffff" stroke="#4f46e5"/>
+  <text x="502" y="540" font-size="11" font-weight="700" fill="#4f46e5" text-anchor="middle">1 - N (Attends)</text>
+
+  <!-- 7. LESSONS -> ATTENDANCES (1 - N: Buổi học được điểm danh) -->
+  <!-- From LESSONS top-right (x=900, y=740) to ATTENDANCES bottom (x=1150, y=658) -->
+  <path d="M 900 750 C 970 750, 1150 720, 1150 658" fill="none" stroke="#4f46e5" stroke-width="2" marker-start="url(#one-start)" marker-end="url(#many-end)"/>
+  <rect x="980" y="715" width="85" height="22" rx="4" fill="#ffffff" stroke="#4f46e5"/>
+  <text x="1022" y="730" font-size="11" font-weight="700" fill="#4f46e5" text-anchor="middle">1 - N (Logs)</text>
+
+  <!-- 8. USERS -> ORDERS (1 - N: Người thanh toán) -->
+  <!-- From USERS top (x=225, y=130) -> up -> right to ORDERS top (x=1600, y=130) -->
+  <path d="M 225 130 L 225 105 L 1600 105 L 1600 130" fill="none" stroke="#b91c1c" stroke-width="2" marker-start="url(#one-start)" marker-end="url(#many-end)"/>
+  <rect x="850" y="95" width="100" height="20" rx="4" fill="#ffffff" stroke="#b91c1c"/>
+  <text x="900" y="109" font-size="10.5" font-weight="700" fill="#b91c1c" text-anchor="middle">1 - N (Giao dịch)</text>
+
+  <!-- 9. COURSES -> ORDERS (1 - N: Khóa học đặt mua) -->
+  <path d="M 900 240 L 1430 240" fill="none" stroke="#b91c1c" stroke-width="2" marker-start="url(#one-start)" marker-end="url(#many-end)"/>
+  <rect x="1120" y="228" width="90" height="22" rx="4" fill="#ffffff" stroke="#b91c1c"/>
+  <text x="1165" y="243" font-size="11" font-weight="700" fill="#b91c1c" text-anchor="middle">1 - N (Đơn hàng)</text>
+
+  <!-- LEGEND BOX (Bottom Left: x=50, y=960) -->
+  <g transform="translate(50, 960)">
+    <rect x="0" y="0" width="1720" height="65" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+    <text x="25" y="25" font-size="12" font-weight="700" fill="#0f172a">GHI CHÚ KÝ HIỆU &amp; RÀNG BUỘC TOÀN VẸN:</text>
+    
+    <text x="25" y="48" font-size="11.5" fill="#0369a1">🔑 <tspan font-weight="700">[PK]</tspan>: Khóa chính (Primary Key)</text>
+    <text x="270" y="48" font-size="11.5" fill="#15803d">🔗 <tspan font-weight="700">[FK]</tspan>: Khóa ngoại (Foreign Key)</text>
+    <text x="510" y="48" font-size="11.5" fill="#0284c7"><tspan font-weight="700">[UK]</tspan>: Giá trị duy nhất (Unique Key)</text>
+    <text x="760" y="48" font-size="11.5" fill="#00539F"><tspan font-weight="700">1 - 1</tspan>: Quan hệ Một - Một</text>
+    <text x="960" y="48" font-size="11.5" fill="#0284c7"><tspan font-weight="700">1 - N</tspan>: Quan hệ Một - Nhiều</text>
+    <text x="1180" y="48" font-size="11.5" fill="#7c2d12"><tspan font-weight="700">CASCADE DELETE</tspan>: Xóa phân tầng (Course -&gt; Chapter -&gt; Lesson)</text>
+    <text x="1560" y="48" font-size="11.5" fill="#047857"><tspan font-weight="700">3NF</tspan>: Dạng chuẩn 3</text>
+  </g>
+</svg>

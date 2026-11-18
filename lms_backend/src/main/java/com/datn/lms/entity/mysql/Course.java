@@ -64,6 +64,16 @@ public class Course {
     @Builder.Default
     private EnrollmentType enrollmentType = EnrollmentType.ASSIGNED_BY_MAJOR;
 
+    @Column(name = "start_date")
+    private java.time.LocalDate startDate;
+
+    @Column(name = "end_date")
+    private java.time.LocalDate endDate;
+
+    @Column(name = "is_sequential_learning", nullable = false)
+    @Builder.Default
+    private Boolean isSequentialLearning = true;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default

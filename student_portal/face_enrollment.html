@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="web_dashboard" name="shell-type"/>
+    <title>Đăng Ký Sinh Trắc Học FaceID 3D - Trường Đại Học Nguyễn Trãi (NTU)</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        @layer base {
+            html, body { margin: 0; padding: 0; }
+            body { overscroll-behavior: none; }
+            main > :first-child { margin-top: 0 !important; }
+            main > :last-child { margin-bottom: 0 !important; }
+        }
+        ::-webkit-scrollbar { display: none; }
+        .mesh-laser-line {
+            animation: scanLaser 2.4s ease-in-out infinite alternate;
+        }
+        @keyframes scanLaser {
+            0% { transform: translateY(30px); opacity: 0.3; }
+            50% { opacity: 0.9; }
+            100% { transform: translateY(240px); opacity: 0.3; }
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#00539F",
+                        "primary-container": "#003E7E",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#ffffff",
+                        "primary-fixed": "#dbeafe",
+                        "primary-fixed-dim": "#bfdbfe",
+                        "secondary": "#DA291C",
+                        "secondary-container": "#F37021",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#ffffff",
+                        "secondary-fixed": "#fee2e2",
+                        "secondary-fixed-dim": "#fca5a5",
+                        "surface": "#f8fafc",
+                        "surface-container": "#f1f5f9",
+                        "surface-container-low": "#f8fafc",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e8eef8",
+                        "surface-container-highest": "#e2e8f0",
+                        "surface-dim": "#cbd5e1",
+                        "surface-bright": "#ffffff",
+                        "on-surface": "#0f172a",
+                        "on-surface-variant": "#475569",
+                        "outline": "#94a3b8",
+                        "outline-variant": "#cbd5e1",
+                        "error": "#dc2626",
+                        "error-container": "#fee2e2",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#991b1b",
+                        "ntu-blue": "#00539F",
+                        "ntu-navy": "#0B3C73",
+                        "ntu-red": "#DA291C",
+                        "ntu-orange": "#F37021"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "space-xl": "2.5rem",
+                        "space-lg": "1.5rem",
+                        "space-sm": "0.5rem",
+                        "space-md": "1rem",
+                        "gutter-mobile": "1rem",
+                        "margin": "2rem",
+                        "margin-mobile": "1rem",
+                        "gutter": "1.5rem",
+                        "space-xs": "0.25rem"
+                    },
+                    "fontFamily": {
+                        "headline-xl-mobile": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-xl-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "headline-xl": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "headline-md": ["22px", {"lineHeight": "28px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased">
+    <!-- ASIDE NAVIGATION (Nguyen Trai University - NTU Portal) -->
+    <aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex flex-col justify-between">
+        <div class="flex flex-col">
+            <div class="h-16 px-space-lg flex items-center gap-space-sm bg-surface-container-lowest border-b border-surface-container-low">
+                <a href="index.html" class="flex items-center gap-2.5 group">
+                    <img src="assets/images/logo-ntu.jpg" alt="Logo NTU" class="w-10 h-10 object-contain rounded-lg border border-slate-200 shadow-xs group-hover:scale-105 transition" />
+                    <div class="flex flex-col">
+                        <span class="font-headline-sm text-[15px] font-extrabold text-[#00539F] leading-tight tracking-tight">ĐH NGUYỄN TRÃI</span>
+                        <span class="font-label-sm text-[11px] font-medium text-slate-500 leading-none">Smart LMS • FaceID 3D</span>
+                    </div>
+                </a>
+            </div>
+            <div class="px-space-md py-space-sm">
+                <div class="px-space-sm py-space-xs text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Phân hệ Đào tạo</div>
+            </div>
+            <nav class="flex flex-col gap-1 px-space-md" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm">
+                <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-lg text-label-lg" href="index.html">
+                    <span class="material-symbols-outlined text-[20px]">space_dashboard</span>
+                    <span>Trang chủ học tập</span>
+                </a>
+                <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-lg text-label-lg" href="index.html#coursesSection">
+                    <span class="material-symbols-outlined text-[20px]">menu_book</span>
+                    <span>Khóa học của tôi</span>
+                </a>
+                <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-lg text-label-lg" href="study.html">
+                    <span class="material-symbols-outlined text-[20px]">video_camera_front</span>
+                    <span>Phòng học trực tuyến</span>
+                </a>
+                <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg bg-primary text-white font-semibold rounded-lg shadow-sm font-label-lg text-label-lg" href="face_enrollment.html">
+                    <span class="material-symbols-outlined text-[20px]">face_unlock</span>
+                    <span>Đăng ký FaceID 3D</span>
+                </a>
+                <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-lg text-label-lg" href="login.html">
+                    <span class="material-symbols-outlined text-[20px]">login</span>
+                    <span>Điểm danh Face AI</span>
+                </a>
+            </nav>
+        </div>
+        <div class="p-space-md bg-surface-container-lowest border-t border-surface-container-low">
+            <div class="p-space-md bg-blue-50/70 border border-blue-100 rounded-xl flex items-center justify-between">
+                <div class="flex flex-col">
+                    <span class="font-label-sm text-[11px] text-slate-500 font-medium">Hỗ trợ kỹ thuật NTU</span>
+                    <span class="font-label-md text-[12px] font-bold text-[#00539F]">tuyensinh@ntu-hn.edu.vn</span>
+                </div>
+                <span class="material-symbols-outlined text-[#00539F] text-[20px]">headset_mic</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTENT WRAPPER -->
+    <div class="pl-64 flex flex-col min-h-screen">
+        <!-- TOP HEADER -->
+        <header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 px-space-lg flex items-center justify-between gap-space-md border-b border-surface-container-low">
+            <div class="flex items-center gap-space-md flex-1 max-w-2xl">
+                <div class="relative w-full max-w-md">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input class="w-full h-10 pl-10 pr-4 rounded-lg bg-surface-container-low font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary-container transition-all" placeholder="Tìm kiếm môn học, mã lớp, tài liệu nhanh..." type="text"/>
+                </div>
+                <div class="hidden xl:flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-low">
+                    <span class="material-symbols-outlined text-primary text-[18px]">school</span>
+                    <span class="font-label-md text-label-md text-on-surface font-medium whitespace-nowrap">Học kỳ I - 2024-2025</span>
+                    <span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-space-md">
+                <button class="relative w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" title="Tin nhắn trao đổi giảng viên" type="button">
+                    <span class="material-symbols-outlined text-[22px]">chat</span>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary"></span>
+                </button>
+                <button class="relative w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" title="Thông báo học vụ & Deadlines" type="button">
+                    <span class="material-symbols-outlined text-[22px]">notifications</span>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary"></span>
+                </button>
+                <div class="flex items-center gap-space-sm pl-space-sm">
+                    <div class="flex flex-col text-right hidden sm:flex">
+                        <span id="navStudentName" class="font-label-lg text-label-lg font-semibold text-on-surface leading-tight">Nguyễn Văn An</span>
+                        <span id="navStudentMeta" class="font-label-sm text-label-sm text-on-surface-variant leading-none">21DH112345 • Khoa CNTT</span>
+                    </div>
+                    <div id="navAvatarCircle" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-xs shadow-sm">
+                        NA
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN DASHBOARD BEHIND MODAL -->
+        <main class="w-full pt-16 bg-surface flex-1 px-gutter py-space-lg">
+            <div class="flex flex-col w-full relative">
+                <!-- LMS Dashboard Background Emulation (Behind the Modal Backdrop) -->
+                <div class="w-full filter blur-[6px] opacity-40 pointer-events-none select-none transition-all duration-300">
+                    <div class="grid grid-cols-12 gap-space-lg mb-space-lg">
+                        <div class="col-span-12 lg:col-span-8 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+                            <div class="h-6 w-48 bg-surface-container-high rounded-full"></div>
+                            <div class="h-32 bg-surface-container-low rounded-xl"></div>
+                            <div class="grid grid-cols-3 gap-space-md">
+                                <div class="h-20 bg-surface-container rounded-lg"></div>
+                                <div class="h-20 bg-surface-container rounded-lg"></div>
+                                <div class="h-20 bg-surface-container rounded-lg"></div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 lg:col-span-4 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+                            <div class="h-6 w-32 bg-surface-container-high rounded-full"></div>
+                            <div class="h-16 bg-surface-container-low rounded-lg"></div>
+                            <div class="h-16 bg-surface-container-low rounded-lg"></div>
+                            <div class="h-16 bg-surface-container-low rounded-lg"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-12 gap-space-lg">
+                        <div class="col-span-12 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm h-64"></div>
+                    </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- MODAL BACKDROP LAYER (POPUP ĐĂNG KÝ KHUÔN MẶT SINH TRẮC HỌC 3D) -->
+                <!-- ============================================================== -->
+                <div id="faceEnrollBackdrop" class="fixed inset-0 top-16 left-64 z-50 bg-[#121c2a]/65 backdrop-blur-md flex items-center justify-center p-space-md sm:p-space-lg overflow-y-auto">
+                    
+                    <!-- Main Biometric Enrollment Modal Card -->
+                    <div class="relative w-full max-w-4xl bg-surface-container-lowest rounded-2xl shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200 border border-surface-container-highest/40">
+                        
+                        <!-- Top Subtle Decorative Ambient Strip -->
+                        <div class="h-1.5 w-full bg-gradient-to-r from-primary-container via-secondary-container to-primary"></div>
+
+                        <!-- Modal Header -->
+                        <div class="px-space-lg py-space-md flex items-center justify-between bg-surface-container-lowest border-b border-surface-container-highest/30">
+                            <div class="flex items-center gap-space-md min-w-0">
+                                <div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shadow-sm flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[24px]">face_unlock</span>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <div class="flex items-center gap-space-xs flex-wrap">
+                                        <span class="font-headline-sm text-headline-sm font-bold text-on-surface truncate">Eduface FaceID Enrollment</span>
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-primary font-label-sm text-label-sm tracking-wide">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+                                            Sinh trắc học 3D
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+                                        <span class="material-symbols-outlined text-[14px] text-tertiary">verified_user</span>
+                                        <span>Chuẩn xác thực FIDO2 & AI Biometrics Level 3</span>
+                                        <span class="text-outline-variant">•</span>
+                                        <span class="text-tertiary">ISO/IEC 30107 Anti-spoofing</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action / Close -->
+                            <button onclick="closeEnrollModal()" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors ml-space-sm flex-shrink-0" title="Đóng cửa sổ" type="button">
+                                <span class="material-symbols-outlined text-[20px]">close</span>
+                            </button>
+                        </div>
+
+                        <!-- Student Identity Strip -->
+                        <div class="px-space-lg py-2.5 bg-surface-container-low flex flex-wrap items-center justify-between gap-space-sm border-b border-surface-container-highest/20">
+                            <div class="flex items-center gap-space-sm">
+                                <div id="stripStudentAvatar" class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-md text-label-md font-bold">
+                                    NA
+                                </div>
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                                    <span id="stripStudentName" class="font-label-lg text-label-lg font-bold text-on-surface">Nguyễn Văn An</span>
+                                    <span class="hidden sm:inline text-outline-variant">•</span>
+                                    <span class="font-body-sm text-body-sm text-on-surface-variant">MSSV: <strong id="stripStudentCode" class="text-on-surface font-semibold">21DH112345</strong></span>
+                                    <span class="hidden sm:inline text-outline-variant">•</span>
+                                    <span id="stripStudentDept" class="font-body-sm text-body-sm text-on-surface-variant">Khoa Công nghệ Thông tin</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm">
+                                <span class="material-symbols-outlined text-[14px] text-secondary">domain_verification</span>
+                                <span>Hệ thống Đào tạo Chính quy 2024-2025</span>
+                            </div>
+                        </div>
+
+                        <!-- Modal Body (Two-Column Layout) -->
+                        <div class="p-space-lg grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+                            
+                            <!-- Left: Live Camera Viewport (7 Cols) -->
+                            <div class="lg:col-span-7 flex flex-col gap-space-sm">
+                                
+                                <!-- Viewport Container -->
+                                <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-inverse-surface shadow-inner flex items-center justify-center border border-surface-container-highest/30 group">
+                                    
+                                    <!-- HTML5 Live Video Element -->
+                                    <video id="liveWebcamVideo" playsinline autoplay muted class="w-full h-full object-cover relative z-0"></video>
+                                    
+                                    <!-- Background simulated student video frame fallback if no webcam -->
+                                    <img id="simulatedVideoFrame" class="absolute inset-0 w-full h-full object-cover opacity-85 z-[1]" data-alt="Student photo preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOwZ0PIZWE_bIGYPCTa3GumKfcrkKHDqrM5WIlrBew8wdoTMrbMyOWZyfW6qam6KRdYrJ8ruu3Wexz1oZQM6yn6-EroSsE6tYFU7olFq0TJvGGxua9A6z0PHBef_mQErwzrhT6F9l2vUZfnmzpP-J4Y_PdkT7uTmrOCyL2zqforDiyu61A7PeqsEndMou84Uk8vNn-3eWDQ9h-cigjuQEW0kFaO6zLXzw6Ft1CcrbWPwaEzcI9wSCm"/>
+                                    
+                                    <!-- AI Hologram / 3D Face Mesh Wireframe Overlay (Vector SVG) -->
+                                    <svg class="absolute inset-0 w-full h-full pointer-events-none z-10" fill="none" viewbox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                                        <!-- Scanning Laser Beam -->
+                                        <line class="mesh-laser-line" x1="60" y1="0" x2="340" y2="0" stroke="#ce3a3a" stroke-width="2.5" stroke-dasharray="8 4" filter="drop-shadow(0 0 6px #ce3a3a)"></line>
+                                        
+                                        <!-- Radial Scan Ring -->
+                                        <ellipse class="animate-pulse" cx="200" cy="145" opacity="0.85" rx="82" ry="105" stroke="#ce3a3a" stroke-dasharray="6 6" stroke-width="2"></ellipse>
+                                        <ellipse cx="200" cy="145" opacity="0.4" rx="94" ry="118" stroke="#ffab69" stroke-width="1"></ellipse>
+                                        
+                                        <!-- 3D Landmark Dots (Facial Keypoints) -->
+                                        <circle cx="170" cy="125" fill="#ce3a3a" r="2.5"></circle>
+                                        <circle cx="230" cy="125" fill="#ce3a3a" r="2.5"></circle>
+                                        <circle cx="200" cy="145" fill="#ffab69" r="3"></circle>
+                                        <circle cx="180" cy="175" fill="#ce3a3a" r="2.5"></circle>
+                                        <circle cx="200" cy="180" fill="#ce3a3a" r="2.5"></circle>
+                                        <circle cx="220" cy="175" fill="#ce3a3a" r="2.5"></circle>
+                                        <circle cx="200" cy="205" fill="#ce3a3a" r="3"></circle>
+                                        
+                                        <!-- Left / Right Wireframe Cheek Lines -->
+                                        <path d="M150 145 C150 180, 175 215, 200 220 C225 215, 250 180, 250 145" opacity="0.7" stroke="#ce3a3a" stroke-dasharray="3 3" stroke-width="1.2"></path>
+                                        <line opacity="0.75" stroke="#ce3a3a" stroke-width="1.5" x1="200" x2="200" y1="80" y2="105"></line>
+                                        <line opacity="0.75" stroke="#ce3a3a" stroke-width="1.5" x1="200" x2="200" y1="230" y2="245"></line>
+                                        <line opacity="0.75" stroke="#ce3a3a" stroke-width="1.5" x1="100" x2="125" y1="145" y2="145"></line>
+                                        <line opacity="0.75" stroke="#ce3a3a" stroke-width="1.5" x1="275" x2="300" y1="145" y2="145"></line>
+                                        
+                                        <!-- Dynamic Animated Angle Arrow: Direction Guide -->
+                                        <g id="angleArrowIndicator" class="animate-bounce" opacity="0.95">
+                                            <circle cx="295" cy="145" fill="#ce3a3a" r="16" filter="drop-shadow(0 2px 5px rgba(0,0,0,0.4))"></circle>
+                                            <path id="angleArrowPath" d="M290 140 L298 145 L290 150" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+                                        </g>
+                                    </svg>
+
+                                    <!-- Top Overlay Indicators (Sensors) -->
+                                    <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
+                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-inverse-surface/80 backdrop-blur-md text-inverse-on-surface font-label-sm text-label-sm shadow-sm">
+                                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                                            <span class="font-medium text-emerald-300">Khoảng cách: Chuẩn (50cm)</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="flex items-center gap-1 px-2 py-1 rounded-lg bg-inverse-surface/80 backdrop-blur-md text-emerald-300 font-label-sm text-label-sm">
+                                                <span class="material-symbols-outlined text-[14px]">wb_sunny</span>
+                                                <span>Ánh sáng: Tốt ✓</span>
+                                            </div>
+                                            <div class="px-2 py-1 rounded-lg bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold tracking-wider uppercase shadow-xs">
+                                                LIVE 60FPS
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bottom Floating Direction Guide Banner -->
+                                    <div class="absolute bottom-3 left-3 right-3 p-2.5 rounded-xl bg-inverse-surface/90 backdrop-blur-md flex items-center justify-between text-inverse-on-surface shadow-lg z-20 border border-white/10">
+                                        <div class="flex items-center gap-2.5">
+                                            <div id="guideBannerIconCircle" class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+                                                <span id="guideBannerIcon" class="material-symbols-outlined text-[16px]">rotate_right</span>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span id="guideStepTitle" class="font-label-md text-label-md font-bold text-inverse-on-surface">Bước 2: Quay chậm mặt sang Phải (~30°)</span>
+                                                <span id="guideStepDesc" class="font-body-sm text-body-sm text-inverse-on-surface/80">Giữ cằm thăng bằng và mắt nhìn hướng theo mũi tên</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-right flex flex-col items-end pl-2">
+                                            <span id="guidePercentVal" class="font-headline-sm text-headline-sm font-bold text-secondary-container leading-none">65%</span>
+                                            <span class="font-label-sm text-label-sm text-inverse-on-surface/70">Đang ghi nhận</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Action Buttons under Viewport -->
+                                <div class="flex items-center justify-between pt-1">
+                                    <button onclick="toggleCameraDevice()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md shadow-2xs" type="button">
+                                        <span class="material-symbols-outlined text-[16px] text-tertiary">videocam</span>
+                                        <span id="cameraToggleLabel">Bật Webcam Thực</span>
+                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="resetCurrentStep()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md" type="button">
+                                            <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                                            <span>Quét lại góc này</span>
+                                        </button>
+                                        <button onclick="autoAlignFace()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary-fixed text-primary hover:bg-outline-variant transition-colors font-label-md text-label-md font-semibold" type="button">
+                                            <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+                                            <span>Tự động căn chỉnh</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: 3-Step Pose Progress & Standards Guidance (5 Cols) -->
+                            <div class="lg:col-span-5 flex flex-col justify-between gap-space-md">
+                                
+                                <!-- Top Section: Enrollment Progress & Steps List -->
+                                <div class="flex flex-col gap-space-sm">
+                                    
+                                    <!-- Global Progress Bar -->
+                                    <div class="p-space-md bg-surface-container-low rounded-xl flex flex-col gap-2 border border-surface-container-highest/20">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-label-md text-label-md font-semibold text-on-surface">Tiến trình quét 3D đa góc</span>
+                                            <span id="globalProgressLabel" class="font-label-lg text-label-lg font-bold text-primary">70% (2/3 Góc)</span>
+                                        </div>
+                                        <div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+                                            <div id="globalProgressBar" class="h-full rounded-full bg-gradient-to-r from-primary-container to-secondary-container transition-all duration-500" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Steps Detailed List -->
+                                    <div class="flex flex-col gap-2 pt-1" id="stepsCardsList">
+                                        
+                                        <!-- Step 1: Completed -->
+                                        <div id="stepCard-1" class="p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-emerald-100">
+                                            <div class="flex items-center gap-3">
+                                                <div id="stepIconBox-1" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                                                    <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <span class="font-label-md text-label-md font-bold text-on-surface">Góc 1: Chính diện (0°)</span>
+                                                    <span id="stepSub-1" class="font-body-sm text-body-sm text-emerald-700 font-medium">100% Đã thu nhận vector</span>
+                                                </div>
+                                            </div>
+                                            <span id="stepEndIcon-1" class="material-symbols-outlined text-emerald-600 text-[20px]">done_all</span>
+                                        </div>
+
+                                        <!-- Step 2: In-Progress Active -->
+                                        <div id="stepCard-2" class="p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container shadow-md flex items-center justify-between relative overflow-hidden border border-primary-container/30">
+                                            <div id="stepCardAccent-2" class="absolute left-0 top-0 bottom-0 w-1 bg-primary-container"></div>
+                                            <div class="flex items-center gap-3 pl-1">
+                                                <div id="stepIconBox-2" class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center flex-shrink-0 animate-pulse">
+                                                    <span class="material-symbols-outlined text-[18px]">motion_photos_on</span>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <span class="font-label-md text-label-md font-bold text-primary">Góc 2: Nghiêng Phải (+30°)</span>
+                                                        <span id="stepBadge-2" class="px-1.5 py-0.2 rounded bg-primary-container text-on-primary font-label-sm text-[10px] leading-none uppercase font-bold">Đang quét</span>
+                                                    </div>
+                                                    <span id="stepSub-2" class="font-body-sm text-body-sm text-on-surface-variant">Khớp 128/192 điểm đặc trưng (65%)</span>
+                                                </div>
+                                            </div>
+                                            <div id="stepSpinner-2" class="w-5 h-5 border-2 border-primary-container border-t-transparent rounded-full animate-spin"></div>
+                                        </div>
+
+                                        <!-- Step 3: Pending -->
+                                        <div id="stepCard-3" class="p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-low opacity-75 flex items-center justify-between border border-surface-container-highest/20">
+                                            <div class="flex items-center gap-3">
+                                                <div id="stepIconBox-3" class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center flex-shrink-0">
+                                                    <span class="material-symbols-outlined text-[18px]">rotate_left</span>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <span class="font-label-md text-label-md font-semibold text-on-surface-variant">Góc 3: Nghiêng Trái (-30°)</span>
+                                                    <span id="stepSub-3" class="font-body-sm text-body-sm text-on-surface-variant">Chờ hoàn tất góc phải</span>
+                                                </div>
+                                            </div>
+                                            <span id="stepEndIcon-3" class="material-symbols-outlined text-on-surface-variant text-[20px]">lock_clock</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Standard Requirements Advice Box -->
+                                    <div class="p-space-md rounded-xl bg-secondary-fixed/40 flex flex-col gap-2 mt-1 border border-secondary/20">
+                                        <span class="font-label-md text-label-md font-bold text-on-secondary-fixed flex items-center gap-1.5">
+                                            <span class="material-symbols-outlined text-[18px] text-secondary">tips_and_updates</span>
+                                            Quy chuẩn sinh trắc học bắt buộc:
+                                        </span>
+                                        <ul class="flex flex-col gap-1.5 text-on-secondary-fixed-variant font-body-sm text-body-sm">
+                                            <li class="flex items-start gap-2">
+                                                <span class="material-symbols-outlined text-[16px] text-secondary flex-shrink-0 mt-0.5">check_box</span>
+                                                <span>Không đeo khẩu trang, khăn trùm hoặc kính râm tối màu.</span>
+                                            </li>
+                                            <li class="flex items-start gap-2">
+                                                <span class="material-symbols-outlined text-[16px] text-secondary flex-shrink-0 mt-0.5">check_box</span>
+                                                <span>Quay chuyển động đầu từ tốn để cảm biến AI bám bắt mốc 3D.</span>
+                                            </li>
+                                            <li class="flex items-start gap-2">
+                                                <span class="material-symbols-outlined text-[16px] text-secondary flex-shrink-0 mt-0.5">check_box</span>
+                                                <span>Đảm bảo khuôn mặt được chiếu sáng đồng đều, không ngược sáng.</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Action CTA Group -->
+                                <div class="flex flex-col gap-space-sm pt-2">
+                                    <button id="btnCaptureCurrentPose" onclick="captureAndAdvanceStep()" class="w-full h-11 px-space-lg rounded-xl bg-primary-container text-on-primary hover:bg-primary active:scale-[0.99] font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-150" type="button">
+                                        <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+                                        <span id="btnCaptureLabel">Chụp xác nhận góc phải (Bước 2/3)</span>
+                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="skipCurrentStep()" class="flex-1 h-9 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-md text-label-md font-medium text-center" type="button">
+                                            Bỏ qua góc này (Thử lại sau)
+                                        </button>
+                                        <button onclick="closeEnrollModal()" class="flex-1 h-9 rounded-lg bg-transparent text-primary hover:bg-primary-fixed/40 transition-colors font-label-md text-label-md font-semibold text-center" type="button">
+                                            Hủy đăng ký
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer / Security Note -->
+                        <div class="px-space-lg py-space-sm bg-surface-container-low flex flex-wrap items-center justify-between gap-space-sm text-on-surface-variant font-label-sm text-label-sm border-t border-surface-container-highest/30">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-[18px]">enhanced_encryption</span>
+                                <span>Dữ liệu khuôn mặt được mã hóa bất đối xứng AES-256 & SHA-3 theo chuẩn ĐH Eduface.</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <a class="text-primary hover:underline font-medium" href="#">Chính sách bảo mật sinh trắc học</a>
+                                <span class="text-outline-variant">•</span>
+                                <span class="text-tertiary">Mã phiên: SEC-BIO-2024-9981</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-2xl opacity-0 translate-y-3 pointer-events-none transition-all duration-300">
+        <span class="material-symbols-outlined text-secondary-fixed text-[20px]" id="toastIcon">check_circle</span>
+        <span class="font-body-sm text-xs font-semibold" id="toastMessage">Thông báo</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & WEBCAM INTERACTION -->
+    <script>
+        let currentStep = 2; // 1: Chính diện, 2: Nghiêng Phải, 3: Nghiêng Trái
+        let mediaStream = null;
+        let isUsingRealCamera = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initStudentProfile();
+            updateStepUi();
+        });
+
+        function initStudentProfile() {
+            try {
+                const storedUser = localStorage.getItem('student_user') || localStorage.getItem('currentUser');
+                if (storedUser) {
+                    const u = JSON.parse(storedUser);
+                    const name = u.fullName || u.username || 'Nguyễn Văn An';
+                    const code = u.studentCode || u.email || '21DH112345';
+                    const dept = u.department || 'Khoa Công nghệ Thông tin';
+
+                    document.getElementById('navStudentName').textContent = name;
+                    document.getElementById('navStudentMeta').textContent = `${code} • ${dept}`;
+                    document.getElementById('stripStudentName').textContent = name;
+                    document.getElementById('stripStudentCode').textContent = code;
+                    document.getElementById('stripStudentDept').textContent = dept;
+
+                    const initials = name.split(' ').map(n => n[0]).slice(-2).join('').toUpperCase();
+                    document.getElementById('navAvatarCircle').textContent = initials;
+                    document.getElementById('stripStudentAvatar').textContent = initials;
+                }
+            } catch (e) {
+                console.warn('Lỗi đọc thông tin sinh viên:', e);
+            }
+        }
+
+        async function toggleCameraDevice() {
+            const video = document.getElementById('liveWebcamVideo');
+            const fallback = document.getElementById('simulatedVideoFrame');
+            const label = document.getElementById('cameraToggleLabel');
+
+            if (!isUsingRealCamera) {
+                try {
+                    mediaStream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }
+                    });
+                    video.srcObject = mediaStream;
+                    video.classList.remove('hidden');
+                    fallback.classList.add('hidden');
+                    isUsingRealCamera = true;
+                    label.textContent = 'Tắt Camera (Dùng Giả lập)';
+                    showToast('Đã kết nối Camera thiết bị thành công!');
+                } catch (err) {
+                    showToast('Không thể mở webcam: ' + err.message);
+                }
+            } else {
+                stopCameraStream();
+                video.classList.add('hidden');
+                fallback.classList.remove('hidden');
+                isUsingRealCamera = false;
+                label.textContent = 'Bật Webcam Thực';
+                showToast('Đã chuyển sang chế độ giả lập mẫu.');
+            }
+        }
+
+        function stopCameraStream() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(t => t.stop());
+                mediaStream = null;
+            }
+        }
+
+        function captureAndAdvanceStep() {
+            if (currentStep === 1) {
+                currentStep = 2;
+                showToast('Đã lưu dữ liệu Góc 1 (Chính diện)! Tiếp tục quay sang phải.');
+            } else if (currentStep === 2) {
+                currentStep = 3;
+                showToast('Đã lưu dữ liệu Góc 2 (Nghiêng Phải)! Tiếp tục quay sang trái.');
+            } else if (currentStep === 3) {
+                currentStep = 4; // Completed
+                showToast('Chúc mừng! Đăng ký sinh trắc học 3D hoàn tất thành công 100%!');
+            } else {
+                currentStep = 1;
+            }
+            updateStepUi();
+        }
+
+        function skipCurrentStep() {
+            if (currentStep < 3) {
+                currentStep++;
+                showToast('Đã bỏ qua góc hiện tại.');
+                updateStepUi();
+            } else {
+                closeEnrollModal();
+            }
+        }
+
+        function resetCurrentStep() {
+            showToast(`Đã thiết lập lại cảm biến cho Góc ${currentStep}`);
+            updateStepUi();
+        }
+
+        function autoAlignFace() {
+            showToast('Đang tự động căn chỉnh mốc 3D vào trung tâm khung hình...');
+            const arrow = document.getElementById('angleArrowIndicator');
+            arrow.classList.remove('animate-bounce');
+            void arrow.offsetWidth; // trigger reflow
+            arrow.classList.add('animate-bounce');
+        }
+
+        function updateStepUi() {
+            const guideStepTitle = document.getElementById('guideStepTitle');
+            const guideStepDesc = document.getElementById('guideStepDesc');
+            const guidePercentVal = document.getElementById('guidePercentVal');
+            const globalProgressLabel = document.getElementById('globalProgressLabel');
+            const globalProgressBar = document.getElementById('globalProgressBar');
+            const btnCaptureLabel = document.getElementById('btnCaptureLabel');
+            const arrowG = document.getElementById('angleArrowIndicator');
+            const arrowPath = document.getElementById('angleArrowPath');
+            const guideIcon = document.getElementById('guideBannerIcon');
+
+            // Reset step cards
+            const card1 = document.getElementById('stepCard-1');
+            const card2 = document.getElementById('stepCard-2');
+            const card3 = document.getElementById('stepCard-3');
+
+            if (currentStep === 1) {
+                globalProgressLabel.textContent = '33% (1/3 Góc)';
+                globalProgressBar.style.width = '33%';
+                guideStepTitle.textContent = 'Bước 1: Nhìn thẳng vào camera (0°)';
+                guideStepDesc.textContent = 'Giữ mặt cân đối giữa khung oval, thả lỏng cơ mặt';
+                guidePercentVal.textContent = '35%';
+                btnCaptureLabel.textContent = 'Chụp xác nhận góc thẳng (Bước 1/3)';
+                arrowG.setAttribute('transform', 'translate(-95, 0)');
+                arrowPath.setAttribute('d', 'M290 145 L290 145'); // center
+                guideIcon.textContent = 'face';
+
+                card1.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container shadow-md flex items-center justify-between relative overflow-hidden border border-primary-container/30";
+                card2.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-low opacity-75 flex items-center justify-between border border-surface-container-highest/20";
+                card3.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-low opacity-75 flex items-center justify-between border border-surface-container-highest/20";
+            } else if (currentStep === 2) {
+                globalProgressLabel.textContent = '70% (2/3 Góc)';
+                globalProgressBar.style.width = '70%';
+                guideStepTitle.textContent = 'Bước 2: Quay chậm mặt sang Phải (+30°)';
+                guideStepDesc.textContent = 'Giữ cằm thăng bằng và mắt nhìn hướng theo mũi tên';
+                guidePercentVal.textContent = '65%';
+                btnCaptureLabel.textContent = 'Chụp xác nhận góc phải (Bước 2/3)';
+                arrowG.setAttribute('transform', 'translate(0, 0)');
+                arrowPath.setAttribute('d', 'M290 140 L298 145 L290 150'); // right arrow
+                guideIcon.textContent = 'rotate_right';
+
+                card1.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-emerald-100";
+                card2.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container shadow-md flex items-center justify-between relative overflow-hidden border border-primary-container/30";
+                card3.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-low opacity-75 flex items-center justify-between border border-surface-container-highest/20";
+            } else if (currentStep === 3) {
+                globalProgressLabel.textContent = '90% (3/3 Góc)';
+                globalProgressBar.style.width = '90%';
+                guideStepTitle.textContent = 'Bước 3: Quay chậm mặt sang Trái (-30°)';
+                guideStepDesc.textContent = 'Từ từ quay đầu sang bên trái theo hướng mũi tên';
+                guidePercentVal.textContent = '85%';
+                btnCaptureLabel.textContent = 'Chụp xác nhận góc trái (Bước 3/3)';
+                arrowG.setAttribute('transform', 'translate(-190, 0)');
+                arrowPath.setAttribute('d', 'M300 140 L292 145 L300 150'); // left arrow
+                guideIcon.textContent = 'rotate_left';
+
+                card1.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-emerald-100";
+                card2.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-emerald-100";
+                card3.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container shadow-md flex items-center justify-between relative overflow-hidden border border-primary-container/30";
+            } else {
+                globalProgressLabel.textContent = '100% Hoàn tất';
+                globalProgressBar.style.width = '100%';
+                guideStepTitle.textContent = 'Đã hoàn tất toàn bộ 3 góc sinh trắc học!';
+                guideStepDesc.textContent = 'Vector 512D đã được mã hóa bảo mật trên hệ thống.';
+                guidePercentVal.textContent = '100%';
+                btnCaptureLabel.textContent = 'Hoàn tất & Quay về Trang chủ';
+                guideIcon.textContent = 'verified';
+
+                card1.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-emerald-100";
+                card2.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-emerald-100";
+                card3.className = "p-space-sm sm:px-space-md sm:py-2.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-emerald-100";
+            }
+        }
+
+        function closeEnrollModal() {
+            stopCameraStream();
+            const modal = document.getElementById('faceEnrollBackdrop');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 250);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toastNotification');
+            const m = document.getElementById('toastMessage');
+            m.textContent = msg;
+            t.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+            t.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                t.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+                t.classList.remove('opacity-100', 'translate-y-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

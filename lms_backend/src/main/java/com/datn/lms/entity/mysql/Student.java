@@ -56,8 +56,8 @@ public class Student {
     @Column(name = "face_image_url", length = 500)
     private String faceImageUrl;
 
-    @Column(name = "face_data_id", length = 100)
-    private String faceDataId; // ID vector tham chiếu bên FastAPI/MongoDB
+    @Column(name = "face_embed", columnDefinition = "LONGTEXT")
+    private String faceEmbed; // Chuỗi Base64 vector khuôn mặt đã mã hoá AES-256 (3 góc ArcFace 512D)
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

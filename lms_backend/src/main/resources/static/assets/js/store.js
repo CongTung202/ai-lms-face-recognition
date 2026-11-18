@@ -25,14 +25,6 @@ const DEFAULT_STORE_DATA = {
         { id: 2, fileName: "Bai_giang_Deep_Learning_ArcFace.docx", course: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", format: "DOCX", pages: 94, chunks: 215, status: "SYNCED", description: "Bài giảng lý thuyết hàm mất mát ArcFace Cosine Margin và mô hình ResNet100." },
         { id: 3, fileName: "Huong_dan_Thuc_hanh_MySQL_3NF.pdf", course: "Cơ sở Dữ liệu Quan hệ & NoSQL MongoDB", format: "PDF", pages: 52, chunks: 110, status: "PENDING", description: "Tài liệu bài tập chuẩn hóa bảng dữ liệu và lập chỉ mục khóa ngoại." }
     ],
-    exams: [
-        { id: 1, code: "EX001", title: "Thi Giữa Kỳ - Kiến trúc Spring Boot 3", course: "Lập trình Java Nâng cao & Spring Boot 3", duration: 45, requireFace: true, questionsCount: 30, status: "OPEN" },
-        { id: 2, code: "EX002", title: "Kiểm tra Thực hành Nhận diện AI ArcFace", course: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", duration: 60, requireFace: true, questionsCount: 40, status: "OPEN" }
-    ],
-    violations: [
-        { id: 1, studentCode: "SV2026001", studentName: "Lê Thị Hoàng An", exam: "EX001 - Kiến trúc Spring Boot 3", behavior: "Quay đầu rời mắt khỏi màn hình máy tính", details: "Góc quay Yaw +38.5 độ duy trì trong 14 giây liên tục", time: "14:22:10 15/10/2026", level: "CẢNH BÁO" },
-        { id: 2, studentCode: "SV2026002", studentName: "Phạm Quốc Bình", exam: "EX001 - Kiến trúc Spring Boot 3", behavior: "Phát hiện nhiều khuôn mặt trong khung hình", details: "Mô hình YuNet phát hiện 2 khuôn mặt đồng thời", time: "14:35:44 15/10/2026", level: "ĐÌNH CHỈ" }
-    ],
     orders: [
         { id: 1001, studentName: "Lê Thị Hoàng An", course: "Lập trình Java Nâng cao & Spring Boot 3", amount: 450000, status: "PAID", vietQrTx: "VCB-99238472", createdAt: "10/10/2026 09:15" },
         { id: 1002, studentName: "Phạm Quốc Bình", course: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", amount: 650000, status: "PENDING", vietQrTx: "VCB-99238499", createdAt: "14/10/2026 14:20" },
@@ -143,7 +135,6 @@ function renderMasterLayout(activeNavKey, breadcrumbs = []) {
         { key: 'courses', label: 'Quản lý Khóa học &amp; Bài học', url: `${rootRelative}courses/list.html` },
         { key: 'videos', label: 'Tài nguyên Video &amp; Nén H264', url: `${rootRelative}videos/list.html` },
         { key: 'documents', label: 'Tài liệu Giáo trình &amp; RAG AI', url: `${rootRelative}documents/list.html` },
-        { key: 'exams', label: 'Đề thi &amp; Giám sát Vi phạm AI', url: `${rootRelative}exams/list.html` },
         { key: 'orders', label: 'Đơn hàng &amp; Thanh toán PayOS', url: `${rootRelative}orders/list.html` }
     ];
 

@@ -1,0 +1,301 @@
+{
+  "university": {
+    "name": "TRƯỜNG ĐẠI HỌC NGUYỄN TRÃI",
+    "subName": "HỆ THỐNG ĐÀO TẠO & CỔNG THÔNG TIN SINH VIÊN TRỰC TUYẾN NTU",
+    "shortName": "NGUYEN TRAI UNIVERSITY LMS",
+    "acronym": "NTU",
+    "slogan": "SINH VIÊN LÀ SỐ 1 • ĐẠI HỌC ỨNG DỤNG - KHÁT VỌNG KHỞI NGHIỆP",
+    "hotline": "0981 924 302 - 098 192 26 41",
+    "email": "tuyensinh@ntu-hn.edu.vn",
+    "address": "Số 28A Lê Trọng Tấn, Phường La Khê, Quận Hà Đông, TP. Hà Nội",
+    "website": "https://daihocnguyentrai.edu.vn/"
+  },
+  "topNavLinks": [
+    { "title": "Cán bộ - Giảng viên", "url": "../admin/index.html" },
+    { "title": "Góc Sinh viên NTU", "url": "#coursesSection" },
+    { "title": "Thư viện Giáo trình AI", "url": "#docsSection" },
+    { "title": "Phòng Học Trực Tuyến", "url": "study.html" },
+    { "title": "Cổng Trường NTU", "url": "https://daihocnguyentrai.edu.vn/" }
+  ],
+  "mainMenu": [
+    { "title": "Trang chủ học tập", "url": "index.html", "active": true },
+    { "title": "Khoa đào tạo NTU", "url": "#schools" },
+    { "title": "Khóa học của tôi", "url": "#coursesSection" },
+    { "title": "Phòng học trực tuyến", "url": "study.html" },
+    { "title": "Điểm danh Face eKYC", "url": "login.html" },
+    { "title": "Tin tức NTU", "url": "#news" }
+  ],
+  "banners": [
+    {
+      "id": 1,
+      "tag": "CÔNG NGHỆ ĐẠI HỌC THÔNG MINH NTU",
+      "title": "Cổng Ôn Tập & Đào Tạo Số Trực Tuyến - Đại Học Nguyễn Trãi",
+      "description": "Tiên phong ứng dụng AI FaceID nhận diện khuôn mặt sinh trắc học không chạm, trợ lý AI RAG giải đáp giáo trình siêu tốc (<10ms) và thư viện bài giảng tương tác.",
+      "ctaText": "Vào Phòng Học Trực Tuyến",
+      "ctaUrl": "study.html",
+      "secondaryText": "Điểm Danh Face eKYC",
+      "secondaryUrl": "login.html",
+      "bgGradient": "from-[#00539F] via-[#003E7E] to-[#DA291C]",
+      "badge": "Chuẩn Đào Tạo Ứng Dụng NTU"
+    },
+    {
+      "id": 2,
+      "tag": "KHÁT VỌNG KHỞI NGHIỆP",
+      "title": "Sinh Viên Là Số 1 - Nơi Hiện Thực Hóa Ước Mơ Của Thầy Và Trò",
+      "description": "Đại học Nguyễn Trãi định hướng công dân toàn cầu, kết hợp kiến thức ứng dụng thực chiến và công nghệ AI hiện đại kết nối hơn 500 doanh nghiệp hàng đầu.",
+      "ctaText": "Khám Phá Học Phần",
+      "ctaUrl": "#coursesSection",
+      "secondaryText": "Đăng Ký FaceID 3D",
+      "secondaryUrl": "face_enrollment.html",
+      "bgGradient": "from-[#0B3C73] via-[#00539F] to-[#F37021]",
+      "badge": "Mô Hình Đại Học Thông Minh"
+    }
+  ],
+  "quickPortals": [
+    {
+      "id": "review",
+      "title": "Cổng Ôn Tập Trực Tuyến",
+      "subtitle": "Đề cương & bài giảng video",
+      "icon": "book-open",
+      "color": "from-blue-600 to-indigo-700",
+      "target": "#coursesSection"
+    },
+    {
+      "id": "ekyc",
+      "title": "Điểm Danh Face AI",
+      "subtitle": "Nhận diện khuôn mặt ArcFace",
+      "icon": "scan-face",
+      "color": "from-red-600 to-rose-700",
+      "target": "login.html"
+    },
+    {
+      "id": "rag",
+      "title": "Trợ Lý AI Giáo Trình",
+      "subtitle": "Hỏi đáp giáo trình PDF tức thì",
+      "icon": "cpu",
+      "color": "from-amber-500 to-orange-600",
+      "target": "#docsSection"
+    },
+    {
+      "id": "study",
+      "title": "Phòng Học Trực Tuyến",
+      "subtitle": "Streaming video 720p HD",
+      "icon": "video",
+      "color": "from-emerald-600 to-teal-700",
+      "target": "study.html"
+    },
+    {
+      "id": "enroll",
+      "title": "Đăng Ký FaceID 3D",
+      "subtitle": "Thu thập 3 góc mặt sinh trắc",
+      "icon": "shield-check",
+      "color": "from-purple-600 to-indigo-600",
+      "target": "face_enrollment.html"
+    },
+    {
+      "id": "support",
+      "title": "Hỗ Trợ Học Vụ NTU",
+      "subtitle": "Hotline: 0981 924 302",
+      "icon": "help-circle",
+      "color": "from-rose-600 to-red-600",
+      "target": "https://daihocnguyentrai.edu.vn/"
+    }
+  ],
+  "stats": [
+    { "value": "98.5%", "label": "Sinh viên có việc làm ngay khi tốt nghiệp", "sub": "Mô hình Đại học Ứng dụng" },
+    { "value": "500+", "label": "Doanh nghiệp đối tác trong & ngoài nước", "sub": "Nhật Bản, Hàn Quốc, Châu Âu" },
+    { "value": "100%", "label": "Giáo trình số hóa tích hợp trợ lý AI RAG", "sub": "Tìm kiếm tức thì <10ms" },
+    { "value": "15.000+", "label": "Sinh viên & Cựu sinh viên thành đạt", "sub": "Đại học Nguyễn Trãi - NTU" }
+  ],
+  "schools": [
+    { "id": "ALL", "name": "Tất Cả Khoa Ngành", "count": 8 },
+    { "id": "IT", "name": "Khoa Công Nghệ Thông Tin", "count": 3, "color": "text-[#00539F]" },
+    { "id": "DES", "name": "Khoa Mỹ Thuật Ứng Dụng & Thiết Kế", "count": 2, "color": "text-[#DA291C]" },
+    { "id": "ECO", "name": "Khoa Kinh Tế & Quản Trị Kinh Doanh", "count": 2, "color": "text-emerald-600" },
+    { "id": "INT", "name": "Khoa Ngôn Ngữ & Văn Hóa Quốc Tế", "count": 1, "color": "text-purple-600" }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "code": "IT101",
+      "schoolId": "IT",
+      "schoolName": "Khoa Công Nghệ Thông Tin",
+      "title": "Lập Trình Web Ứng Dụng & Cấu Trúc Dữ Liệu",
+      "instructor": "TS. Nguyễn Công Tùng",
+      "department": "Bộ môn Kỹ thuật Phần mềm",
+      "credits": 3,
+      "lessonsCount": 16,
+      "duration": "48 giờ học",
+      "studentsEnrolled": 485,
+      "rating": 4.9,
+      "reviewsCount": 142,
+      "tag": "Bắt Buộc",
+      "thumbnail": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=700&auto=format&fit=crop&q=80",
+      "shortDescription": "Nền tảng phát triển ứng dụng Fullstack hiện đại, kiến trúc MVC, RESTful API và cơ sở dữ liệu số.",
+      "syllabus": [
+        "Chương 1: Kiến trúc Web hiện đại và giao thức HTTP",
+        "Chương 2: Thiết kế giao diện phản hồi với Tailwind CSS và Component",
+        "Chương 3: Xây dựng REST API an toàn với Spring Boot và JWT",
+        "Chương 4: Cơ sở dữ liệu quan hệ MySQL chuẩn hóa 3NF",
+        "Chương 5: Đề thi thực hành và dự án cuối khóa"
+      ]
+    },
+    {
+      "id": 2,
+      "code": "AI202",
+      "schoolId": "IT",
+      "schoolName": "Khoa Công Nghệ Thông Tin",
+      "title": "Trí Tuệ Nhân Tạo & Nhận Diện Khuôn Mặt (Computer Vision)",
+      "instructor": "ThS. Hoàng Minh Đức",
+      "department": "Bộ môn Trí Tuệ Nhân Tạo",
+      "credits": 3,
+      "lessonsCount": 14,
+      "duration": "42 giờ học",
+      "studentsEnrolled": 390,
+      "rating": 5.0,
+      "reviewsCount": 118,
+      "tag": "Khóa Học AI Hot",
+      "thumbnail": "https://images.unsplash.com/photo-1555255707-c07966088b7b?w=700&auto=format&fit=crop&q=80",
+      "shortDescription": "Nghiên cứu mô hình ArcFace, nhận diện 3 góc mặt, phát hiện giả mạo Liveness và triển khai Microservices.",
+      "syllabus": [
+        "Chương 1: Thị giác máy tính và tiền xử lý ảnh số",
+        "Chương 2: Trích xuất đặc trưng khuôn mặt với Deep Residual Network",
+        "Chương 3: Thuật toán Cosine Similarity và Vector 512D Embeddings",
+        "Chương 4: Phát hiện góc quay đầu Head-Pose 3D và chống giả mạo Liveness",
+        "Chương 5: Xây dựng hệ thống điểm danh eKYC thực tế"
+      ]
+    },
+    {
+      "id": 3,
+      "code": "DES101",
+      "schoolId": "DES",
+      "schoolName": "Khoa Mỹ Thuật Ứng Dụng & Thiết Kế",
+      "title": "Thiết Kế Đồ Họa Truyền Thông & Nhận Diện Thương Hiệu",
+      "instructor": "ThS. Đặng Thu Hà",
+      "department": "Bộ môn Thiết kế Đồ họa",
+      "credits": 3,
+      "lessonsCount": 18,
+      "duration": "54 giờ học",
+      "studentsEnrolled": 320,
+      "rating": 4.8,
+      "reviewsCount": 96,
+      "tag": "Sáng Tạo",
+      "thumbnail": "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=700&auto=format&fit=crop&q=80",
+      "shortDescription": "Nguyên lý bố cục, phối màu thị giác, nghệ thuật chữ ký tự và thiết kế bộ nhận diện thương hiệu chuyên nghiệp.",
+      "syllabus": [
+        "Chương 1: Tư duy thị giác và ngôn ngữ thiết kế đồ họa",
+        "Chương 2: Hệ thống màu sắc và Typography ứng dụng",
+        "Chương 3: Thiết kế logo và bộ nhận diện thương hiệu doanh nghiệp",
+        "Chương 4: Ấn phẩm truyền thông số và thiết kế quảng cáo",
+        "Chương 5: Đồ án thiết kế nhận diện thương hiệu tổng thể"
+      ]
+    },
+    {
+      "id": 4,
+      "code": "ECO102",
+      "schoolId": "ECO",
+      "schoolName": "Khoa Kinh Tế & Quản Trị Kinh Doanh",
+      "title": "Quản Trị Khởi Nghiệp & Đổi Mới Sáng Tạo (Startup)",
+      "instructor": "TS. Phạm Thanh Tùng",
+      "department": "Bộ môn Quản trị Kinh doanh",
+      "credits": 3,
+      "lessonsCount": 15,
+      "duration": "45 giờ học",
+      "studentsEnrolled": 410,
+      "rating": 4.9,
+      "reviewsCount": 105,
+      "tag": "Khởi Nghiệp",
+      "thumbnail": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=700&auto=format&fit=crop&q=80",
+      "shortDescription": "Xây dựng mô hình kinh doanh tinh gọn Canvas, phân tích thị trường, gọi vốn đầu tư và quản trị rủi ro khởi nghiệp.",
+      "syllabus": [
+        "Chương 1: Khát vọng khởi nghiệp và tìm kiếm ý tưởng kinh doanh",
+        "Chương 2: Mô hình kinh doanh Canvas (Business Model Canvas)",
+        "Chương 3: Nghiên cứu thị trường và trải nghiệm khách hàng",
+        "Chương 4: Kế hoạch tài chính và thuyết trình gọi vốn Pitching",
+        "Chương 5: Xây dựng dự án khởi nghiệp mẫu"
+      ]
+    }
+  ],
+  "aiHighlights": [
+    {
+      "badge": "BẢO MẬT SINH TRẮC HỌC",
+      "title": "Điểm Danh Face eKYC 3 Góc Mặt Thông Minh",
+      "description": "Loại bỏ hoàn toàn điểm danh hộ và gian lận. Hệ thống nhận diện khuôn mặt ArcFace kết hợp Head-Pose 3D (Trực diện, Nghiêng trái, Nghiêng phải) đảm bảo người học tham gia thực chất chỉ trong 0.5 giây.",
+      "points": [
+        "Độ chính xác nhận diện khuôn mặt ArcFace đạt 99.8%",
+        "Chống giả mạo hình ảnh và video liveness check",
+        "Đồng bộ trực tiếp kết quả điểm danh vào CSDL NTU"
+      ],
+      "icon": "shield-check"
+    },
+    {
+      "badge": "TRỢ LÝ HỌC TẬP TỨC THÌ",
+      "title": "Hỏi Đáp Giáo Trình Bằng AI RAG Siêu Tốc (<10ms)",
+      "description": "Không cần chờ đợi giảng viên phản hồi. Trợ lý AI dựa trên toàn văn tài liệu PDF, DOCX của môn học sẽ trả lời chính xác kèm dẫn chứng số trang thực tế.",
+      "points": [
+        "Tìm kiếm ngữ nghĩa thông minh theo từng học phần",
+        "Trích dẫn cụ thể trang giáo trình nguồn gốc",
+        "Hoàn toàn miễn phí, hỗ trợ sinh viên NTU 24/7 mọi lúc mọi nơi"
+      ],
+      "icon": "sparkles"
+    },
+    {
+      "badge": "TRUYỀN PHÁT TỐI ƯU",
+      "title": "Video Bài Giảng Chuẩn 720p HD & Giám Sát Khuôn Mặt",
+      "description": "Video bài giảng được tự động nén tối ưu, truyền tải siêu mượt mà với tính năng quét khuôn mặt định kỳ đảm bảo sinh viên học tập trung trước màn hình.",
+      "points": [
+        "Phát tức thì HTTP 206 Partial Streaming không giật lag",
+        "Giám sát chuyên cần qua camera, tự động dừng khi vắng mặt",
+        "Ghi nhớ giây học dừng cuối cùng để tiếp tục ôn tập"
+      ],
+      "icon": "video"
+    }
+  ],
+  "news": [
+    {
+      "id": 1,
+      "date": "08 Tháng 11, 2026",
+      "category": "Thông Báo Đào Tạo NTU",
+      "title": "Đại học Nguyễn Trãi triển khai Cổng ôn tập trực tuyến và định danh sinh trắc học Face eKYC",
+      "excerpt": "Nhà trường đưa vào vận hành hệ thống LMS thông minh tích hợp trí tuệ nhân tạo nhận diện khuôn mặt phục vụ ôn tập và khảo thí học kỳ mới.",
+      "image": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80",
+      "readTime": "3 phút đọc"
+    },
+    {
+      "id": 2,
+      "date": "05 Tháng 11, 2026",
+      "category": "Khởi Nghiệp & Doanh Nghiệp",
+      "title": "Ngày hội Khởi nghiệp NTU Startup Day 2026: Kết nối 50+ quỹ đầu tư và doanh nghiệp công nghệ",
+      "excerpt": "Hàng trăm dự án đổi mới sáng tạo của sinh viên Đại học Nguyễn Trãi được giới thiệu và nhận cam kết bảo trợ vốn từ các tập đoàn lớn.",
+      "image": "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&auto=format&fit=crop&q=80",
+      "readTime": "5 phút đọc"
+    },
+    {
+      "id": 3,
+      "date": "01 Tháng 11, 2026",
+      "category": "Học Bổng NTU",
+      "title": "Đại học Nguyễn Trãi trao học bổng 'Khát vọng thanh xuân' tổng trị giá 5 tỷ đồng cho sinh viên",
+      "excerpt": "Chính sách học bổng nhằm chắp cánh ước mơ cho những sinh viên tài năng, có tinh thần khởi nghiệp và ý chí vượt khó vươn lên.",
+      "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&auto=format&fit=crop&q=80",
+      "readTime": "4 phút đọc"
+    }
+  ],
+  "mockTestAccounts": [
+    {
+      "username": "student_tung",
+      "fullName": "Nguyễn Công Tùng",
+      "studentCode": "2310900051",
+      "className": "K23 Kỹ Thuật Phần Mềm 1",
+      "faculty": "Khoa Công Nghệ Thông Tin - NTU",
+      "faceStatus": "Đã đăng ký eKYC"
+    },
+    {
+      "username": "student_mai",
+      "fullName": "Trần Thị Mai",
+      "studentCode": "2310900052",
+      "className": "K23 Thiết Kế Đồ Họa 1",
+      "faculty": "Khoa Mỹ Thuật Ứng Dụng - NTU",
+      "faceStatus": "Đã đăng ký eKYC"
+    }
+  ]
+}

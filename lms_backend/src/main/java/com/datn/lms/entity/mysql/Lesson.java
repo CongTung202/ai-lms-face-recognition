@@ -44,8 +44,25 @@ public class Lesson {
     @Builder.Default
     private Boolean isPreview = false;
 
+    @Column(name = "scheduled_date")
+    private java.time.LocalDate scheduledDate;
+
+    @Column(name = "unlock_at")
+    private LocalDateTime unlockAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "prerequisite_lesson_id")
+    private Lesson prerequisiteLesson;
+
+    @Column(name = "is_sequential", nullable = false)
+    @Builder.Default
+    private Boolean isSequential = true;
+
     @OneToOne(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private VideoAsset videoAsset;
+
+    @OneToOne(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Quiz quiz;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -56,6 +73,6 @@ public class Lesson {
     private LocalDateTime updatedAt;
 
     public enum LessonType {
-        VIDEO, DOCUMENT, QUIZ
+        VIDEO, DOCUMENT
     }
 }

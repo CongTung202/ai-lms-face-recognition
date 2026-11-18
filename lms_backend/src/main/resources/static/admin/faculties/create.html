@@ -1,145 +1,345 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm Khoa Đào Tạo Mới - EduFace LMS Admin</title>
-    <!-- Google Fonts Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS v3 Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#0068ff', 600: '#0054d1', 700: '#0043a8' }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thêm Khoa / Viện Mới - Đại Học Nguyễn Trãi (NTU) | Admin Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6fbfe;
+      --surface: rgba(255, 255, 255, 0.88);
+      --surface-solid: #ffffff;
+      --line: #e3edf5;
+      --ink: #0b2540;
+      --muted: #5f7d95;
+      --sky: #33ccff;
+      --sky-soft: #e5f7ff;
+      --ntu-blue: #00539F;
+      --ntu-hover: #003e7e;
+      --ok: #059669;
+      --danger: #dc2626;
+      --radius: 18px;
+      --sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --serif: 'Fraunces', Georgia, serif;
+      --ease: cubic-bezier(.2,.8,.2,1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    .orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; opacity: .45; }
+    .orb.a { width: 500px; height: 500px; background: radial-gradient(circle, #cceeff, transparent 70%); top: -100px; left: -100px; }
+    .orb.b { width: 420px; height: 420px; background: radial-gradient(circle, #e0f2fe, transparent 70%); bottom: -80px; right: -80px; }
+    .layout { position: relative; z-index: 1; display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
+    .side {
+      position: sticky; top: 0; height: 100vh;
+      background: var(--surface);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-right: 1px solid var(--line);
+      padding: 24px 18px;
+      display: flex; flex-direction: column; gap: 20px;
+      z-index: 20;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: inherit; }
+    .crest {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--ntu-blue), var(--sky));
+      display: grid; place-items: center; overflow: hidden;
+      box-shadow: 0 8px 18px -6px rgba(0,83,159,.45);
+      border: 1px solid rgba(255,255,255,.5);
+    }
+    .crest img { width: 100%; height: 100%; object-fit: cover; }
+    .b-name { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--ntu-blue); line-height: 1.15; }
+    .b-sub { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-top: 2px; }
+    .office {
+      padding: 12px 14px; background: var(--sky-soft);
+      border: 1px solid rgba(51,204,255,.3); border-radius: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .office .av {
+      width: 34px; height: 34px; border-radius: 10px; background: var(--ntu-blue);
+      color: #fff; display: grid; place-items: center;
+    }
+    .office .av svg { width: 18px; height: 18px; }
+    .office b { display: block; font-size: .78rem; color: var(--ntu-blue); font-weight: 700; }
+    .office small { font-size: .68rem; color: var(--muted); }
+    .label { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; padding: 0 8px; }
+    .side nav { display: flex; flex-direction: column; gap: 4px; }
+    .side nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 11px;
+      font-size: .84rem; font-weight: 600; color: var(--muted);
+      text-decoration: none; transition: background .3s, transform .3s var(--ease), color .3s;
+    }
+    .side nav a svg { width: 18px; height: 18px; color: var(--muted); transition: color .3s; }
+    .side nav a:hover { background: var(--sky-soft); color: var(--ntu-blue); transform: translateX(3px); }
+    .side nav a:hover svg { color: var(--ntu-blue); }
+    .side nav a.active {
+      background: var(--ink); color: #fff;
+      box-shadow: 0 10px 22px -10px rgba(11,37,64,.55);
+    }
+    .side nav a.active svg { color: var(--sky); }
+    .side-foot {
+      margin-top: auto; padding: 10px 12px;
+      border-top: 1px dashed var(--line); font-size: .75rem; color: var(--muted);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .side-foot .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; margin-right: 6px; }
+
+    /* Topbar */
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,.82);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 28px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .top-left { display: flex; align-items: center; gap: 10px; font-size: .84rem; font-weight: 600; color: var(--muted); }
+    .top-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+    .user-pill {
+      display: flex; align-items: center; gap: 10px; padding: 5px 12px 5px 6px;
+      border-radius: 999px; background: var(--surface-solid); border: 1px solid var(--line);
+      box-shadow: 0 2px 8px rgba(0,0,0,.03);
+    }
+    .user-pill .av {
+      width: 32px; height: 32px; border-radius: 50%; background: var(--ntu-blue);
+      color: #fff; display: grid; place-items: center; font-size: .78rem; font-weight: 700;
+    }
+    .user-pill b { font-size: .82rem; color: var(--ink); display: block; line-height: 1.1; }
+    .user-pill small { font-size: .68rem; color: var(--muted); }
+
+    /* Content Area */
+    .content { padding: 28px 36px 60px; max-width: 900px; display: flex; flex-direction: column; gap: 24px; }
+    .crumbs {
+      display: flex !important; flex-direction: row !important;
+      align-items: center !important; gap: 8px !important;
+      font-size: .84rem !important; color: var(--muted) !important;
+      flex-wrap: wrap !important; text-align: left !important;
+    }
+    .crumbs a { color: inherit; text-decoration: none; }
+    .crumbs a:hover { color: var(--ntu-blue); }
+    .crumbs b { color: var(--ink); font-weight: 700; }
+    .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    h1 {
+      font-family: var(--serif); font-weight: 600;
+      font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+      letter-spacing: -.02em; line-height: 1.25; color: var(--ink);
+    }
+    h1 em { font-style: italic; color: var(--ntu-blue); }
+    p.desc { font-size: .88rem; color: var(--muted); margin-top: 4px; }
+
+    /* Form Card */
+    .card {
+      background: var(--surface-solid);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 30px -12px rgba(11,37,64,.08);
+      overflow: hidden;
+    }
+    .card-head {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fafcff);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-head h2 { font-size: 1rem; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+    .card-head h2 svg { color: var(--ntu-blue); width: 20px; height: 20px; }
+    .card-body { padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 680px) { .grid-2 { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: .82rem; font-weight: 700; color: var(--ink); text-transform: uppercase; letter-spacing: .03em; }
+    .form-group label span { color: var(--danger); }
+    .form-input, .form-textarea {
+      width: 100%; padding: 11px 14px; border-radius: 12px;
+      border: 1px solid #d3e2ef; background: #fdfefe;
+      font-family: var(--sans); font-size: .88rem; color: var(--ink);
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--ntu-blue);
+      box-shadow: 0 0 0 3px rgba(0,83,159,.15);
+      background: #fff;
+    }
+    .hint { font-size: .74rem; color: var(--muted); }
+    .card-foot {
+      padding: 18px 28px; border-top: 1px solid var(--line);
+      background: #f8fbfe; display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 12px; font-size: .86rem; font-weight: 700;
+      text-decoration: none; cursor: pointer; border: 1px solid transparent; transition: all .2s;
+    }
+    .btn-secondary { background: #fff; border-color: var(--line); color: var(--muted); }
+    .btn-secondary:hover { background: #f1f5f9; color: var(--ink); }
+    .btn-primary {
+      background: var(--ntu-blue); color: #fff;
+      box-shadow: 0 6px 18px -4px rgba(0,83,159,.4);
+    }
+    .btn-primary:hover { background: var(--ntu-hover); transform: translateY(-1px); }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; padding: 12px 20px;
+      border-radius: 12px; background: var(--ink); color: #fff;
+      font-size: .84rem; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,.2);
+      transform: translateY(100px); opacity: 0; transition: all .3s var(--ease); z-index: 100;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
 </head>
-<body data-nav="faculties" class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
+<body>
+  <div class="orb a"></div>
+  <div class="orb b"></div>
 
-    <!-- REUSABLE HEADER -->
-    <div id="admin-header"></div>
+  <div class="layout">
+    <!-- SIDEBAR COMPONENT -->
+    <aside class="side" id="side" data-active="faculties"></aside>
 
-    <div class="flex-1 flex min-h-[calc(100vh-65px)]">
-        <!-- REUSABLE SIDEBAR -->
-        <div id="admin-sidebar"></div>
+    <!-- MAIN AREA -->
+    <div class="main">
+      <header class="topbar">
+        <div class="top-left">
+          <i data-lucide="building-2"></i>
+          <span>Quản Trị Khoa &amp; Viện Đào Tạo Chuyên Sâu</span>
+        </div>
+        <div class="top-right">
+          <div class="user-pill">
+            <div class="av">NTU</div>
+            <div>
+              <b>Quản Trị Viên Đào Tạo</b>
+              <small>Hội Đồng Học Vụ NTU</small>
+            </div>
+          </div>
+        </div>
+      </header>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 p-6 lg:p-8 overflow-y-auto max-w-3xl mx-auto w-full">
-            <div class="mb-6">
-                <div class="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-                    <a href="../index.html" class="hover:text-blue-600 transition">Dashboard</a>
-                    <span>/</span>
-                    <a href="list.html" class="hover:text-blue-600 transition">Khoa đào tạo</a>
-                    <span>/</span>
-                    <span class="text-blue-600 font-medium">Thêm mới</span>
+      <main class="content">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/admin/index.html">Trang chủ</a>
+          <span>/</span>
+          <a href="/admin/faculties/list.html">Khoa &amp; Viện</a>
+          <span>/</span>
+          <b>Thêm mới</b>
+        </nav>
+
+        <div class="head">
+          <div>
+            <h1>Thêm <em>Khoa / Viện Mới</em></h1>
+            <p class="desc">Khởi tạo viện/khoa quản lý, thiết lập danh mục chuyên ngành đào tạo và phân bổ giảng viên.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2><i data-lucide="plus-circle"></i>Thông Tin Khoa Đào Tạo</h2>
+            <span style="font-size: .78rem; color: var(--muted); font-weight: 600;">* Trường bắt buộc</span>
+          </div>
+
+          <form id="createFacultyForm" onsubmit="handleCreateFaculty(event)">
+            <div class="card-body">
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="facultyCodeInput">Mã Khoa / Viện <span>*</span></label>
+                  <input type="text" id="facultyCodeInput" required placeholder="Ví dụ: CNTT, DTVT, QTKD" class="form-input" style="font-family: monospace; text-transform: uppercase;" />
+                  <span class="hint">Mã viết tắt duy nhất của khoa</span>
                 </div>
-                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Thêm Khoa Đào Tạo Mới</h1>
-                <p class="text-xs text-slate-500 mt-1">Khởi tạo viện/khoa quản lý, thiết lập danh mục chuyên ngành đào tạo</p>
+
+                <div class="form-group">
+                  <label for="facultyNameInput">Tên Khoa / Viện Đào Tạo <span>*</span></label>
+                  <input type="text" id="facultyNameInput" required placeholder="Ví dụ: Khoa Công Nghệ Thông Tin" class="form-input" />
+                  <span class="hint">Tên chính thức trên các văn bằng, chứng chỉ</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="facultyDescInput">Giới Thiệu &amp; Mô Tả Khoa</label>
+                <textarea id="facultyDescInput" rows="4" placeholder="Đơn vị đào tạo các kỹ sư và chuyên gia công nghệ thông tin xuất sắc..." class="form-textarea"></textarea>
+                <span class="hint">Tóm tắt mục tiêu và định hướng nghiên cứu của khoa</span>
+              </div>
             </div>
 
-            <!-- Create Form Card -->
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
-                <form id="createFacultyForm" onsubmit="handleCreateFaculty(event)" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <!-- Faculty Code -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                                Mã Khoa / Viện <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="facultyCodeInput" required placeholder="ví dụ: FIT, DTVT, QTKD"
-                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 font-mono uppercase focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-                        </div>
-
-                        <!-- Faculty Name -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                                Tên Khoa Đào Tạo <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="facultyNameInput" required placeholder="ví dụ: Khoa Công Nghệ Thông Tin"
-                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-                        </div>
-
-                        <!-- Description -->
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                                Giới thiệu &amp; Mô tả khoa
-                            </label>
-                            <textarea id="facultyDescInput" rows="3" placeholder="Đơn vị đào tạo các kỹ sư và chuyên gia công nghệ thông tin..."
-                                class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition leading-relaxed"></textarea>
-                        </div>
-
-
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="pt-6 border-t border-slate-100 flex items-center justify-end space-x-3">
-                        <a href="list.html"
-                            class="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
-                            Hủy &amp; Quay lại danh sách
-                        </a>
-                        <button type="submit" id="submitBtn"
-                            class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span>Lưu Khoa Mới</span>
-                        </button>
-                    </div>
-                </form>
+            <div class="card-foot">
+              <a href="/admin/faculties/list.html" class="btn btn-secondary">
+                <i data-lucide="arrow-left"></i>Hủy &amp; Quay lại
+              </a>
+              <button type="submit" id="submitBtn" class="btn btn-primary">
+                <i data-lucide="check"></i>Lưu Khoa Mới
+              </button>
             </div>
-        </main>
+          </form>
+        </div>
+      </main>
     </div>
+  </div>
 
-    <!-- Scripts -->
-    <script src="../assets/js/admin-components.js"></script>
-    <script>
-        async function handleCreateFaculty(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span>Đang lưu...</span>';
+  <div id="toast" class="toast"></div>
 
-            const payload = {
-                facultyCode: document.getElementById('facultyCodeInput').value.trim().toUpperCase(),
-                facultyName: document.getElementById('facultyNameInput').value.trim(),
-                description: document.getElementById('facultyDescInput').value.trim()
-            };
+  <script>
+    const API_BASE = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
+      ? 'http://localhost:8080'
+      : window.location.origin;
 
-            try {
-                const res = await fetch(`${API_BASE}/api/admin/faculties`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await res.json();
-                if (res.ok) {
-                    showToast('Đã thêm khoa mới thành công!');
-                    setTimeout(() => {
-                        location.href = 'list.html';
-                    }, 800);
-                } else {
-                    alert('Lỗi thêm khoa: ' + (result.message || 'Không thể tạo'));
-                    btn.disabled = false;
-                    btn.innerHTML = '<span>Lưu Khoa Mới</span>';
-                }
-            } catch (err) {
-                alert('Lỗi kết nối máy chủ: ' + err.message);
-                btn.disabled = false;
-                btn.innerHTML = '<span>Lưu Khoa Mới</span>';
-            }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+
+    async function handleCreateFaculty(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i data-lucide="loader-2"></i>Đang lưu...';
+      if (window.lucide) lucide.createIcons();
+
+      const payload = {
+        facultyCode: document.getElementById('facultyCodeInput').value.trim().toUpperCase(),
+        facultyName: document.getElementById('facultyNameInput').value.trim(),
+        description: document.getElementById('facultyDescInput').value.trim()
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/faculties`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (res.ok) {
+          showToast('Đã thêm khoa mới thành công!');
+          setTimeout(() => {
+            location.href = '/admin/faculties/list.html';
+          }, 800);
+        } else {
+          alert('Lỗi: ' + (result.message || 'Không thể tạo khoa mới'));
+          btn.disabled = false;
+          btn.innerHTML = '<i data-lucide="check"></i>Lưu Khoa Mới';
+          if (window.lucide) lucide.createIcons();
         }
-    </script>
+      } catch (err) {
+        alert('Lỗi kết nối máy chủ: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="check"></i>Lưu Khoa Mới';
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+  </script>
+  <script src="../assets/js/admin-sidebar.js"></script>
 </body>
 </html>

@@ -28,6 +28,7 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/health/**", "/auth/**", "/public/**").permitAll()
                 .anyRequest().permitAll() // Tạm thời permit all trong giai đoạn scaffolding, sau này kích hoạt JWT filter

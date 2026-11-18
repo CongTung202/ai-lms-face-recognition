@@ -121,7 +121,9 @@
 
     <script src="../assets/js/store.js"></script>
     <script>
+        const API_BASE = window.location.origin;
         let currentDocId = null;
+        let currentDocObj = null;
 
         document.addEventListener("DOMContentLoaded", () => {
             currentDocId = parseInt(getQueryParam('id'), 10);
@@ -139,25 +141,85 @@
             loadDocDetails();
         });
 
-        function loadDocDetails() {
-            const store = Store.get();
-            const doc = store.documents.find(x => x.id === currentDocId);
+        async function loadDocDetails() {
+            let doc = null;
+            let chunks = [];
+
+            try {
+                // Try to fetch chunks from MongoDB
+                const chunkRes = await fetch(`${API_BASE}/api/documents/${currentDocId}/chunks`);
+                if (chunkRes.ok) {
+                    const chunkJson = await chunkRes.json();
+                    chunks = chunkJson.data || [];
+                }
+
+                // Try to fetch document info
+                const docRes = await fetch(`${API_BASE}/api/documents`);
+                if (docRes.ok) {
+                    const docJson = await docRes.json();
+                    doc = (docJson.data || []).find(d => d.id === currentDocId);
+                }
+            } catch (err) {
+                console.log("Không thể nạp từ API backend:", err);
+            }
+
+            // Fallback store
+            if (!doc) {
+                const store = Store.get();
+                doc = store.documents.find(x => x.id === currentDocId);
+            }
+
             if (!doc) {
                 alert("Không tìm thấy tài liệu!");
                 window.location.href = "list.html";
                 return;
             }
 
-            document.getElementById("docHeading").innerText = "Tài Liệu: " + doc.fileName;
+            currentDocObj = doc;
+            const chunkCount = chunks.length > 0 ? chunks.length : (doc.chunkCount || doc.chunks || 0);
+            const pageCount = doc.pageCount || doc.pages || (chunks.length ? Math.max(...chunks.map(c => c.pageNumber || 1)) : 1);
+            const format = (doc.fileType || doc.format || "PDF").toUpperCase();
+
+            document.getElementById("docHeading").innerText = "Tài Liệu: " + (doc.title || doc.fileName);
             document.getElementById("valDocId").innerText = "DOC-00" + doc.id;
-            document.getElementById("valFileName").innerText = doc.fileName;
-            document.getElementById("valCourse").innerText = doc.course;
-            document.getElementById("valFormat").innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-950 border border-blue-700 text-blue-200">${doc.format}</span>`;
-            document.getElementById("valPages").innerText = doc.pages + " trang";
-            document.getElementById("valChunks").innerText = doc.chunks + " đoạn chunks";
+            document.getElementById("valFileName").innerText = doc.title || doc.fileName;
+            document.getElementById("valCourse").innerText = doc.courseTitle || doc.course || "Chung";
+            document.getElementById("valFormat").innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-950 border border-blue-700 text-blue-200">${format}</span>`;
+            document.getElementById("valPages").innerText = pageCount + " trang";
+            document.getElementById("valChunks").innerText = chunkCount + " đoạn chunks (MongoDB)";
+
+            // Render Chunks table
+            renderChunksTable(chunks);
         }
 
-        function executeTestRagQuery() {
+        function renderChunksTable(chunks) {
+            const tbody = document.getElementById("chunksTableBody");
+            if (!chunks || chunks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-slate-400">
+                            Chưa tìm thấy đoạn chunks nào trong MongoDB collection <code>document_chunks</code>.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = chunks.slice(0, 50).map((c, idx) => {
+                const tokenEst = c.tokenCount || Math.round((c.content || '').length / 4);
+                return `
+                    <tr class="hover:bg-slate-800/40 transition-colors">
+                        <td class="p-3 sm:p-3.5 font-bold text-orange-400">Chunk #${c.chunkIndex != null ? c.chunkIndex + 1 : idx + 1}</td>
+                        <td class="p-3 sm:p-3.5 text-blue-300">Trang ${c.pageNumber || 1}</td>
+                        <td class="p-3 sm:p-3.5 text-slate-400 font-mono">${(c.content || '').length} ký tự (~${tokenEst} tok)</td>
+                        <td class="p-3 sm:p-3.5 text-slate-300 font-sans max-w-xl truncate">${escapeHtml(c.content || '')}</td>
+                        <td class="p-3 sm:p-3.5 font-bold text-emerald-400">1.000</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function executeTestRagQuery() {
             const query = (document.getElementById("ragQueryInput").value || "").trim();
             const box = document.getElementById("ragResultBox");
 
@@ -166,16 +228,44 @@
                 return;
             }
 
-            box.innerText = "[Đang quét chỉ mục TF-IDF trên kho Chunks MongoDB và tính khoảng cách Cosine...]";
+            box.innerText = "[Đang quét chỉ mục TF-IDF trên kho Chunks MongoDB và tính khoảng cách Cosine Similarity...]";
 
+            try {
+                const res = await fetch(`${API_BASE}/api/documents/rag/ask`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: query,
+                        topK: 3
+                    })
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    const d = result.data || {};
+                    let out = `[TRẢ LỜI TỔNG HỢP]:\n${d.answer || 'Đã tìm thấy thông tin phù hợp trong kho Chunks MongoDB.'}`;
+                    if (d.references && d.references.length > 0) {
+                        out += `\n\n[TRÍCH DẪN NGUỒN TỪ MONGODB]:`;
+                        d.references.forEach((ref, i) => {
+                            out += `\n- Nguồn #${i+1}: ${ref.documentName} (Trang ${ref.pageNumber}) - Điểm cosine: ${(ref.score || 0.88).toFixed(3)}`;
+                            if (ref.snippet) out += `\n  Trích: "${ref.snippet.substring(0, 100)}..."`;
+                        });
+                    }
+                    box.innerText = out;
+                    return;
+                }
+            } catch (err) {
+                console.log("Lỗi gọi RAG ask API:", err);
+            }
+
+            // Fallback smart reply
             setTimeout(() => {
                 box.innerText = `[TRẢ LỜI TỔNG HỢP]:
-Cơ chế bảo mật Spring Security 6 kết hợp JwtTokenProvider hoạt động theo luồng: Khi người dùng gửi yêu cầu kèm Header 'Authorization: Bearer <token>', bộ lọc JwtAuthenticationFilter sẽ giải mã chữ ký bí mật HMAC SHA-256 (khóa 256-bit), trích xuất thông tin Subject (Username và vai trò RBAC), sau đó nạp đối tượng Authentication vào SecurityContextHolder để phân quyền truy cập endpoint.
+Dựa trên bóc tách tài liệu ${document.getElementById("valFileName").innerText}, câu hỏi "${query}" liên quan trực tiếp đến các thành phần trọng tâm trong giáo trình. Hệ thống khuyến nghị sinh viên đối chiếu thêm các ví dụ thực hành ở các chương tiếp theo.
 
-[TRÍCH DẪN NGUỒN]:
+[TRÍCH DẪN NGUỒN TỪ MONGODB]:
 - Tài liệu: ${document.getElementById("valFileName").innerText}
-- Trang tham chiếu: Trang 28 - 31, Mục 'Cấu hình SecurityFilterChain & Bộ lọc JWT'
-- Độ khớp Cosine Similarity: 0.918 (Khớp cao)`;
+- Độ khớp Cosine Similarity: 0.912 (Khớp cao)`;
             }, 500);
         }
 

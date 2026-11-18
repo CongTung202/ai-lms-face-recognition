@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bản Vẽ Bố Cục Giao Diện Thực Tế • EduFace Smart LMS NTU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00539F;
+      --primary-dark: #003d75;
+      --accent: #DA291C;
+      --sky: #00a2ff;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0b2540;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    header.main-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #002244 100%);
+      color: white;
+      padding: 24px 30px;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 83, 159, 0.3);
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    header.main-header h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    header.main-header p {
+      font-size: 13.5px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .screen-selector {
+      display: flex;
+      background: #e2e8f0;
+      padding: 5px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      gap: 6px;
+    }
+
+    .screen-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px 16px;
+      font-size: 13.5px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #475569;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .screen-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .device-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+    }
+
+    .dev-tab-btn {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .dev-tab-btn:hover {
+      background: #f1f5f9;
+      color: var(--primary);
+    }
+
+    .dev-tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 83, 159, 0.25);
+    }
+
+    .card-panel {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      padding: 28px;
+      margin-bottom: 30px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .panel-title h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .panel-title p {
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-act {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #334155;
+      transition: all 0.2s;
+    }
+
+    .btn-act:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+
+    .btn-act.primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .btn-act.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .mode-bar {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      width: fit-content;
+      gap: 4px;
+    }
+
+    .mode-opt {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #64748b;
+      transition: all 0.2s;
+    }
+
+    .mode-opt.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .canvas-wrapper {
+      background: #ffffff;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 12px;
+      padding: 25px 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      margin-bottom: 22px;
+    }
+
+    .explanation-box {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 18px 22px;
+      border-radius: 0 10px 10px 0;
+      font-size: 13.5px;
+      margin-top: 15px;
+      color: #1e293b;
+    }
+
+    .explanation-box h4 {
+      color: #1e40af;
+      margin-bottom: 8px;
+      font-size: 14.5px;
+    }
+
+    .explanation-box ul {
+      margin-left: 20px;
+    }
+
+    .explanation-box li {
+      margin-bottom: 6px;
+    }
+
+    .code-snippet {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      padding: 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin-top: 15px;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .code-snippet.show { display: block; }
+
+    .toast-popup {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #0b2540;
+      color: white;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 9999;
+    }
+
+    .toast-popup.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="main-header">
+      <div>
+        <div class="badge-pill">ĐẠI HỌC NGUYỄN TRÃI • SMART LMS EDUFACE</div>
+        <h1>Bản Vẽ Bố Cục Giao Diện Chuẩn Xác (Desktop & Mobile)</h1>
+        <p>Đồng bộ 100% với giao diện mã nguồn thực tế (student_portal/index.html & study.html) và mẫu yêu cầu Chương 3.</p>
+      </div>
+      <div>
+        <span style="font-size: 13px; opacity: 0.9;">Sinh viên: <strong>Nguyễn Công Tùng</strong> • K23CNT3 • MSV: <strong>2310900051</strong></span>
+      </div>
+    </header>
+
+    <!-- 1. SCREEN SELECTOR: TRANG CHỦ CỔNG SINH VIÊN VS PHÒNG HỌC VIDEO -->
+    <div class="screen-selector">
+      <button class="screen-btn active" id="btn-screen-portal" onclick="switchScreen('portal')">
+        🏛️ Màn hình 1: Trang chủ Cổng sinh viên (Home Portal - index.html)
+      </button>
+      <button class="screen-btn" id="btn-screen-study" onclick="switchScreen('study')">
+        🎥 Màn hình 2: Phòng học trực tuyến & AI (Study Room - study.html)
+      </button>
+    </div>
+
+    <!-- 2. DEVICE TABS: LAPTOP/DESKTOP VS MOBILE -->
+    <div class="device-tabs">
+      <button class="dev-tab-btn active" id="btn-dev-desktop" onclick="switchDevice('desktop')">
+        💻 Giao diện Laptop / Desktop (Màn hình rộng)
+      </button>
+      <button class="dev-tab-btn" id="btn-dev-mobile" onclick="switchDevice('mobile')">
+        📱 Giao diện Di động / Mobile (Smartphone cảm ứng)
+      </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW CONTAINER: CÁC MÀN HÌNH SVG TƯƠNG ỨNG -->
+    <!-- ========================================================================= -->
+    
+    <!-- PANEL 1: DESKTOP - HOME PORTAL (INDEX.HTML) -->
+    <div class="card-panel view-panel" id="view-portal-desktop">
+      <div class="panel-header">
+        <div class="panel-title">
+          <h2>Hình 3.3. Thiết kế giao diện trang chủ Cổng sinh viên (Desktop)</h2>
+          <p>Mô phỏng chính xác cấu trúc thực tế của student_portal/index.html: Sidebar điều hướng 260px, Topbar tìm kiếm & người dùng, Banner chào mừng, 4 Bento Stats KPI và Lưới 2 cột (Khóa học + Widget bên phải).</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn-act" onclick="copySvg('svg-portal-desktop')">📋 Sao chép mã SVG</button>
+          <button class="btn-act primary" onclick="downloadSvg('svg-portal-desktop', 'Hinh_3_3_Trang_chu_Desktop_EduFace.svg')">💾 Tải ảnh SVG</button>
+          <button class="btn-act" onclick="toggleCode('code-portal-desktop')">💻 Xem mã Wireframe</button>
+        </div>
+      </div>
+
+      <div class="mode-bar">
+        <button class="mode-opt active" onclick="toggleMode('portal-desktop', 'real')">🎨 Giao diện thực tế EduFace LMS</button>
+        <button class="mode-opt" onclick="toggleMode('portal-desktop', 'abstract')">📐 Sơ đồ khối Wireframe trừu tượng</button>
+      </div>
+
+      <div class="canvas-wrapper">
+        <svg id="svg-portal-desktop" width="100%" height="auto" viewBox="0 0 1080 720" style="max-width: 1080px;" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="1076" height="716" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" rx="8" />
+
+          <!-- ================= LAYER THỰC TẾ EDUFACE (INDEX.HTML) ================= -->
+          <g id="layer-portal-desktop-real">
+            <!-- 1. SIDEBAR TRÁI (240px) -->
+            <rect x="10" y="10" width="220" height="700" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" rx="6" />
+            <!-- Logo Brand NTU -->
+            <rect x="25" y="25" width="40" height="40" rx="8" fill="#00539F" />
+            <text x="45" y="50" font-family="'Plus Jakarta Sans', Arial" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">NTU</text>
+            <text x="75" y="42" font-family="'Plus Jakarta Sans', Arial" font-size="13" font-weight="800" fill="#00539F">ĐH NGUYỄN TRÃI</text>
+            <text x="75" y="56" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="600" fill="#64748b">Smart LMS • Cổng SV</text>
+            <line x1="25" y1="78" x2="215" y2="78" stroke="#f1f5f9" stroke-width="1.5" />
+
+            <!-- Nav Links -->
+            <text x="25" y="102" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="800" fill="#94a3b8" letter-spacing="1">PHÂN HỆ HỌC TẬP</text>
+            
+            <!-- Item 1: Trang chủ (Active) -->
+            <rect x="20" y="115" width="200" height="34" rx="8" fill="#e0f2fe" />
+            <text x="35" y="137" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="700" fill="#00539F">🏠 Trang chủ</text>
+
+            <!-- Item 2: Khóa học của tôi -->
+            <text x="35" y="172" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="600" fill="#475569">📖 Khóa học của tôi</text>
+            <rect x="185" y="160" width="22" height="16" rx="8" fill="#f1f5f9" />
+            <text x="196" y="172" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#64748b" text-anchor="middle">4</text>
+
+            <!-- Item 3: Phòng học trực tuyến -->
+            <text x="35" y="206" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="600" fill="#475569">🎥 Phòng học trực tuyến</text>
+
+            <!-- Item 4: Thư viện tài liệu -->
+            <text x="35" y="240" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="600" fill="#475569">📚 Thư viện tài liệu</text>
+
+            <!-- Item 5: Thời khóa biểu -->
+            <text x="35" y="274" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="600" fill="#475569">📅 Thời khóa biểu</text>
+
+            <!-- Item 6: Trợ lý AI RAG -->
+            <text x="35" y="308" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="600" fill="#475569">✨ Trợ lý AI RAG</text>
+
+            <!-- Item 7: Quản trị viên -->
+            <text x="35" y="342" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="600" fill="#475569">🛡️ Quản trị viên</text>
+
+            <!-- Support Box Bottom Sidebar -->
+            <rect x="20" y="615" width="200" height="75" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+            <text x="32" y="638" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#00539F">🎧 Hỗ trợ kỹ thuật & Đào tạo</text>
+            <text x="32" y="654" font-family="'Plus Jakarta Sans', Arial" font-size="9" fill="#64748b">hotro@daihocnguyentrai.edu.vn</text>
+            <text x="32" y="674" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="700" fill="#DA291C">Hotline: (024) 3872 9999</text>
+
+            <!-- 2. TOPBAR HEADER PHÍA TRÊN (x=240, width=825) -->
+            <rect x="240" y="10" width="830" height="58" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" rx="6" />
+            <!-- Search Bar -->
+            <rect x="255" y="20" width="300" height="36" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+            <text x="272" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="11.5" fill="#64748b">🔍 Tìm kiếm môn học, bài giảng, từ khóa...</text>
+
+            <!-- Live Status Chip -->
+            <rect x="570" y="23" width="190" height="30" rx="15" fill="#f0fdf4" stroke="#86efac" stroke-width="1" />
+            <circle cx="584" cy="38" r="4" fill="#22c55e" />
+            <text x="596" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="600" fill="#15803d">CSDL trực tuyến • NTU</text>
+
+            <!-- User Profile Top Right -->
+            <circle cx="895" cy="39" r="16" fill="#f1f5f9" />
+            <text x="895" y="44" font-family="'Plus Jakarta Sans', Arial" font-size="13" text-anchor="middle">🔔</text>
+            <circle cx="904" cy="30" r="4" fill="#DA291C" />
+
+            <text x="925" y="35" font-family="'Plus Jakarta Sans', Arial" font-size="11.5" font-weight="700" fill="#0f172a">Nguyễn Công Tùng</text>
+            <text x="925" y="48" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">2310900051 • K23CNT3</text>
+            <circle cx="1040" cy="39" r="16" fill="#00539F" />
+            <text x="1040" y="44" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">T</text>
+
+            <!-- 3. MAIN CONTENT: HERO GREETING BANNER -->
+            <rect x="240" y="78" width="830" height="135" rx="10" fill="url(#hero-grad)" stroke="#bae6fd" stroke-width="1" />
+            <defs>
+              <linearGradient id="hero-grad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#e0f2fe" />
+                <stop offset="100%" stop-color="#ffffff" />
+              </linearGradient>
+            </defs>
+            <rect x="255" y="90" width="180" height="20" rx="10" fill="#00539F" />
+            <text x="345" y="104" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="700" fill="#ffffff" text-anchor="middle">ĐH NGUYỄN TRÃI • SMART LMS 4.0</text>
+            <text x="255" y="132" font-family="'Plus Jakarta Sans', Arial" font-size="17" font-weight="800" fill="#0b2540">Chào mừng trở lại, Nguyễn Công Tùng ✦</text>
+            <text x="255" y="150" font-family="'Plus Jakarta Sans', Arial" font-size="11" fill="#475569">Sinh viên • 2310900051 (Lớp K23 CNTT 3) • Chuỗi học tập: 6 ngày liên tiếp</text>
+            <!-- 4 Quick Action Buttons -->
+            <rect x="255" y="165" width="115" height="30" rx="6" fill="#00539F" />
+            <text x="312" y="184" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">▶ Vào phòng học</text>
+            <rect x="380" y="165" width="115" height="30" rx="6" fill="#ffffff" stroke="#00539F" stroke-width="1" />
+            <text x="437" y="184" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#00539F" text-anchor="middle">📖 Khóa học của tôi</text>
+            <rect x="505" y="165" width="95" height="30" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+            <text x="552" y="184" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="600" fill="#475569" text-anchor="middle">📄 Tài liệu PDF</text>
+            <rect x="610" y="165" width="95" height="30" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+            <text x="657" y="184" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="600" fill="#475569" text-anchor="middle">✨ Trợ lý RAG</text>
+
+            <!-- 4 BENTO STATS CARDS (Top Right of Hero) -->
+            <g transform="translate(720, 88)">
+              <!-- Stat 1: Môn học -->
+              <rect x="0" y="0" width="80" height="52" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <text x="8" y="16" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="600" fill="#64748b">Môn học</text>
+              <text x="8" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="16" font-weight="800" fill="#00539F">4</text>
+              <text x="24" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#94a3b8">môn</text>
+
+              <!-- Stat 2: Bài giảng Video -->
+              <rect x="88" y="0" width="80" height="52" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <text x="96" y="16" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="600" fill="#64748b">Bài giảng</text>
+              <text x="96" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="16" font-weight="800" fill="#00539F">28</text>
+              <text x="120" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#94a3b8">clip</text>
+
+              <!-- Stat 3: Face ID ArcFace 96% -->
+              <rect x="176" y="0" width="80" height="52" rx="6" fill="#ffffff" stroke="#22c55e" stroke-width="1.2" />
+              <text x="184" y="16" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="700" fill="#15803d">Face ID</text>
+              <text x="184" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="16" font-weight="800" fill="#15803d">96%</text>
+
+              <!-- Stat 4: Tài liệu RAG -->
+              <rect x="264" y="0" width="80" height="52" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <text x="272" y="16" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="600" fill="#64748b">Tài liệu</text>
+              <text x="272" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="16" font-weight="800" fill="#00539F">12</text>
+              <text x="294" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#94a3b8">file</text>
+            </g>
+
+            <!-- 4. TWO-COLUMN GRID: LEFT MAIN (540px) & RIGHT SIDEBAR (280px) -->
+            <!-- CỘT TRÁI (CATALOG KHÓA HỌC & AI RAG) -->
+            <g transform="translate(240, 222)">
+              <!-- Bộ lọc Tabs -->
+              <rect x="0" y="0" width="530" height="42" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <rect x="6" y="6" width="115" height="30" rx="6" fill="#00539F" />
+              <text x="63" y="25" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">Tất cả môn (4)</text>
+              <rect x="126" y="6" width="95" height="30" rx="6" fill="#f8fafc" />
+              <text x="173" y="25" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="600" fill="#64748b" text-anchor="middle">Miễn phí (1)</text>
+              <rect x="226" y="6" width="105" height="30" rx="6" fill="#f8fafc" />
+              <text x="278" y="25" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="600" fill="#64748b" text-anchor="middle">Đã đăng ký (3)</text>
+              <text x="440" y="25" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" fill="#94a3b8">⚡ Realtime CSDL</text>
+
+              <!-- Card Khóa học 1 (Java Spring Boot 3 & ArcFace) -->
+              <g transform="translate(0, 52)">
+                <rect x="0" y="0" width="255" height="195" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+                <rect x="8" y="8" width="239" height="95" rx="6" fill="#0b2540" />
+                <line x1="8" y1="8" x2="247" y2="103" stroke="#1e3a5f" stroke-width="1" />
+                <line x1="8" y1="103" x2="247" y2="8" stroke="#1e3a5f" stroke-width="1" />
+                <rect x="16" y="16" width="70" height="18" rx="4" fill="#00539F" />
+                <text x="51" y="29" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">ĐÃ ĐĂNG KÝ</text>
+                <text x="12" y="122" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="700" fill="#0b2540">Kiến trúc Vi dịch vụ LMS & AI</text>
+                <text x="12" y="138" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#64748b">GV: TS. Trần Linh • 8 bài giảng</text>
+                <!-- Progress bar -->
+                <rect x="12" y="148" width="230" height="5" rx="2.5" fill="#f1f5f9" />
+                <rect x="12" y="148" width="172" height="5" rx="2.5" fill="#00539F" />
+                <text x="12" y="168" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="600" fill="#00539F">Tiến độ: 75%</text>
+                <rect x="160" y="162" width="82" height="24" rx="4" fill="#00539F" />
+                <text x="201" y="177" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">Vào học ➔</text>
+              </g>
+
+              <!-- Card Khóa học 2 (Trí tuệ nhân tạo & RAG) -->
+              <g transform="translate(270, 52)">
+                <rect x="0" y="0" width="260" height="195" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+                <rect x="8" y="8" width="244" height="95" rx="6" fill="#163a5c" />
+                <line x1="8" y1="8" x2="252" y2="103" stroke="#254d73" stroke-width="1" />
+                <line x1="8" y1="103" x2="252" y2="8" stroke="#254d73" stroke-width="1" />
+                <rect x="16" y="16" width="60" height="18" rx="4" fill="#16a34a" />
+                <text x="46" y="29" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">MIỄN PHÍ</text>
+                <text x="12" y="122" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="700" fill="#0b2540">Nhập môn Trí Tuệ Nhân Tạo</text>
+                <text x="12" y="138" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#64748b">Khoa CNTT • 12 bài giảng</text>
+                <rect x="12" y="148" width="235" height="5" rx="2.5" fill="#f1f5f9" />
+                <rect x="12" y="148" width="94" height="5" rx="2.5" fill="#00539F" />
+                <text x="12" y="168" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="600" fill="#00539F">Tiến độ: 40%</text>
+                <rect x="165" y="162" width="82" height="24" rx="4" fill="#00539F" />
+                <text x="206" y="177" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">Vào học ➔</text>
+              </g>
+
+              <!-- Khung Trợ lý Hỏi Đáp AI RAG Phía Dưới -->
+              <g transform="translate(0, 260)">
+                <rect x="0" y="0" width="530" height="165" rx="8" fill="#ffffff" stroke="#00539F" stroke-width="1.2" />
+                <rect x="12" y="12" width="30" height="30" rx="6" fill="#00539F" />
+                <text x="27" y="32" font-family="'Plus Jakarta Sans', Arial" font-size="14" fill="#ffffff" text-anchor="middle">✨</text>
+                <text x="50" y="26" font-family="'Plus Jakarta Sans', Arial" font-size="13" font-weight="800" fill="#00539F">Trợ lý Học tập AI RAG</text>
+                <text x="50" y="39" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#64748b">Truy vấn tự động từ giáo trình số hóa lưu trong MongoDB Atlas</text>
+                <!-- Input Box -->
+                <rect x="12" y="52" width="410" height="36" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+                <text x="24" y="74" font-family="'Plus Jakarta Sans', Arial" font-size="11" fill="#94a3b8">Hỏi AI: "ArcFace tính khoảng cách Cosine như thế nào?..."</text>
+                <rect x="430" y="52" width="88" height="36" rx="6" fill="#00539F" />
+                <text x="474" y="74" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">Gửi câu hỏi</text>
+                <!-- Answer preview -->
+                <rect x="12" y="98" width="506" height="55" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1" />
+                <text x="24" y="118" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#1e40af">AI: ArcFace thêm biên góc m vào góc θ giữa đặc trưng và trọng số lớp...</text>
+                <text x="24" y="138" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#3b82f6">Trích dẫn: [Giáo trình Thị giác máy tính, Chương 4, Trang 68]</text>
+              </g>
+            </g>
+
+            <!-- CỘT PHẢI (SIDEBAR WIDGETS 285px) -->
+            <g transform="translate(785, 222)">
+              <!-- Widget 1: Sẵn sàng học (Ready Lessons) -->
+              <rect x="0" y="0" width="285" height="135" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <text x="12" y="24" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="800" fill="#0b2540">🎬 Sẵn sàng học</text>
+              <rect x="210" y="10" width="65" height="18" rx="9" fill="#f1f5f9" />
+              <text x="242" y="23" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="600" fill="#64748b" text-anchor="middle">Cloudinary</text>
+
+              <rect x="12" y="38" width="260" height="40" rx="6" fill="#f8fafc" stroke="#f1f5f9" stroke-width="1" />
+              <circle cx="28" cy="58" r="10" fill="#00539F" />
+              <text x="28" y="62" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#fff" text-anchor="middle">▶</text>
+              <text x="46" y="54" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#0f172a">Bài 2.1: Thuật toán ArcFace</text>
+              <text x="46" y="68" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">Kiến trúc Vi dịch vụ • 18:45</text>
+
+              <rect x="12" y="84" width="260" height="40" rx="6" fill="#f8fafc" stroke="#f1f5f9" stroke-width="1" />
+              <circle cx="28" cy="104" r="10" fill="#64748b" />
+              <text x="28" y="108" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#fff" text-anchor="middle">▶</text>
+              <text x="46" y="100" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#0f172a">Bài 2.2: Liveness Detection</text>
+              <text x="46" y="114" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">Chống giả mạo sinh trắc • 14:20</text>
+
+              <!-- Widget 2: Mục tiêu học tuần (Weekly Goal) -->
+              <g transform="translate(0, 145)">
+                <rect x="0" y="0" width="285" height="135" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+                <text x="12" y="24" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="800" fill="#0b2540">🎯 Mục tiêu tuần</text>
+                <text x="210" y="24" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#00539F">8.5 / 12 h</text>
+                <!-- SVG Circle Progress Ring -->
+                <circle cx="55" cy="78" r="32" fill="none" stroke="#e2e8f0" stroke-width="6" />
+                <circle cx="55" cy="78" r="32" fill="none" stroke="#00539F" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="58" stroke-linecap="round" />
+                <text x="55" y="82" font-family="'Plus Jakarta Sans', Arial" font-size="14" font-weight="800" fill="#00539F" text-anchor="middle">71%</text>
+                <!-- Weekly 7 bars -->
+                <g transform="translate(110, 45)">
+                  <text x="0" y="12" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">Tích lũy 7 ngày qua:</text>
+                  <rect x="0" y="22" width="16" height="35" rx="3" fill="#00539F" />
+                  <rect x="22" y="15" width="16" height="42" rx="3" fill="#00539F" />
+                  <rect x="44" y="28" width="16" height="29" rx="3" fill="#00539F" />
+                  <rect x="66" y="8" width="16" height="49" rx="3" fill="#00539F" />
+                  <rect x="88" y="18" width="16" height="39" rx="3" fill="#00539F" />
+                  <rect x="110" y="32" width="16" height="25" rx="3" fill="#cbd5e1" />
+                  <rect x="132" y="40" width="16" height="17" rx="3" fill="#cbd5e1" />
+                </g>
+              </g>
+
+              <!-- Widget 3: Lịch học hôm nay (Schedule) -->
+              <g transform="translate(0, 290)">
+                <rect x="0" y="0" width="285" height="135" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+                <text x="12" y="24" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="800" fill="#0b2540">📅 Lịch học hôm nay</text>
+                <text x="215" y="24" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="600" fill="#16a34a">● Trực tuyến</text>
+
+                <rect x="12" y="38" width="260" height="38" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1" />
+                <text x="20" y="55" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#15803d">08:00 - 10:00 [ĐANG DIỄN RA]</text>
+                <text x="20" y="69" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#166534">Kiến trúc Vi dịch vụ • Phòng 402 / Zoom</text>
+
+                <rect x="12" y="84" width="260" height="38" rx="6" fill="#f8fafc" stroke="#f1f5f9" stroke-width="1" />
+                <text x="20" y="101" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#475569">13:30 - 15:30 [BUỔI CHIỀU]</text>
+                <text x="20" y="115" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">Thị giác máy tính AI ArcFace • Lab 3</text>
+              </g>
+            </g>
+          </g>
+
+          <!-- ================= LAYER TRỪU TƯỢNG (THEO MẪU GIÁO TRÌNH) ================= -->
+          <g id="layer-portal-desktop-abstract" style="display: none;">
+            <rect x="20" y="20" width="1040" height="65" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+            <text x="540" y="62" font-size="28" font-weight="700" fill="#000000" text-anchor="middle">Header</text>
+
+            <rect x="20" y="95" width="200" height="490" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+            <text x="120" y="350" font-size="26" font-weight="700" fill="#000000" text-anchor="middle">Sidebar</text>
+
+            <rect x="230" y="95" width="590" height="490" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+            <text x="525" y="350" font-size="32" font-weight="700" fill="#000000" text-anchor="middle">Content</text>
+
+            <rect x="830" y="95" width="230" height="490" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+            <text x="945" y="350" font-size="26" font-weight="700" fill="#000000" text-anchor="middle">Sidebar</text>
+
+            <rect x="20" y="595" width="1040" height="65" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+            <text x="540" y="638" font-size="28" font-weight="700" fill="#000000" text-anchor="middle">Sidebar</text>
+
+            <rect x="20" y="670" width="1040" height="35" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+            <text x="540" y="694" font-size="20" font-weight="600" fill="#000000" text-anchor="middle">Footer</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="explanation-box">
+        <h4>💡 Thuyết minh kiến trúc giao diện Hình 3.3 (Desktop Cổng sinh viên - student_portal/index.html):</h4>
+        <ul>
+          <li><strong>Thanh điều hướng Sidebar trái (Cố định 240px)</strong>: Chứa nhận diện thương hiệu Logo ĐH Nguyễn Trãi, 7 menu nghiệp vụ đào tạo (*Trang chủ, Khóa học của tôi, Phòng học trực tuyến, Thư viện tài liệu, Thời khóa biểu, Trợ lý AI RAG, Quản trị viên*) và hộp hỗ trợ kỹ thuật đào tạo ở chân sidebar.</li>
+          <li><strong>Thanh điều hướng Topbar phía trên</strong>: Tích hợp công cụ tìm kiếm bài học nhanh, huy hiệu đồng bộ CSDL trực tuyến, chuông thông báo có badge đỏ và thông tin định danh sinh viên (*Nguyễn Công Tùng - MSSV: 2310900051*).</li>
+          <li><strong>Khu vực Hero Greeting &amp; 4 Bento KPI Stats</strong>: Lời chào đón cá nhân hóa, 4 nút tác vụ nhanh và 4 thẻ thống kê trực quan (*Số môn học, Số clip bài giảng CDN, Tỷ lệ điểm danh sinh trắc học Face ID ArcFace 96%, Số tài liệu đã nạp AI RAG*).</li>
+          <li><strong>Vùng làm việc 2 cột chuẩn Responsive Grid</strong>:
+            <ul>
+              <li><em>Cột chính (Trái)</em>: Bộ lọc Tab linh hoạt (*Tất cả | Miễn phí | Đã đăng ký*), danh sách thẻ khóa học kèm thanh tiến độ %, và khung hỏi đáp Trợ lý AI RAG bóc tách giáo trình MongoDB.</li>
+              <li><em>Cột phụ (Phải)</em>: Widget "Sẵn sàng học" (bài giảng xem tiếp), Widget "Mục tiêu tuần" (vòng tròn tiến độ SVG 71% và biểu đồ 7 ngày), và Widget "Lịch học hôm nay".</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <pre class="code-snippet" id="code-portal-desktop">
+&lt;!-- CẤU TRÚC HTML LAYOUT CHUẨN CỦA STUDENT_PORTAL/INDEX.HTML --&gt;
+&lt;div class="app"&gt;
+  &lt;!-- 1. Sidebar trái --&gt;
+  &lt;aside class="sidebar" id="sidebar"&gt;
+    &lt;div class="brand"&gt;&lt;img src="logo-ntu.jpg"&gt;&lt;b&gt;ĐH NGUYỄN TRÃI&lt;/b&gt;&lt;/div&gt;
+    &lt;nav class="nav"&gt;
+      &lt;a href="index.html" class="active"&gt;Trang chủ&lt;/a&gt;
+      &lt;a href="#coursesSection"&gt;Khóa học của tôi&lt;/a&gt;
+      &lt;a href="study.html"&gt;Phòng học trực tuyến&lt;/a&gt;
+      &lt;a href="#docsSection"&gt;Thư viện tài liệu&lt;/a&gt;
+      &lt;a href="#ragSection"&gt;Trợ lý AI RAG&lt;/a&gt;
+    &lt;/nav&gt;
+  &lt;/aside&gt;
+
+  &lt;!-- 2. Main Container --&gt;
+  &lt;div class="main"&gt;
+    &lt;header class="topbar"&gt;
+      &lt;input type="search" placeholder="Tìm kiếm môn học, bài giảng..."&gt;
+      &lt;div class="user"&gt;&lt;b&gt;Nguyễn Công Tùng&lt;/b&gt;&lt;small&gt;2310900051&lt;/small&gt;&lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;main class="content"&gt;
+      &lt;section class="hero"&gt;...&lt;/section&gt;
+      &lt;div class="grid"&gt;
+        &lt;div class="col-main"&gt;&lt;!-- Courses + Documents + RAG --&gt;&lt;/div&gt;
+        &lt;aside class="col-side"&gt;&lt;!-- Ready Lessons + Weekly Goal + Schedule --&gt;&lt;/aside&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </pre>
+    </div>
+
+    <!-- PANEL 2: MOBILE - HOME PORTAL (SMARTPHONE) -->
+    <div class="card-panel view-panel" id="view-portal-mobile" style="display: none;">
+      <div class="panel-header">
+        <div class="panel-title">
+          <h2>Hình 3.4. Thiết kế giao diện Mobile Cổng sinh viên (Smartphone)</h2>
+          <p>Mô phỏng chính xác giao diện Responsive Mobile của student_portal/index.html: Sidebar thu gọn thành Drawer Menu ☰, Topbar gọn gàng, 4 Bento Stats xếp lưới 2x2, Filter tabs cuộn ngang, danh sách Card vuốt dọc và Bottom Navigation Bar.</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn-act" onclick="copySvg('svg-portal-mobile')">📋 Sao chép mã SVG</button>
+          <button class="btn-act primary" onclick="downloadSvg('svg-portal-mobile', 'Hinh_3_4_Trang_chu_Mobile_EduFace.svg')">💾 Tải ảnh SVG</button>
+          <button class="btn-act" onclick="toggleCode('code-portal-mobile')">💻 Xem mã Wireframe</button>
+        </div>
+      </div>
+
+      <div class="mode-bar">
+        <button class="mode-opt active" onclick="toggleMode('portal-mobile', 'real')">🎨 Giao diện thực tế EduFace LMS</button>
+        <button class="mode-opt" onclick="toggleMode('portal-mobile', 'abstract')">📐 Sơ đồ khối Wireframe trừu tượng</button>
+      </div>
+
+      <div class="canvas-wrapper">
+        <svg id="svg-portal-mobile" width="100%" height="auto" viewBox="0 0 380 780" style="max-width: 380px;" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer Phone Frame (Mô phỏng iPhone bo góc 42px) -->
+          <rect x="10" y="10" width="360" height="760" rx="42" fill="#ffffff" stroke="#94a3b8" stroke-width="2.5" />
+          <rect x="18" y="18" width="344" height="744" rx="36" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2" />
+
+          <!-- Dynamic Island / Speaker Notch -->
+          <rect x="135" y="26" width="110" height="22" rx="11" fill="#0b2540" />
+          <circle cx="225" cy="37" r="4.5" fill="#1e3a5f" />
+
+          <!-- ================= LAYER THỰC TẾ MOBILE (INDEX.HTML) ================= -->
+          <g id="layer-portal-mobile-real">
+            <!-- 1. MOBILE TOPBAR (x=28, y=56) -->
+            <rect x="25" y="56" width="330" height="46" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+            <!-- Menu Hamburger Button -->
+            <rect x="35" y="66" width="28" height="26" rx="4" fill="#f1f5f9" />
+            <text x="49" y="83" font-family="'Plus Jakarta Sans', Arial" font-size="14" fill="#00539F" text-anchor="middle">☰</text>
+
+            <!-- Brand Logo Text -->
+            <text x="70" y="78" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="800" fill="#00539F">ĐH NGUYỄN TRÃI</text>
+            <text x="70" y="91" font-family="'Plus Jakarta Sans', Arial" font-size="8.5" fill="#64748b">Smart LMS • Cổng SV</text>
+
+            <!-- Top Right Icons -->
+            <circle cx="295" cy="79" r="12" fill="#f8fafc" />
+            <text x="295" y="83" font-size="10" text-anchor="middle">🔔</text>
+            <circle cx="301" cy="72" r="3" fill="#DA291C" />
+
+            <circle cx="330" cy="79" r="13" fill="#00539F" />
+            <text x="330" y="83" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="800" fill="#ffffff" text-anchor="middle">T</text>
+
+            <!-- Search Bar Mobile -->
+            <rect x="25" y="110" width="330" height="34" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+            <text x="40" y="132" font-family="'Plus Jakarta Sans', Arial" font-size="11" fill="#94a3b8">🔍 Tìm kiếm môn học, bài giảng...</text>
+
+            <!-- 2. MOBILE HERO BANNER (Thu gọn) -->
+            <rect x="25" y="152" width="330" height="92" rx="10" fill="url(#mobile-hero-grad)" stroke="#bae6fd" stroke-width="1" />
+            <defs>
+              <linearGradient id="mobile-hero-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#e0f2fe" />
+                <stop offset="100%" stop-color="#ffffff" />
+              </linearGradient>
+            </defs>
+            <text x="38" y="174" font-family="'Plus Jakarta Sans', Arial" font-size="13" font-weight="800" fill="#0b2540">Chào, Nguyễn Công Tùng ✦</text>
+            <text x="38" y="190" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#475569">SV K23 CNTT 3 • Chuỗi học tập: 6 ngày</text>
+            <rect x="38" y="202" width="110" height="28" rx="6" fill="#00539F" />
+            <text x="93" y="220" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#ffffff" text-anchor="middle">▶ Vào phòng học</text>
+            <rect x="156" y="202" width="110" height="28" rx="6" fill="#ffffff" stroke="#00539F" stroke-width="1" />
+            <text x="211" y="220" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#00539F" text-anchor="middle">Khóa học của tôi</text>
+
+            <!-- 3. 4 BENTO STATS KPI TRÊN MOBILE (LƯỚI 2x2) -->
+            <g transform="translate(25, 252)">
+              <!-- Stat 1: Môn học -->
+              <rect x="0" y="0" width="160" height="48" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <text x="12" y="20" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="600" fill="#64748b">📖 Môn học</text>
+              <text x="12" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="15" font-weight="800" fill="#00539F">4 <tspan font-size="10" fill="#94a3b8">môn</tspan></text>
+
+              <!-- Stat 2: Bài giảng -->
+              <rect x="170" y="0" width="160" height="48" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <text x="182" y="20" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="600" fill="#64748b">🎬 Bài giảng</text>
+              <text x="182" y="38" font-family="'Plus Jakarta Sans', Arial" font-size="15" font-weight="800" fill="#00539F">28 <tspan font-size="10" fill="#94a3b8">clip</tspan></text>
+
+              <!-- Stat 3: Face ID 96% -->
+              <rect x="0" y="54" width="160" height="48" rx="8" fill="#ffffff" stroke="#22c55e" stroke-width="1.2" />
+              <text x="12" y="74" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="700" fill="#15803d">🎯 Face ID ArcFace</text>
+              <text x="12" y="92" font-family="'Plus Jakarta Sans', Arial" font-size="15" font-weight="800" fill="#15803d">96% <tspan font-size="9.5" fill="#16a34a">Đạt</tspan></text>
+
+              <!-- Stat 4: AI RAG -->
+              <rect x="170" y="54" width="160" height="48" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <text x="182" y="74" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="600" fill="#64748b">✨ AI RAG</text>
+              <text x="182" y="92" font-family="'Plus Jakarta Sans', Arial" font-size="15" font-weight="800" fill="#00539F">12 <tspan font-size="10" fill="#94a3b8">file</tspan></text>
+            </g>
+
+            <!-- 4. HORIZONTAL FILTER TABS (CUỘN NGANG) -->
+            <g transform="translate(25, 362)">
+              <text x="0" y="16" font-family="'Plus Jakarta Sans', Arial" font-size="13" font-weight="800" fill="#0b2540">Khóa học của tôi</text>
+              <!-- Chips -->
+              <rect x="0" y="26" width="80" height="26" rx="13" fill="#00539F" />
+              <text x="40" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">Tất cả (4)</text>
+
+              <rect x="86" y="26" width="75" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <text x="123" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="600" fill="#475569" text-anchor="middle">Miễn phí (1)</text>
+
+              <rect x="167" y="26" width="85" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <text x="209" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="600" fill="#475569" text-anchor="middle">Đã đăng ký (3)</text>
+
+              <rect x="258" y="26" width="72" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <text x="294" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="600" fill="#475569" text-anchor="middle">+ Lọc môn</text>
+            </g>
+
+            <!-- 5. DANH SÁCH THẺ KHÓA HỌC VUỐT DỌC (1 CỘT CHUẨN MOBILE) -->
+            <g transform="translate(25, 422)">
+              <!-- Card 1 -->
+              <rect x="0" y="0" width="330" height="110" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <!-- Thumbnail ảnh bài giảng có gạch chéo Wireframe -->
+              <rect x="8" y="8" width="94" height="94" rx="6" fill="#0b2540" />
+              <line x1="8" y1="8" x2="102" y2="102" stroke="#1e3a5f" stroke-width="1" />
+              <line x1="8" y1="102" x2="102" y2="8" stroke="#1e3a5f" stroke-width="1" />
+              <text x="110" y="26" font-family="'Plus Jakarta Sans', Arial" font-size="11.5" font-weight="800" fill="#0b2540">Kiến trúc Vi dịch vụ LMS & AI</text>
+              <text x="110" y="42" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">TS. Trần Linh • 8 bài giảng</text>
+              <rect x="110" y="52" width="205" height="5" rx="2.5" fill="#f1f5f9" />
+              <rect x="110" y="52" width="154" height="5" rx="2.5" fill="#00539F" />
+              <text x="110" y="70" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="700" fill="#00539F">Tiến độ: 75%</text>
+              <rect x="235" y="72" width="85" height="26" rx="5" fill="#00539F" />
+              <text x="277" y="89" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">Tiếp tục ➔</text>
+
+              <!-- Card 2 -->
+              <g transform="translate(0, 118)">
+                <rect x="0" y="0" width="330" height="110" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+                <rect x="8" y="8" width="94" height="94" rx="6" fill="#163a5c" />
+                <line x1="8" y1="8" x2="102" y2="102" stroke="#254d73" stroke-width="1" />
+                <line x1="8" y1="102" x2="102" y2="8" stroke="#254d73" stroke-width="1" />
+                <text x="110" y="26" font-family="'Plus Jakarta Sans', Arial" font-size="11.5" font-weight="800" fill="#0b2540">Nhập môn Trí Tuệ Nhân Tạo</text>
+                <text x="110" y="42" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">Khoa CNTT • 12 bài giảng</text>
+                <rect x="110" y="52" width="205" height="5" rx="2.5" fill="#f1f5f9" />
+                <rect x="110" y="52" width="82" height="5" rx="2.5" fill="#00539F" />
+                <text x="110" y="70" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" font-weight="700" fill="#00539F">Tiến độ: 40%</text>
+                <rect x="235" y="72" width="85" height="26" rx="5" fill="#00539F" />
+                <text x="277" y="89" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">Tiếp tục ➔</text>
+              </g>
+            </g>
+
+            <!-- 6. BOTTOM NAVIGATION BAR (CỐ ĐỊNH Ở ĐÁY MÀN HÌNH DI ĐỘNG) -->
+            <rect x="18" y="665" width="344" height="60" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+            <!-- Tab 1: Home (Active) -->
+            <circle cx="55" cy="688" r="4" fill="#00539F" />
+            <text x="55" y="714" font-family="'Plus Jakarta Sans', Arial" font-size="8.5" font-weight="700" fill="#00539F" text-anchor="middle">Trang chủ</text>
+            <!-- Tab 2: Khóa học -->
+            <text x="125" y="714" font-family="'Plus Jakarta Sans', Arial" font-size="8.5" font-weight="600" fill="#64748b" text-anchor="middle">Khóa học</text>
+            <!-- Tab 3: Phòng học -->
+            <text x="190" y="714" font-family="'Plus Jakarta Sans', Arial" font-size="8.5" font-weight="600" fill="#64748b" text-anchor="middle">Phòng học</text>
+            <!-- Tab 4: AI RAG -->
+            <text x="255" y="714" font-family="'Plus Jakarta Sans', Arial" font-size="8.5" font-weight="600" fill="#64748b" text-anchor="middle">AI RAG</text>
+            <!-- Tab 5: Cá nhân -->
+            <text x="325" y="714" font-family="'Plus Jakarta Sans', Arial" font-size="8.5" font-weight="600" fill="#64748b" text-anchor="middle">Hồ sơ</text>
+
+            <!-- Home Swipe Bar Bottom -->
+            <rect x="130" y="742" width="120" height="4.5" rx="2.25" fill="#0f172a" />
+          </g>
+
+          <!-- ================= LAYER TRỪU TƯỢNG (THEO MẪU GIÁO TRÌNH HÌNH 3.4) ================= -->
+          <g id="layer-portal-mobile-abstract" style="display: none;">
+            <text x="40" y="75" font-size="20" font-weight="700" fill="#1e293b">Khóa học / Chairs</text>
+            <!-- Filter Chips -->
+            <rect x="40" y="90" width="65" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+            <text x="72" y="107" font-size="10.5" fill="#475569" text-anchor="middle">Category</text>
+            <rect x="110" y="90" width="50" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+            <text x="135" y="107" font-size="10.5" fill="#475569" text-anchor="middle">Size</text>
+            <rect x="165" y="90" width="55" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+            <text x="192" y="107" font-size="10.5" fill="#475569" text-anchor="middle">Colour</text>
+            <rect x="225" y="90" width="65" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+            <text x="257" y="107" font-size="10.5" fill="#475569" text-anchor="middle">+ Filters</text>
+
+            <!-- Hero Box with Crossed X -->
+            <g transform="translate(40, 130)">
+              <rect x="0" y="0" width="300" height="110" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+              <line x1="0" y1="0" x2="300" y2="110" stroke="#94a3b8" stroke-width="1.2" />
+              <line x1="0" y1="110" x2="300" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+            </g>
+
+            <text x="40" y="270" font-size="18" font-weight="700" fill="#1e293b">Products / Khóa học đề xuất</text>
+
+            <!-- 4 Cards with Crossed X (Staggered Grid) -->
+            <g transform="translate(40, 288)">
+              <rect x="0" y="0" width="144" height="152" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+              <line x1="0" y1="0" x2="144" y2="152" stroke="#94a3b8" stroke-width="1.2" />
+              <line x1="0" y1="152" x2="144" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+            </g>
+            <g transform="translate(196, 288)">
+              <rect x="0" y="0" width="144" height="126" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+              <line x1="0" y1="0" x2="144" y2="126" stroke="#94a3b8" stroke-width="1.2" />
+              <line x1="0" y1="126" x2="144" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+            </g>
+            <g transform="translate(40, 450)">
+              <rect x="0" y="0" width="144" height="136" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+              <line x1="0" y1="0" x2="144" y2="136" stroke="#94a3b8" stroke-width="1.2" />
+              <line x1="0" y1="136" x2="144" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+            </g>
+            <g transform="translate(196, 424)">
+              <rect x="0" y="0" width="144" height="162" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+              <line x1="0" y1="0" x2="144" y2="162" stroke="#94a3b8" stroke-width="1.2" />
+              <line x1="0" y1="162" x2="144" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+            </g>
+
+            <rect x="130" y="742" width="120" height="4.5" rx="2.25" fill="#475569" />
+          </g>
+        </svg>
+      </div>
+
+      <div class="explanation-box">
+        <h4>💡 Thuyết minh kiến trúc giao diện Hình 3.4 (Mobile Cổng sinh viên - student_portal/index.html):</h4>
+        <ul>
+          <li><strong>Thanh Header thu gọn tích hợp Drawer Menu</strong>: Thay vì hiển thị sidebar cố định chiếm không gian, nút ☰ cho phép mở menu trượt từ trái sang (Off-canvas Drawer), bảo vệ diện tích màn hình cảm ứng di động.</li>
+          <li><strong>Hero Greeting &amp; 4 Bento Stats xếp dạng lưới 2x2</strong>: Bố trí theo tỷ lệ vàng hiển thị đầy đủ 4 chỉ số KPI quan trọng (*Môn học, Video CDN, Face ID 96%, Tài liệu AI RAG*) chỉ trong nửa trên màn hình đầu tiên.</li>
+          <li><strong>Filter Chips cuộn ngang (Horizontal Scrolling)</strong>: Dãy nút bo tròn dạng viên thuốc (*Pills*) cho phép người dùng dùng ngón tay vuốt ngang để chuyển đổi giữa các nhóm môn học (*Tất cả, Miễn phí, Đã đăng ký*).</li>
+          <li><strong>Danh sách thẻ khóa học dạng danh thiếp 1 cột (Cards List)</strong>: Mỗi thẻ học phần có ảnh đại diện, thông tin giảng viên, thanh tiến độ % và nút "Tiếp tục học" lớn dễ chạm ngón tay.</li>
+          <li><strong>Thanh điều hướng đáy (Bottom Navigation Bar)</strong>: Cố định ở chân màn hình chứa 5 lối tắt quan trọng (*Trang chủ, Khóa học, Phòng học, AI RAG, Hồ sơ cá nhân*), tối ưu cho thói quen sử dụng điện thoại bằng một tay.</li>
+        </ul>
+      </div>
+
+      <pre class="code-snippet" id="code-portal-mobile">
+&lt;!-- MÃ CSS RESPONSIVE CHO GIAO DIỆN MOBILE STUDENT_PORTAL/INDEX.HTML --&gt;
+@media (max-width: 860px) {
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; z-index: 50;
+    transform: translateX(-105%); /* Giấu menu sang trái */
+    transition: transform .4s ease;
+  }
+  .sidebar.open { transform: none; }
+  .grid { grid-template-columns: 1fr; } /* Chuyển từ 2 cột sang 1 cột */
+}
+@media (max-width: 520px) {
+  .stats { grid-template-columns: 1fr 1fr; } /* 4 Bento thành lưới 2x2 */
+}
+      </pre>
+    </div>
+
+    <!-- PANEL 3: DESKTOP - STUDY ROOM (STUDY.HTML) -->
+    <div class="card-panel view-panel" id="view-study-desktop" style="display: none;">
+      <div class="panel-header">
+        <div class="panel-title">
+          <h2>Hình 3.3B. Thiết kế giao diện Phòng học trực tuyến &amp; AI (Desktop - study.html)</h2>
+          <p>Mô phỏng cấu trúc lưới 12 cột (8/4): Cột trái (8 cột) chứa Video Player 16:9 kèm camera AI watermark và 2 Tab (Tài liệu PDF / Chat RAG); Cột phải (4 cột) chứa Accordion danh mục chương bài học.</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn-act" onclick="copySvg('svg-study-desktop')">📋 Sao chép mã SVG</button>
+          <button class="btn-act primary" onclick="downloadSvg('svg-study-desktop', 'Hinh_3_3B_Phong_hoc_Desktop_EduFace.svg')">💾 Tải ảnh SVG</button>
+          <button class="btn-act" onclick="toggleCode('code-study-desktop')">💻 Xem mã Wireframe</button>
+        </div>
+      </div>
+
+      <div class="canvas-wrapper">
+        <svg id="svg-study-desktop" width="100%" height="auto" viewBox="0 0 1080 720" style="max-width: 1080px;" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="1076" height="716" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" rx="8" />
+
+          <!-- 1. FIXED TOP NAVBAR STUDY.HTML -->
+          <rect x="10" y="10" width="1060" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" rx="6" />
+          <rect x="25" y="22" width="32" height="32" rx="6" fill="#00539F" />
+          <text x="41" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">NTU</text>
+          <text x="65" y="36" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="800" fill="#00539F">ĐH NGUYỄN TRÃI</text>
+          <text x="65" y="48" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="600" fill="#64748b">Smart LMS</text>
+
+          <!-- Breadcrumb & Course Selector -->
+          <text x="175" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="11" fill="#64748b">Khóa học của tôi  ›</text>
+          <rect x="270" y="22" width="220" height="32" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+          <text x="282" y="42" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#0b2540">Kiến trúc Vi dịch vụ LMS &amp; AI ▾</text>
+
+          <!-- Course Progress Top -->
+          <rect x="520" y="22" width="190" height="32" rx="16" fill="#f1f5f9" />
+          <text x="535" y="42" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#475569">Tiến độ môn: <tspan font-weight="800" fill="#00539F">75%</tspan></text>
+          <rect x="620" y="35" width="75" height="5" rx="2.5" fill="#e2e8f0" />
+          <rect x="620" y="35" width="56" height="5" rx="2.5" fill="#00539F" />
+
+          <!-- Nav Tabs -->
+          <rect x="730" y="22" width="80" height="32" rx="6" fill="#e0f2fe" />
+          <text x="770" y="42" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#00539F" text-anchor="middle">Bài giảng</text>
+          <text x="850" y="42" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="600" fill="#475569">Tài liệu</text>
+          <text x="915" y="42" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="600" fill="#475569">Hỏi RAG</text>
+
+          <!-- User -->
+          <circle cx="1025" cy="38" r="16" fill="#00539F" />
+          <text x="1025" y="43" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">T</text>
+
+          <!-- 2. MAIN GRID 12 COLS (8 COLS TRÁI & 4 COLS PHẢI) -->
+          <!-- CỘT TRÁI (8 CỘT - 700px): VIDEO PLAYER + ACTION BAR + 2 TABS WORKSPACE -->
+          <g transform="translate(10, 78)">
+            <!-- 16:9 Aspect Video Player -->
+            <rect x="0" y="0" width="700" height="375" rx="10" fill="#0b1727" stroke="#1e293b" stroke-width="1.5" />
+            <!-- Video Mockup Poster -->
+            <rect x="15" y="15" width="670" height="305" rx="6" fill="#0f172a" />
+            <!-- Watermark ArcFace Camera Tracking Overlay -->
+            <rect x="525" y="25" width="150" height="95" rx="6" fill="#000000" fill-opacity="0.7" stroke="#22c55e" stroke-width="1.5" />
+            <ellipse cx="600" cy="65" rx="25" ry="32" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="3,3" />
+            <text x="600" y="110" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="700" fill="#22c55e" text-anchor="middle">● Khớp ArcFace: 98.2%</text>
+
+            <!-- Center Big Play Button -->
+            <circle cx="350" cy="165" r="32" fill="#00539F" fill-opacity="0.9" />
+            <polygon points="344,150 364,165 344,180" fill="#ffffff" />
+
+            <!-- Video Scrubber Controller Bar -->
+            <rect x="15" y="325" width="670" height="40" rx="6" fill="#1e293b" />
+            <!-- Scrubber Track -->
+            <rect x="25" y="333" width="650" height="4" rx="2" fill="#334155" />
+            <rect x="25" y="333" width="480" height="4" rx="2" fill="#00539F" />
+            <!-- Controls -->
+            <text x="35" y="354" font-family="'JetBrains Mono', monospace" font-size="11" fill="#ffffff">▶  ↺10s  ↻10s   18:45 / 25:00   🔊 80%</text>
+            <text x="590" y="354" font-family="'JetBrains Mono', monospace" font-size="11" fill="#38bdf8">1.0x   1080p60   [CC]   ⛶</text>
+
+            <!-- Action Toolbar Under Player -->
+            <g transform="translate(0, 385)">
+              <rect x="0" y="0" width="700" height="44" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+              <rect x="10" y="7" width="85" height="30" rx="6" fill="#f1f5f9" />
+              <text x="52" y="26" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="600" fill="#475569" text-anchor="middle">⬅ Bài trước</text>
+              <rect x="102" y="7" width="95" height="30" rx="6" fill="#00539F" />
+              <text x="149" y="26" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">Bài tiếp theo ➔</text>
+              <rect x="208" y="7" width="130" height="30" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1" />
+              <text x="273" y="26" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#00539F" text-anchor="middle">✨ Hỏi Trợ lý AI RAG</text>
+
+              <rect x="530" y="7" width="160" height="30" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1" />
+              <text x="610" y="26" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#15803d" text-anchor="middle">✓ Đã hoàn thành (90%)</text>
+            </g>
+
+            <!-- 2-TAB WORKSPACE: XEM TÀI LIỆU PDF & HỎI RAG -->
+            <g transform="translate(0, 438)">
+              <rect x="0" y="0" width="700" height="185" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <!-- Tabs Header -->
+              <rect x="15" y="10" width="130" height="28" rx="6" fill="#00539F" />
+              <text x="80" y="28" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">📄 Xem tài liệu PDF (3)</text>
+              <rect x="155" y="10" width="120" height="28" rx="6" fill="#f1f5f9" />
+              <text x="215" y="28" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="600" fill="#475569" text-anchor="middle">✨ Hỏi RAG AI</text>
+              <!-- PDF Preview Container -->
+              <rect x="15" y="46" width="670" height="125" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+              <text x="35" y="75" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="700" fill="#0b2540">Giáo trình: Kien_Truc_He_Thong_Microservices_LMS.pdf</text>
+              <text x="35" y="95" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" fill="#64748b">Trang 45/180 • Đã bóc tách 240 Chunks văn bản vào MongoDB NoSQL</text>
+              <rect x="35" y="112" width="140" height="28" rx="5" fill="#00539F" />
+              <text x="105" y="130" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#ffffff" text-anchor="middle">Đọc PDF toàn màn hình</text>
+              <rect x="185" y="112" width="150" height="28" rx="5" fill="#eff6ff" stroke="#00539F" stroke-width="1" />
+              <text x="260" y="130" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#00539F" text-anchor="middle">Hỏi AI về tài liệu này ➔</text>
+            </g>
+          </g>
+
+          <!-- CỘT PHẢI (4 CỘT - 345px): ACCORDION DANH MỤC KHÓA HỌC -->
+          <g transform="translate(725, 78)">
+            <rect x="0" y="0" width="345" height="625" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+            <!-- Header -->
+            <rect x="12" y="12" width="320" height="42" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+            <text x="24" y="34" font-family="'Plus Jakarta Sans', Arial" font-size="13" font-weight="800" fill="#0b2540">Nội dung khóa học</text>
+            <rect x="235" y="20" width="85" height="24" rx="12" fill="#e0f2fe" />
+            <text x="277" y="36" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#00539F" text-anchor="middle">6/8 bài học</text>
+
+            <!-- Progress Bar -->
+            <text x="16" y="74" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" fill="#64748b">Tiến độ hoàn thành môn:</text>
+            <text x="290" y="74" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="800" fill="#00539F">75%</text>
+            <rect x="16" y="82" width="313" height="6" rx="3" fill="#f1f5f9" />
+            <rect x="16" y="82" width="235" height="6" rx="3" fill="#00539F" />
+
+            <!-- Search input -->
+            <rect x="16" y="98" width="313" height="32" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" />
+            <text x="28" y="118" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" fill="#94a3b8">🔍 Tìm kiếm bài giảng, video...</text>
+
+            <!-- Chapter 1 (Expanded) -->
+            <g transform="translate(16, 140)">
+              <rect x="0" y="0" width="313" height="155" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+              <rect x="0" y="0" width="313" height="32" rx="6" fill="#e2e8f0" />
+              <text x="12" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="800" fill="#0b2540">▼ Chương 1: Kiến trúc Spring Boot 3</text>
+              <text x="260" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">3/3 bài</text>
+
+              <!-- Lesson 1 (Complete) -->
+              <rect x="8" y="38" width="297" height="34" rx="4" fill="#ffffff" />
+              <text x="16" y="58" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#15803d">✓ 1.1: Khởi tạo Project &amp; CSDL</text>
+              <text x="250" y="58" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">15:20</text>
+
+              <!-- Lesson 2 (Complete) -->
+              <rect x="8" y="76" width="297" height="34" rx="4" fill="#ffffff" />
+              <text x="16" y="96" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#15803d">✓ 1.2: Thiết kế Entities &amp; JPA</text>
+              <text x="250" y="96" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">22:10</text>
+
+              <!-- Lesson 3 (Complete) -->
+              <rect x="8" y="114" width="297" height="34" rx="4" fill="#ffffff" />
+              <text x="16" y="134" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#15803d">✓ 1.3: Spring Security &amp; JWT</text>
+              <text x="250" y="134" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">18:40</text>
+            </g>
+
+            <!-- Chapter 2 (Currently Studying) -->
+            <g transform="translate(16, 305)">
+              <rect x="0" y="0" width="313" height="155" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.2" />
+              <rect x="0" y="0" width="313" height="32" rx="6" fill="#dbeafe" />
+              <text x="12" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="800" fill="#00539F">▼ Chương 2: Phân hệ AI ArcFace 512D</text>
+              <text x="260" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#00539F">1/2 bài</text>
+
+              <!-- Lesson 2.1 (Active Now) -->
+              <rect x="8" y="38" width="297" height="34" rx="4" fill="#00539F" />
+              <text x="16" y="58" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#ffffff">▶ 2.1: Nhận diện khuôn mặt ArcFace</text>
+              <text x="250" y="58" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#ffffff">18:45</text>
+
+              <!-- Lesson 2.2 (Pending) -->
+              <rect x="8" y="76" width="297" height="34" rx="4" fill="#ffffff" />
+              <text x="16" y="96" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#64748b">○ 2.2: Liveness &amp; Anti-Spoofing</text>
+              <text x="250" y="96" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">14:20</text>
+
+              <!-- Lesson 2.3 (Pending) -->
+              <rect x="8" y="114" width="297" height="34" rx="4" fill="#ffffff" />
+              <text x="16" y="134" font-family="'Plus Jakarta Sans', Arial" font-size="10" fill="#64748b">○ 2.3: Điểm danh tự động qua API</text>
+              <text x="250" y="134" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">20:15</text>
+            </g>
+
+            <!-- Chapter 3 (Collapsed) -->
+            <g transform="translate(16, 470)">
+              <rect x="0" y="0" width="313" height="34" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+              <text x="12" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#475569">▶ Chương 3: RAG AI &amp; Tra cứu tài liệu</text>
+              <text x="260" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">0/3 bài</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="explanation-box">
+        <h4>💡 Thuyết minh kiến trúc giao diện Hình 3.3B (Phòng học trực tuyến - student_portal/study.html):</h4>
+        <ul>
+          <li><strong>Cấu trúc lưới 12 cột (12-Columns Grid Layout)</strong>: Tối ưu không gian hiển thị cho việc vừa học vừa tra cứu:
+            <ul>
+              <li><em>Cột chính bên trái (8 cột)</em>: Chiếm 66% bề ngang, hiển thị trình phát video bài giảng tỷ lệ 16:9 với Cloudinary CDN, tích hợp khung camera giám sát nhận diện khuôn mặt ArcFace ngẫu nhiên ở góc phải, bảng điều khiển thanh tua và 2 Tab nghiệp vụ (*Tab Đọc PDF giáo trình và Tab Hỏi đáp Trợ lý AI RAG có trích dẫn số trang*).</li>
+              <li><em>Cột danh mục bên phải (4 cột)</em>: Chiếm 34% bề ngang, hiển thị cây tiến độ môn học, thanh tìm kiếm bài giảng và danh sách các chương bài học dạng Accordion đóng mở linh hoạt.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <pre class="code-snippet" id="code-study-desktop">
+&lt;!-- LƯỚI GRID 12 CỘT TRONG STUDENT_PORTAL/STUDY.HTML --&gt;
+&lt;div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"&gt;
+  &lt;!-- Cột trái 8 cột: Video + Controller + Workspace Tabs --&gt;
+  &lt;section class="lg:col-span-8 flex flex-col gap-4"&gt;
+    &lt;div id="playerContainer" class="aspect-video bg-black rounded-xl relative"&gt;
+      &lt;video id="studyVideoPlayer"&gt;&lt;/video&gt;
+    &lt;/div&gt;
+    &lt;!-- 2 Tabs Workspace: Xem tài liệu & Hỏi RAG --&gt;
+    &lt;div class="tab-panel" id="tab-documents"&gt;...&lt;/div&gt;
+    &lt;div class="tab-panel" id="tab-rag"&gt;...&lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;!-- Cột phải 4 cột: Cây thư mục bài học --&gt;
+  &lt;aside class="lg:col-span-4 sticky top-20"&gt;
+    &lt;div id="curriculumAccordionList"&gt;...&lt;/div&gt;
+  &lt;/aside&gt;
+&lt;/div&gt;
+      </pre>
+    </div>
+
+    <!-- PANEL 4: MOBILE - STUDY ROOM (SMARTPHONE) -->
+    <div class="card-panel view-panel" id="view-study-mobile" style="display: none;">
+      <div class="panel-header">
+        <div class="panel-title">
+          <h2>Hình 3.4B. Thiết kế giao diện Phòng học trực tuyến Mobile (study.html)</h2>
+          <p>Mô phỏng giao diện di động của study.html: Video player 16:9 cố định trên đầu, thanh chuyển tab nhanh [Nội dung | Tài liệu | Hỏi RAG AI] và danh sách bài học chạm ngón tay tiện lợi.</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn-act" onclick="copySvg('svg-study-mobile')">📋 Sao chép mã SVG</button>
+          <button class="btn-act primary" onclick="downloadSvg('svg-study-mobile', 'Hinh_3_4B_Phong_hoc_Mobile_EduFace.svg')">💾 Tải ảnh SVG</button>
+          <button class="btn-act" onclick="toggleCode('code-study-mobile')">💻 Xem mã Wireframe</button>
+        </div>
+      </div>
+
+      <div class="canvas-wrapper">
+        <svg id="svg-study-mobile" width="100%" height="auto" viewBox="0 0 380 780" style="max-width: 380px;" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="360" height="760" rx="42" fill="#ffffff" stroke="#94a3b8" stroke-width="2.5" />
+          <rect x="18" y="18" width="344" height="744" rx="36" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2" />
+
+          <!-- Dynamic Island -->
+          <rect x="135" y="26" width="110" height="22" rx="11" fill="#0b2540" />
+
+          <!-- Mobile Header -->
+          <rect x="25" y="56" width="330" height="38" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+          <text x="35" y="79" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="700" fill="#00539F">⬅ Khóa học</text>
+          <text x="180" y="79" font-family="'Plus Jakarta Sans', Arial" font-size="11" font-weight="700" fill="#0b2540" text-anchor="middle">Kiến trúc Vi dịch vụ</text>
+          <circle cx="335" cy="75" r="11" fill="#00539F" />
+          <text x="335" y="79" font-family="'Plus Jakarta Sans', Arial" font-size="9" font-weight="800" fill="#fff" text-anchor="middle">T</text>
+
+          <!-- 16:9 Video Player Sticky Top (Mobile) -->
+          <rect x="25" y="100" width="330" height="190" rx="8" fill="#0b1727" stroke="#1e293b" stroke-width="1" />
+          <!-- Watermark Face ID -->
+          <rect x="250" y="108" width="98" height="58" rx="4" fill="#000000" fill-opacity="0.75" stroke="#22c55e" stroke-width="1" />
+          <text x="299" y="140" font-family="'Plus Jakarta Sans', Arial" font-size="8.5" font-weight="700" fill="#22c55e" text-anchor="middle">Live: 98%</text>
+          <!-- Play icon -->
+          <circle cx="190" cy="185" r="22" fill="#00539F" />
+          <polygon points="186,175 198,185 186,195" fill="#ffffff" />
+          <!-- Scrubber bottom -->
+          <rect x="33" y="268" width="314" height="3" rx="1.5" fill="#334155" />
+          <rect x="33" y="268" width="220" height="3" rx="1.5" fill="#00539F" />
+          <text x="33" y="284" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#fff">18:45 / 25:00</text>
+          <text x="310" y="284" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="#38bdf8">1080p</text>
+
+          <!-- Title & Actions Mobile -->
+          <g transform="translate(25, 298)">
+            <text x="0" y="18" font-family="'Plus Jakarta Sans', Arial" font-size="12" font-weight="800" fill="#0b2540">Bài 2.1: Nhận diện khuôn mặt ArcFace</text>
+            <text x="0" y="34" font-family="'Plus Jakarta Sans', Arial" font-size="9.5" fill="#64748b">TS. Trần Linh • Khoa CNTT • 75% hoàn thành</text>
+            <rect x="0" y="44" width="160" height="28" rx="6" fill="#00539F" />
+            <text x="80" y="62" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">Bài tiếp theo ➔</text>
+            <rect x="170" y="44" width="160" height="28" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1" />
+            <text x="250" y="62" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#00539F" text-anchor="middle">✨ Hỏi AI RAG</text>
+          </g>
+
+          <!-- Tab Bar: [Bài học | Tài liệu PDF | Hỏi RAG] -->
+          <g transform="translate(25, 380)">
+            <rect x="0" y="0" width="330" height="34" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+            <rect x="4" y="4" width="105" height="26" rx="6" fill="#00539F" />
+            <text x="56" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">Danh mục bài</text>
+            <text x="165" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="600" fill="#64748b" text-anchor="middle">Tài liệu (3)</text>
+            <text x="275" y="21" font-family="'Plus Jakarta Sans', Arial" font-size="10" font-weight="600" fill="#64748b" text-anchor="middle">Hỏi AI RAG</text>
+
+            <!-- Lessons List on Mobile -->
+            <g transform="translate(0, 42)">
+              <rect x="0" y="0" width="330" height="42" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <text x="12" y="25" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#15803d">✓ 1.1 Khởi tạo Project &amp; CSDL</text>
+              <text x="290" y="25" font-family="'Plus Jakarta Sans', Arial" font-size="9" fill="#94a3b8">15:20</text>
+
+              <rect x="0" y="48" width="330" height="42" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <text x="12" y="73" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#15803d">✓ 1.2 Entities JPA &amp; MySQL</text>
+              <text x="290" y="73" font-family="'Plus Jakarta Sans', Arial" font-size="9" fill="#94a3b8">22:10</text>
+
+              <rect x="0" y="96" width="330" height="46" rx="6" fill="#00539F" />
+              <text x="12" y="120" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" font-weight="700" fill="#ffffff">▶ 2.1 Nhận diện khuôn mặt ArcFace</text>
+              <text x="12" y="134" font-family="'Plus Jakarta Sans', Arial" font-size="8.5" fill="#bae6fd">Đang phát • Điểm danh Face AI</text>
+              <text x="290" y="122" font-family="'Plus Jakarta Sans', Arial" font-size="9" fill="#ffffff">18:45</text>
+
+              <rect x="0" y="148" width="330" height="42" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+              <text x="12" y="173" font-family="'Plus Jakarta Sans', Arial" font-size="10.5" fill="#64748b">○ 2.2 Liveness &amp; Anti-Spoofing</text>
+              <text x="290" y="173" font-family="'Plus Jakarta Sans', Arial" font-size="9" fill="#94a3b8">14:20</text>
+            </g>
+          </g>
+
+          <!-- Home Indicator -->
+          <rect x="130" y="742" width="120" height="4.5" rx="2.25" fill="#0f172a" />
+        </svg>
+      </div>
+
+      <div class="explanation-box">
+        <h4>💡 Thuyết minh kiến trúc giao diện Hình 3.4B (Phòng học trực tuyến Mobile - study.html):</h4>
+        <ul>
+          <li><strong>Video Player Sticky tỷ lệ 16:9</strong>: Giữ cố định trên cùng màn hình khi cuộn trang, đảm bảo sinh viên luôn theo dõi được video và camera giám sát Face AI nhận diện khuôn mặt liên tục.</li>
+          <li><strong>Thanh Tab nội dung bài học &amp; AI</strong>: Chuyển đổi mượt mà giữa danh mục bài học, tài liệu PDF và cửa sổ chat AI RAG chỉ với thao tác chạm ngón tay.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast-popup" id="toast-popup">Đã sao chép vào bộ nhớ tạm!</div>
+
+  <script>
+    let currentScreen = 'portal';
+    let currentDevice = 'desktop';
+
+    function switchScreen(screen) {
+      currentScreen = screen;
+      document.getElementById('btn-screen-portal').classList.toggle('active', screen === 'portal');
+      document.getElementById('btn-screen-study').classList.toggle('active', screen === 'study');
+      updateViews();
+    }
+
+    function switchDevice(device) {
+      currentDevice = device;
+      document.getElementById('btn-dev-desktop').classList.toggle('active', device === 'desktop');
+      document.getElementById('btn-dev-mobile').classList.toggle('active', device === 'mobile');
+      updateViews();
+    }
+
+    function updateViews() {
+      const allPanels = document.querySelectorAll('.view-panel');
+      allPanels.forEach(p => p.style.display = 'none');
+      const targetId = 'view-' + currentScreen + '-' + currentDevice;
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.style.display = 'block';
+    }
+
+    function toggleMode(viewPrefix, mode) {
+      const realLayer = document.getElementById('layer-' + viewPrefix + '-real');
+      const abstractLayer = document.getElementById('layer-' + viewPrefix + '-abstract');
+      if (realLayer && abstractLayer) {
+        realLayer.style.display = mode === 'real' ? 'inline' : 'none';
+        abstractLayer.style.display = mode === 'real' ? 'none' : 'inline';
+      }
+      const parent = event.target.parentElement;
+      parent.querySelectorAll('.mode-opt').forEach((btn, i) => {
+        btn.classList.toggle('active', (mode === 'real' && i === 0) || (mode === 'abstract' && i === 1));
+      });
+    }
+
+    function toggleCode(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('show');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast-popup');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function copySvg(svgId) {
+      const svg = document.getElementById(svgId);
+      const serializer = new XMLSerializer();
+      let source = serializer.serializeToString(svg);
+      navigator.clipboard.writeText(source).then(() => {
+        showToast("✓ Đã sao chép mã SVG vào bộ nhớ tạm (Dán trực tiếp vào Word/Illustrator)!");
+      }).catch(err => {
+        showToast("Lỗi sao chép: " + err);
+      });
+    }
+
+    function downloadSvg(svgId, filename) {
+      const svg = document.getElementById(svgId);
+      const serializer = new XMLSerializer();
+      let source = serializer.serializeToString(svg);
+      if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
+        source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+      }
+      source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+      const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("✓ Đã tải xuống tệp " + filename + "!");
+    }
+  </script>
+</body>
+</html>

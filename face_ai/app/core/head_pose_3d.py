@@ -71,14 +71,22 @@ class HeadPose3DEstimator:
             # Looking down (Pitch < 0)
             pitch_deg = float(-min(1.0, (vert_ratio - 1.40) / 2.5) * 45.0)
 
-        # 5. Classify dominant discrete 3-angle pose (Trực diện, Trái, Phải - Không lấy ngẩng/cúi đầu)
-        # - Turn Left: yaw_deg >= +12.0°
-        # - Turn Right: yaw_deg <= -12.0°
-        # - Straight (Trực diện): between -10.0° and +10.0°
-        if yaw_deg >= 12.0:
+        # 5. Classify dominant discrete 5-angle pose
+        # Calibrated thresholds with distinct deadbands to prevent accidental triggers:
+        # - Turn Left (Physical Left): yaw_deg >= +13.0°
+        # - Turn Right (Physical Right): yaw_deg <= -13.0°
+        # - Look Up (Tilt Up): pitch_deg >= +10.0°
+        # - Look Down (Tilt Down): pitch_deg <= -10.0°
+        # - Straight (Center): between -8.0° and +8.0° on both axes
+
+        if yaw_deg >= 13.0:
             pose = "TURN_LEFT"
-        elif yaw_deg <= -12.0:
+        elif yaw_deg <= -13.0:
             pose = "TURN_RIGHT"
+        elif pitch_deg >= 10.0:
+            pose = "LOOK_UP"
+        elif pitch_deg <= -10.0:
+            pose = "LOOK_DOWN"
         else:
             pose = "STRAIGHT"
 

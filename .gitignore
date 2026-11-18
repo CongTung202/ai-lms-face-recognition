@@ -49,5 +49,12 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
+# Temporary & Office lock files
+~$*
+*.tmp
+*_backup.docx
+*_HoanThien.docx
+face_ai_old/
+
 # Logs
 *.log

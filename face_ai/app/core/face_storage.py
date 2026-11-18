@@ -1,9 +1,23 @@
 import os
+import sys
 import json
 import numpy as np
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
 from pathlib import Path
+
+# Force UTF-8 encoding on Windows console
+if hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+if hasattr(sys.stderr, 'reconfigure'):
+    try:
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 try:
     from pymongo import MongoClient
 except ImportError:
@@ -41,94 +55,151 @@ class FaceStorage:
         client = self._get_mongo_client()
         if client is not None:
             try:
-                db_name = settings.MONGODB_DB_NAME or "attendance_db"
-                return client, client[db_name]["employees"]
+                db_name = settings.MONGODB_DB_NAME or "crm_deepcode_db"
+                col_name = "employees" if "employees" in client[db_name].list_collection_names() else "users"
+                return client, client[db_name][col_name]
             except Exception:
                 return None, None
         return None, None
 
     def _init_storage(self):
-        """Initializes storage from MongoDB, with automatic fallback and migration from JSON."""
-        # 1. Load from MongoDB first
+        """Initializes storage from MongoDB (crm_deepcode_db), syncing to JSON."""
         loaded_from_mongo = self._load_from_mongodb()
-
-        # 2. If MongoDB is empty or unreachable, check local JSON
         if not loaded_from_mongo:
             self._load_from_json()
-            # If JSON had data and MongoDB is online, migrate JSON -> MongoDB
-            if self.profiles and self.use_mongodb:
-                self._migrate_json_to_mongodb()
-        else:
-            # Sync back to local JSON for backup
-            self._save_to_json()
 
     def _load_from_mongodb(self) -> bool:
-        """Loads all employees and their multi-angle embeddings from MongoDB."""
-        client, collection = self._get_collection()
-        if collection is None:
+        """Loads all employees and their multi-angle embeddings from MongoDB (users collection and employees collection)."""
+        client = self._get_mongo_client()
+        if client is None:
             return False
 
         try:
-            emp_docs = list(collection.find({"is_active": True}))
-            if not emp_docs:
-                client.close()
-                return False
-
+            db_name = settings.MONGODB_DB_NAME or "crm_deepcode_db"
+            db = client[db_name]
             profiles = {}
-            for doc in emp_docs:
-                emp_id = str(doc.get("employee_id"))
-                embeddings = {}
-                image_paths = {}
-                registered_angles = []
 
-                face_list = doc.get("face_embeddings", [])
-                for f in face_list:
-                    angle = f.get("angle_type", "straight")
-                    vec = f.get("embedding", [])
-                    img = f.get("image_path")
-                    if vec and len(vec) > 0:
-                        embeddings[angle] = [float(x) for x in vec]
-                        registered_angles.append(angle)
-                    if img:
-                        image_paths[angle] = img
+            # 1. CRM users collection (has isFaceRegistered: true and faceAngles)
+            try:
+                user_docs = list(db["users"].find({
+                    "$or": [
+                        {"isFaceRegistered": True},
+                        {"faceAngles.straight": {"$exists": True, "$ne": []}},
+                        {"faceDescriptor": {"$exists": True, "$ne": []}}
+                    ]
+                }))
+                for doc in user_docs:
+                    u_id = str(doc.get("_id"))
+                    email = str(doc.get("email") or "")
+                    face_angles = doc.get("faceAngles", {})
+                    embeddings = {}
+                    registered_angles = []
 
-                # Compute primary average embedding
-                all_vecs = [np.array(v, dtype=np.float32) for v in embeddings.values()]
-                if all_vecs:
+                    if isinstance(face_angles, dict):
+                        for angle, vec in face_angles.items():
+                            if isinstance(vec, list) and len(vec) > 0:
+                                embeddings[angle] = [float(x) for x in vec]
+                                registered_angles.append(angle)
+
+                    if not embeddings and doc.get("faceDescriptor"):
+                        vec = doc.get("faceDescriptor")
+                        if isinstance(vec, list) and len(vec) > 0:
+                            embeddings["straight"] = [float(x) for x in vec]
+                            registered_angles.append("straight")
+
+                    if not embeddings:
+                        continue
+
+                    # Average primary embedding
+                    all_vecs = [np.array(v, dtype=np.float32) for v in embeddings.values()]
                     avg_vec = np.mean(all_vecs, axis=0)
                     norm = np.linalg.norm(avg_vec)
                     if norm > 1e-6:
                         avg_vec = avg_vec / norm
                     primary_embedding = [float(x) for x in avg_vec.tolist()]
-                else:
-                    primary_embedding = []
 
-                primary_avatar = doc.get("avatar_url") or image_paths.get("straight")
-                if not primary_avatar and image_paths:
-                    primary_avatar = next(iter(image_paths.values()), None)
+                    image_paths = doc.get("faceAnglePhotos") or {}
+                    primary_avatar = doc.get("facePhoto") or doc.get("avatar")
 
-                profiles[emp_id] = {
-                    "employee_id": emp_id,
-                    "full_name": doc.get("full_name") or emp_id,
-                    "department": doc.get("department") or "Văn phòng",
-                    "company_id": doc.get("company_id") or "CP01",
-                    "shift_id": doc.get("shift_id") or "CA_HANH_CHINH",
-                    "image_path": primary_avatar,
-                    "image_paths": image_paths,
-                    "created_at": doc.get("created_at").isoformat() if isinstance(doc.get("created_at"), datetime) else str(doc.get("created_at", "")),
-                    "embeddings": embeddings,
-                    "embedding": primary_embedding,
-                    "registered_angles": registered_angles or (["straight"] if primary_embedding else [])
-                }
+                    profile_data = {
+                        "employee_id": u_id,
+                        "user_id": u_id,
+                        "email": email,
+                        "full_name": doc.get("fullName") or email or u_id,
+                        "department": doc.get("department") or "Vận hành",
+                        "company_id": "DEEPCODE",
+                        "shift_id": "CA_HANH_CHINH",
+                        "image_path": primary_avatar,
+                        "image_paths": image_paths if isinstance(image_paths, dict) else {},
+                        "created_at": doc.get("createdAt", datetime.now()).isoformat() if isinstance(doc.get("createdAt"), datetime) else str(doc.get("createdAt", "")),
+                        "embeddings": embeddings,
+                        "embedding": primary_embedding,
+                        "registered_angles": registered_angles
+                    }
 
-            self.profiles = profiles
+                    profiles[u_id] = profile_data
+                    if email:
+                        profiles[email] = profile_data
+            except Exception as user_err:
+                print(f"[FaceStorage] Note reading users: {user_err}")
+
+            # 2. Fallback: employees collection
+            if "employees" in db.list_collection_names():
+                try:
+                    emp_docs = list(db["employees"].find({"is_active": True}))
+                    for doc in emp_docs:
+                        emp_id = str(doc.get("employee_id"))
+                        if emp_id in profiles:
+                            continue
+                        embeddings = {}
+                        image_paths = {}
+                        registered_angles = []
+                        for f in doc.get("face_embeddings", []):
+                            angle = f.get("angle_type", "straight")
+                            vec = f.get("embedding", [])
+                            img = f.get("image_path")
+                            if vec and len(vec) > 0:
+                                embeddings[angle] = [float(x) for x in vec]
+                                registered_angles.append(angle)
+                            if img:
+                                image_paths[angle] = img
+                        if not embeddings:
+                            continue
+                        all_vecs = [np.array(v, dtype=np.float32) for v in embeddings.values()]
+                        avg_vec = np.mean(all_vecs, axis=0)
+                        norm = np.linalg.norm(avg_vec)
+                        if norm > 1e-6:
+                            avg_vec = avg_vec / norm
+                        primary_embedding = [float(x) for x in avg_vec.tolist()]
+                        primary_avatar = doc.get("avatar_url") or image_paths.get("straight")
+                        profiles[emp_id] = {
+                            "employee_id": emp_id,
+                            "full_name": doc.get("full_name") or emp_id,
+                            "department": doc.get("department") or "Văn phòng",
+                            "company_id": doc.get("company_id") or "CP01",
+                            "shift_id": doc.get("shift_id") or "CA_HANH_CHINH",
+                            "image_path": primary_avatar,
+                            "image_paths": image_paths,
+                            "created_at": doc.get("created_at", "").isoformat() if isinstance(doc.get("created_at"), datetime) else str(doc.get("created_at", "")),
+                            "embeddings": embeddings,
+                            "embedding": primary_embedding,
+                            "registered_angles": registered_angles
+                        }
+                except Exception as emp_err:
+                    print(f"[FaceStorage] Note reading employees: {emp_err}")
+
             client.close()
-            print(f"[FaceStorage] ✅ Đã tải thành công {len(self.profiles)} nhân viên từ MongoDB!")
-            return True
+            if profiles:
+                self.profiles = profiles
+                self._save_to_json()
+                print(f"[FaceStorage] ✅ Đã nạp thành công {len(self.profiles)} hồ sơ khuôn mặt từ MongoDB ({db_name})!")
+                return True
+            return False
         except Exception as e:
             print(f"[FaceStorage] ⚠️ Lỗi đọc dữ liệu từ MongoDB: {e}")
             if client:
                 client.close()
+            return False
             return False
 
     def _load_from_json(self):
@@ -190,45 +261,66 @@ class FaceStorage:
                 primary_avatar = image_paths.get("straight") or next(iter(image_paths.values()), None)
 
             face_embeddings_list = []
+            face_angles = {}
             for angle, vec in embeddings.items():
                 if vec is not None:
                     vec_list = [float(x) for x in vec.tolist()]
+                    face_angles[angle] = vec_list
+                    img_path = image_paths.get(angle) if image_paths else None
                     face_embeddings_list.append({
                         "angle_type": angle,
                         "embedding": vec_list,
-                        "image_path": primary_avatar,
+                        "image_path": img_path,
                         "created_at": datetime.now()
                     })
 
-            registered_angles_list = list(embeddings.keys())
+            user_id_str = str(employee_id)
+            is_valid_oid = len(user_id_str) == 24 and all(c in '0123456789abcdefABCDEF' for c in user_id_str)
+            if is_valid_oid:
+                try:
+                    from bson import ObjectId
+                    query_filter = {
+                        "$or": [
+                            {"_id": ObjectId(user_id_str)},
+                            {"email": user_id_str},
+                            {"employee_id": user_id_str}
+                        ]
+                    }
+                except Exception:
+                    query_filter = {"$or": [{"email": user_id_str}, {"employee_id": user_id_str}]}
+            else:
+                query_filter = {"$or": [{"email": user_id_str}, {"employee_id": user_id_str}]}
 
             update_doc = {
-                "id": employee_id,
-                "employee_id": employee_id,
-                "full_name": full_name or employee_id,
-                "department": department or "Phòng Kỹ Thuật AI",
-                "company_id": company_id,
-                "shift_id": shift_id,
-                "is_active": True,
-                "face_registered": True,
-                "registered_angles": registered_angles_list,
+                "isFaceRegistered": True,
+                "faceRegisteredAt": datetime.now(),
                 "face_embeddings": face_embeddings_list,
-                "avatar_url": primary_avatar,
-                "image_path": primary_avatar,
-                "updated_at": datetime.now()
+                "is_active": True
             }
+            if full_name:
+                update_doc["fullName"] = full_name
+            if department:
+                update_doc["department"] = department
+            if primary_avatar:
+                update_doc["facePhoto"] = primary_avatar
+                update_doc["avatar_url"] = primary_avatar
+            if face_angles:
+                update_doc["faceAngles"] = face_angles
+                if "straight" in face_angles:
+                    update_doc["faceDescriptor"] = face_angles["straight"]
+            if image_paths:
+                update_doc["faceAnglePhotos"] = image_paths
 
-            collection.update_one(
-                {"$or": [{"id": employee_id}, {"employee_id": employee_id}]},
-                {
-                    "$set": update_doc,
-                    "$setOnInsert": {"created_at": datetime.now()}
-                },
-                upsert=True
-            )
+            res = collection.update_one(query_filter, {"$set": update_doc})
+            if res.matched_count == 0:
+                collection.update_one(
+                    {"employee_id": user_id_str},
+                    {"$set": update_doc, "$setOnInsert": {"created_at": datetime.now()}},
+                    upsert=True
+                )
 
             client.close()
-            print(f"[FaceStorage] 💾 Đã lưu thành công 5 vector góc & 1 ảnh chính diện tuyệt đối '{primary_avatar}' của nhân viên '{employee_id}' vào MongoDB 'legiapos_db'!")
+            print(f"[FaceStorage] 💾 Đã lưu thành công dữ liệu khuôn mặt cho '{employee_id}' vào MongoDB!")
             return True
         except Exception as e:
             print(f"[FaceStorage] ❌ Lỗi khi lưu vào MongoDB: {e}")
@@ -338,28 +430,61 @@ class FaceStorage:
 
     def delete_face(self, employee_id: str) -> bool:
         """Deletes face and employee from MongoDB and memory."""
-        if employee_id in self.profiles:
-            del self.profiles[employee_id]
-            self._save_to_json()
+        to_delete = []
+        for k, v in self.profiles.items():
+            if (k == employee_id or 
+                v.get("user_id") == employee_id or 
+                v.get("employee_id") == employee_id or 
+                v.get("email") == employee_id):
+                to_delete.append(k)
+        for k in to_delete:
+            del self.profiles[k]
+        self._save_to_json()
 
         if self.use_mongodb:
             client, collection = self._get_collection()
             if collection is not None:
                 try:
-                    collection.delete_one({"employee_id": employee_id})
+                    user_id_str = str(employee_id)
+                    is_valid_oid = len(user_id_str) == 24 and all(c in '0123456789abcdefABCDEF' for c in user_id_str)
+                    if is_valid_oid:
+                        try:
+                            from bson import ObjectId
+                            query_filter = {"$or": [{"_id": ObjectId(user_id_str)}, {"email": user_id_str}, {"employee_id": user_id_str}]}
+                        except Exception:
+                            query_filter = {"$or": [{"email": user_id_str}, {"employee_id": user_id_str}]}
+                    else:
+                        query_filter = {"$or": [{"email": user_id_str}, {"employee_id": user_id_str}]}
+
+                    collection.update_one(
+                        query_filter,
+                        {"$set": {
+                            "isFaceRegistered": False,
+                            "faceRegisteredAt": None,
+                            "facePhoto": "",
+                            "faceAngles": {"straight": [], "left": [], "right": [], "up": [], "down": []},
+                            "faceAnglePhotos": {"straight": "", "left": "", "right": "", "up": "", "down": ""},
+                            "faceDescriptor": [],
+                            "face_embeddings": []
+                        }}
+                    )
                     client.close()
-                    print(f"[FaceStorage] 🗑️ Đã xóa nhân viên '{employee_id}' khỏi MongoDB!")
+                    print(f"[FaceStorage] 🗑️ Đã xóa khuôn mặt '{employee_id}' khỏi MongoDB!")
                 except Exception as e:
                     print(f"[FaceStorage] Lỗi khi xóa khỏi MongoDB: {e}")
                     if client:
                         client.close()
         return True
 
-    def clear_all(self, delete_images: bool = True) -> int:
-        """Purges all registered face profiles, vector caches, and optionally saved images."""
+    def clear_all(self, delete_images: bool = False) -> int:
+        """Purges local cache and reloads ONLY genuine profiles from crm_deepcode_db."""
         count = len(self.profiles)
         self.profiles = {}
-        self._save_to_json()
+        if self.db_file.exists():
+            try:
+                self.db_file.unlink()
+            except Exception:
+                pass
 
         # Delete image files in registered_faces
         if delete_images:
@@ -371,28 +496,22 @@ class FaceStorage:
                     except Exception as e:
                         print(f"[FaceStorage] Error removing image {img_file}: {e}")
 
-        # Delete from MongoDB if active
-        if self.use_mongodb:
-            client, collection = self._get_collection()
-            if collection is not None:
-                try:
-                    collection.update_many({}, {"$set": {"face_embeddings": [], "avatar_url": None}})
-                    client.close()
-                    print("[FaceStorage] 🧹 Đã xoá toàn bộ dữ liệu khuôn mặt trong MongoDB!")
-                except Exception as e:
-                    print(f"[FaceStorage] Lỗi khi xoá trong MongoDB: {e}")
-                    if client:
-                        client.close()
-
-        print(f"[FaceStorage] 🧹 Đã xoá sạch cache dữ liệu khuôn mặt ({count} hồ sơ)!")
+        # Reload clean from MongoDB crm_deepcode_db
+        self._load_from_mongodb()
+        print(f"[FaceStorage] 🧹 Đã xoá sạch cache dữ liệu cũ và đồng bộ lại {len(self.profiles)} tài khoản CRM chuẩn!")
         return count
 
     def list_faces(self) -> List[EmployeeFaceProfile]:
+        seen_users = set()
         res = []
         for emp_id, p in self.profiles.items():
+            u_id = p.get("user_id") or p.get("employee_id") or emp_id
+            if u_id in seen_users:
+                continue
+            seen_users.add(u_id)
             angles = p.get("registered_angles", ["straight"])
             res.append(EmployeeFaceProfile(
-                employee_id=emp_id,
+                employee_id=u_id,
                 full_name=p.get("full_name"),
                 department=p.get("department"),
                 created_at=p.get("created_at", ""),
@@ -421,8 +540,14 @@ class FaceStorage:
         norm_query = query_embedding / query_norm
 
         candidates: List[Tuple[str, str, float, str]] = []
+        seen_users = set()
 
         for emp_id, profile in self.profiles.items():
+            u_id = profile.get("user_id") or profile.get("employee_id") or emp_id
+            if u_id in seen_users:
+                continue
+            seen_users.add(u_id)
+
             best_sim_for_user = 0.0
             best_angle_for_user = "straight"
 
@@ -430,7 +555,7 @@ class FaceStorage:
             vectors = self.get_face_vectors(emp_id)
             for angle_name, db_vec in vectors:
                 db_norm = np.linalg.norm(db_vec)
-                if db_norm == 0:
+                if db_norm == 0 or len(norm_query) != len(db_vec):
                     continue
                 sim = float(np.dot(norm_query, db_vec / db_norm))
                 sim = float(np.clip(sim, 0.0, 1.0))
@@ -438,7 +563,7 @@ class FaceStorage:
                     best_sim_for_user = sim
                     best_angle_for_user = angle_name
 
-            candidates.append((emp_id, profile.get("full_name", emp_id), best_sim_for_user, best_angle_for_user))
+            candidates.append((u_id, profile.get("full_name", u_id), best_sim_for_user, best_angle_for_user))
 
         candidates.sort(key=lambda x: x[2], reverse=True)
 

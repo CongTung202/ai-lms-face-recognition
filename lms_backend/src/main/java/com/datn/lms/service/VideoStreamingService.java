@@ -46,60 +46,90 @@ public class VideoStreamingService {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bài học id=" + lessonId));
 
-        // 1. Tạo thư mục lưu trữ cục bộ
+        // 1. Tạo thư mục tạm thời trên ổ đĩa để xử lý nén
         Path lessonDir = Paths.get(videoStorageDir, "lesson_" + lessonId);
         Files.createDirectories(lessonDir);
 
         String originalFilename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "video.mp4";
-        String cleanOriginalName = "raw_" + System.currentTimeMillis() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9._-]", "_");
+        String cleanOriginalName = "temp_raw_" + System.currentTimeMillis() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9._-]", "_");
         Path rawDestination = lessonDir.resolve(cleanOriginalName);
 
-        // 2. Lưu file gốc tạm thời vào máy chủ
-        Files.copy(file.getInputStream(), rawDestination, StandardCopyOption.REPLACE_EXISTING);
-        log.info("Đã lưu video gốc cho bài học {}: {} ({} MB)",
-                lessonId, rawDestination, rawDestination.toFile().length() / (1024 * 1024));
-
-        // 3. Tiến hành Nén Video về chuẩn Web HD 720p (H.264, bitrate 1.5Mbps)
-        File compressedFile = lessonDir.resolve("compressed_" + System.currentTimeMillis() + ".mp4").toFile();
-        int durationSeconds = videoCompressorService.compressVideoForWeb(rawDestination.toFile(), compressedFile);
-
-        // Chọn file để upload (nếu nén thành công thì lấy file nén, ngược lại lấy file gốc)
-        File fileToUpload = (compressedFile.exists() && compressedFile.length() > 0) ? compressedFile : rawDestination.toFile();
-
-        // 4. Đẩy video lên Cloudinary CDN
-        String cloudinaryUrl = null;
-        VideoAsset.StorageProvider provider = VideoAsset.StorageProvider.LOCAL;
+        File compressedFile = null;
         try {
-            cloudinaryUrl = cloudinaryVideoService.uploadVideoToCloudinary(fileToUpload, lessonId);
-            provider = VideoAsset.StorageProvider.CLOUDINARY;
-            log.info("Video bài học {} đã tải lên Cloudinary thành công: {}", lessonId, cloudinaryUrl);
-        } catch (Exception ex) {
-            log.warn("Không thể tải lên Cloudinary ({}), tự động lưu trữ cục bộ (LOCAL).", ex.getMessage());
-        }
+            // 2. Lưu file gốc tạm thời vào máy chủ để nén/tải lên
+            Files.copy(file.getInputStream(), rawDestination, StandardCopyOption.REPLACE_EXISTING);
+            log.info("Lưu tạm video để xử lý nén/upload cho bài học {}: {} ({} MB)",
+                    lessonId, rawDestination, rawDestination.toFile().length() / (1024 * 1024));
 
-        // 5. Cập nhật hoặc tạo mới VideoAsset trong MySQL
-        VideoAsset videoAsset = videoAssetRepository.findByLessonId(lessonId)
-                .orElse(VideoAsset.builder()
-                        .lesson(lesson)
-                        .storageProvider(provider)
-                        .encodeStatus(VideoAsset.EncodeStatus.READY)
-                        .build());
+            // 3. Tiến hành Nén Video về chuẩn Web HD 720p (H.264, bitrate 1.5Mbps)
+            compressedFile = lessonDir.resolve("temp_compressed_" + System.currentTimeMillis() + ".mp4").toFile();
+            int durationSeconds = videoCompressorService.compressVideoForWeb(rawDestination.toFile(), compressedFile);
 
-        videoAsset.setOriginalFileName(originalFilename);
-        videoAsset.setStorageProvider(provider);
-        videoAsset.setDurationSeconds(durationSeconds > 0 ? durationSeconds : lesson.getDurationSeconds());
-        videoAsset.setFileSizeBytes(fileToUpload.length());
-        videoAsset.setResolution("720p HD");
+            // Chọn file để upload (nếu nén thành công thì lấy file nén, ngược lại lấy file gốc)
+            File fileToUpload = (compressedFile.exists() && compressedFile.length() > 0) ? compressedFile : rawDestination.toFile();
 
-        if (cloudinaryUrl != null) {
+            // 4. Đẩy video lên Cloudinary CDN
+            String cloudinaryUrl = null;
+            VideoAsset.StorageProvider provider = VideoAsset.StorageProvider.CLOUDINARY;
+            try {
+                cloudinaryUrl = cloudinaryVideoService.uploadVideoToCloudinary(fileToUpload, lessonId);
+                log.info("Video bài học {} đã tải lên Cloudinary thành công: {}", lessonId, cloudinaryUrl);
+            } catch (Exception ex) {
+                log.error("Lỗi tải lên Cloudinary cho bài học {}: {}", lessonId, ex.getMessage(), ex);
+                throw new IOException("Không thể đẩy video lên Cloudinary: " + ex.getMessage(), ex);
+            }
+
+            // 5. Cập nhật hoặc tạo mới VideoAsset trong MySQL
+            VideoAsset videoAsset = videoAssetRepository.findByLessonId(lessonId)
+                    .orElse(VideoAsset.builder()
+                            .lesson(lesson)
+                            .storageProvider(provider)
+                            .encodeStatus(VideoAsset.EncodeStatus.READY)
+                            .build());
+
+            videoAsset.setOriginalFileName(originalFilename);
+            videoAsset.setStorageProvider(provider);
+            videoAsset.setDurationSeconds(durationSeconds > 0 ? durationSeconds : lesson.getDurationSeconds());
+            videoAsset.setFileSizeBytes(fileToUpload.length());
+            videoAsset.setResolution("720p HD");
             videoAsset.setRawVideoUrl(cloudinaryUrl);
             videoAsset.setHlsPlaylistUrl(cloudinaryUrl);
-        } else {
-            videoAsset.setRawVideoUrl("/api/videos/stream/" + lessonId);
-            videoAsset.setHlsPlaylistUrl("/api/videos/stream/" + lessonId);
-        }
 
-        return videoAssetRepository.save(videoAsset);
+            VideoAsset savedAsset = videoAssetRepository.save(videoAsset);
+
+            // 6. XÓA SẠCH HOÀN TOÀN TẤT CẢ FILE VIDEO Ở LOCAL TRONG THƯ MỤC GỐC
+            deleteLocalLessonFiles(lessonId);
+            log.info("Đã xóa sạch toàn bộ video trong thư mục gốc trên máy local cho bài học {}. Chỉ phát từ Cloudinary CDN.", lessonId);
+
+            return savedAsset;
+        } finally {
+            // Dọn dẹp an toàn các file tạm còn sót nếu có ngoại lệ
+            try {
+                if (Files.exists(rawDestination)) Files.deleteIfExists(rawDestination);
+                if (compressedFile != null && compressedFile.exists()) compressedFile.delete();
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    /**
+     * Dọn dẹp và xóa hoàn toàn thư mục video cục bộ của bài học
+     */
+    public void deleteLocalLessonFiles(Long lessonId) {
+        if (lessonId == null) return;
+        try {
+            Path lessonDir = Paths.get(videoStorageDir, "lesson_" + lessonId);
+            if (Files.exists(lessonDir)) {
+                try (var stream = Files.walk(lessonDir)) {
+                    stream.sorted(java.util.Comparator.reverseOrder())
+                            .map(Path::toFile)
+                            .forEach(File::delete);
+                }
+                log.info("Đã dọn dẹp sạch thư mục cục bộ bài học {}: {}", lessonId, lessonDir);
+            }
+        } catch (Exception e) {
+            log.warn("Không thể dọn dẹp thư mục cục bộ bài học {}: {}", lessonId, e.getMessage());
+        }
     }
 
     /**
@@ -112,17 +142,20 @@ public class VideoStreamingService {
                 .orElseThrow(() -> new RuntimeException("Bài học này chưa có video"));
 
         // 1. Nếu video đã được lưu trên Cloudinary CDN, chuyển hướng phát trực tiếp từ CDN
-        if (videoAsset.getStorageProvider() == VideoAsset.StorageProvider.CLOUDINARY
-                && videoAsset.getRawVideoUrl() != null && videoAsset.getRawVideoUrl().startsWith("http")) {
+        String videoUrl = videoAsset.getRawVideoUrl();
+        if (videoUrl == null || !videoUrl.startsWith("http")) {
+            videoUrl = videoAsset.getHlsPlaylistUrl();
+        }
+        if (videoUrl != null && videoUrl.startsWith("http")) {
             HttpHeaders redirectHeaders = new HttpHeaders();
-            redirectHeaders.set(HttpHeaders.LOCATION, videoAsset.getRawVideoUrl());
+            redirectHeaders.set(HttpHeaders.LOCATION, videoUrl);
             return new ResponseEntity<>(redirectHeaders, HttpStatus.FOUND);
         }
 
-        // 2. Tìm file video trong thư mục lưu trữ cục bộ của bài học
+        // 2. Tìm file video trong thư mục lưu trữ cục bộ của bài học (nếu có)
         Path lessonDir = Paths.get(videoStorageDir, "lesson_" + lessonId);
         if (!Files.exists(lessonDir)) {
-            throw new RuntimeException("Không tìm thấy tệp video trên máy chủ");
+            throw new RuntimeException("Không tìm thấy tệp video trên máy chủ hoặc Cloud");
         }
 
         File[] files = lessonDir.toFile().listFiles((dir, name) -> name.endsWith(".mp4") || name.endsWith(".mkv") || name.endsWith(".webm"));

@@ -18,4 +18,7 @@ public class ProgressResponse {
     private Integer completionPercentage;
     private Boolean isCompleted;
     private LocalDateTime completedAt;
+    private Boolean quizPassed;
+    private java.math.BigDecimal quizScore;
+    private Boolean canUnlockNext;
 }

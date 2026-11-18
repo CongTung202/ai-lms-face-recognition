@@ -1,10 +1,10 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from app.config import settings
-from app.api.routes import router as api_router
+from app.api.routes import router as api_router, websocket_face_stream
 from app.core.hmac_auth import HmacInternalAuthMiddleware
 
 app = FastAPI(
@@ -16,17 +16,23 @@ app = FastAPI(
 # Thêm Middleware HMAC Bảo mật Service-to-Service (Node.js <-> Python AI)
 app.add_middleware(HmacInternalAuthMiddleware)
 
+# Cấu hình CORS: Cho phép các domain CRM chính thức, localhost và dải IP LAN nội bộ
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+|.*\.deepcode\.vn)(:\d+)?$",
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
 app.include_router(api_router)
 app.include_router(api_router, prefix="/api")
-app.include_router(api_router, prefix="/v1")
+
+@app.websocket("/ws/face-stream")
+async def app_websocket_face_stream(websocket: WebSocket):
+    """Direct root WebSocket endpoint for browser face streaming"""
+    await websocket_face_stream(websocket)
 
 
 @app.get("/health", tags=["System"])
@@ -231,10 +237,10 @@ def index():
             <!-- Right Column: Operations & 5-Angle Console -->
             <div class="card">
                 <div class="tab-nav">
-                    <button class="tab-btn active" onclick="switchTab('challenge')">🛡️ Điểm Danh 3 Tư Thế</button>
+                    <button class="tab-btn active" onclick="switchTab('challenge')">🛡️ Điểm Danh 5 Tư Thế</button>
                     <button class="tab-btn" onclick="switchTab('mobile')">📱 Mobile Chấm Công (Check In/Out)</button>
                     <button class="tab-btn" onclick="switchTab('recognize')">1:N Điểm Danh Nhanh</button>
-                    <button class="tab-btn" onclick="switchTab('enroll')">➕ Đăng Ký 3 Góc Mặt (Cloudinary)</button>
+                    <button class="tab-btn" onclick="switchTab('enroll')">➕ Đăng Ký 5 Góc Mặt</button>
                     <button class="tab-btn" onclick="switchTab('verify')">1:1 Đối Chiếu</button>
                     <button class="tab-btn" onclick="switchTab('list')">👥 Danh Sách Đã Lưu</button>
                 </div>
@@ -251,10 +257,10 @@ def index():
                     </label>
                 </div>
 
-                <!-- Tab 0: Action Challenge 3 Steps (Straight -> Left -> Right) -->
+                <!-- Tab 0: Action Challenge 5 Steps (Straight -> Left -> Right -> Up -> Down) -->
                 <div id="tab-challenge" class="tab-content">
                     <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
-                        Thực hiện 3 tư thế trực diện (Không ngẩng/cúi đầu) để xác thực 100% người thật trước khi điểm danh:
+                        Thực hiện 5 tư thế để xác thực 100% người thật trước khi điểm danh:
                     </p>
                     <div class="challenge-box">
                         <div class="challenge-item" id="step-straight">
@@ -269,10 +275,18 @@ def index():
                             <span>3. 👉 Quay mặt sang PHẢI</span>
                             <span id="badge-right" style="font-size:12px; color:#94a3b8;">Chờ thực hiện</span>
                         </div>
+                        <div class="challenge-item" id="step-up">
+                            <span>4. 👆 Ngước cằm lên TRÊN</span>
+                            <span id="badge-up" style="font-size:12px; color:#94a3b8;">Chờ thực hiện</span>
+                        </div>
+                        <div class="challenge-item" id="step-down">
+                            <span>5. 👇 Cúi đầu xuống DƯỚI</span>
+                            <span id="badge-down" style="font-size:12px; color:#94a3b8;">Chờ thực hiện</span>
+                        </div>
                     </div>
                     <div style="display:flex; gap:8px;">
                         <button class="success" style="flex:1; padding: 10px;" onclick="startInteractiveChallenge()">
-                            🚀 Bắt Đầu Thử Thách 3 Bước
+                            🚀 Bắt Đầu Thử Thách 5 Bước
                         </button>
                         <button class="outline" style="padding: 10px;" onclick="resetChallenge()">
                             🔄 Reset
@@ -342,46 +356,64 @@ def index():
                     <!-- 5 Angle Cards -->
                     <div style="margin: 10px 0;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                            <label style="font-weight:600; color:#38bdf8; font-size:12px;">📸 Thu thập 3 góc mặt (Chính diện, Trái, Phải - Tự động lưu Cloudinary):</label>
+                            <label style="font-weight:600; color:#38bdf8; font-size:12px;">📸 Thu thập 5 góc mặt (Chính diện, Trái, Phải, Trên, Dưới):</label>
                             <button class="outline" style="padding: 3px 8px; font-size: 11px; border-color:#38bdf8; color:#38bdf8;" onclick="startAutoAngleScan()">
-                                ⚡ Tự Động Quét 3 Góc
+                                ⚡ Tự Động Quét 5 Góc
                             </button>
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                            <!-- Angle 1: Straight (Lưu Cloudinary) -->
-                            <div id="card-straight" style="background:#0f172a; border:1px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
-                                <div style="font-size:11px; font-weight:700; color:#38bdf8; margin-bottom:4px;">1. Trực Diện ☁️</div>
+                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;">
+                            <!-- Angle 1: Straight -->
+                            <div id="card-straight" style="background:#0f172a; border:1px solid var(--border); border-radius:8px; padding:6px; text-align:center;">
+                                <div style="font-size:10px; font-weight:700; color:#f8fafc; margin-bottom:4px;">1. Trực Diện</div>
                                 <div id="prev-straight" style="width:100%; aspect-ratio:1; background:#020617; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:4px; border:1px dashed #334155;">
-                                    <span style="font-size:10px; color:#64748b;">Chưa chụp</span>
+                                    <span style="font-size:9px; color:#64748b;">Chưa chụp</span>
                                 </div>
-                                <button class="outline" style="width:100%; padding:4px 2px; font-size:10px;" onclick="captureAngle('straight')">📸 Chụp Trực Diện</button>
+                                <button class="outline" style="width:100%; padding:3px 2px; font-size:9px;" onclick="captureAngle('straight')">📸 Chụp</button>
                             </div>
 
                             <!-- Angle 2: Left -->
-                            <div id="card-left" style="background:#0f172a; border:1px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
-                                <div style="font-size:11px; font-weight:700; color:#f8fafc; margin-bottom:4px;">2. Nghiêng Trái 👈</div>
+                            <div id="card-left" style="background:#0f172a; border:1px solid var(--border); border-radius:8px; padding:6px; text-align:center;">
+                                <div style="font-size:10px; font-weight:700; color:#f8fafc; margin-bottom:4px;">2. Trái</div>
                                 <div id="prev-left" style="width:100%; aspect-ratio:1; background:#020617; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:4px; border:1px dashed #334155;">
-                                    <span style="font-size:10px; color:#64748b;">Chưa chụp</span>
+                                    <span style="font-size:9px; color:#64748b;">Chưa chụp</span>
                                 </div>
-                                <button class="outline" style="width:100%; padding:4px 2px; font-size:10px;" onclick="captureAngle('left')">👈 Chụp Trái</button>
+                                <button class="outline" style="width:100%; padding:3px 2px; font-size:9px;" onclick="captureAngle('left')">👈 Chụp</button>
                             </div>
 
                             <!-- Angle 3: Right -->
-                            <div id="card-right" style="background:#0f172a; border:1px solid var(--border); border-radius:8px; padding:8px; text-align:center;">
-                                <div style="font-size:11px; font-weight:700; color:#f8fafc; margin-bottom:4px;">3. Nghiêng Phải 👉</div>
+                            <div id="card-right" style="background:#0f172a; border:1px solid var(--border); border-radius:8px; padding:6px; text-align:center;">
+                                <div style="font-size:10px; font-weight:700; color:#f8fafc; margin-bottom:4px;">3. Phải</div>
                                 <div id="prev-right" style="width:100%; aspect-ratio:1; background:#020617; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:4px; border:1px dashed #334155;">
-                                    <span style="font-size:10px; color:#64748b;">Chưa chụp</span>
+                                    <span style="font-size:9px; color:#64748b;">Chưa chụp</span>
                                 </div>
-                                <button class="outline" style="width:100%; padding:4px 2px; font-size:10px;" onclick="captureAngle('right')">👉 Chụp Phải</button>
+                                <button class="outline" style="width:100%; padding:3px 2px; font-size:9px;" onclick="captureAngle('right')">👉 Chụp</button>
+                            </div>
+
+                            <!-- Angle 4: Up -->
+                            <div id="card-up" style="background:#0f172a; border:1px solid var(--border); border-radius:8px; padding:6px; text-align:center;">
+                                <div style="font-size:10px; font-weight:700; color:#f8fafc; margin-bottom:4px;">4. Trên</div>
+                                <div id="prev-up" style="width:100%; aspect-ratio:1; background:#020617; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:4px; border:1px dashed #334155;">
+                                    <span style="font-size:9px; color:#64748b;">Chưa chụp</span>
+                                </div>
+                                <button class="outline" style="width:100%; padding:3px 2px; font-size:9px;" onclick="captureAngle('up')">👆 Chụp</button>
+                            </div>
+
+                            <!-- Angle 5: Down -->
+                            <div id="card-down" style="background:#0f172a; border:1px solid var(--border); border-radius:8px; padding:6px; text-align:center;">
+                                <div style="font-size:10px; font-weight:700; color:#f8fafc; margin-bottom:4px;">5. Dưới</div>
+                                <div id="prev-down" style="width:100%; aspect-ratio:1; background:#020617; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:4px; border:1px dashed #334155;">
+                                    <span style="font-size:9px; color:#64748b;">Chưa chụp</span>
+                                </div>
+                                <button class="outline" style="width:100%; padding:3px 2px; font-size:9px;" onclick="captureAngle('down')">👇 Chụp</button>
                             </div>
                         </div>
                     </div>
 
                     <div style="display:flex; gap:6px; margin-top:8px;">
                         <button class="success" style="flex:1; padding: 10px; font-size:12px;" onclick="executeEnrollMultiAngle()">
-                            🚀 Phân Tích & Lưu Trữ 3 Góc (Lưu Cloudinary)
+                            🚀 Phân Tích & Lưu Trữ 5 Góc
                         </button>
-                        <button class="outline" style="padding: 10px; font-size:12px;" title="Chụp nhanh 1 ảnh trực diện" onclick="executeEnroll()">
+                        <button class="outline" style="padding: 10px; font-size:12px;" title="Chụp nhanh 1 ảnh trực tiếp hiện tại" onclick="executeEnroll()">
                             💾 Chụp Nhanh
                         </button>
                     </div>
@@ -450,8 +482,8 @@ def index():
         let laserY = 0;
         let laserDirection = 1;
 
-        // Challenge Steps (3 Steps: Straight, Left, Right - Không lấy ngẩng/cúi đầu)
-        const CHALLENGE_STEPS = ['straight', 'left', 'right'];
+        // Challenge Steps (5 Steps)
+        const CHALLENGE_STEPS = ['straight', 'left', 'right', 'up', 'down'];
         let currentChallengeIndex = -1;
         let challengeActive = false;
         let stepHoldCounter = 0;
@@ -797,9 +829,11 @@ def index():
             const pitchDeg = data.pose.pitch_deg || 0;
 
             let conditionMet = false;
-            if (step === 'straight' && (currentPose === 'STRAIGHT' && Math.abs(yawDeg) <= 8)) conditionMet = true;
-            else if (step === 'left' && (currentPose === 'TURN_LEFT' || yawDeg >= 12)) conditionMet = true;
-            else if (step === 'right' && (currentPose === 'TURN_RIGHT' || yawDeg <= -12)) conditionMet = true;
+            if (step === 'straight' && (currentPose === 'STRAIGHT' && Math.abs(yawDeg) <= 7 && Math.abs(pitchDeg) <= 7)) conditionMet = true;
+            else if (step === 'left' && (currentPose === 'TURN_LEFT' || yawDeg >= 13) && yawDeg > 6) conditionMet = true;
+            else if (step === 'right' && (currentPose === 'TURN_RIGHT' || yawDeg <= -13) && yawDeg < -6) conditionMet = true;
+            else if (step === 'up' && (currentPose === 'LOOK_UP' || pitchDeg >= 10) && pitchDeg > 5) conditionMet = true;
+            else if (step === 'down' && (currentPose === 'LOOK_DOWN' || pitchDeg <= -10) && pitchDeg < -5) conditionMet = true;
 
             if (conditionMet) {
                 stepHoldCounter++;
@@ -814,7 +848,7 @@ def index():
                         highlightCurrentStep();
                     } else {
                         challengeActive = false;
-                        logAction("🎉 HOÀN THÀNH 100% LIVENESS 3 BƯỚC TRỰC DIỆN! Tự động xác thực điểm danh...");
+                        logAction("🎉 HOÀN THÀNH 100% LIVENESS 5 BƯỚC! Tự động xác thực điểm danh...");
                         setResult("✅ Liveness Đạt 100%! Đang trích xuất Face Vector để điểm danh...", "success", "✅ XÁC NHẬN NGƯỜI THẬT");
                         setTimeout(() => {
                             executeRecognize();
@@ -1035,28 +1069,28 @@ def index():
 
         function startAutoAngleScan() {
             if (!video.videoWidth) {
-                alert("Vui lòng mở Camera trước khi quét 3 góc!");
+                alert("Vui lòng mở Camera trước khi quét 5 góc!");
                 return;
             }
             autoScanActive = true;
             autoScanStep = 0;
             autoScanHold = 0;
-            logAction("⚡ BẮT ĐẦU QUÉT 3 GÓC: 1. Hãy nhìn thẳng vào camera...");
+            logAction("⚡ BẮT ĐẦU QUÉT 5 GÓC: 1. Hãy nhìn thẳng vào camera...");
             highlightAngleCard('straight');
-            setResult("Đang quét tự động 3 góc: 1. Hãy nhìn thẳng trực diện...", null);
+            setResult("Đang quét tự động 5 góc: 1. Hãy nhìn thẳng trực diện...", null);
         }
 
         function handleAutoScanStep(data, currentBlob) {
             if (!autoScanActive || !data.face_detected || !data.pose) return;
-            if (Date.now() - lastStepCaptureTime < 700) return;
+            if (Date.now() - lastStepCaptureTime < 700) return; // 700ms cooldown after capturing each step
 
             const pose = data.pose.pose;
             const yawDeg = data.pose.yaw_deg || 0;
             const pitchDeg = data.pose.pitch_deg || 0;
 
             if (autoScanStep === 0) {
-                // 1. Straight (Trực diện)
-                if (pose === 'STRAIGHT' && Math.abs(yawDeg) <= 8) {
+                // 1. Straight
+                if (pose === 'STRAIGHT' && Math.abs(yawDeg) <= 7 && Math.abs(pitchDeg) <= 7) {
                     autoScanHold++;
                     if (autoScanHold >= 4) {
                         lastStepCaptureTime = Date.now();
@@ -1071,8 +1105,8 @@ def index():
                     autoScanHold = 0;
                 }
             } else if (autoScanStep === 1) {
-                // 2. Left (Nghiêng trái)
-                if ((pose === 'TURN_LEFT' || yawDeg >= 12)) {
+                // 2. Left (Physical Left)
+                if ((pose === 'TURN_LEFT' || yawDeg >= 13) && yawDeg > 6) {
                     autoScanHold++;
                     if (autoScanHold >= 4) {
                         lastStepCaptureTime = Date.now();
@@ -1087,14 +1121,46 @@ def index():
                     autoScanHold = 0;
                 }
             } else if (autoScanStep === 2) {
-                // 3. Right (Nghiêng phải)
-                if ((pose === 'TURN_RIGHT' || yawDeg <= -12)) {
+                // 3. Right (Physical Right)
+                if ((pose === 'TURN_RIGHT' || yawDeg <= -13) && yawDeg < -6) {
                     autoScanHold++;
                     if (autoScanHold >= 4) {
                         lastStepCaptureTime = Date.now();
                         setAnglePreview('right', currentBlob);
-                        logAction("🎉 HOÀN THÀNH THU THẬP ĐỦ 3 GÓC TRỰC DIỆN! Nhấn 'Phân Tích & Lưu Trữ 3 Góc' để lưu lên Cloudinary.");
-                        setResult("🎉 Đã thu thập đủ 3 góc mặt! Nhấn 'Phân Tích & Lưu Trữ 3 Góc' để tải lên Cloudinary & lưu DB.", "success", "✅ ĐỦ 3 GÓC KHUÔN MẶT");
+                        logAction("✅ ĐÃ BẮT GÓC NGHIÊNG PHẢI! 👉 Bước 4: Hãy ngước cằm lên TRÊN...");
+                        setResult("✅ Đã bắt góc nghiêng phải! 👉 Bước 4: Hãy ngước cằm lên TRÊN...", null);
+                        autoScanStep = 3;
+                        autoScanHold = 0;
+                        highlightAngleCard('up');
+                    }
+                } else {
+                    autoScanHold = 0;
+                }
+            } else if (autoScanStep === 3) {
+                // 4. Up (Tilt Up)
+                if ((pose === 'LOOK_UP' || pitchDeg >= 10) && pitchDeg > 5) {
+                    autoScanHold++;
+                    if (autoScanHold >= 4) {
+                        lastStepCaptureTime = Date.now();
+                        setAnglePreview('up', currentBlob);
+                        logAction("✅ ĐÃ BẮT GÓC NGƯỚC LÊN (TRÊN)! 👉 Bước 5: Hãy cúi đầu xuống DƯỚI...");
+                        setResult("✅ Đã bắt góc ngước lên! 👉 Bước 5: Hãy cúi đầu xuống DƯỚI...", null);
+                        autoScanStep = 4;
+                        autoScanHold = 0;
+                        highlightAngleCard('down');
+                    }
+                } else {
+                    autoScanHold = 0;
+                }
+            } else if (autoScanStep === 4) {
+                // 5. Down (Tilt Down)
+                if ((pose === 'LOOK_DOWN' || pitchDeg <= -10) && pitchDeg < -5) {
+                    autoScanHold++;
+                    if (autoScanHold >= 4) {
+                        lastStepCaptureTime = Date.now();
+                        setAnglePreview('down', currentBlob);
+                        logAction("🎉 HOÀN THÀNH THU THẬP ĐỦ 5 GÓC! Nhấn 'Phân Tích & Lưu Trữ 5 Góc' để hoàn tất.");
+                        setResult("🎉 Đã thu thập đủ 5 góc mặt! Nhấn 'Phân Tích & Lưu Trữ 5 Góc' để hoàn tất đăng ký.", "success", "✅ ĐỦ 5 GÓC KHUÔN MẶT");
                         autoScanActive = false;
                         autoScanStep = -1;
                         autoScanHold = 0;
@@ -1113,7 +1179,7 @@ def index():
             const checkQuality = document.getElementById('chkQuality').checked;
 
             if (!empId) {
-                alert("Vui lòng nhập Mã Sinh Viên / UID!");
+                alert("Vui lòng nhập Mã Nhân Viên!");
                 return;
             }
 
@@ -1124,7 +1190,7 @@ def index():
                 angleBlobs.straight = currentBlob;
             }
 
-            setResult("Đang phân tích 3 góc khuôn mặt và tải ảnh trực diện lên Cloudinary...", null);
+            setResult("Đang phân tích 5 góc khuôn mặt và trích xuất vector ArcFace đa chiều...", null);
             const formData = new FormData();
             formData.append('employee_id', empId);
             if (empName) formData.append('full_name', empName);
@@ -1138,6 +1204,8 @@ def index():
 
             if (angleBlobs.left) formData.append('image_left', angleBlobs.left, 'left.jpg');
             if (angleBlobs.right) formData.append('image_right', angleBlobs.right, 'right.jpg');
+            if (angleBlobs.up) formData.append('image_up', angleBlobs.up, 'up.jpg');
+            if (angleBlobs.down) formData.append('image_down', angleBlobs.down, 'down.jpg');
 
             try {
                 const res = await fetch(`/v1/face/enroll-multi-angle?check_quality=${checkQuality}`, {
@@ -1147,12 +1215,8 @@ def index():
                 const data = await res.json();
                 if (data.success) {
                     const anglesText = (data.registered_angles || []).join(', ');
-                    let extraInfo = `✅ Đăng ký 3 góc thành công (${anglesText})!`;
-                    if (data.cloudinary_url) {
-                        extraInfo += `\n☁️ Cloudinary CDN: ${data.cloudinary_url}`;
-                    }
-                    setResult(JSON.stringify(data, null, 2), "success", extraInfo);
-                    logAction(`💾 Đã lưu 3 góc & Cloudinary cho: ${empName || empId} (${empId})`);
+                    setResult(JSON.stringify(data, null, 2), "success", `✅ Đăng ký 5 góc thành công (${anglesText})!`);
+                    logAction(`💾 Đã đăng ký 5 góc cho: ${empName || empId} (${empId}) - [${anglesText}]`);
                     loadEmployeeList();
                 } else {
                     setResult(JSON.stringify(data, null, 2), "fail", `❌ Lỗi: ${(data.reasons || []).join(', ')}`);
@@ -1169,14 +1233,14 @@ def index():
             const checkQuality = document.getElementById('chkQuality').checked;
 
             if (!empId) {
-                alert("Vui lòng nhập Mã Sinh Viên / UID!");
+                alert("Vui lòng nhập Mã Nhân Viên!");
                 return;
             }
 
             const blob = uploadedBlob || await captureBlob();
             if (!blob) return;
 
-            setResult("Đang kiểm tra chất lượng và tải ảnh lên Cloudinary...", null);
+            setResult("Đang kiểm tra chất lượng khuôn mặt và đăng ký vector...", null);
             const formData = new FormData();
             formData.append('image', blob, 'enroll.jpg');
             formData.append('employee_id', empId);
@@ -1190,11 +1254,7 @@ def index():
                 });
                 const data = await res.json();
                 if (data.success) {
-                    let msg = "✅ Đăng ký thành công!";
-                    if (data.cloudinary_url) {
-                        msg += `\n☁️ Cloudinary: ${data.cloudinary_url}`;
-                    }
-                    setResult(JSON.stringify(data, null, 2), "success", msg);
+                    setResult(JSON.stringify(data, null, 2), "success", "✅ Đăng ký thành công!");
                     logAction(`💾 Đã đăng ký thành công: ${empName || empId} (${empId})`);
                     loadEmployeeList();
                 } else {
@@ -1298,12 +1358,6 @@ def index():
 
 if __name__ == "__main__":
     import uvicorn
-    import sys
-    from pathlib import Path
-    
-    current_dir = Path(__file__).resolve().parent
-    if str(current_dir) not in sys.path:
-        sys.path.insert(0, str(current_dir))
-        
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, app_dir=str(current_dir))
-
+    host = os.getenv("FACE_AI_HOST", "127.0.0.1")
+    port = int(os.getenv("FACE_AI_PORT", "8000"))
+    uvicorn.run("main:app", host=host, port=port, reload=True)

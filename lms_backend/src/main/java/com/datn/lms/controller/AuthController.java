@@ -42,17 +42,24 @@ public class AuthController {
     public ResponseEntity<ApiResponse<LoginResponse>> enrollFaceFirstTime(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
             @RequestParam(value = "tempToken", required = false) String paramToken,
-            @RequestParam("image_straight") MultipartFile imageStraight,
-            @RequestParam("image_left") MultipartFile imageLeft,
-            @RequestParam("image_right") MultipartFile imageRight) {
+            @RequestParam(value = "studentCode", required = false) String studentCode,
+            @RequestParam(value = "image_straight", required = false) MultipartFile imageStraight,
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "image_left", required = false) MultipartFile imageLeft,
+            @RequestParam(value = "image_right", required = false) MultipartFile imageRight) {
 
         String token = resolveToken(authHeader, paramToken);
-        if (token == null) {
+        if (token == null && (studentCode == null || studentCode.isBlank())) {
             return ResponseEntity.badRequest().body(ApiResponse.error(401, "Thiếu mã xác thực phiên đăng nhập tạm thời"));
         }
 
+        MultipartFile primaryImage = imageStraight != null ? imageStraight : image;
+        if (primaryImage == null || primaryImage.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(400, "Vui lòng cung cấp ảnh chụp khuôn mặt trực diện"));
+        }
+
         try {
-            LoginResponse response = authService.enrollFaceFirstTime(token, imageStraight, imageLeft, imageRight);
+            LoginResponse response = authService.enrollFaceFirstTime(token, studentCode, primaryImage, imageLeft, imageRight);
             return ResponseEntity.ok(ApiResponse.success(response, response.getMessage()));
         } catch (Exception e) {
             log.error("Lỗi đăng ký khuôn mặt: {}", e.getMessage());

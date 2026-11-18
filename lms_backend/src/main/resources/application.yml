@@ -14,7 +14,7 @@ spring:
   # 1. CẤU HÌNH CƠ SỞ DỮ LIỆU MYSQL (RDBMS QUAN HỆ TRUNG TÂM)
   # ----------------------------------------------------------------------------
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:lms_online_db}?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:lms_online_db}?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
     username: ${DB_USERNAME:root}
     password: "${DB_PASSWORD:123456}"
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -63,7 +63,7 @@ jwt:
 ai-service:
   face-api:
     base-url: ${AI_SERVICE_URL:http://localhost:8001}
-    enroll-endpoint: /api/v1/face/enroll
+    enroll-endpoint: /api/v1/face/enroll-multi-angle
     verify-endpoint: /api/v1/face/verify
     head-pose-endpoint: /api/v1/face/head-pose
   rag-api:
@@ -94,5 +94,14 @@ payos:
   client-id: "${PAYOS_CLIENT_ID:ef278d93-dc87-492b-80e5-50a31ca580b6}"
   api-key: "${PAYOS_API_KEY:87b589f1-048a-44bc-97ec-e7b886342b34}"
   checksum-key: "${PAYOS_CHECKSUM_KEY:ef3972c57a254e7ae93d1f245df4b4d229d8bf665a9ff778ffef515d1f154ca1}"
-  return-url: "${PAYOS_RETURN_URL:http://localhost:3000/payment/success}"
-  cancel-url: "${PAYOS_CANCEL_URL:http://localhost:3000/payment/cancel}"
+  return-url: "${PAYOS_RETURN_URL:http://localhost:8080/portal/index.html?payment=success}"
+  cancel-url: "${PAYOS_CANCEL_URL:http://localhost:8080/portal/index.html?payment=cancel}"
+
+# ------------------------------------------------------------------------------
+# 9. CẤU HÌNH GOOGLE GEMINI AI (CHO TRỢ LÝ RAG GIÁO TRÌNH)
+# ------------------------------------------------------------------------------
+gemini:
+  api-key: "${GEMINI_API_KEY:}"
+  model: "${GEMINI_MODEL:gemini-3.1-flash-lite}"
+  api-url: "${GEMINI_API_URL:https://generativelanguage.googleapis.com/v1beta/models}"
+

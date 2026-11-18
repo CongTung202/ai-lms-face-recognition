@@ -20,6 +20,9 @@ public class AdminUserDto {
     private String status;   // ACTIVE, INACTIVE, LOCKED
     private String studentCode;
     private Long classId;
+    private Long facultyId;
+    private String className;
+    private String facultyName;
     private String gender;   // MALE, FEMALE, OTHER
     private String dateOfBirth;
     private Boolean faceRegistered;

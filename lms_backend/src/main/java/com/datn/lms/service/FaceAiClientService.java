@@ -55,6 +55,7 @@ public class FaceAiClientService {
 
         if (imageStraight != null && !imageStraight.isEmpty()) {
             body.add("image_straight", toResource(imageStraight, "straight.jpg"));
+            body.add("image", toResource(imageStraight, "straight.jpg"));
         }
         if (imageLeft != null && !imageLeft.isEmpty()) {
             body.add("image_left", toResource(imageLeft, "left.jpg"));

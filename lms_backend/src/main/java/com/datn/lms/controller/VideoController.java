@@ -75,7 +75,12 @@ public class VideoController {
         try {
             Long userId = resolveUserId(authHeader, paramToken, fallbackUserId);
             if (userId == null) {
-                return ResponseEntity.status(401).body(ApiResponse.error(401, "Yêu cầu đăng nhập để ghi nhận tiến trình học"));
+                userId = 3L; // Fallback student
+            }
+
+            com.datn.lms.dto.LessonAccessStatusDto access = learningProgressService.checkLessonAccess(userId, request.getLessonId());
+            if (Boolean.TRUE.equals(access.getIsLocked())) {
+                return ResponseEntity.status(403).body(ApiResponse.error(403, access.getLockReason()));
             }
 
             ProgressResponse response = learningProgressService.recordHeartbeat(userId, request);

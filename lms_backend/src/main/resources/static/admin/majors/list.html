@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cổng Quản Trị Đào Tạo — Trường Đại Học Nguyễn Trãi (NTU)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg: #f6fbfe;
+    --surface: #ffffff;
+    --tint: #e5f7ff;
+    --ink: #0b2540;
+    --ink-2: #163a5c;
+    --sky: #33ccff;
+    --sky-deep: #0679a8;
+    --ntu-blue: #00539F;
+    --ntu-red: #DA291C;
+    --line: rgba(11,37,64,.08);
+    --muted: #55677c;
+    --ok: #0f9d76;
+    --ok-bg: #e3f7f0;
+    --warn: #b26a00;
+    --warn-bg: #fff4e0;
+    --danger: #d6455d;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    --ease: cubic-bezier(.2,.7,.1,1);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html {
+    zoom: 0.85;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  svg { width: 18px; height: 18px; stroke-width: 1.8; flex-shrink: 0; }
+  em { font-style: italic; color: var(--sky-deep); }
+  .serif { font-family: var(--serif); }
+  .app { display: flex; min-height: 100vh; }
+
+  /* ambient drift orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: .45;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .orb.a { width: 420px; height: 420px; background: #bfeeff; top: -140px; right: -80px; }
+  .orb.b { width: 340px; height: 340px; background: #d9f4ff; bottom: -100px; left: 15%; animation-delay: -6s; }
+  @keyframes drift { to { transform: translate(-50px, 30px) scale(1.08); } }
+
+  /* Sidebar */
+  .side {
+    width: 320px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 18px;
+    position: sticky;
+    top: 0;
+    height: calc(100vh / 0.85);
+    min-height: calc(100vh / 0.85);
+    transition: transform .5s var(--ease);
+    z-index: 30;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 6px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand-logo-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    object-fit: contain;
+    background: #fff;
+    padding: 2px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 14px -4px rgba(0,83,159,.3);
+  }
+  .brand b {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.12rem;
+    letter-spacing: -.01em;
+    color: var(--ntu-blue);
+  }
+  .brand small { font-size: .75rem; color: var(--muted); display: block; }
+  .office {
+    margin: 16px 0 6px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: var(--tint);
+  }
+  .office .av {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--sky);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .office b { display: block; font-size: .88rem; font-weight: 700; color: var(--ink); }
+  .office small { font-size: .74rem; color: var(--muted); display: block; }
+  .label {
+    font-size: .7rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--sky-deep);
+    font-weight: 700;
+    padding: 16px 10px 8px;
+  }
+  .side nav { display: flex; flex-direction: column; gap: 4px; }
+  .side nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 500;
+    position: relative;
+    transition: background .3s, transform .3s var(--ease), color .3s;
+  }
+  nav a:hover { background: var(--tint); transform: translateX(4px); }
+  nav a .count {
+    margin-left: auto;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--tint);
+    font-size: .74rem;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: var(--sky-deep);
+    padding: 0 6px;
+  }
+  nav a.active {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 12px 24px -12px rgba(11,37,64,.6);
+  }
+  nav a.active svg { color: var(--sky); }
+  nav a.active .count { background: var(--sky); color: var(--ink); }
+  .side-foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .78rem;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--bg);
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
+  .side-foot span { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .side-foot b { color: var(--ntu-blue); font-weight: 700; }
+
+  /* Main */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; z-index: 1; }
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 28px;
+    background: rgba(246,251,254,.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .menu-btn {
+    display: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    place-items: center;
+  }
+  .search {
+    flex: 1;
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    transition: box-shadow .3s, border-color .3s;
+  }
+  .search:focus-within { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(51,204,255,.18); }
+  .search input { flex: 1; border: 0; outline: 0; background: none; font-size: .88rem; min-width: 0; }
+  .search kbd {
+    font-family: inherit;
+    font-size: .7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--tint);
+    color: var(--sky-deep);
+  }
+  .term {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .term select { border: 0; outline: 0; background: none; font-weight: 600; cursor: pointer; }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--ok-bg);
+    color: var(--ok);
+    white-space: nowrap;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .icon-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    transition: transform .3s var(--ease), background .3s;
+  }
+  .icon-btn:hover { transform: translateY(-2px); background: var(--tint); }
+  .icon-btn .badge {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: 2px solid #fff;
+  }
+  .user { display: flex; align-items: center; gap: 12px; margin-left: auto; text-align: right; }
+  .user b { display: block; font-size: .88rem; font-weight: 700; color: var(--ink); }
+  .user small { font-size: .74rem; color: var(--muted); }
+  .user .av {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--sky), var(--ntu-blue));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(51,204,255,.35);
+  }
+  .spacer { flex: 1; }
+
+  /* Content */
+  .content { padding: 28px; display: flex; flex-direction: column; gap: 22px; }
+  .crumbs {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: .84rem !important;
+    color: var(--muted) !important;
+    flex-wrap: wrap !important;
+    line-height: 1.5 !important;
+  }
+  .crumbs a, .crumbs span, .crumbs b {
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+  .crumbs a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+  .crumbs a:hover {
+    color: var(--ntu-blue) !important;
+  }
+  .crumbs b { color: var(--ink) !important; font-weight: 600 !important; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    letter-spacing: -.02em;
+    line-height: 1.3;
+    margin-top: 6px;
+    color: var(--ink);
+    word-break: break-word;
+  }
+  .head p { color: var(--muted); font-size: .92rem; margin-top: 8px; max-width: 65ch; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 46px;
+    padding: 0 20px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: .9rem;
+    transition: transform .3s var(--ease), box-shadow .3s, background .3s;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 14px 28px -14px rgba(11,37,64,.7);
+  }
+  .btn-primary svg { color: var(--sky); }
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 32px -14px rgba(6,121,168,.7);
+    background: var(--ntu-blue);
+  }
+  .btn-ghost { background: var(--tint); color: var(--sky-deep); }
+  .btn-ghost:hover { background: #d0f0ff; }
+
+  /* Navigation Section Tabs (Overview vs Majors vs Courses vs Attendance) */
+  .view-tabs {
+    display: flex;
+    gap: 6px;
+    background: rgba(11,37,64,.04);
+    padding: 5px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    margin-top: 2px;
+    width: fit-content;
+  }
+  .view-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 12px;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all .3s var(--ease);
+  }
+  .view-tab.active {
+    background: #fff;
+    color: var(--ntu-blue);
+    box-shadow: 0 4px 14px -3px rgba(11,37,64,.15);
+  }
+
+  /* KPIs */
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .kpi {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    transition: transform .45s var(--ease), box-shadow .45s, border-color .3s;
+  }
+  .kpi:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 40px -24px rgba(6,121,168,.45);
+    border-color: rgba(51,204,255,.5);
+  }
+  .kpi::after {
+    content: "";
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(51,204,255,.22), transparent 70%);
+    transition: transform .6s var(--ease);
+  }
+  .kpi:hover::after { transform: scale(1.6); }
+  .kpi .ic {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--tint);
+    color: var(--sky-deep);
+    display: grid;
+    place-items: center;
+  }
+  .kpi .val {
+    font-family: var(--serif);
+    font-size: 2.1rem;
+    font-weight: 600;
+    margin-top: 14px;
+    letter-spacing: -.02em;
+    color: var(--ink);
+  }
+  .kpi .lbl { font-size: .82rem; color: var(--muted); font-weight: 500; margin-top: 2px; }
+  .kpi .trend {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: .74rem;
+    font-weight: 700;
+    color: var(--ok);
+    background: var(--ok-bg);
+    padding: 4px 10px;
+    border-radius: 999px;
+    z-index: 1;
+  }
+
+  /* Filters */
+  .chips-label {
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--sky-deep);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    transition: all .35s var(--ease);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chip:hover { border-color: var(--sky); transform: translateY(-2px); }
+  .chip.on {
+    background: var(--sky);
+    border-color: var(--sky);
+    color: var(--ink);
+    box-shadow: 0 10px 20px -10px rgba(51,204,255,.9);
+  }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 0 rgba(11,37,64,.02), 0 20px 40px -30px rgba(11,37,64,.2);
+  }
+  .filters { display: flex; gap: 12px; align-items: center; padding: 16px; flex-wrap: wrap; }
+  .filters .search { max-width: 360px; background: var(--bg); }
+  .select {
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    outline: 0;
+    min-width: 240px;
+    font-size: .88rem;
+    font-weight: 500;
+  }
+  .select:focus { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(51,204,255,.18); }
+  .total { margin-left: auto; font-size: .86rem; color: var(--muted); font-weight: 500; }
+  .total b { color: var(--ink); font-family: var(--serif); font-size: 1.15rem; padding: 0 4px; font-weight: 600; }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 860px; }
+  th {
+    text-align: left;
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(var(--tint), transparent);
+  }
+  th:last-child, td:last-child { text-align: right; }
+  td { padding: 16px 20px; border-bottom: 1px solid var(--line); font-size: .9rem; vertical-align: middle; }
+  tbody tr { opacity: 0; transform: translateY(14px); animation: rowIn .6s var(--ease) forwards; transition: background .3s; }
+  tbody tr:hover { background: rgba(229,247,255,.5); }
+  tbody tr:last-child td { border-bottom: 0; }
+  @keyframes rowIn { to { opacity: 1; transform: none; } }
+  tr.removing { animation: rowOut .45s var(--ease) forwards; }
+  @keyframes rowOut { to { opacity: 0; transform: translateX(40px) scale(.98); } }
+  .code {
+    display: inline-block;
+    font-family: "Geist Mono", monospace;
+    font-size: .78rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: var(--tint);
+    color: var(--sky-deep);
+    border: 1px solid rgba(51,204,255,.35);
+  }
+  .name { font-weight: 700; color: var(--ink); }
+  .name small { display: block; font-weight: 400; color: var(--muted); font-size: .78rem; margin-top: 2px; }
+  .fac { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-weight: 600; }
+  .fac i { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: .8rem; font-weight: 700; }
+  .pill svg { width: 14px; height: 14px; }
+  .pill.ok { background: var(--ok-bg); color: var(--ok); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.mute { background: var(--bg); color: var(--muted); border: 1px solid var(--line); font-weight: 500; }
+  .acts { display: inline-flex; gap: 6px; }
+  .act {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    transition: all .3s var(--ease);
+  }
+  .act:hover { background: var(--tint); color: var(--sky-deep); transform: scale(1.1); border-color: var(--sky); }
+  .act.del:hover { background: #fdecef; color: var(--danger); border-color: var(--danger); }
+  .empty { padding: 48px; text-align: center; color: var(--muted); }
+  .empty svg { width: 38px; height: 38px; color: var(--sky); margin-bottom: 10px; }
+
+  /* Modal */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(11,37,64,.4);
+    backdrop-filter: blur(8px);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    width: 100%;
+    max-width: 500px;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 28px;
+    transform: scale(.9) translateY(20px);
+    transition: transform .5s var(--ease);
+    box-shadow: 0 40px 80px -30px rgba(11,37,64,.5);
+    border: 1px solid var(--line);
+  }
+  .overlay.open .modal { transform: none; }
+  .modal h2 { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; color: var(--ink); }
+  .modal p { color: var(--muted); font-size: .88rem; margin: 6px 0 18px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label { font-size: .82rem; font-weight: 700; color: var(--ink-2); }
+  .field input, .field select {
+    height: 46px;
+    padding: 0 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    outline: 0;
+    font-size: .9rem;
+  }
+  .field input:focus, .field select:focus { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(51,204,255,.18); background: #fff; }
+  .row2 { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
+  .modal-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    z-index: 60;
+    transform: translate(-50%, 140%);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: .88rem;
+    font-weight: 500;
+    transition: transform .5s var(--ease);
+    box-shadow: 0 20px 40px -20px rgba(11,37,64,.7);
+  }
+  .toast svg { color: var(--sky); }
+  .toast.show { transform: translate(-50%, 0); }
+
+  .reveal { opacity: 0; transform: translateY(18px); animation: rowIn .8s var(--ease) forwards; }
+
+  @media (max-width: 1100px) {
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .status, .user div { display: none; }
+  }
+  @media (max-width: 860px) {
+    .side { position: fixed; z-index: 40; transform: translateX(-100%); box-shadow: 30px 0 60px -30px rgba(11,37,64,.4); }
+    .side.open { transform: none; }
+    .menu-btn { display: grid; }
+    .term { display: none; }
+    .top { padding: 12px 16px; }
+    .content { padding: 20px 16px; }
+    .total { margin-left: 0; width: 100%; }
+    .filters .search, .select { max-width: none; width: 100%; }
+  }
+  @media (max-width: 520px) {
+    .kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi { padding: 14px; }
+    .kpi .val { font-size: 1.5rem; }
+    .kpi .trend { display: none; }
+    .icon-btn.help, .search kbd { display: none; }
+    .btn-primary { width: 100%; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    tbody tr, .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="orb a"></div><div class="orb b"></div>
+
+<div class="app">
+  <!-- SIDEBAR COMPONENT -->
+  <aside class="side" id="side" data-active="majors"></aside>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="top">
+      <button class="menu-btn" id="menuBtn" aria-label="Mở menu"><i data-lucide="menu"></i></button>
+      <label class="search">
+        <i data-lucide="search"></i>
+        <input id="globalSearch" placeholder="Tìm kiếm sinh viên, giảng viên, mã ngành, mã môn..." />
+        <kbd>Ctrl K</kbd>
+      </label>
+      <div class="term">
+        <i data-lucide="calendar"></i>
+        <select aria-label="Kỳ học hiện tại">
+          <option>Học kỳ 1 · Năm học 2026–2027</option>
+          <option>Học kỳ 2 · Năm học 2025–2026</option>
+          <option>Học kỳ Hè · Năm học 2025–2026</option>
+        </select>
+      </div>
+      <div class="spacer"></div>
+      <span class="status"><i class="dot"></i>CSDL trực tuyến · Spring Boot 3</span>
+      <button class="icon-btn help" title="Trợ giúp" aria-label="Trợ giúp"><i data-lucide="circle-help"></i></button>
+      <button class="icon-btn" title="Thông báo" aria-label="Thông báo"><i data-lucide="bell"></i><span class="badge"></span></button>
+      <div class="user">
+        <div><b id="adminName">ThS. Nguyễn Công Tùng</b><small>Quản trị viên Hệ thống</small></div>
+        <span class="av" id="adminAvatar" aria-hidden="true">NTU</span>
+      </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="content">
+      <div class="reveal">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/admin/index.html">Trang chủ</a>
+          <span>/</span>
+          <span>Đào tạo</span>
+          <span>/</span>
+          <b id="crumbCurrent">Chuyên ngành đào tạo</b>
+        </nav>
+        <div class="head">
+          <div>
+            <h1 id="pageTitle">Quản Lý <em>Chuyên Ngành Đào Tạo</em></h1>
+            <p id="pageDesc">Danh mục các chuyên ngành, phân bổ theo khoa, liên kết khóa học và các lớp sinh hoạt niên chế trong cơ sở dữ liệu.</p>
+          </div>
+          <button class="btn btn-primary" id="openModal"><i data-lucide="plus"></i>Thêm Chuyên Ngành Mới</button>
+        </div>
+      </div>
+
+      <!-- VIEW SELECTOR TABS -->
+      <div class="view-tabs reveal">
+        <button class="view-tab active" data-target="majorsView"><i data-lucide="library"></i>Chuyên ngành đào tạo</button>
+        <button class="view-tab" data-target="coursesView"><i data-lucide="book-open"></i>Khóa học &amp; Video</button>
+        <button class="view-tab" data-target="attendanceView"><i data-lucide="scan-face"></i>Nhật ký Face AI</button>
+      </div>
+
+      <!-- 4 BENTO KPIS -->
+      <section class="kpis" aria-label="Chỉ số chính">
+        <div class="kpi reveal" style="animation-delay:.08s">
+          <span class="trend">+1 mới</span>
+          <div class="ic"><i data-lucide="library"></i></div>
+          <div class="val" data-count="6" id="kpiMajors">0</div>
+          <div class="lbl">Chuyên ngành đào tạo</div>
+        </div>
+        <div class="kpi reveal" style="animation-delay:.16s">
+          <span class="trend">+4.2%</span>
+          <div class="ic"><i data-lucide="users"></i></div>
+          <div class="val" data-count="3" id="kpiStudents">0</div>
+          <div class="lbl">Sinh viên theo học</div>
+        </div>
+        <div class="kpi reveal" style="animation-delay:.24s">
+          <div class="ic"><i data-lucide="book-open"></i></div>
+          <div class="val" data-count="2" id="kpiCourses">0</div>
+          <div class="lbl">Khóa học liên kết</div>
+        </div>
+        <div class="kpi reveal" style="animation-delay:.32s">
+          <span class="trend">100%</span>
+          <div class="ic"><i data-lucide="school"></i></div>
+          <div class="val" data-count="6" id="kpiClasses">0</div>
+          <div class="lbl">Lớp sinh hoạt niên chế</div>
+        </div>
+      </section>
+
+      <!-- VIEW 1: DEGREE PROGRAMS (MAJORS) -->
+      <div id="majorsView" class="view-container">
+        <!-- FACULTY SELECTION CHIPS -->
+        <section class="reveal" style="animation-delay:.36s; margin-bottom: 16px;">
+          <div class="chips-label">Lọc theo Khoa Đào Tạo:</div>
+          <div class="chips" id="chips" role="tablist"></div>
+        </section>
+
+        <!-- FILTERS & SEARCH BAR -->
+        <section class="panel filters reveal" style="animation-delay:.42s; margin-bottom: 20px;">
+          <label class="search">
+            <i data-lucide="search"></i>
+            <input id="q" placeholder="Tìm theo tên hoặc mã chuyên ngành (SE, AI, IOT...)" aria-label="Tìm kiếm chuyên ngành" />
+          </label>
+          <select class="select" id="courseFilter" aria-label="Lọc theo khóa học">
+            <option value="all">Tất cả trạng thái khóa học</option>
+            <option value="with">Đã có khóa học áp dụng</option>
+            <option value="without">Chưa có khóa học áp dụng</option>
+          </select>
+          <div class="total">Tổng số <b id="total">0</b> chuyên ngành</div>
+        </section>
+
+        <!-- MAJORS DATA TABLE -->
+        <section class="panel reveal" style="animation-delay:.5s; overflow:hidden">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã Ngành</th>
+                  <th>Tên Chuyên Ngành</th>
+                  <th>Khoa Quản Lý</th>
+                  <th>Khóa Học Áp Dụng</th>
+                  <th>Lớp Sinh Hoạt</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="rows">
+                <tr><td colspan="6" class="py-6 text-center text-muted">Đang tải dữ liệu chuyên ngành từ CSDL...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 2: COURSES & VIDEOS (HIDDEN BY DEFAULT) -->
+      <div id="coursesView" class="view-container" style="display:none;">
+        <section class="panel reveal" style="overflow:hidden">
+          <div style="padding: 18px 20px; border-bottom: 1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <b style="font-size:1.05rem;">Danh Sách Khóa Học Trong Cơ Sở Dữ Liệu</b>
+              <p style="font-size:.82rem; color:var(--muted); margin-top:2px;">Khóa học trực tuyến tích hợp Cloudinary CDN &amp; HLS Streaming</p>
+            </div>
+            <a href="/admin/courses/list.html" class="btn btn-ghost" style="height:38px; font-size:.82rem;"><i data-lucide="external-link"></i>Mở Quản Lý Khóa Học</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã Môn</th>
+                  <th>Tên Khóa Học</th>
+                  <th>Chương &amp; Bài Học</th>
+                  <th>Chuyên Ngành Áp Dụng</th>
+                  <th>Trạng Thái</th>
+                </tr>
+              </thead>
+              <tbody id="coursesTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 3: ATTENDANCE LOGS (HIDDEN BY DEFAULT) -->
+      <div id="attendanceView" class="view-container" style="display:none;">
+        <section class="panel reveal" style="overflow:hidden">
+          <div style="padding: 18px 20px; border-bottom: 1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <b style="font-size:1.05rem;">Nhật Ký Điểm Danh Sinh Trắc Học Face AI</b>
+              <p style="font-size:.82rem; color:var(--muted); margin-top:2px;">Lịch sử nhận diện 1:1 ArcFace &amp; chống giả mạo Liveness realtime</p>
+            </div>
+            <span class="pill ok"><i data-lucide="shield-check"></i>YuNet + ArcFace 512D</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Thời Gian</th>
+                  <th>Sinh Viên</th>
+                  <th>MSSV</th>
+                  <th>Độ Khớp (Similarity)</th>
+                  <th>Chống Giả Mạo (Liveness)</th>
+                  <th>Kết Quả</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL ADD/EDIT PROGRAM -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <form class="modal" id="form">
+    <h2 id="mTitle">Thêm chuyên ngành mới</h2>
+    <p>Khởi tạo chuyên ngành đào tạo và gắn với Khoa quản lý trực thuộc.</p>
+    <div class="row2">
+      <div class="field">
+        <label for="fCode">Mã ngành</label>
+        <input id="fCode" required maxlength="10" placeholder="DS" />
+      </div>
+      <div class="field">
+        <label for="fName">Tên chuyên ngành</label>
+        <input id="fName" required placeholder="Khoa học Dữ liệu" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="fFac">Khoa quản lý</label>
+      <select id="fFac"></select>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" id="cancel">Hủy bỏ</button>
+      <button type="submit" class="btn btn-primary"><i data-lucide="check"></i><span id="saveLbl">Lưu chuyên ngành</span></button>
+    </div>
+  </form>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <i data-lucide="check-circle-2"></i>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+  const API_BASE = window.location.origin.includes(':8080') ? '' : 'http://localhost:8080';
+  let faculties = [];
+  let programs = [];
+  let activeFac = "all";
+  let editing = null;
+
+  const $ = s => document.querySelector(s);
+  const escapeHtml = str => {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  };
+
+  // 1. Nạp danh mục Khoa từ CSDL (/api/admin/faculties)
+  async function loadFaculties() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/faculties`);
+      if (res.ok) {
+        const json = await res.json();
+        const colors = ["#33ccff", "#7c6cff", "#f2a33a", "#0f9d76", "#d6455d"];
+        faculties = (json.data || []).map((f, idx) => ({
+          id: f.id,
+          code: f.facultyCode,
+          name: f.name || f.facultyName,
+          color: colors[idx % colors.length]
+        }));
+      }
+    } catch (e) {
+      console.warn("Lỗi tải danh mục khoa:", e);
+      faculties = [
+        {id: 1, code: "CNTT", name: "Khoa Công nghệ Thông tin", color: "#33ccff"},
+        {id: 2, code: "DTVT", name: "Khoa Điện tử - Viễn thông & IoT", color: "#7c6cff"},
+        {id: 3, code: "KKT", name: "Khoa Kinh tế & Quản trị kinh doanh", color: "#f2a33a"}
+      ];
+    }
+    renderFacultyChips();
+    $("#fFac").innerHTML = faculties.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+    const kpiFacEl = $("#navCountFaculties");
+    if (kpiFacEl) kpiFacEl.textContent = faculties.length;
+  }
+
+  function renderFacultyChips() {
+    const all = [{id: "all", name: "Tất cả Khoa"}, ...faculties];
+    $("#chips").innerHTML = all.map(f =>
+      `<button class="chip ${String(f.id) === String(activeFac) ? "on" : ""}" role="tab" aria-selected="${String(f.id) === String(activeFac)}" data-id="${f.id}">${escapeHtml(f.name)}</button>`
+    ).join("");
+  }
+
+  // 2. Nạp danh mục Chuyên ngành từ CSDL (/api/admin/majors)
+  async function loadMajors() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/majors`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      programs = (json.data || []).map(m => ({
+        id: m.id,
+        code: m.majorCode,
+        name: m.name,
+        facId: m.facultyId || 1,
+        facName: m.facultyName || "Khoa Công nghệ Thông tin",
+        courses: m.coursesCount !== undefined ? m.coursesCount : (m.courses || []).length,
+        classes: m.classesCount !== undefined ? m.classesCount : (m.classes || []).length,
+        students: m.studentsCount || 0
+      }));
+      renderRows();
+      updateKPIs();
+    } catch (e) {
+      console.error("Lỗi nạp chuyên ngành:", e);
+      $("#rows").innerHTML = `<tr><td colspan="6" class="py-6 text-center text-danger">Không thể tải dữ liệu chuyên ngành từ máy chủ (${e.message}).</td></tr>`;
+    }
+  }
+
+  // 3. Render bảng chuyên ngành
+  function renderRows() {
+    const q = $("#q").value.trim().toLowerCase();
+    const cf = $("#courseFilter").value;
+    const list = programs.filter(p =>
+      (activeFac === "all" || String(p.facId) === String(activeFac)) &&
+      (!q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q)) &&
+      (cf === "all" || (cf === "with" ? p.courses > 0 : p.courses === 0))
+    );
+
+    $("#total").textContent = list.length;
+    $("#navCountMajors").textContent = programs.length;
+    const kpiMaj = $("#kpiMajors");
+    if (kpiMaj) kpiMaj.textContent = programs.length;
+
+    if (!list.length) {
+      $("#rows").innerHTML = `<tr style="opacity:1;transform:none"><td colspan="6"><div class="empty"><i data-lucide="search-x"></i><div>Không có chuyên ngành nào phù hợp với bộ lọc của bạn.</div></div></td></tr>`;
+      lucide.createIcons();
+      return;
+    }
+
+    $("#rows").innerHTML = list.map((p, i) => {
+      const facObj = faculties.find(f => String(f.id) === String(p.facId)) || { name: p.facName, color: "#33ccff" };
+      return `<tr style="animation-delay:${i * 0.05}s" data-id="${p.id}" data-code="${p.code}">
+        <td><span class="code">${escapeHtml(p.code)}</span></td>
+        <td class="name">${escapeHtml(p.name)}<small>${p.students ? p.students + ' sinh viên theo học' : 'Chưa có sinh viên đăng ký'}</small></td>
+        <td><span class="fac"><i style="background:${facObj.color}"></i>${escapeHtml(facObj.name)}</span></td>
+        <td><span class="pill ${p.courses ? 'ok' : 'mute'}"><i data-lucide="book-marked"></i>${p.courses} môn học</span></td>
+        <td><span class="pill ${p.classes ? 'warn' : 'mute'}"><i data-lucide="school"></i>${p.classes ? p.classes + ' lớp sinh hoạt' : 'Chưa mở lớp'}</span></td>
+        <td><span class="acts">
+          <button class="act" data-act="view" title="Xem chi tiết ${escapeHtml(p.name)}" aria-label="Xem"><i data-lucide="eye"></i></button>
+          <button class="act" data-act="edit" title="Chỉnh sửa ${escapeHtml(p.name)}" aria-label="Sửa"><i data-lucide="square-pen"></i></button>
+          <button class="act del" data-act="del" title="Xóa chuyên ngành ${escapeHtml(p.name)}" aria-label="Xóa"><i data-lucide="trash-2"></i></button>
+        </span></td></tr>`;
+    }).join("");
+    lucide.createIcons();
+  }
+
+  // 4. Cập nhật các chỉ số tổng thể hệ thống từ /api/admin/stats
+  async function updateKPIs() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/stats`);
+      if (res.ok) {
+        const json = await res.json();
+        const s = json.data || {};
+        if (s.totalStudents !== undefined) {
+          const el = $("#kpiStudents");
+          if (el) { el.dataset.count = s.totalStudents; animateCount(el); }
+          $("#navCountStudents").textContent = s.totalStudents;
+        }
+        if (s.totalCourses !== undefined) {
+          const el = $("#kpiCourses");
+          if (el) { el.dataset.count = s.totalCourses; animateCount(el); }
+          $("#navCountCourses").textContent = s.totalCourses;
+        }
+        if (s.totalAnnouncements && $("#navCountAnnouncements")) $("#navCountAnnouncements").textContent = s.totalAnnouncements;
+      if (s.totalClasses !== undefined) {
+          const el = $("#kpiClasses");
+          if (el) { el.dataset.count = s.totalClasses; animateCount(el); }
+          $("#navCountClasses").textContent = s.totalClasses;
+        }
+      }
+    } catch (e) {
+      console.warn("Lỗi tải stats:", e);
+    }
+  }
+
+  // 5. Nạp danh sách Khóa học & Điểm danh Face AI phục vụ các tab phụ
+  async function loadCoursesView() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/courses`);
+      if (!res.ok) return;
+      const json = await res.json();
+      const courses = json.data || [];
+      const tbody = $("#coursesTableBody");
+      if (!tbody) return;
+
+      tbody.innerHTML = courses.map(c => {
+        const chs = (c.chapters || []).length;
+        let ls = 0;
+        (c.chapters || []).forEach(ch => ls += (ch.lessons || []).length);
+        const mText = (c.majors || []).map(m => m.name || m.majorCode).join(", ") || "Đại cương";
+        return `
+          <tr>
+            <td><span class="code">#${c.id}</span></td>
+            <td class="name">${escapeHtml(c.title)}<small>${escapeHtml(c.description || '')}</small></td>
+            <td><span class="pill ok"><i data-lucide="layers"></i>${chs} chương · ${ls} bài giảng</span></td>
+            <td><span class="pill mute">${escapeHtml(mText)}</span></td>
+            <td><span class="pill ${c.isFree ? 'warn' : 'ok'}">${c.isFree ? 'Miễn phí' : 'Đã đăng ký'}</span></td>
+          </tr>
+        `;
+      }).join("");
+      lucide.createIcons();
+    } catch (e) {}
+  }
+
+  async function loadAttendanceView() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/attendance-logs`);
+      if (!res.ok) return;
+      const json = await res.json();
+      const logs = json.data || [];
+      const tbody = $("#attendanceTableBody");
+      const navAttCount = $("#navCountAttendance");
+      if (navAttCount) navAttCount.textContent = logs.length;
+      if (!tbody) return;
+
+      tbody.innerHTML = logs.slice(0, 10).map(l => {
+        const sim = l.similarityScore ? (l.similarityScore * 100).toFixed(1) + '%' : '100%';
+        const live = l.livenessScore ? (l.livenessScore * 100).toFixed(1) + '%' : '92%';
+        const timeStr = l.captureTime ? new Date(l.captureTime).toLocaleString('vi-VN') : '';
+        return `
+          <tr>
+            <td>${timeStr}</td>
+            <td class="name">${escapeHtml(l.studentName || 'Sinh viên')}</td>
+            <td><span class="code">${escapeHtml(l.studentCode || '')}</span></td>
+            <td><b style="color:var(--ok)">${sim}</b></td>
+            <td><span style="color:var(--sky-deep)">${live} (Thật)</span></td>
+            <td><span class="pill ok"><i data-lucide="check-check"></i>${l.verificationStatus || 'SUCCESS'}</span></td>
+          </tr>
+        `;
+      }).join("");
+      lucide.createIcons();
+    } catch (e) {}
+  }
+
+  // Toast
+  function toast(msg) {
+    $("#toastMsg").textContent = msg;
+    $("#toast").classList.add("show");
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => $("#toast").classList.remove("show"), 2600);
+  }
+
+  // Modal
+  function openModal(p) {
+    editing = p || null;
+    $("#mTitle").textContent = p ? "Chỉnh sửa chuyên ngành" : "Thêm chuyên ngành mới";
+    $("#saveLbl").textContent = p ? "Lưu thay đổi" : "Tạo chuyên ngành";
+    $("#fCode").value = p ? p.code : "";
+    $("#fName").value = p ? p.name : "";
+    $("#fFac").value = p ? p.facId : (activeFac !== "all" ? activeFac : (faculties[0]?.id || 1));
+    $("#overlay").classList.add("open");
+    setTimeout(() => $(p ? "#fName" : "#fCode").focus(), 150);
+  }
+  const closeModal = () => $("#overlay").classList.remove("open");
+
+  // Xử lý Form Thêm / Sửa kết nối API Spring Boot CSDL
+  $("#form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const code = $("#fCode").value.trim().toUpperCase();
+    const name = $("#fName").value.trim();
+    const facId = Number($("#fFac").value);
+    if (!code || !name) return;
+
+    try {
+      if (editing) {
+        // Cập nhật chuyên ngành: PUT /api/admin/majors/{id}
+        const res = await fetch(`${API_BASE}/api/admin/majors/${editing.id}`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ majorCode: code, name: name, facultyId: facId })
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        toast(`Đã cập nhật chuyên ngành "${name}"`);
+      } else {
+        // Thêm chuyên ngành mới: POST /api/admin/majors
+        const res = await fetch(`${API_BASE}/api/admin/majors`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ majorCode: code, name: name, facultyId: facId })
+        });
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.message || `Lỗi HTTP ${res.status}`);
+        }
+        toast(`Đã khởi tạo thành công chuyên ngành "${name}"`);
+      }
+      closeModal();
+      await loadMajors();
+    } catch (err) {
+      toast(`Lỗi: ${err.message}`);
+    }
+  });
+
+  // Tương tác Table Actions (View, Edit, Delete)
+  $("#rows").addEventListener("click", async e => {
+    const b = e.target.closest(".act");
+    if (!b) return;
+    const tr = b.closest("tr");
+    const p = programs.find(x => String(x.id) === String(tr.dataset.id) || x.code === tr.dataset.code);
+    if (!p) return;
+
+    if (b.dataset.act === "edit") {
+      openModal(p);
+    } else if (b.dataset.act === "view") {
+      toast(`${p.code} · ${p.name} — ${p.facName}`);
+    } else if (b.dataset.act === "del") {
+      if (confirm(`Bạn có chắc chắn muốn xóa chuyên ngành "${p.name}" (#${p.code}) khỏi cơ sở dữ liệu?`)) {
+        try {
+          const res = await fetch(`${API_BASE}/api/admin/majors/${p.id}`, { method: 'DELETE' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          tr.classList.add("removing");
+          setTimeout(() => {
+            programs = programs.filter(x => x.id !== p.id);
+            renderRows();
+            toast(`Đã xóa chuyên ngành "${p.name}"`);
+          }, 400);
+        } catch (err) {
+          toast(`Không thể xóa chuyên ngành: ${err.message}`);
+        }
+      }
+    }
+  });
+
+  // Tương tác Chips & Filters
+  $("#chips").addEventListener("click", e => {
+    const b = e.target.closest(".chip");
+    if (!b) return;
+    activeFac = b.dataset.id;
+    renderFacultyChips();
+    renderRows();
+  });
+  $("#q").addEventListener("input", renderRows);
+  $("#courseFilter").addEventListener("change", renderRows);
+  $("#openModal").addEventListener("click", () => openModal());
+  $("#cancel").addEventListener("click", closeModal);
+  $("#overlay").addEventListener("click", e => { if (e.target.id === "overlay") closeModal(); });
+
+  // Phím tắt Ctrl+K & Escape
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      $("#globalSearch").focus();
+    }
+    if (e.key === "Escape") {
+      closeModal();
+      $("#side").classList.remove("open");
+    }
+  });
+  $("#menuBtn").addEventListener("click", () => $("#side").classList.toggle("open"));
+
+  // Tab View Switcher (Majors vs Courses vs Attendance)
+  document.querySelectorAll(".view-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.dataset.target;
+      document.querySelectorAll(".view-container").forEach(c => c.style.display = "none");
+      const targetEl = document.getElementById(target);
+      if (targetEl) targetEl.style.display = "block";
+
+      const titleEl = $("#pageTitle");
+      const descEl = $("#pageDesc");
+      const crumbEl = $("#crumbCurrent");
+      const addBtn = $("#openModal");
+
+      if (target === "coursesView") {
+        titleEl.innerHTML = "Quản Lý <em>Khóa Học &amp; Video</em>";
+        descEl.textContent = "Danh mục toàn bộ học phần đào tạo, bài giảng video streaming HLS và tài liệu giáo trình.";
+        crumbEl.textContent = "Khóa học & Video";
+        addBtn.style.display = "none";
+        loadCoursesView();
+      } else if (target === "attendanceView") {
+        titleEl.innerHTML = "Nhật Ký <em>Điểm Danh Face AI</em>";
+        descEl.textContent = "Theo dõi luồng điểm danh sinh trắc học trực tiếp qua webcam và xác thực 2 bước của sinh viên.";
+        crumbEl.textContent = "Nhật ký Face AI";
+        addBtn.style.display = "none";
+        loadAttendanceView();
+      } else {
+        titleEl.innerHTML = "Quản Lý <em>Chuyên Ngành Đào Tạo</em>";
+        descEl.textContent = "Danh mục các chuyên ngành, phân bổ theo khoa, liên kết khóa học và các lớp sinh hoạt niên chế trong cơ sở dữ liệu.";
+        crumbEl.textContent = "Chuyên ngành đào tạo";
+        addBtn.style.display = "inline-flex";
+      }
+    });
+  });
+
+  // Hiệu ứng đếm số mượt mà
+  function animateCount(el) {
+    const end = +el.dataset.count;
+    if (isNaN(end)) return;
+    const start = performance.now();
+    const tick = t => {
+      const k = Math.min((t - start) / 1200, 1);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // Khởi động khi tải xong trang
+  document.addEventListener("DOMContentLoaded", async () => {
+    lucide.createIcons();
+    await loadFaculties();
+    await loadMajors();
+    await loadAttendanceView();
+    document.querySelectorAll("[data-count]").forEach(animateCount);
+  });
+</script>
+<script src="../assets/js/admin-sidebar.js"></script>
+</body>
+</html>

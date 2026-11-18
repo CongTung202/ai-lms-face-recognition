@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chi Tiết Hồ Sơ Người Dùng - Đại Học Nguyễn Trãi (NTU)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6fbfe;
+      --surface: rgba(255, 255, 255, 0.88);
+      --surface-solid: #ffffff;
+      --line: #e3edf5;
+      --ink: #0b2540;
+      --muted: #5f7d95;
+      --sky: #33ccff;
+      --sky-soft: #e5f7ff;
+      --sky-deep: #0679a8;
+      --ntu-blue: #00539F;
+      --ntu-hover: #003e7e;
+      --ok: #059669;
+      --ok-bg: #ecfdf5;
+      --warn: #b45309;
+      --warn-bg: #fef3c7;
+      --danger: #dc2626;
+      --danger-soft: #fde8e8;
+      --radius: 18px;
+      --sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --serif: 'Fraunces', Georgia, serif;
+      --mono: 'Geist Mono', monospace;
+      --ease: cubic-bezier(.2,.8,.2,1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { zoom: 0.85; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    /* Face AI Modal Safety Lock */
+    #faceAiEnrollModal { display: none !important; }
+    #faceAiEnrollModal.open { display: flex !important; }
+
+    .orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; opacity: .45; }
+    .orb.a { width: 500px; height: 500px; background: radial-gradient(circle, #cceeff, transparent 70%); top: -100px; left: -100px; }
+    .orb.b { width: 420px; height: 420px; background: radial-gradient(circle, #e0f2fe, transparent 70%); bottom: -80px; right: -80px; }
+
+    .layout { position: relative; z-index: 1; display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
+    .side {
+      position: sticky; top: 0; height: 100vh;
+      background: var(--surface);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-right: 1px solid var(--line);
+      padding: 24px 18px;
+      display: flex; flex-direction: column; gap: 20px;
+      z-index: 20;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 6px 8px; text-decoration: none; color: inherit; }
+    .crest {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--ntu-blue), var(--sky));
+      display: grid; place-items: center; overflow: hidden;
+      box-shadow: 0 8px 18px -6px rgba(0,83,159,.45);
+      border: 1px solid rgba(255,255,255,.5);
+    }
+    .crest img { width: 100%; height: 100%; object-fit: cover; }
+    .b-name { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--ntu-blue); line-height: 1.15; }
+    .b-sub { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; margin-top: 2px; }
+    .office {
+      padding: 12px 14px; background: var(--sky-soft);
+      border: 1px solid rgba(51,204,255,.3); border-radius: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .office .av {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: #00539F; color: #fff;
+      display: grid; place-items: center; font-size: .95rem; font-weight: 700; flex-shrink: 0;
+    }
+    .office-title { font-size: .82rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
+    .office-sub { font-size: .72rem; color: var(--muted); }
+
+    .menu { display: flex; flex-direction: column; gap: 4px; }
+    .sec-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 700; padding: 10px 10px 4px; }
+    .nav-a {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: 12px; text-decoration: none; color: var(--ink);
+      font-size: .88rem; font-weight: 600; transition: all .2s var(--ease);
+    }
+    .nav-a:hover { background: var(--sky-soft); color: var(--ntu-blue); }
+    .nav-a.active {
+      background: linear-gradient(135deg, #0b2540 0%, #163a5c 100%);
+      color: #fff; box-shadow: 0 8px 18px -6px rgba(11,37,64,.5);
+    }
+    .nav-a.active i { color: var(--sky); }
+
+    .main { padding: 32px 48px; max-width: 1300px; width: 100%; }
+    .crumbs { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--muted); margin-bottom: 12px; }
+    .crumbs a { color: inherit; text-decoration: none; font-weight: 500; }
+    .crumbs a:hover { color: var(--ntu-blue); }
+
+    .page-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+      margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--line);
+    }
+    .page-title { font-family: var(--serif); font-size: 2rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
+    .page-desc { font-size: .92rem; color: var(--muted); margin-top: 4px; }
+
+    .btn-group { display: flex; align-items: center; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+      border-radius: 12px; font-size: .86rem; font-weight: 700; border: none; cursor: pointer;
+      text-decoration: none; transition: all .2s var(--ease);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--ntu-blue), #0b2540);
+      color: #fff; box-shadow: 0 8px 18px -4px rgba(0,83,159,.35);
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, var(--ntu-hover), #051829); transform: translateY(-1px); }
+    .btn-ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+    .btn-ghost:hover { background: var(--sky-soft); border-color: var(--sky); color: var(--ntu-blue); }
+
+    /* Profile Hero */
+    .profile-hero {
+      background: var(--surface-solid);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px -10px rgba(11,37,64,.06);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .profile-av {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--sky-soft);
+      border: 3px solid #fff;
+      box-shadow: 0 8px 24px -6px rgba(0,83,159,.3);
+      flex-shrink: 0;
+    }
+    .hero-info { flex: 1; }
+    .hero-name-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .hero-name { font-family: var(--serif); font-size: 1.6rem; font-weight: 700; color: var(--ink); }
+    .hero-sub { color: var(--muted); font-size: .88rem; margin-top: 6px; }
+
+    /* Grid layout */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 1024px) {
+      .details-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface-solid);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px -10px rgba(11,37,64,.06);
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 18px;
+    }
+    .card-title i { color: var(--sky-deep); }
+
+    .info-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 640px) {
+      .info-list { grid-template-columns: 1fr; }
+    }
+    .info-box {
+      background: #fbfdff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+    .info-lbl {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .info-val {
+      font-size: .94rem;
+      font-weight: 600;
+      color: var(--ink);
+      word-break: break-all;
+    }
+    .info-val.mono { font-family: var(--mono); }
+
+    .code-pill {
+      font-family: var(--mono);
+      font-size: .76rem;
+      font-weight: 700;
+      color: var(--ntu-blue);
+      background: var(--sky-soft);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(51,204,255,.3);
+      display: inline-block;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 700;
+    }
+    .status-pill.active { background: var(--ok-bg); color: var(--ok); }
+    .status-pill.locked { background: #f1f5f9; color: var(--muted); }
+
+    /* Face AI Card specifics */
+    .face-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+      border: 1px solid #bbf7d0;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .face-box.pending {
+      background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+      border-color: #fde68a;
+    }
+  </style>
+</head>
+<body>
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+
+  <div class="layout">
+    <!-- SIDEBAR COMPONENT -->
+    <aside class="side" id="side" data-active="students"></aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <div class="crumbs">
+        <a href="/admin/index.html">Trang chủ</a>
+        <span>/</span>
+        <a href="list.html">Sinh viên &amp; Hồ sơ</a>
+        <span>/</span>
+        <span style="color:var(--ink); font-weight:600;">Chi tiết hồ sơ</span>
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Hồ Sơ Chi Tiết</h1>
+          <p class="page-desc">Thông tin học viên, cán bộ giảng viên và định danh sinh trắc học Face AI 512D</p>
+        </div>
+        <div class="btn-group">
+          <a href="list.html" class="btn btn-ghost"><i data-lucide="arrow-left"></i>Quay lại danh sách</a>
+          <a id="btnEditLink" href="#" class="btn btn-primary"><i data-lucide="edit-3"></i>Chỉnh sửa hồ sơ</a>
+        </div>
+      </div>
+
+      <!-- PROFILE HERO -->
+      <div class="profile-hero">
+        <img id="avatarImage" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" alt="Avatar" class="profile-av" />
+        <div class="hero-info">
+          <div class="hero-name-row">
+            <h2 id="valFullName" class="hero-name">Đang tải hồ sơ...</h2>
+            <span id="roleBadge" class="code-pill">STUDENT</span>
+            <span id="statusBadge" class="status-pill active">• Đang hoạt động</span>
+          </div>
+          <div class="hero-sub">
+            MSSV: <b id="valStudentCode" style="color:var(--ink); font-family:var(--mono);">--</b> · 
+            Username: <span id="valUsername" style="font-family:var(--mono); color:var(--sky-deep);">@--</span> · 
+            Mã định danh hệ thống: <span id="valUid" style="font-family:var(--mono);">#UID-0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAILS GRID -->
+      <div class="details-grid">
+        <!-- LEFT: PERSONAL & ACADEMIC INFO -->
+        <div class="card">
+          <div class="card-title">
+            <i data-lucide="user-check"></i>Thông Tin Hành Chính &amp; Đào Tạo
+          </div>
+          <div class="info-list">
+            <div class="info-box">
+              <div class="info-lbl">Email liên hệ</div>
+              <div id="valEmail" class="info-val">--</div>
+            </div>
+            <div class="info-box">
+              <div class="info-lbl">Số điện thoại (Mật khẩu SĐT)</div>
+              <div id="valPhone" class="info-val mono">--</div>
+            </div>
+            <div class="info-box">
+              <div class="info-lbl">Ngày sinh</div>
+              <div id="valDob" class="info-val mono">--</div>
+            </div>
+            <div class="info-box">
+              <div class="info-lbl">Giới tính</div>
+              <div id="valGender" class="info-val">--</div>
+            </div>
+            <div class="info-box">
+              <div class="info-lbl">Khoa / Viện đào tạo</div>
+              <div id="valFaculty" class="info-val">--</div>
+            </div>
+            <div class="info-box">
+              <div class="info-lbl">Lớp sinh hoạt / Niên chế</div>
+              <div id="valClass" class="info-val">--</div>
+            </div>
+            <div class="info-box" style="grid-column: 1 / -1;">
+              <div class="info-lbl">Thời điểm khởi tạo hồ sơ</div>
+              <div id="valCreatedAt" class="info-val">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: BIOMETRICS & FACE AI -->
+        <div class="card">
+          <div class="card-title">
+            <i data-lucide="scan-face"></i>Sinh Trắc Học Face AI ArcFace 512D
+          </div>
+
+          <div id="faceStatusBox" class="face-box">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+              <i id="faceIcon" data-lucide="check-circle-2" style="color:var(--ok);"></i>
+              <b id="faceStatusTitle" style="font-size:.95rem; color:var(--ok);">Đã nạp vector eKYC 512D</b>
+            </div>
+            <p id="faceStatusDesc" style="font-size:.84rem; color:var(--muted); line-height:1.4;">
+              Hồ sơ sinh trắc học đã sẵn sàng cho điểm danh tự động trực tiếp trên cổng học tập và phòng học trực tuyến.
+            </p>
+          </div>
+
+          <div style="background:#f8fafc; border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:18px;">
+            <div style="font-size:.76rem; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Thông số kỹ thuật nhận diện</div>
+            <ul style="font-size:.82rem; color:var(--ink); padding-left:18px; line-height:1.6;">
+              <li>Model trích xuất: <b>ArcFace ResNet100 (512-dim embedding)</b></li>
+              <li>Chống giả mạo: <b>Liveness Detection (Anti-Spoofing)</b></li>
+              <li>Góc nhìn 3D: <b>Pitch, Yaw, Roll kiểm soát 3 góc đa chiều</b></li>
+            </ul>
+          </div>
+
+          <button id="btnTriggerFace" type="button" class="btn btn-primary" style="width:100%; justify-content:center;">
+            <i data-lucide="camera"></i>Quét lại Face ID tự động 3 góc
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let currentUser = null;
+
+    function getParam(param) {
+      return new URLSearchParams(window.location.search).get(param);
+    }
+
+    function formatPhone(p) {
+      if (!p) return '--';
+      const clean = String(p).replace(/[^0-9]/g, '');
+      if (clean.length === 10) return `${clean.slice(0,4)} ${clean.slice(4,7)} ${clean.slice(7)}`;
+      return p;
+    }
+
+    function formatDate(d) {
+      if (!d) return '--';
+      try {
+        const parts = String(d).split('T')[0].split('-');
+        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      } catch(e) {}
+      return d;
+    }
+
+    async function loadUser() {
+      const id = getParam('id');
+      if (!id) {
+        alert("Thiếu tham số ID người dùng!");
+        window.location.href = "list.html";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/users/${id}`);
+        const result = await res.json();
+        if (!res.ok || !result.data) {
+          throw new Error(result.message || "Không thể tải hồ sơ");
+        }
+        currentUser = result.data;
+        renderUser(currentUser);
+      } catch (err) {
+        // Fallback: search in full list
+        try {
+          const listRes = await fetch(`${API_BASE}/api/admin/users?limit=500`);
+          const listJson = await listRes.json();
+          const found = (listJson.data || []).find(x => String(x.id) === String(id));
+          if (found) {
+            currentUser = found;
+            renderUser(currentUser);
+            return;
+          }
+        } catch(e) {}
+        alert("Không tìm thấy hồ sơ người dùng #" + id);
+      }
+    }
+
+    function renderUser(u) {
+      document.getElementById('avatarImage').src = u.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80';
+      document.getElementById('valFullName').textContent = u.fullName || 'Chưa đặt tên';
+      document.getElementById('valStudentCode').textContent = u.studentCode || `UID-${u.id}`;
+      document.getElementById('valUsername').textContent = `@${u.username || ''}`;
+      document.getElementById('valUid').textContent = `#UID-${u.id}`;
+
+      let roleBadgeText = 'STUDENT';
+      if (u.role === 'ADMIN') roleBadgeText = 'ADMIN (Quản trị)';
+      else if (u.role === 'INSTRUCTOR') roleBadgeText = 'INSTRUCTOR (Giảng viên)';
+      document.getElementById('roleBadge').textContent = roleBadgeText;
+
+      const isActive = (u.status === 'ACTIVE' || !u.status);
+      const statusEl = document.getElementById('statusBadge');
+      if (isActive) {
+        statusEl.className = 'status-pill active';
+        statusEl.textContent = '• Đang hoạt động';
+      } else {
+        statusEl.className = 'status-pill locked';
+        statusEl.textContent = 'Tạm khóa';
+      }
+
+      document.getElementById('valEmail').textContent = u.email || 'Chưa cập nhật';
+      document.getElementById('valPhone').textContent = `${formatPhone(u.phone)} (Mật khẩu mặc định)`;
+      document.getElementById('valDob').textContent = formatDate(u.dateOfBirth);
+      document.getElementById('valGender').textContent = u.gender === 'FEMALE' ? 'Nữ' : (u.gender === 'MALE' ? 'Nam' : (u.gender || 'Chưa cập nhật'));
+      document.getElementById('valFaculty').textContent = u.facultyName ? `${u.facultyName} (${u.facultyCode || ''})` : (u.facultyCode || 'Chưa phân khoa');
+      document.getElementById('valClass').textContent = u.className ? `${u.className} (${u.classCode || ''})` : (u.classCode || 'Chưa xếp lớp');
+      document.getElementById('valCreatedAt').textContent = u.createdAt ? new Date(u.createdAt).toLocaleString('vi-VN') : 'Hệ thống khởi tạo';
+
+      document.getElementById('btnEditLink').href = `edit.html?id=${u.id}`;
+
+      // Face AI card
+      const faceBox = document.getElementById('faceStatusBox');
+      const faceTitle = document.getElementById('faceStatusTitle');
+      const faceDesc = document.getElementById('faceStatusDesc');
+      const faceIcon = document.getElementById('faceIcon');
+      const btnFace = document.getElementById('btnTriggerFace');
+
+      if (u.faceRegistered) {
+        faceBox.className = 'face-box';
+        faceTitle.style.color = 'var(--ok)';
+        faceTitle.textContent = 'Đã nạp vector eKYC 512D ArcFace';
+        faceDesc.textContent = 'Đã hoàn tất huấn luyện vector đặc trưng nhận diện 3 góc. Học viên có thể tự động điểm danh Face ID trên hệ thống.';
+        faceIcon.setAttribute('data-lucide', 'check-circle-2');
+        faceIcon.style.color = 'var(--ok)';
+        btnFace.innerHTML = '<i data-lucide="camera"></i>Quét lại Face ID tự động 3 góc';
+      } else {
+        faceBox.className = 'face-box pending';
+        faceTitle.style.color = 'var(--warn)';
+        faceTitle.textContent = 'Chưa có dữ liệu khuôn mặt Face ID';
+        faceDesc.textContent = 'Học viên chưa đăng ký sinh trắc học. Vui lòng bấm nút bên dưới để mở camera quét tự động 3 góc trực diện - nghiêng trái - nghiêng phải.';
+        faceIcon.setAttribute('data-lucide', 'alert-circle');
+        faceIcon.style.color = 'var(--warn)';
+        btnFace.innerHTML = '<i data-lucide="scan-face"></i>Đăng ký Face ID ngay';
+      }
+
+      btnFace.onclick = () => {
+        if (typeof window.openFaceEnrollmentModal === 'function') {
+          window.openFaceEnrollmentModal({
+            studentId: u.id,
+            studentCode: u.studentCode || u.username,
+            fullName: u.fullName
+          }, () => {
+            alert("Đã lưu Face ID thành công!");
+            loadUser();
+          });
+        } else {
+          alert("Mô-đun Face AI camera đang sẵn sàng trên trang danh sách!");
+          window.location.href = `list.html`;
+        }
+      };
+
+      lucide.createIcons();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadUser();
+    });
+  </script>
+  <script src="/assets/js/face-ai-autocapture.js"></script>
+  <script src="../assets/js/admin-sidebar.js"></script>
+</body>
+</html>

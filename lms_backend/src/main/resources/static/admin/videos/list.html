@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Video Bài Giảng - LMS Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
+
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-7 py-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-100">Quản Lý Tài Nguyên Video &amp; Nén Tự Động H.264</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Giám sát xử lý FFmpeg JAVE2 chuẩn 720p, truyền phát HTTP 206 Partial Content và Cloudinary CDN</p>
+                </div>
+                <a href="create.html" class="inline-flex items-center px-3.5 py-1.5 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition">
+                    Đăng ký tệp video mới
+                </a>
+            </div>
+
+            <div class="p-4 sm:p-5">
+                <div class="overflow-x-auto border border-slate-800 rounded-lg">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-bold border-b border-slate-800">
+                            <tr>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Mã tài nguyên</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Tên tệp Video</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Bài học liên kết</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Độ phân giải</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thời lượng</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Dung lượng</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Trạng thái nén</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Kênh phát</th>
+                                <th class="p-3 sm:p-3.5 whitespace-nowrap">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="videoTableBody" class="divide-y divide-slate-800/80">
+                            <!-- Rendered by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/store.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderMasterLayout('videos', [
+                { label: 'Tài nguyên Video', url: 'list.html' },
+                { label: 'Danh sách' }
+            ]);
+            loadTableData();
+        });
+
+        function loadTableData() {
+            const store = Store.get();
+            const tbody = document.getElementById("videoTableBody");
+            tbody.innerHTML = "";
+
+            store.videos.forEach(v => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/40 transition-colors";
+
+                let statusBadge = "";
+                if (v.status === "COMPRESSED") {
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã nén H.264 720p</span>`;
+                } else if (v.status === "UPLOADED_CLOUDINARY") {
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-200">Đã phát Cloudinary</span>`;
+                } else {
+                    statusBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-950 border border-amber-700 text-amber-200">Bản ghi gốc (Chờ nén)</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3 sm:p-3.5"><code class="text-blue-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">VID-00${v.id}</code></td>
+                    <td class="p-3 sm:p-3.5 font-semibold text-slate-100">${escapeHtml(v.fileName)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${escapeHtml(v.lesson)}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-400">${escapeHtml(v.resolution || "1280x720")}</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${v.duration} giây</td>
+                    <td class="p-3 sm:p-3.5 text-slate-300">${v.size}</td>
+                    <td class="p-3 sm:p-3.5">${statusBadge}</td>
+                    <td class="p-3 sm:p-3.5"><small class="text-slate-400 max-w-[180px] truncate block">${escapeHtml(v.cdnUrl)}</small></td>
+                    <td class="p-3 sm:p-3.5">
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <a href="details.html?id=${v.id}" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">Kiểm thử phát</a>
+                            <button type="button" class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700 transition" onclick="deleteVideoRow(${v.id})">Xóa</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteVideoRow(videoId) {
+            const store = Store.get();
+            const v = store.videos.find(x => x.id === videoId);
+            if (!v) return;
+
+            if (confirm("Bạn có chắc chắn muốn xóa tài nguyên video: " + v.fileName + "?")) {
+                store.videos = store.videos.filter(x => x.id !== videoId);
+                Store.save(store);
+                showToast("Đã xóa video thành công!");
+                loadTableData();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -32,27 +32,29 @@ public class DocumentParserService {
      * Bóc tách toàn bộ nội dung từ các tệp tài liệu giáo trình (.pdf, .docx, .txt)
      */
     public ParsedDocumentResult parseDocument(MultipartFile file) throws Exception {
-        String filename = file.getOriginalFilename() != null ? file.getOriginalFilename().toLowerCase() : "document.txt";
-        log.info("Bắt đầu bóc tách văn bản từ tệp: {} ({} KB)", filename, file.getSize() / 1024);
+        return parseFromBytes(file.getBytes(), file.getOriginalFilename());
+    }
+
+    public ParsedDocumentResult parseFromBytes(byte[] bytes, String originalFilename) throws Exception {
+        String filename = originalFilename != null ? originalFilename.toLowerCase() : "document.txt";
+        log.info("Bắt đầu bóc tách văn bản từ tệp: {} ({} KB)", filename, bytes.length / 1024);
 
         if (filename.endsWith(".pdf")) {
-            return parsePdf(file);
+            return parsePdfBytes(bytes, originalFilename);
         } else if (filename.endsWith(".docx")) {
-            return parseDocx(file);
+            return parseDocxBytes(bytes, originalFilename);
         } else if (filename.endsWith(".txt")) {
-            return parseTxt(file);
+            return parseTxtBytes(bytes, originalFilename);
         } else {
             throw new IllegalArgumentException("Định dạng tệp không được hỗ trợ. Chỉ hỗ trợ .pdf, .docx, .txt");
         }
     }
 
-    private ParsedDocumentResult parsePdf(MultipartFile file) throws Exception {
+    private ParsedDocumentResult parsePdfBytes(byte[] bytes, String originalFilename) throws Exception {
         Map<Integer, String> pages = new LinkedHashMap<>();
         StringBuilder fullTextBuilder = new StringBuilder();
 
-        try (InputStream is = file.getInputStream();
-             PDDocument document = Loader.loadPDF(is.readAllBytes())) {
-
+        try (PDDocument document = Loader.loadPDF(bytes)) {
             int totalPages = document.getNumberOfPages();
             PDFTextStripper stripper = new PDFTextStripper();
 
@@ -69,7 +71,7 @@ public class DocumentParserService {
             }
 
             return ParsedDocumentResult.builder()
-                    .fileName(file.getOriginalFilename())
+                    .fileName(originalFilename)
                     .fullText(fullTextBuilder.toString().trim())
                     .totalPages(totalPages)
                     .pagesText(pages)
@@ -77,12 +79,12 @@ public class DocumentParserService {
         }
     }
 
-    private ParsedDocumentResult parseDocx(MultipartFile file) throws Exception {
+    private ParsedDocumentResult parseDocxBytes(byte[] bytes, String originalFilename) throws Exception {
         Map<Integer, String> pages = new LinkedHashMap<>();
         StringBuilder fullTextBuilder = new StringBuilder();
 
-        try (InputStream is = file.getInputStream();
-             XWPFDocument docx = new XWPFDocument(is)) {
+        try (java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
+             XWPFDocument docx = new XWPFDocument(bais)) {
 
             List<XWPFParagraph> paragraphs = docx.getParagraphs();
             int estimatedPage = 1;
@@ -109,7 +111,7 @@ public class DocumentParserService {
             }
 
             return ParsedDocumentResult.builder()
-                    .fileName(file.getOriginalFilename())
+                    .fileName(originalFilename)
                     .fullText(fullTextBuilder.toString().trim())
                     .totalPages(Math.max(1, pages.size()))
                     .pagesText(pages)
@@ -117,12 +119,12 @@ public class DocumentParserService {
         }
     }
 
-    private ParsedDocumentResult parseTxt(MultipartFile file) throws Exception {
-        String content = new String(file.getBytes(), StandardCharsets.UTF_8).trim();
+    private ParsedDocumentResult parseTxtBytes(byte[] bytes, String originalFilename) throws Exception {
+        String content = new String(bytes, StandardCharsets.UTF_8).trim();
         Map<Integer, String> pages = Map.of(1, content);
 
         return ParsedDocumentResult.builder()
-                .fileName(file.getOriginalFilename())
+                .fileName(originalFilename)
                 .fullText(content)
                 .totalPages(1)
                 .pagesText(pages)

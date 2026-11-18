@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#00539F" />
+<title>Đại học Nguyễn Trãi — Sinh viên là số 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<style>
+  :root{
+    --bg:#f6fbfe;
+    --surface:#ffffff;
+    --tint:#e5f7ff;
+    --ink:#0b2540;
+    --ink-2:#163a5c;
+    --sky:#00a2ff;
+    --sky-deep:#00539F;
+    --crimson:#DA291C;
+    --line:rgba(11,37,64,.1);
+    --muted:#55677c;
+    --serif:"Fraunces", Georgia, serif;
+    --sans:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --ease:cubic-bezier(.2,.7,.1,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  .container{width:min(1200px,100% - 2.5rem);margin-inline:auto}
+  .eyebrow{font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--sky-deep);font-weight:700}
+  .serif{font-family:var(--serif)}
+  em{font-style:italic;color:var(--sky-deep)}
+
+  .grain{position:fixed;inset:-50%;pointer-events:none;z-index:100;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 8s steps(10) infinite}
+  @keyframes grain{0%,100%{transform:translate(0,0)}20%{transform:translate(-5%,4%)}40%{transform:translate(4%,-6%)}60%{transform:translate(-3%,7%)}80%{transform:translate(6%,2%)}}
+
+  .progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--sky),var(--sky-deep));z-index:60}
+
+  .nav{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .4s,backdrop-filter .4s,padding .4s,box-shadow .4s;padding:1.25rem 0}
+  .nav.scrolled{background:rgba(255,255,255,.82);backdrop-filter:blur(16px);padding:.75rem 0;box-shadow:0 1px 0 var(--line),0 10px 30px -20px rgba(11,37,64,.25)}
+  .nav .container{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .brand{display:flex;align-items:center;gap:.65rem;font-family:var(--serif);font-size:1.25rem;font-weight:600;letter-spacing:-.01em}
+  .crest{width:36px;height:36px;border-radius:50% 50% 6px 6px;background:linear-gradient(135deg,var(--sky-deep),var(--crimson));display:grid;place-items:center;font-size:.9rem;color:#fff;font-weight:700}
+  .nav ul{display:flex;gap:2rem;list-style:none;font-size:.9rem;color:var(--ink-2);font-weight:500}
+  .nav ul a{position:relative}
+  .nav ul a::after{content:"";position:absolute;left:0;bottom:-4px;height:2px;width:100%;background:var(--sky-deep);transform:scaleX(0);transform-origin:right;transition:transform .45s var(--ease)}
+  .nav ul a:hover::after{transform:scaleX(1);transform-origin:left}
+  .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.75rem 1.35rem;border-radius:999px;font-weight:600;font-size:.9rem;transition:transform .3s var(--ease),background .3s,color .3s,box-shadow .3s;will-change:transform;border:none;cursor:pointer}
+  .btn-primary{background:var(--sky-deep);color:#fff;box-shadow:0 10px 25px -10px rgba(0,83,159,.8)}
+  .btn-primary:hover{background:var(--ink);color:#fff;box-shadow:0 10px 30px -12px rgba(11,37,64,.6);transform:translateY(-2px)}
+  .btn-ghost{border:1px solid rgba(11,37,64,.2);background:rgba(255,255,255,.6);color:var(--ink)}
+  .btn-ghost:hover{background:var(--ink);color:#fff;border-color:var(--ink);transform:translateY(-2px)}
+  .btn .arrow{transition:transform .3s var(--ease);display:inline-block}
+  .btn:hover .arrow{transform:translateX(4px)}
+
+  .hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden;padding-bottom:8vh}
+  .hero-bg{position:absolute;inset:-5%;transform-origin:50% 60%;animation:heroZoom 2.6s var(--ease) both;will-change:transform}
+  .hero-bg .layer{position:absolute;inset:0}
+  .sky{background:
+      radial-gradient(55% 50% at 72% 28%, rgba(0,162,255,.4), transparent 70%),
+      radial-gradient(45% 55% at 18% 70%, rgba(218,41,28,.15), transparent 70%),
+      linear-gradient(180deg,#eef8ff 0%,#f6fbfe 70%,#f6fbfe 100%)}
+  .orb{position:absolute;border-radius:50%;filter:blur(60px);animation:float 14s ease-in-out infinite}
+  .orb.a{width:38vw;height:38vw;background:#33ccff;top:2%;right:6%;opacity:.28}
+  .orb.b{width:30vw;height:30vw;background:#00539F;bottom:5%;left:5%;opacity:.22;animation-delay:-5s}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,-4%) scale(1.08)}}
+  @keyframes heroZoom{from{transform:scale(1.35);filter:blur(8px)}to{transform:scale(1);filter:blur(0)}}
+
+  .arches{position:absolute;left:0;right:0;bottom:0;height:62vh;display:flex;align-items:flex-end;justify-content:center;gap:1.2vw;padding-inline:3vw}
+  .arch{flex:1;max-width:140px;border-radius:999px 999px 0 0;background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.15));border:1px solid rgba(0,83,159,.25);border-bottom:none;transform:translateY(100%);animation:rise 1.6s var(--ease) forwards;position:relative;overflow:hidden}
+  .arch::before{content:"";position:absolute;inset:18% 22% 0;border-radius:999px 999px 0 0;background:linear-gradient(180deg,rgba(0,162,255,.35),transparent 85%);animation:glow 4s ease-in-out infinite}
+  @keyframes rise{to{transform:translateY(0)}}
+  @keyframes glow{0%,100%{opacity:.2}50%{opacity:.85}}
+
+  .hero-content{position:relative;z-index:2}
+  .hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(3.2rem,9.5vw,8.5rem);line-height:.92;letter-spacing:-.03em;margin:1rem 0 1.5rem}
+  .hero h1 .line{display:block;overflow:hidden;padding-bottom:.06em}
+  .hero h1 .word{display:inline-block;transform:translateY(110%);animation:up 1.2s var(--ease) forwards}
+  @keyframes up{to{transform:translateY(0)}}
+  .hero-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:2rem}
+  .hero p.lead{max-width:460px;color:var(--ink-2);font-size:1.05rem}
+  .fade-in{opacity:0;transform:translateY(20px);animation:fadeUp 1s var(--ease) forwards}
+  @keyframes fadeUp{to{opacity:1;transform:none}}
+  .scroll-cue{position:absolute;right:2.5rem;bottom:2.5rem;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.6rem;font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);writing-mode:vertical-rl}
+  .scroll-cue span{width:2px;height:60px;background:linear-gradient(var(--sky-deep),transparent);animation:cue 2s ease-in-out infinite;transform-origin:top}
+  @keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(0);transform-origin:bottom}}
+
+  .marquee{border-block:1px solid var(--line);overflow:hidden;padding:1.4rem 0;background:var(--surface)}
+  .marquee-track{display:flex;gap:3rem;width:max-content;animation:marquee 36s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  .marquee-track span{font-family:var(--serif);font-size:clamp(1.3rem,2.8vw,2rem);font-style:italic;color:var(--ink-2);white-space:nowrap;display:flex;align-items:center;gap:3rem}
+  .marquee-track span::after{content:"✦";font-style:normal;font-size:.85rem;color:var(--crimson)}
+  @keyframes marquee{to{transform:translateX(-50%)}}
+
+  section{position:relative}
+  .section{padding:clamp(5rem,11vw,8.5rem) 0}
+
+  .reveal{opacity:0;transform:translateY(36px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+  .reveal.zoom{transform:scale(.94)}
+  .reveal.in{opacity:1;transform:none}
+  .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+  .intro-grid{display:grid;grid-template-columns:1fr;gap:2.5rem}
+  @media(min-width:900px){.intro-grid{grid-template-columns:1.2fr 1.2fr;align-items:end}}
+  .intro h2{font-family:var(--serif);font-weight:300;font-size:clamp(2.2rem,4.5vw,3.8rem);line-height:1.08;letter-spacing:-.02em}
+  .intro p{color:var(--muted);font-size:1.05rem;max-width:540px}
+
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:4.5rem}
+  @media(min-width:800px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat{background:var(--surface);padding:2.2rem 1.6rem;border-radius:20px;border:1px solid var(--line);transition:background .4s,transform .4s var(--ease),box-shadow .4s}
+  .stat:hover{background:var(--tint);transform:translateY(-6px);box-shadow:0 20px 40px -24px rgba(0,83,159,.4)}
+  .stat .num{font-family:var(--serif);font-size:clamp(2.4rem,4.5vw,3.6rem);font-weight:300;line-height:1;color:var(--ink)}
+  .stat .num sup{font-size:.5em;color:var(--sky-deep);margin-left:.1em;font-weight:600}
+  .stat .label{margin-top:.6rem;color:var(--muted);font-size:.85rem;line-height:1.4}
+
+  .zoom-wrap{height:220vh;position:relative}
+  .zoom-sticky{position:sticky;top:0;height:100vh;display:grid;place-items:center;overflow:hidden}
+  .zoom-frame{width:100%;height:100%;color:#fff;border-radius:calc(var(--r,1)*360px) calc(var(--r,1)*360px) 24px 24px;overflow:hidden;position:relative;transform:scale(var(--s,.45));will-change:transform;
+    background:
+      radial-gradient(40% 40% at 50% 30%, rgba(0,162,255,.9), transparent 70%),
+      radial-gradient(70% 60% at 15% 85%, rgba(0,83,159,.95), transparent 70%),
+      radial-gradient(70% 60% at 85% 85%, rgba(218,41,28,.8), transparent 70%),
+      linear-gradient(160deg,#00539F,#0b2540)}
+  .zoom-frame .inner{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:2rem;text-shadow:0 2px 30px rgba(11,37,64,.5)}
+  .zoom-frame em{color:#fff}
+  .zoom-frame h2{font-family:var(--serif);font-weight:300;font-size:clamp(2.4rem,7vw,6.5rem);line-height:.95;letter-spacing:-.03em;opacity:var(--o,0);transform:translateY(calc((1 - var(--o,0)) * 40px))}
+  .zoom-frame p{margin-top:1.2rem;color:#eefaff;max-width:500px;margin-inline:auto;opacity:var(--o,0);font-size:1.05rem}
+  .zoom-rings{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+  .zoom-rings i{position:absolute;border:1px solid rgba(255,255,255,.35);border-radius:50%;animation:ring 6s linear infinite}
+  .zoom-rings i:nth-child(1){width:30vmin;height:30vmin}
+  .zoom-rings i:nth-child(2){width:55vmin;height:55vmin;animation-delay:-2s}
+  .zoom-rings i:nth-child(3){width:80vmin;height:80vmin;animation-delay:-4s}
+  @keyframes ring{0%{transform:scale(.8);opacity:0}30%{opacity:1}100%{transform:scale(1.3);opacity:0}}
+
+  .head-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1.5rem;margin-bottom:2.2rem}
+  .head-row h2{font-family:var(--serif);font-weight:300;font-size:clamp(2.2rem,4.5vw,3.8rem);line-height:1;letter-spacing:-.02em}
+  
+  .programs-wrap{height:340vh;position:relative}
+  .programs-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+  .programs-track{display:flex;gap:2rem;padding-left:max(1.25rem,calc((100vw - 1200px)/2));width:max-content;will-change:transform}
+  
+  .card{width:clamp(300px,32vw,430px);aspect-ratio:4/5.2;border-radius:24px;overflow:hidden;position:relative;color:#fff;flex-shrink:0;box-shadow:0 20px 50px -25px rgba(11,37,64,.55);display:block;transition:box-shadow .4s,transform .4s;cursor:pointer;isolation:isolate}
+  .card:hover{box-shadow:0 30px 65px -20px rgba(0,83,159,.6);transform:translateY(-6px)}
+  .card .art{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .2s ease-out;will-change:transform;z-index:-1}
+  .card:hover .art{transform:scale(1.08)}
+  .card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(11,37,64,.85) 75%,rgba(11,37,64,.97) 100%);z-index:-1}
+  .card .body{position:absolute;inset:auto 0 0 0;padding:1.8rem;z-index:2}
+  .card .idx{position:absolute;top:1.3rem;left:1.5rem;font-family:var(--serif);font-size:1.05rem;color:rgba(255,255,255,.95);font-weight:600}
+  .card h3{font-family:var(--serif);font-weight:400;font-size:1.55rem;line-height:1.2;margin-top:.4rem}
+  .card p{color:#d8eef8;font-size:.88rem;margin-top:.4rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card .tag{display:inline-block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--sky-deep);padding:.25rem .75rem;border-radius:999px;margin-bottom:.5rem;font-weight:700}
+  .card:focus-visible{outline:3px solid var(--sky);outline-offset:4px}
+  .meta-pills{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.8rem;font-size:.78rem;color:#b2ebff}
+  .meta-pills .price-pill{background:rgba(255,255,255,.2);padding:.2rem .6rem;border-radius:999px;font-weight:600;color:#fff}
+  .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--sky);margin-right:4px}
+
+  .courses-loading{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:4rem 1rem;color:var(--muted)}
+  .spinner{width:34px;height:34px;border:3px solid rgba(11,37,64,.12);border-top-color:var(--sky-deep);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .quote{padding:clamp(5rem,12vw,9.5rem) 0;background:var(--ink);color:#fff;overflow:hidden;position:relative}
+  .quote::before{content:"";position:absolute;width:60vw;height:60vw;right:-20vw;top:-30vw;border-radius:50%;background:radial-gradient(circle,rgba(0,162,255,.25),transparent 65%);pointer-events:none}
+  .quote .eyebrow{color:var(--sky)}
+  .quote blockquote{font-family:var(--serif);font-weight:300;font-size:clamp(1.8rem,4vw,3.2rem);line-height:1.2;letter-spacing:-.015em;margin-top:1.5rem;max-width:1000px;position:relative}
+  .quote blockquote .w{opacity:.18;transition:opacity .4s}
+  .quote blockquote .w.on{opacity:1}
+  .quote cite{display:flex;align-items:center;gap:1rem;margin-top:2.5rem;font-style:normal}
+  .avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--sky-deep),var(--crimson));display:grid;place-items:center;font-weight:700;color:#fff;font-family:var(--serif);font-size:1.1rem}
+  .quote cite strong{display:block;font-size:1rem;font-weight:600}
+  .quote cite small{color:rgba(255,255,255,.6);font-size:.85rem}
+
+  .life-wrap{height:380vh;position:relative}
+  .life-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+  .life-track{display:flex;gap:2rem;padding-left:max(1.25rem,calc((100vw - 1200px)/2));width:max-content;will-change:transform}
+  .life-card{width:clamp(280px,34vw,440px);aspect-ratio:4/5;border-radius:24px;overflow:hidden;position:relative;color:#fff;flex-shrink:0;box-shadow:0 20px 50px -25px rgba(11,37,64,.5)}
+  .life-card .bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .2s ease-out;will-change:transform}
+  .life-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(11,37,64,.92) 95%)}
+  .life-card .caption{position:absolute;inset:auto 0 0 0;padding:2rem;z-index:2}
+  .life-card h3{font-family:var(--serif);font-size:1.5rem;font-weight:400;line-height:1.2}
+  .life-card p{color:#d8eef8;font-size:.88rem;margin-top:.4rem;line-height:1.4}
+
+  .events{border-top:1px solid var(--line)}
+  .event{display:grid;grid-template-columns:100px 1fr auto;align-items:center;gap:2rem;padding:2rem 0;border-bottom:1px solid var(--line);transition:background .3s,padding .3s var(--ease)}
+  .event:hover{background:var(--tint);padding-inline:1.5rem;border-radius:16px}
+  .event .date{font-family:var(--serif);font-size:2.2rem;line-height:1;font-weight:300}
+  .event .date small{display:block;font-family:var(--sans);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sky-deep);margin-top:.3rem;font-weight:700}
+  .event:hover .date small{color:var(--ink)}
+  .event h3{font-family:var(--serif);font-weight:400;font-size:clamp(1.2rem,2.2vw,1.6rem)}
+  .event .meta{color:var(--muted);font-size:.88rem}
+  .event:hover .meta{color:var(--ink-2)}
+  .event .go{width:46px;height:46px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;transition:transform .5s var(--ease),background .3s}
+  .event:hover .go{transform:rotate(-45deg);background:var(--sky-deep);color:#fff;border-color:var(--sky-deep)}
+  @media(max-width:600px){.event{grid-template-columns:70px 1fr}.event .go{display:none}}
+
+  .cta{padding:clamp(5rem,12vw,9rem) 0;text-align:center;overflow:hidden}
+  .cta-bg{position:absolute;inset:0;background:radial-gradient(55% 65% at 50% 100%,rgba(0,162,255,.3),transparent 70%);pointer-events:none}
+  .cta h2{font-family:var(--serif);font-weight:300;font-size:clamp(2.8rem,9vw,8rem);line-height:.92;letter-spacing:-.04em}
+  .cta p{color:var(--muted);margin:1.4rem auto 2.2rem;max-width:460px;font-size:1.05rem}
+  .magnetic{padding:1rem 2rem;font-size:.95rem}
+
+  footer{border-top:1px solid var(--line);padding:2.5rem 0;color:var(--muted);font-size:.85rem;background:var(--surface)}
+  footer .container{display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:space-between;align-items:center}
+  footer nav{display:flex;gap:1.5rem;flex-wrap:wrap}
+  footer a:hover{color:var(--sky-deep)}
+
+  .cursor{position:fixed;top:0;left:0;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--sky-deep);pointer-events:none;z-index:200;transform:translate(-50%,-50%);transition:width .3s var(--ease),height .3s var(--ease),background .3s}
+  .cursor.big{width:76px;height:76px;background:rgba(0,162,255,.16)}
+  @media(hover:none){.cursor{display:none}}
+
+  /* Modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(11,37,64,.6);backdrop-filter:blur(10px);z-index:1000;display:none;place-items:center;padding:1.5rem;opacity:0;transition:opacity .3s var(--ease)}
+  .modal-overlay.open{display:grid;opacity:1}
+  .modal-card{background:var(--surface);border:1px solid var(--line);border-radius:24px;width:min(460px,100%);padding:1.8rem;box-shadow:0 30px 80px -20px rgba(11,37,64,.4);transform:scale(.95);transition:transform .3s var(--ease)}
+  .modal-overlay.open .modal-card{transform:scale(1)}
+  .acc-item{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-radius:14px;border:1px solid var(--line);margin-top:.7rem;background:var(--bg);transition:background .2s,transform .2s;cursor:pointer}
+  .acc-item:hover{background:var(--tint);transform:translateY(-2px)}
+
+  @media(max-width:820px){.nav ul{display:none}.scroll-cue{display:none}}
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+
+<!-- NAVIGATION -->
+<header class="nav" id="nav">
+  <div class="container">
+    <a href="#top" class="brand" aria-label="Đại học Nguyễn Trãi">
+      <img src="portal/assets/images/logo-ntu.jpg" alt="Logo Đại học Nguyễn Trãi" style="height:44px;width:auto;object-fit:contain;border-radius:8px;" />
+      <span>Đại học Nguyễn Trãi</span>
+    </a>
+    <nav aria-label="Menu chính">
+      <ul>
+        <li><a href="#about">Giới thiệu</a></li>
+        <li><a href="#programs">Khóa học</a></li>
+        <li><a href="#life">Khuôn viên</a></li>
+        <li><a href="#events">Sự kiện</a></li>
+      </ul>
+    </nav>
+    <div style="display:flex;gap:.6rem;align-items:center">
+      <button type="button" onclick="openTestAccountsModal()" class="btn btn-ghost" style="padding:.6rem 1rem;font-size:.82rem">Tài khoản mẫu</button>
+      <a href="portal/login.html" class="btn btn-primary">Cổng Sinh Viên <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-bg" id="heroBg" aria-hidden="true">
+      <div class="layer sky"></div>
+      <div class="orb a"></div>
+      <div class="orb b"></div>
+      <div class="arches" id="arches"></div>
+    </div>
+    <div class="container hero-content">
+      <p class="eyebrow fade-in" style="animation-delay:.9s">Hệ sinh thái đào tạo số · Đại học ứng dụng</p>
+      <h1 id="hero-title">
+        <span class="line"><span class="word" style="animation-delay:.5s">Sinh viên là</span></span>
+        <span class="line"><span class="word serif" style="animation-delay:.7s"><em>số 1.</em></span></span>
+      </h1>
+      <div class="hero-row">
+        <p class="lead fade-in" style="animation-delay:1.2s">Tiên phong số hóa toàn diện với công nghệ sinh trắc học FaceID 3D và trợ lý AI RAG giải đáp giáo trình thông minh.</p>
+        <div class="fade-in" style="animation-delay:1.4s;display:flex;gap:.75rem;flex-wrap:wrap">
+          <a href="#programs" class="btn btn-primary">Xem khóa học <span class="arrow" aria-hidden="true">→</span></a>
+          <a href="portal/study.html" class="btn btn-ghost">Phòng học bài giảng</a>
+          <a href="portal/face_enrollment.html" class="btn btn-ghost">Đăng ký FaceID 3D</a>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true">Cuộn xuống<span></span></div>
+  </section>
+
+  <!-- MARQUEE (DYNAMIC FACULTIES FROM DB) -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack">
+      <span>Khoa Công nghệ Thông tin</span><span>Khoa Điện tử - Viễn thông &amp; IoT</span><span>Khoa Kinh tế &amp; Quản trị</span><span>Mỹ thuật &amp; Thiết kế</span><span>Ngôn ngữ Quốc tế</span>
+      <span>Khoa Công nghệ Thông tin</span><span>Khoa Điện tử - Viễn thông &amp; IoT</span><span>Khoa Kinh tế &amp; Quản trị</span><span>Mỹ thuật &amp; Thiết kế</span><span>Ngôn ngữ Quốc tế</span>
+    </div>
+  </div>
+
+  <!-- INTRO & REAL STATS FROM DATABASE -->
+  <section class="section intro" id="about" aria-labelledby="about-title">
+    <div class="container">
+      <div class="intro-grid">
+        <div>
+          <p class="eyebrow reveal">Về chúng tôi</p>
+          <h2 id="about-title" class="reveal d1" style="margin-top:1rem">Khát vọng thanh xuân, <em>khát vọng</em> khởi nghiệp.</h2>
+        </div>
+        <p class="reveal d2">Đào tạo công dân toàn cầu thực chiến, gắn kết giảng đường với doanh nghiệp và ứng dụng công nghệ AI tiên tiến trong từng môn học.</p>
+      </div>
+      <div class="stats">
+        <div class="stat reveal zoom"><div class="num"><span id="stat-courses" data-count="0">0</span><sup>+</sup></div><div class="label">Khóa học số hóa trực tuyến (Database)</div></div>
+        <div class="stat reveal zoom d1"><div class="num"><span id="stat-students" data-count="0">0</span><sup>+</sup></div><div class="label">Sinh viên đang học tập thực tế</div></div>
+        <div class="stat reveal zoom d2"><div class="num"><span id="stat-faculties" data-count="0">0</span></div><div class="label">Khoa đào tạo trọng điểm</div></div>
+        <div class="stat reveal zoom d3"><div class="num"><span id="stat-face" data-count="0">0</span><sup>+</sup></div><div class="label">Hồ sơ khuôn mặt FaceID 3D</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ZOOM SHOWCASE -->
+  <section class="zoom-wrap" id="zoomWrap" aria-labelledby="zoom-title">
+    <div class="zoom-sticky">
+      <div class="zoom-frame" id="zoomFrame">
+        <div class="zoom-rings" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="inner">
+          <div>
+            <h2 id="zoom-title">Không Gian Số<br/><em>Khai phóng tri thức.</em></h2>
+            <p>Hệ sinh thái học tập không giới hạn — Tích hợp điểm danh khuôn mặt ArcFace và trợ lý AI RAG phản hồi dưới 10ms.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS (HORIZONTAL STICKY TRACK - Y HỆT KHUÔN VIÊN / ĐỜI SỐNG HỌC ĐƯỜNG) -->
+  <section class="programs-wrap" id="programs" aria-labelledby="programs-title">
+    <div class="programs-sticky">
+      <div class="container" style="margin-bottom:1.5rem;">
+        <div class="head-row" style="margin-bottom:0;">
+          <div>
+            <p class="eyebrow">Kho Học Liệu &amp; Khóa Học Số</p>
+            <h2 id="programs-title" class="serif" style="font-weight:300;font-size:clamp(2.2rem,4.5vw,3.8rem);line-height:1;margin-top:.6rem">Khám phá <em>khóa học.</em></h2>
+          </div>
+          <a href="portal/index.html" class="btn btn-ghost">Xem tất cả trên Cổng SV <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <div class="programs-track" id="realCoursesGrid">
+        <div class="courses-loading reveal in">
+          <div class="spinner"></div>
+          <span>Đang kết nối cơ sở dữ liệu khóa học NTU...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE WITH SCROLL WORD LIGHTING -->
+  <section class="quote" aria-labelledby="quote-label">
+    <div class="container">
+      <p class="eyebrow" id="quote-label">Thông điệp nhà trường</p>
+      <blockquote id="quoteText">Đại học Nguyễn Trãi là nơi nuôi dưỡng đam mê, bứt phá giới hạn và biến ước mơ khởi nghiệp của thế hệ trẻ thành hiện thực.</blockquote>
+      <cite><span class="avatar" aria-hidden="true">N</span><span><strong>Trường Đại Học Nguyễn Trãi</strong><small>Số 28A Lê Trọng Tấn, Hà Đông, Hà Nội</small></span></cite>
+    </div>
+  </section>
+
+  <!-- HORIZONTAL CAMPUS LIFE TRACK -->
+  <section class="life-wrap" id="life" aria-labelledby="life-title">
+    <div class="life-sticky">
+      <div class="container">
+        <p class="eyebrow">Đời sống học đường</p>
+        <h2 id="life-title" class="serif" style="font-weight:300;font-size:clamp(2.2rem,4.5vw,3.8rem);line-height:1;margin-top:.6rem">Khuôn viên <em>sáng tạo.</em></h2>
+      </div>
+      <div class="life-track" id="lifeTrack">
+        <!-- CARD 1 -->
+        <div class="life-card">
+          <div class="bg" style="background-image:url('portal/assets/images/ntu-startup-arena.jpg')"></div>
+          <div class="caption">
+            <span class="tag" style="background:rgba(99,102,241,.9);color:#fff;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem">Khởi nghiệp Đổi mới Sáng tạo</span>
+            <h3>Chung Kết NTU Startup Arena</h3>
+            <p>Bệ phóng các dự án khởi nghiệp công nghệ AI &amp; mô hình kinh tế tuần hoàn của sinh viên Đại học Nguyễn Trãi.</p>
+          </div>
+        </div>
+        <!-- CARD 2 -->
+        <div class="life-card">
+          <div class="bg" style="background-image:url('portal/assets/images/ntu-the-next-you.jpg')"></div>
+          <div class="caption">
+            <span class="tag" style="background:rgba(14,165,233,.9);color:#fff;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem">Sự kiện &amp; Tài năng</span>
+            <h3>Cuộc Thi "NTU - The Next You"</h3>
+            <p>Định vị bản sắc cá nhân và trao tặng học bổng tài năng từ đối tác chiến lược Tập đoàn Atlantic.</p>
+          </div>
+        </div>
+        <!-- CARD 3 -->
+        <div class="life-card">
+          <div class="bg" style="background-image:url('portal/assets/images/ntu-thien-nguyen-kim-bang.jpg')"></div>
+          <div class="caption">
+            <span class="tag" style="background:rgba(225,29,72,.9);color:#fff;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem">Hoạt động Cộng đồng</span>
+            <h3>Tri Ân Người Có Công</h3>
+            <p>Hành trình về nguồn thăm hỏi, giao lưu và tri ân các bác thương bệnh binh tại Trung tâm Kim Bảng nhân dịp 30/4.</p>
+          </div>
+        </div>
+        <!-- CARD 4 -->
+        <div class="life-card">
+          <div class="bg" style="background-image:url('portal/assets/images/ntu-bong-da-nu-vo-dich.jpg')"></div>
+          <div class="caption">
+            <span class="tag" style="background:rgba(245,158,11,.9);color:#fff;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem">Thể thao &amp; Sức trẻ</span>
+            <h3>NTU Women's Cup Vô Địch</h3>
+            <p>Đội tuyển nữ Khối Ngoại Ngữ nâng cao cúp vàng vô địch trong niềm tự hào và tiếng reo hò rực lửa.</p>
+          </div>
+        </div>
+        <!-- CARD 5 -->
+        <div class="life-card">
+          <div class="bg" style="background-image:url('portal/assets/images/ntu-vinh-danh-thu-khoa.jpg')"></div>
+          <div class="caption">
+            <span class="tag" style="background:rgba(16,185,129,.9);color:#fff;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem">Vinh danh &amp; Học thuật</span>
+            <h3>Vinh Danh Thủ Khoa Tốt Nghiệp</h3>
+            <p>Tuyên dương Thủ khoa Nguyễn Thị Minh Nguyệt (K22 Quốc tế học - Hàn học) với thành tích toàn diện xuất sắc.</p>
+          </div>
+        </div>
+        <!-- CARD 6 -->
+        <div class="life-card">
+          <div class="bg" style="background-image:url('portal/assets/images/ntu-bong-da-nam-vo-dich.jpg')"></div>
+          <div class="caption">
+            <span class="tag" style="background:rgba(14,165,233,.9);color:#fff;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem">Thể thao &amp; Giao lưu</span>
+            <h3>Bế Mạc NTU Champions League</h3>
+            <p>Giải đấu thường niên gắn kết tình thầy trò và nâng cao cúp vàng vô địch mùa giải thể thao mới.</p>
+          </div>
+        </div>
+        <!-- CARD 7 -->
+        <div class="life-card">
+          <div class="bg" style="background-image:url('portal/assets/images/ntu-dai-le-tot-nghiep.jpg')"></div>
+          <div class="caption">
+            <span class="tag" style="background:rgba(217,119,6,.9);color:#fff;padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem">Lễ Tốt Nghiệp NTU</span>
+            <h3>Đại Lễ Trao Bằng Cử Nhân &amp; Kỹ Sư</h3>
+            <p>Rực rỡ khoảnh khắc tung mũ cử nhân chào đón thế hệ công dân toàn cầu NTU sẵn sàng hội nhập thế giới.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTS & ACADEMIC SCHEDULE -->
+  <section class="section" id="events" aria-labelledby="events-title">
+    <div class="container">
+      <div class="head-row">
+        <div>
+          <p class="eyebrow reveal">Lịch trình &amp; Học vụ</p>
+          <h2 id="events-title" class="reveal d1" style="margin-top:1rem">Sự kiện <em>nổi bật.</em></h2>
+        </div>
+        <a href="portal/index.html" class="btn btn-ghost reveal d2">Xem lịch học vụ <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="events">
+        <a href="portal/index.html" class="event reveal">
+          <div class="date">15<small>Tháng 11</small></div>
+          <div>
+            <h3>Đăng ký Khóa học &amp; Học phần Trực tuyến Kỳ II</h3>
+            <div class="meta">Hệ thống LMS NTU · Tất cả các khoa và chuyên ngành</div>
+          </div>
+          <div class="go" aria-hidden="true">→</div>
+        </a>
+        <a href="portal/study.html" class="event reveal d1">
+          <div class="date">22<small>Tháng 11</small></div>
+          <div>
+            <h3>Chuyên đề Thị giác máy tính với Python &amp; FastAPI</h3>
+            <div class="meta">Phòng Lab AI &amp; Trực tuyến qua Cloudinary CDN Stream</div>
+          </div>
+          <div class="go" aria-hidden="true">→</div>
+        </a>
+        <a href="portal/face_enrollment.html" class="event reveal d2">
+          <div class="date">28<small>Tháng 11</small></div>
+          <div>
+            <h3>Cập nhật Hồ sơ Điểm danh Sinh trắc học FaceID 3D</h3>
+            <div class="meta">Cổng Sinh Viên NTU · Quét 3 góc mặt ArcFace</div>
+          </div>
+          <div class="go" aria-hidden="true">→</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA WITH MAGNETIC BUTTON -->
+  <section class="cta" id="apply" aria-labelledby="cta-title">
+    <div class="cta-bg" aria-hidden="true"></div>
+    <div class="container reveal">
+      <p class="eyebrow">Hành trình mới</p>
+      <h2 id="cta-title">Bắt đầu ngay<br/>hôm nay.</h2>
+      <p>Trải nghiệm hệ thống đào tạo số hiện đại nhất cùng Trường Đại học Nguyễn Trãi.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="portal/login.html" class="btn btn-primary magnetic" id="magnetic">Vào Cổng Sinh Viên <span class="arrow" aria-hidden="true">→</span></a>
+        <button type="button" onclick="openTestAccountsModal()" class="btn btn-ghost">Tài Khoản Mẫu (1-Chạm)</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:1.2rem">
+      <img src="portal/assets/images/logo-ntu.jpg" alt="Logo NTU" style="height:48px;width:auto;object-fit:contain;border-radius:8px;background:#fff;padding:2px" />
+      <div>
+        <p style="font-weight:700;color:var(--ink)">© 2026 Trường Đại học Nguyễn Trãi (NTU)</p>
+        <p style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Số 28A Lê Trọng Tấn, La Khê, Hà Đông, Hà Nội • Hotline: 0981 924 302</p>
+      </div>
+    </div>
+    <nav>
+      <a href="portal/login.html">Cổng Sinh Viên</a>
+      <a href="portal/study.html">Phòng Học Online</a>
+      <a href="portal/face_enrollment.html">FaceID 3D</a>
+      <a href="admin/index.html">Quản Trị Viên</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- MODAL: TÀI KHOẢN MẪU (1-CHẠM ĐĂNG NHẬP NHANH) -->
+<div class="modal-overlay" id="testAccountsModal" onclick="if(event.target===this) closeTestAccountsModal()">
+  <div class="modal-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:.85rem">
+      <div>
+        <h3 style="font-family:var(--serif);font-size:1.3rem;font-weight:500">Tài khoản mẫu NTU</h3>
+        <p style="font-size:.82rem;color:var(--muted)">Chọn tài khoản để điền và truy cập ngay</p>
+      </div>
+      <button type="button" onclick="closeTestAccountsModal()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted)">&times;</button>
+    </div>
+    <div style="margin-top:.85rem">
+      <div class="acc-item" onclick="loginWithAccount('nct30000', '123456')">
+        <div>
+          <div style="font-weight:600;font-size:.92rem">Nguyễn Công Tùng (Sinh viên CNTT)</div>
+          <div style="font-size:.8rem;color:var(--muted)">MSSV: <code style="color:var(--sky-deep)">nct30000</code> • Mật khẩu: 123456</div>
+        </div>
+        <span class="btn btn-primary" style="padding:.4rem .85rem;font-size:.8rem">Vào học</span>
+      </div>
+      <div class="acc-item" onclick="loginWithAccount('levanbang123@gmail.com', '123456')">
+        <div>
+          <div style="font-weight:600;font-size:.92rem">Lê Văn Bằng (Sinh viên IoT)</div>
+          <div style="font-size:.8rem;color:var(--muted)">Email: <code style="color:var(--sky-deep)">levanbang123@gmail.com</code> • Mật khẩu: 123456</div>
+        </div>
+        <span class="btn btn-primary" style="padding:.4rem .85rem;font-size:.8rem">Vào học</span>
+      </div>
+      <div class="acc-item" onclick="loginWithAccount('admin', '123456')">
+        <div>
+          <div style="font-weight:600;font-size:.92rem">Quản Trị Viên Hệ Thống (Admin)</div>
+          <div style="font-size:.8rem;color:var(--muted)">Tài khoản: <code style="color:var(--crimson)">admin</code> • Mật khẩu: 123456</div>
+        </div>
+        <span class="btn btn-ghost" style="padding:.4rem .85rem;font-size:.8rem">Quản trị</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ĐĂNG KÝ KHÓA HỌC & THANH TOÁN TẠO TÀI KHOẢN TẠM THỜI -->
+<div class="modal-overlay" id="courseEnrollModal" onclick="if(event.target===this) closeCourseEnrollModal()">
+  <div class="modal-card" style="width:min(540px, 95vw); max-height:90vh; overflow-y:auto; border-radius:24px; padding:2rem;">
+    
+    <!-- MODAL HEADER -->
+    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); padding-bottom:1rem; margin-bottom:1.2rem;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:40px; height:40px; border-radius:12px; background:var(--tint); display:grid; place-items:center; color:var(--sky-deep);">
+          <span class="material-symbols-outlined" style="font-size:22px;">school</span>
+        </div>
+        <div>
+          <h3 id="enrollModalTitle" style="font-family:var(--serif); font-size:1.25rem; font-weight:600; color:var(--ink); margin:0;">Đăng Ký Khóa Học NTU</h3>
+          <p style="font-size:.78rem; color:var(--muted); margin:2px 0 0;">Khởi tạo tài khoản học viên & ghi danh trực tuyến</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeCourseEnrollModal()" style="background:none; border:none; font-size:1.6rem; cursor:pointer; color:var(--muted); line-height:1;">&times;</button>
+    </div>
+
+    <!-- COURSE PREVIEW BANNER -->
+    <div id="enrollCourseBanner" style="background:var(--bg); border:1px solid var(--line); border-radius:16px; padding:1rem; margin-bottom:1.2rem; display:flex; gap:12px; align-items:center;">
+      <img id="enrollCourseThumb" src="portal/assets/images/bxh-qs-05-1.jpg" alt="Bìa" style="width:70px; height:50px; object-fit:cover; border-radius:10px; border:1px solid var(--line);" />
+      <div style="flex:1; overflow:hidden;">
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+          <span id="enrollCourseMajor" class="tag" style="font-size:.68rem; padding:2px 8px; border-radius:999px; background:var(--tint); color:var(--sky-deep); font-weight:700;">CHUYÊN NGÀNH</span>
+          <span id="enrollCoursePrice" style="font-weight:800; font-size:.88rem; color:#b91c1c;">250.000 đ</span>
+        </div>
+        <h4 id="enrollCourseName" style="margin:0; font-size:.92rem; font-weight:700; color:var(--ink); white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">Tên khóa học</h4>
+      </div>
+    </div>
+
+    <!-- VIEW 1: BIỂU MẪU ĐIỀN THÔNG TIN HỌC VIÊN -->
+    <div id="enrollStepForm">
+      <form id="courseRegisterForm" onsubmit="submitCourseEnrollment(event)">
+        <input type="hidden" id="enrollCourseId" value="">
+        
+        <div style="margin-bottom:1rem;">
+          <label style="display:block; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:.4rem;">Họ và tên học viên *</label>
+          <input type="text" id="enrollFullName" required placeholder="vd: Nguyễn Công Tùng" 
+                 style="width:100%; padding:.75rem 1rem; border:1px solid var(--line); border-radius:12px; font-size:.9rem; background:var(--surface); color:var(--ink); outline:none;" />
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:1rem;">
+          <div>
+            <label style="display:block; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:.4rem;">Số điện thoại *</label>
+            <input type="tel" id="enrollPhone" required placeholder="vd: 0987654321" 
+                   style="width:100%; padding:.75rem 1rem; border:1px solid var(--line); border-radius:12px; font-size:.9rem; background:var(--surface); color:var(--ink); outline:none;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:.4rem;">Email nhận tài khoản *</label>
+            <input type="email" id="enrollEmail" required placeholder="vd: student@gmail.com" 
+                   style="width:100%; padding:.75rem 1rem; border:1px solid var(--line); border-radius:12px; font-size:.9rem; background:var(--surface); color:var(--ink); outline:none;" />
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.2rem;">
+          <label style="display:block; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:.4rem;">
+            Mật khẩu đăng nhập mong muốn
+            <small style="font-weight:400; text-transform:none; color:var(--muted);">(Tùy chọn, mặc định 123456)</small>
+          </label>
+          <input type="password" id="enrollPassword" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)" 
+                 style="width:100%; padding:.75rem 1rem; border:1px solid var(--line); border-radius:12px; font-size:.9rem; background:var(--surface); color:var(--ink); outline:none;" />
+        </div>
+
+        <!-- PROCESS NOTICE -->
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:.85rem 1rem; margin-bottom:1.4rem; font-size:.78rem; color:#1e40af; line-height:1.5;">
+          <div style="font-weight:700; display:flex; align-items:center; gap:6px; margin-bottom:3px;">
+            <span class="material-symbols-outlined" style="font-size:16px;">info</span>
+            Quy trình kích hoạt tài khoản sinh viên:
+          </div>
+          <div>1. Hệ thống sẽ tạo ngay <b>tài khoản học viên tạm thời</b> (trạng thái <i>Chưa kích hoạt</i>).</div>
+          <div>2. Sau khi thanh toán PayOS thành công, tài khoản sẽ được <b>kích hoạt chính thức</b> và mở quyền vào học lập tức!</div>
+        </div>
+
+        <button type="submit" id="btnSubmitEnroll" class="btn btn-primary" style="width:100%; justify-content:center; padding:.85rem; font-size:.95rem; border-radius:14px;">
+          <span id="btnSubmitEnrollText">Đăng Ký & Nhận Mã Thanh Toán</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- VIEW 2: KHUNG THANH TOÁN VIETQR PAYOS (NẾU CÓ PHÍ) -->
+    <div id="enrollStepPayment" style="display:none; text-align:center;">
+      
+      <!-- STATUS BADGE: CHƯA KÍCH HOẠT -->
+      <div style="display:inline-flex; align-items:center; gap:8px; background:#fef3c7; border:1px solid #fde68a; color:#92400e; padding:6px 14px; border-radius:999px; font-size:.78rem; font-weight:700; margin-bottom:1rem;">
+        <span style="width:8px; height:8px; border-radius:50%; background:#f59e0b; display:inline-block;"></span>
+        <span id="paymentAccountNotice">Tài khoản: SV26xxxx • TRẠNG THÁI: CHƯA KÍCH HOẠT (Chờ thanh toán)</span>
+      </div>
+
+      <!-- VIETQR DISPLAY -->
+      <div style="background:#fff; border:2px dashed #00539F; border-radius:18px; padding:1.2rem; margin-bottom:1.2rem; display:inline-block; max-width:320px; box-shadow:0 10px 30px rgba(0,83,159,.1);">
+        <img id="payosQrImage" src="" alt="Mã VietQR PayOS" style="width:100%; aspect-ratio:1/1; object-fit:contain; border-radius:10px;" />
+        <div style="font-size:.75rem; color:var(--muted); margin-top:8px;">Quét mã VietQR bằng ứng dụng Ngân hàng bất kỳ</div>
+      </div>
+
+      <!-- TRANSFER DETAILS -->
+      <div style="background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:1rem; text-align:left; font-size:.82rem; margin-bottom:1.2rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--muted);">Ngân hàng:</span>
+          <b style="color:var(--ink);">Quân Đội (MB Bank)</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="color:var(--muted);">Số tài khoản:</span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <b id="payosAccNumber" style="font-family:monospace; color:var(--sky-deep); font-size:.9rem;">30334402527</b>
+            <button type="button" onclick="copyAccountNumber()" style="background:var(--tint); border:none; padding:3px 8px; border-radius:6px; font-size:.72rem; font-weight:700; color:var(--sky-deep); cursor:pointer;" title="Sao chép số tài khoản">Copy STK</button>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--muted);">Chủ tài khoản:</span>
+          <b id="payosAccName" style="color:var(--ink);">NGUYEN CONG TUNG</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--muted);">Số tiền:</span>
+          <b id="payosAmount" style="color:#b91c1c; font-size:1.05rem;">250.000 đ</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-top:6px; border-top:1px dashed var(--line);">
+          <span style="color:var(--muted); font-weight:600;">Nội dung CK:</span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <b id="payosDescription" style="font-family:monospace; color:#b91c1c; font-size:.92rem; background:#fff; padding:3px 8px; border:1px solid #fecaca; border-radius:6px;">HOCPHI ...</b>
+            <button type="button" onclick="copyTransferContent()" style="background:#fee2e2; border:1px solid #fca5a5; padding:3px 8px; border-radius:6px; font-size:.72rem; font-weight:700; color:#b91c1c; cursor:pointer;" title="Sao chép đúng nội dung chuyển khoản">Copy Nội Dung</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- POLLING LISTENER INDICATOR -->
+      <div style="display:flex; align-items:center; justify-content:center; gap:8px; font-size:.82rem; color:var(--sky-deep); margin-bottom:1rem; font-weight:600;">
+        <div class="spinner" style="width:16px; height:16px; border-width:2px;"></div>
+        <span id="pollingStatusText">Đang lắng nghe xác nhận từ ngân hàng...</span>
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+        <a id="payosCheckoutLink" href="#" target="_blank" class="btn btn-ghost" style="padding:.6rem 1rem; font-size:.82rem;">Mở PayOS Checkout ↗</a>
+        <button type="button" onclick="checkCurrentOrderStatus()" class="btn btn-primary" style="padding:.6rem 1rem; font-size:.82rem;">Đã Chuyển Khoản Xong</button>
+        <button type="button" onclick="simulatePaymentSuccess()" class="btn btn-ghost" style="padding:.6rem .8rem; font-size:.75rem; color:#059669; border-color:#a7f3d0;" title="Dành cho Demo / Bảo vệ đồ án">⚡ Giả lập thanh toán (Demo)</button>
+      </div>
+    </div>
+
+    <!-- VIEW 3: KÍCH HOẠT THÀNH CÔNG -->
+    <div id="enrollStepSuccess" style="display:none; text-align:center; padding:1rem 0;">
+      <div style="width:68px; height:68px; border-radius:50%; background:#dcfce7; color:#16a34a; display:grid; place-items:center; margin:0 auto 1.2rem; font-size:36px;">
+        <span class="material-symbols-outlined" style="font-size:38px;">check_circle</span>
+      </div>
+      <h3 style="font-family:var(--serif); font-size:1.4rem; color:var(--ink); margin-bottom:.4rem;">🎉 Kích Hoạt Tài Khoản Thành Công!</h3>
+      <p style="font-size:.85rem; color:var(--muted); margin-bottom:1.4rem;">Chào mừng bạn gia nhập hệ sinh thái học tập số Đại học Nguyễn Trãi.</p>
+
+      <!-- ACTIVATED CREDENTIALS BOX -->
+      <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:16px; padding:1.2rem; text-align:left; font-size:.85rem; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--muted);">Mã sinh viên:</span>
+          <b id="successStudentCode" style="font-family:monospace; color:var(--ink);">SV26xxxx</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--muted);">Tên đăng nhập:</span>
+          <b id="successUsername" style="color:var(--sky-deep);">...</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--muted);">Họ và tên:</span>
+          <b id="successFullName" style="color:var(--ink);">...</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:var(--muted);">Trạng thái tài khoản:</span>
+          <b style="color:#16a34a; font-weight:800; display:inline-flex; align-items:center; gap:4px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:#16a34a;"></span>
+            ĐÃ KÍCH HOẠT CHÍNH THỨC
+          </b>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding-top:6px; border-top:1px dashed #bbf7d0;">
+          <span style="color:var(--muted);">Khóa học đã mở:</span>
+          <b id="successCourseName" style="color:var(--ink);">...</b>
+        </div>
+      </div>
+
+      <button type="button" id="btnGoToStudy" onclick="proceedToStudyRoom()" class="btn btn-primary" style="width:100%; justify-content:center; padding:.9rem; font-size:1rem; border-radius:14px;">
+        <span>Vào Học Ngay Trên Cổng Sinh Viên</span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 1. Rising arches in hero
+  const arches = document.getElementById('arches');
+  const heights = [45, 60, 75, 90, 100, 92, 78, 62, 48];
+  heights.forEach((h, i) => {
+    const a = document.createElement('div');
+    a.className = 'arch';
+    a.style.height = h + '%';
+    a.style.animationDelay = (0.2 + i * 0.08) + 's';
+    arches.appendChild(a);
+    a.addEventListener('animationend', () => { a.style.transform = 'translateY(0)'; }, { once: true });
+  });
+  const glowStyle = document.createElement('style');
+  glowStyle.textContent = heights.map((_, i) => `.arch:nth-child(${i+1})::before{animation-delay:${(i * 0.37) % 4}s}`).join('');
+  document.head.appendChild(glowStyle);
+
+  // 2. Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+  window.revealObserver = io;
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // 3. Counters observer
+  const cio = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, end = +el.dataset.count, dur = 1800, t0 = performance.now();
+      const tick = (t) => {
+        const p = Math.min(1, (t - t0) / dur);
+        el.textContent = Math.round(end * (1 - Math.pow(1 - p, 4)));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      reduce ? (el.textContent = end) : requestAnimationFrame(tick);
+      cio.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  window.counterObserver = cio;
+  document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+
+  // 4. Quote words split & scroll lighting
+  const q = document.getElementById('quoteText');
+  if (q) {
+    q.innerHTML = q.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span> `).join('');
+  }
+  const words = q ? [...q.querySelectorAll('.w')] : [];
+
+  // 5. Scroll-driven animations
+  const nav = document.getElementById('nav');
+  const progress = document.querySelector('.progress');
+  const heroBg = document.getElementById('heroBg');
+  const zoomWrap = document.getElementById('zoomWrap');
+  const zoomFrame = document.getElementById('zoomFrame');
+  const programsWrap = document.getElementById('programs');
+  const programsTrack = document.getElementById('realCoursesGrid');
+  const lifeWrap = document.getElementById('life');
+  const lifeTrack = document.getElementById('lifeTrack');
+  const lifeBgs = lifeTrack ? [...lifeTrack.querySelectorAll('.bg')] : [];
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  let ticking = false;
+
+  function onScroll() {
+    const y = scrollY, vh = innerHeight;
+    const max = document.documentElement.scrollHeight - vh;
+    if (progress) progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+    if (nav) nav.classList.toggle('scrolled', y > 40);
+
+    if (!reduce) {
+      // hero parallax zoom
+      if (heroBg && y < vh * 1.2) {
+        heroBg.style.animation = 'none';
+        heroBg.style.transform = `translateY(${y * 0.35}px) scale(${1 + y / vh * 0.25})`;
+        heroBg.style.opacity = 1 - clamp(y / vh) * 0.6;
+      }
+
+      // zoom showcase
+      if (zoomWrap && zoomFrame) {
+        const zr = zoomWrap.getBoundingClientRect();
+        const zp = clamp(-zr.top / (zr.height - vh));
+        const s = 0.42 + 0.58 * clamp(zp / 0.6);
+        zoomFrame.style.setProperty('--s', s);
+        zoomFrame.style.setProperty('--r', (1 - clamp(zp / 0.6)).toFixed(3));
+        zoomFrame.style.setProperty('--o', clamp((zp - 0.45) / 0.3).toFixed(3));
+      }
+
+      // horizontal courses track (Scroll y hệt phần khuôn viên sáng tạo)
+      if (programsWrap && programsTrack) {
+        const pr = programsWrap.getBoundingClientRect();
+        const pp = clamp(-pr.top / (pr.height - vh));
+        const pDist = programsTrack.scrollWidth - innerWidth + 40;
+        if (pDist > 0) {
+          programsTrack.style.transform = `translateX(${-pp * pDist}px)`;
+          const courseArts = programsTrack.querySelectorAll('.art');
+          courseArts.forEach((b, i) => b.style.transform = `scale(1.15) translateX(${(pp * 45) - i * 5}px)`);
+        }
+      }
+
+      // horizontal campus life
+      if (lifeWrap && lifeTrack) {
+        const lr = lifeWrap.getBoundingClientRect();
+        const lp = clamp(-lr.top / (lr.height - vh));
+        const dist = lifeTrack.scrollWidth - innerWidth + 40;
+        lifeTrack.style.transform = `translateX(${-lp * Math.max(0, dist)}px)`;
+        lifeBgs.forEach((b, i) => b.style.transform = `scale(1.2) translateX(${(lp * 50) - i * 6}px)`);
+      }
+    }
+
+    // quote highlight
+    if (q && words.length) {
+      const qr = q.getBoundingClientRect();
+      const qp = clamp((vh * 0.85 - qr.top) / (qr.height + vh * 0.35));
+      const lit = Math.round(qp * words.length);
+      words.forEach((w, i) => w.classList.toggle('on', reduce || i < lit));
+    }
+
+    ticking = false;
+  }
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  addEventListener('resize', onScroll);
+  setTimeout(onScroll, 50);
+
+  // 6. 3D tilt cards
+  window.attachTiltListeners = function() {
+    if (reduce) return;
+    document.querySelectorAll('.tilt').forEach(card => {
+      card.onpointermove = e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(900px) rotateY(${x * 10}deg) rotateX(${-y * 10}deg) translateY(-6px)`;
+      };
+      card.onpointerleave = () => { card.style.transform = ''; };
+    });
+  };
+
+  // 7. Magnetic button
+  const mag = document.getElementById('magnetic');
+  if (mag && !reduce) {
+    mag.addEventListener('pointermove', e => {
+      const r = mag.getBoundingClientRect();
+      mag.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.3}px, ${(e.clientY - r.top - r.height / 2) * 0.4}px)`;
+    });
+    mag.addEventListener('pointerleave', () => { mag.style.transform = ''; });
+  }
+
+  // 8. Custom cursor
+  const cur = document.querySelector('.cursor');
+  if (cur && !reduce) {
+    let cx = -100, cy = -100, tx = -100, ty = -100;
+    addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; });
+    (function loop() {
+      cx += (tx - cx) * 0.18; cy += (ty - cy) * 0.18;
+      cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+      requestAnimationFrame(loop);
+    })();
+
+    window.attachCursorHover = function() {
+      document.querySelectorAll('a, .card, .event, button').forEach(el => {
+        el.onpointerenter = () => cur.classList.add('big');
+        el.onpointerleave = () => cur.classList.remove('big');
+      });
+    };
+    attachCursorHover();
+  } else {
+    window.attachCursorHover = () => {};
+  }
+})();
+
+// =========================================================================
+// REAL DATABASE DATA LOADERS (KHÔNG DÙNG MOCK DATA CHO BẤT KỲ PHẦN NÀO)
+// =========================================================================
+async function fetchRealCourses() {
+  const container = document.getElementById('realCoursesGrid');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/api/admin/courses');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const courses = json.data || [];
+    window.allCoursesList = courses;
+
+    if (!courses || courses.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:20px;">
+          Chưa có khóa học nào được phát hành trong cơ sở dữ liệu.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = courses.map((c, idx) => {
+      const indexStr = String(idx + 1).padStart(2, '0');
+      const majorTag = (c.majors && c.majors.length > 0) ? c.majors[0].name : (c.enrollmentType || 'Đào Tạo');
+      const lessonsCount = c.lessonsCount || 0;
+      const chaptersCount = c.chaptersCount || 0;
+      const isFree = c.isFree || c.price === 0 || c.price === "0.00";
+      const priceText = isFree ? 'Miễn phí' : (Number(c.price).toLocaleString('vi-VN') + ' đ');
+      const thumb = c.thumbnailUrl || 'portal/assets/images/bxh-qs-05-1.jpg';
+
+      return `
+        <a href="javascript:void(0)" onclick="openCourseEnrollModal(${c.id})" class="card tilt reveal zoom d${(idx % 3) + 1}" data-course-id="${c.id}" aria-label="${escapeHtml(c.title)}">
+          <div class="art" style="background-image:url('${thumb}');" aria-hidden="true"></div>
+          <span class="idx">${indexStr}</span>
+          <div class="body">
+            <span class="tag">${escapeHtml(majorTag)}</span>
+            <h3>${escapeHtml(c.title)}</h3>
+            <p>${escapeHtml(c.description || 'Khóa học chính quy số hóa tích hợp bài giảng video HD và giáo trình AI RAG.')}</p>
+            <div class="meta-pills">
+              <span><i class="dot"></i>${chaptersCount} chương · ${lessonsCount} bài</span>
+              <span class="price-pill">${priceText}</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }).join('');
+
+    if (window.attachTiltListeners) window.attachTiltListeners();
+    if (window.attachCursorHover) window.attachCursorHover();
+    if (window.revealObserver) {
+      container.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
+    }
+    if (typeof onScroll === 'function') onScroll();
+  } catch (err) {
+    console.error('Lỗi nạp khóa học thật từ cơ sở dữ liệu:', err);
+    container.innerHTML = `
+      <div style="grid-column:1/-1;padding:2.5rem;text-align:center;color:var(--crimson);border:1px dashed rgba(218,41,28,.3);border-radius:20px;">
+        Không thể kết nối đến cơ sở dữ liệu khóa học. Vui lòng kiểm tra máy chủ backend.
+      </div>
+    `;
+  }
+}
+
+async function fetchRealStats() {
+  try {
+    const res = await fetch('/api/admin/stats');
+    if (!res.ok) return;
+    const json = await res.json();
+    const stats = json.data;
+    if (!stats) return;
+
+    const elCourses = document.getElementById('stat-courses');
+    const elStudents = document.getElementById('stat-students');
+    const elFaculties = document.getElementById('stat-faculties');
+    const elFace = document.getElementById('stat-face');
+
+    if (elCourses) elCourses.dataset.count = stats.totalCourses || 0;
+    if (elStudents) elStudents.dataset.count = stats.totalStudents || 0;
+    if (elFaculties) elFaculties.dataset.count = stats.totalFaculties || stats.totalMajors || 0;
+    if (elFace) elFace.dataset.count = stats.faceRegisteredCount || 0;
+
+    if (window.counterObserver) {
+      document.querySelectorAll('[data-count]').forEach(el => window.counterObserver.observe(el));
+    }
+  } catch (err) {
+    console.warn('Lỗi nạp thống kê realtime:', err);
+  }
+}
+
+async function fetchRealFaculties() {
+  try {
+    const res = await fetch('/api/admin/faculties');
+    if (!res.ok) return;
+    const json = await res.json();
+    const faculties = json.data || [];
+    if (faculties.length > 0) {
+      const track = document.getElementById('marqueeTrack');
+      if (track) {
+        const names = faculties.map(f => f.name || f.facultyName);
+        const doubleList = [...names, ...names];
+        track.innerHTML = doubleList.map(n => `<span>${escapeHtml(n)}</span>`).join('');
+      }
+    }
+  } catch (err) {
+    console.warn('Lỗi nạp khoa đào tạo:', err);
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+// Modal Handlers
+function openTestAccountsModal() {
+  const m = document.getElementById('testAccountsModal');
+  if (m) m.classList.add('open');
+}
+function closeTestAccountsModal() {
+  const m = document.getElementById('testAccountsModal');
+  if (m) m.classList.remove('open');
+}
+function loginWithAccount(user, pass) {
+  closeTestAccountsModal();
+  const studentObj = {
+    username: user,
+    fullName: user === 'student_tung' ? 'Nguyễn Văn Tùng' : (user === 'student_mai' ? 'Lê Thị Mai' : 'Quản trị viên Hệ thống'),
+    studentCode: user === 'student_tung' ? '20210012' : (user === 'student_mai' ? '20210045' : 'ADMIN'),
+    className: user === 'student_tung' ? 'K23 Công nghệ Phần mềm 3' : (user === 'student_mai' ? 'K23 Thiết kế Đồ họa' : 'Ban Giám Hiệu'),
+    facultyName: user === 'student_tung' ? 'Khoa Công nghệ Thông tin' : (user === 'student_mai' ? 'Mỹ thuật & Thiết kế' : 'Văn phòng Đào tạo'),
+    faceRegistered: true,
+    role: user.startsWith('admin') ? 'ADMIN' : 'STUDENT'
+  };
+  sessionStorage.setItem('lms_token', 'demo-token-' + user);
+  sessionStorage.setItem('lms_user', JSON.stringify(studentObj));
+  localStorage.setItem('currentUser', JSON.stringify(studentObj));
+  localStorage.setItem('student_user', JSON.stringify(studentObj));
+  if (user.startsWith('admin')) {
+    window.location.href = 'admin/index.html';
+  } else {
+    window.location.href = 'portal/index.html';
+  }
+}
+
+// =========================================================================
+// COURSE REGISTRATION & PAYMENT MODAL HANDLERS
+// =========================================================================
+let currentEnrollCourse = null;
+let currentEnrollOrderCode = null;
+let enrollPollingTimer = null;
+
+function openCourseEnrollModal(courseId) {
+  if (!window.allCoursesList) return;
+  const course = window.allCoursesList.find(c => c.id == courseId);
+  if (!course) return;
+
+  currentEnrollCourse = course;
+  currentEnrollOrderCode = null;
+  if (enrollPollingTimer) clearInterval(enrollPollingTimer);
+
+  document.getElementById('enrollStepForm').style.display = 'block';
+  document.getElementById('enrollStepPayment').style.display = 'none';
+  document.getElementById('enrollStepSuccess').style.display = 'none';
+
+  document.getElementById('enrollCourseId').value = course.id;
+  document.getElementById('enrollCourseName').textContent = course.title || 'Khóa học';
+  document.getElementById('enrollCourseThumb').src = course.thumbnailUrl || 'portal/assets/images/bxh-qs-05-1.jpg';
+
+  const majorTag = (course.majors && course.majors.length > 0) ? course.majors[0].name : (course.enrollmentType || 'Đào Tạo');
+  document.getElementById('enrollCourseMajor').textContent = majorTag;
+
+  const isFree = course.isFree || course.price === 0 || course.price === "0.00";
+  const priceFormatted = isFree ? 'Miễn phí' : (Number(course.price).toLocaleString('vi-VN') + ' đ');
+  document.getElementById('enrollCoursePrice').textContent = priceFormatted;
+
+  const submitText = isFree 
+    ? 'Đăng Ký & Kích Hoạt Vào Học Ngay'
+    : `Đăng Ký & Nhận Mã Thanh Toán (${priceFormatted})`;
+  document.getElementById('btnSubmitEnrollText').textContent = submitText;
+
+  const m = document.getElementById('courseEnrollModal');
+  if (m) m.classList.add('open');
+}
+
+function closeCourseEnrollModal() {
+  const m = document.getElementById('courseEnrollModal');
+  if (m) m.classList.remove('open');
+  if (enrollPollingTimer) clearInterval(enrollPollingTimer);
+}
+
+async function submitCourseEnrollment(e) {
+  e.preventDefault();
+  const courseId = document.getElementById('enrollCourseId').value;
+  const fullName = document.getElementById('enrollFullName').value.trim();
+  const phone = document.getElementById('enrollPhone').value.trim();
+  const email = document.getElementById('enrollEmail').value.trim();
+  const password = document.getElementById('enrollPassword').value.trim();
+
+  if (!fullName || !phone || !email) {
+    alert("Vui lòng điền đầy đủ Họ tên, Số điện thoại và Email!");
+    return;
+  }
+
+  const btn = document.getElementById('btnSubmitEnroll');
+  const oldText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Đang khởi tạo tài khoản...`;
+
+  try {
+    const res = await fetch('/api/payment/register-and-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        courseId: parseInt(courseId, 10),
+        fullName,
+        phone,
+        email,
+        password: password || undefined
+      })
+    });
+
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || `Lỗi HTTP ${res.status}`);
+
+    const data = json.data;
+    if (data.alreadyEnrolled) {
+      alert("Bạn đã đăng ký khóa học này rồi! Hệ thống sẽ đưa bạn vào phòng học.");
+      window.location.href = `portal/study.html?courseId=${courseId}`;
+      return;
+    }
+
+    if (data.isFree) {
+      showEnrollSuccess(data);
+    } else {
+      showEnrollPayment(data);
+    }
+  } catch (err) {
+    alert("Không thể đăng ký: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = oldText;
+  }
+}
+
+function showEnrollPayment(data) {
+  currentEnrollOrderCode = data.orderCode;
+  document.getElementById('enrollStepForm').style.display = 'none';
+  document.getElementById('enrollStepPayment').style.display = 'block';
+
+  document.getElementById('paymentAccountNotice').textContent = 
+    `Tài khoản: ${data.username || data.studentCode} (MSSV: ${data.studentCode}) • TRẠNG THÁI: CHƯA KÍCH HOẠT (Chờ thanh toán)`;
+
+  const qrImg = document.getElementById('payosQrImage');
+  if (data.qrCode && data.qrCode.startsWith('000201')) {
+    // Chuỗi mã QR chuẩn EMVCo quốc gia do cổng PayOS phát hành -> Render trực tiếp bằng qrserver
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=8&data=${encodeURIComponent(data.qrCode)}`;
+    qrImg.onerror = () => {
+      // Fallback sang vietqr.io với đầy đủ mã nội dung chuẩn
+      qrImg.src = `https://api.vietqr.io/image/${data.bin || '970422'}-${data.accountNumber || '30334402527'}-compact2.jpg?amount=${data.amount}&addInfo=${encodeURIComponent(data.description)}&accountName=${encodeURIComponent(data.accountName || 'NGUYEN CONG TUNG')}`;
+    };
+  } else if (data.qrCode && (data.qrCode.startsWith('http://') || data.qrCode.startsWith('https://'))) {
+    qrImg.src = data.qrCode;
+  } else {
+    qrImg.src = `https://api.vietqr.io/image/${data.bin || '970422'}-${data.accountNumber || '30334402527'}-compact2.jpg?amount=${data.amount}&addInfo=${encodeURIComponent(data.description)}&accountName=${encodeURIComponent(data.accountName || 'NGUYEN CONG TUNG')}`;
+  }
+
+  document.getElementById('payosAccNumber').textContent = data.accountNumber || '30334402527';
+  document.getElementById('payosAccName').textContent = data.accountName || 'NGUYEN CONG TUNG';
+  document.getElementById('payosAmount').textContent = Number(data.amount).toLocaleString('vi-VN') + ' đ';
+  document.getElementById('payosDescription').textContent = data.description;
+
+  const checkoutLink = document.getElementById('payosCheckoutLink');
+  if (data.checkoutUrl) {
+    checkoutLink.href = data.checkoutUrl;
+    checkoutLink.style.display = 'inline-flex';
+  } else {
+    checkoutLink.style.display = 'none';
+  }
+
+  startEnrollPolling(data.orderCode);
+}
+
+function startEnrollPolling(orderCode) {
+  if (enrollPollingTimer) clearInterval(enrollPollingTimer);
+  enrollPollingTimer = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/payment/order-status/${orderCode}`);
+      if (!res.ok) return;
+      const json = await res.json();
+      if (json.data && (json.data.isSuccess || json.data.status === 'SUCCESS')) {
+        clearInterval(enrollPollingTimer);
+        showEnrollSuccess(json.data);
+      }
+    } catch (ignore) {}
+  }, 2500);
+}
+
+async function checkCurrentOrderStatus() {
+  if (!currentEnrollOrderCode) return;
+  const statusEl = document.getElementById('pollingStatusText');
+  statusEl.textContent = "Đang kiểm tra đối soát với PayOS...";
+  try {
+    const res = await fetch(`/api/payment/order-status/${currentEnrollOrderCode}`);
+    const json = await res.json();
+    if (json.data && (json.data.isSuccess || json.data.status === 'SUCCESS')) {
+      if (enrollPollingTimer) clearInterval(enrollPollingTimer);
+      showEnrollSuccess(json.data);
+    } else {
+      statusEl.textContent = "Chưa nhận được giao dịch. Vui lòng quét mã chuyển khoản.";
+      setTimeout(() => {
+        statusEl.textContent = "Đang lắng nghe xác nhận từ ngân hàng...";
+      }, 3000);
+    }
+  } catch (err) {
+    statusEl.textContent = "Lỗi đối soát: " + err.message;
+  }
+}
+
+async function simulatePaymentSuccess() {
+  if (!currentEnrollOrderCode) return;
+  if (!confirm("Bạn có muốn kích hoạt tức thì giao dịch này để kiểm thử/bảo vệ đồ án không?")) return;
+  try {
+    const res = await fetch(`/api/payment/manual-confirm/${currentEnrollOrderCode}`, { method: 'POST' });
+    const json = await res.json();
+    if (json.data && (json.data.status === 'SUCCESS' || json.data.isActivated)) {
+      if (enrollPollingTimer) clearInterval(enrollPollingTimer);
+      showEnrollSuccess(json.data);
+    }
+  } catch (err) {
+    alert("Lỗi giả lập: " + err.message);
+  }
+}
+
+function showEnrollSuccess(data) {
+  document.getElementById('enrollStepForm').style.display = 'none';
+  document.getElementById('enrollStepPayment').style.display = 'none';
+  document.getElementById('enrollStepSuccess').style.display = 'block';
+
+  document.getElementById('successStudentCode').textContent = data.studentCode || '--';
+  document.getElementById('successUsername').textContent = data.username || data.studentCode || '--';
+  document.getElementById('successFullName').textContent = data.fullName || (currentEnrollCourse ? currentEnrollCourse.title : '--');
+  document.getElementById('successCourseName').textContent = currentEnrollCourse ? currentEnrollCourse.title : 'Khóa học NTU';
+
+  const studentObj = {
+    username: data.username || data.studentCode,
+    studentCode: data.studentCode,
+    fullName: data.fullName,
+    role: 'STUDENT',
+    faceRegistered: false,
+    active: true
+  };
+  sessionStorage.setItem('lms_token', 'token-' + data.studentCode);
+  sessionStorage.setItem('lms_user', JSON.stringify(studentObj));
+  localStorage.setItem('currentUser', JSON.stringify(studentObj));
+  localStorage.setItem('student_user', JSON.stringify(studentObj));
+}
+
+function proceedToStudyRoom() {
+  const cId = currentEnrollCourse ? currentEnrollCourse.id : '';
+  window.location.href = `portal/study.html?courseId=${cId}`;
+}
+
+function copyAccountNumber() {
+  const acc = document.getElementById('payosAccNumber').textContent.trim();
+  navigator.clipboard.writeText(acc).then(() => {
+    alert("Đã sao chép Số tài khoản: " + acc);
+  }).catch(() => {
+    prompt("Số tài khoản:", acc);
+  });
+}
+
+function copyTransferContent() {
+  const desc = document.getElementById('payosDescription').textContent.trim();
+  navigator.clipboard.writeText(desc).then(() => {
+    alert("Đã sao chép đúng Nội dung chuyển khoản: " + desc);
+  }).catch(() => {
+    prompt("Nội dung chuyển khoản:", desc);
+  });
+}
+
+// Khởi chạy khi tài liệu sẵn sàng
+document.addEventListener('DOMContentLoaded', () => {
+  fetchRealCourses();
+  fetchRealStats();
+  fetchRealFaculties();
+});
+</script>
+</body>
+</html>

@@ -82,35 +82,14 @@ class FaceEmbedder:
             return np.zeros((output_size[1], output_size[0], 3), dtype=np.uint8)
         return cv2.resize(crop, output_size)
 
-    def extract_embedding(self, aligned_face_bgr: np.ndarray) -> np.ndarray:
+    def extract_spatial_descriptor(self, aligned_face_bgr: np.ndarray) -> np.ndarray:
         """
-        Extracts a normalized 512-dimensional embedding vector from an aligned face.
+        Built-in Spatial Gradient Descriptor (Multi-scale Grid Gradients with CLAHE illumination invariance).
+        Extracts 512-d normalized vector (all elements >= 0).
         """
         if aligned_face_bgr is None or aligned_face_bgr.size == 0:
             return np.zeros(settings.EMBEDDING_DIM, dtype=np.float32)
 
-        # 1. If ONNX Session is active, run model inference
-        if self.session is not None:
-            try:
-                # Preprocessing for ArcFace: BGR -> RGB, normalize to [-1, 1], transpose to (1, 3, 112, 112)
-                face_rgb = cv2.cvtColor(aligned_face_bgr, cv2.COLOR_BGR2RGB)
-                face_norm = (face_rgb.astype(np.float32) - 127.5) / 128.0
-                face_tensor = np.transpose(face_norm, (2, 0, 1))
-                face_tensor = np.expand_dims(face_tensor, axis=0)
-
-                input_name = self.session.get_inputs()[0].name
-                raw_embed = self.session.run(None, {input_name: face_tensor})[0][0]
-                
-                # L2 normalize
-                norm = np.linalg.norm(raw_embed)
-                if norm > 0:
-                    return (raw_embed / norm).astype(np.float32)
-                return raw_embed.astype(np.float32)
-            except Exception as e:
-                print(f"[FaceEmbedder] ONNX inference error: {e}")
-
-        # 2. Built-in Deterministic Deep Spatial Descriptor (Multi-scale Grid Gradients with CLAHE illumination invariance)
-        # Extracts 512-d normalized vector robust across mobile photos and laptop webcams
         face_resized = cv2.resize(aligned_face_bgr, (112, 112))
         gray_u8 = cv2.cvtColor(face_resized, cv2.COLOR_BGR2GRAY)
         
@@ -142,6 +121,48 @@ class FaceEmbedder:
 
         return feat_arr
 
+    def extract_embedding(self, aligned_face_bgr: np.ndarray) -> np.ndarray:
+        """
+        Extracts a normalized 512-dimensional embedding vector from an aligned face.
+        Prioritizes deep ArcFace ResNet100 ONNX model, fallback to spatial descriptor.
+        """
+        if aligned_face_bgr is None or aligned_face_bgr.size == 0:
+            return np.zeros(settings.EMBEDDING_DIM, dtype=np.float32)
+
+        # 1. If ONNX Session is active and matches configured EMBEDDING_DIM, run model inference
+        if self.session is not None:
+            try:
+                # Preprocessing for ArcFace: BGR -> RGB, normalize to [-1, 1], transpose to (1, 3, 112, 112)
+                face_rgb = cv2.cvtColor(aligned_face_bgr, cv2.COLOR_BGR2RGB)
+                face_norm = (face_rgb.astype(np.float32) - 127.5) / 128.0
+                face_tensor = np.transpose(face_norm, (2, 0, 1))
+                face_tensor = np.expand_dims(face_tensor, axis=0)
+
+                input_name = self.session.get_inputs()[0].name
+                raw_embed = self.session.run(None, {input_name: face_tensor})[0][0]
+                
+                # Check if dimension matches configured embedding dimension (512)
+                if len(raw_embed) == settings.EMBEDDING_DIM:
+                    norm = np.linalg.norm(raw_embed)
+                    if norm > 0:
+                        return (raw_embed / norm).astype(np.float32)
+                    return raw_embed.astype(np.float32)
+            except Exception as e:
+                print(f"[FaceEmbedder] ONNX inference error: {e}")
+
+        # 2. Fallback to spatial descriptor
+        return self.extract_spatial_descriptor(aligned_face_bgr)
+
+    def extract_for_db_vector(self, aligned_face_bgr: np.ndarray, db_vector: np.ndarray) -> np.ndarray:
+        """
+        Extracts vector representation compatible with target DB vector:
+        - If db_vector has negative elements -> ArcFace embedding.
+        - If db_vector elements are all >= 0 -> Legacy spatial descriptor.
+        """
+        if db_vector is not None and (db_vector < 0).any():
+            return self.extract_embedding(aligned_face_bgr)
+        return self.extract_spatial_descriptor(aligned_face_bgr)
+
     @staticmethod
     def compute_similarity(vector_a: np.ndarray, vector_b: np.ndarray) -> float:
         """
@@ -152,7 +173,8 @@ class FaceEmbedder:
             return 0.0
         norm_a = np.linalg.norm(vector_a)
         norm_b = np.linalg.norm(vector_b)
-        if norm_a == 0 or norm_b == 0:
+        if norm_a == 0 or norm_b == 0 or len(vector_a) != len(vector_b):
             return 0.0
         sim = np.dot(vector_a, vector_b) / (norm_a * norm_b)
         return float(np.clip(sim, 0.0, 1.0))
+

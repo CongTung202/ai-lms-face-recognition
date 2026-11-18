@@ -84,7 +84,7 @@ CREATE TABLE `students` (
     `face_registered` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Đã đăng ký khuôn mặt AI chưa',
     `face_registered_at` DATETIME COMMENT 'Thời điểm đăng ký khuôn mặt',
     `face_image_url` VARCHAR(500) COMMENT 'Ảnh chân dung mẫu đã chuẩn hóa',
-    `face_data_id` VARCHAR(100) COMMENT 'Mã tham chiếu vector nhận diện bên FastAPI/MongoDB',
+    `face_embed` LONGTEXT COMMENT 'Chuỗi Base64 vector khuôn mặt đã mã hoá AES-256 (3 góc ArcFace 512D)',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT `fk_students_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -138,6 +138,9 @@ CREATE TABLE `courses` (
     `is_free` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Đánh dấu khóa học miễn phí công khai',
     `enrollment_type` ENUM('ASSIGNED_BY_MAJOR', 'OPEN_FREE', 'PURCHASED') NOT NULL DEFAULT 'ASSIGNED_BY_MAJOR' 
         COMMENT 'Hình thức: Cấp theo chuyên ngành, Mở tự do, hoặc Phải mua',
+    `start_date` DATE NULL COMMENT 'Ngày bắt đầu khóa học theo niên lịch',
+    `end_date` DATE NULL COMMENT 'Ngày kết thúc khóa học',
+    `is_sequential_learning` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Bắt buộc học viên phải học tuần tự từng bài',
     `status` ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED') NOT NULL DEFAULT 'DRAFT' COMMENT 'Trạng thái phát hành',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -224,10 +227,16 @@ CREATE TABLE `lessons` (
     `order_index` INT NOT NULL DEFAULT 0 COMMENT 'Thứ tự sắp xếp trong chương',
     `duration_seconds` INT NOT NULL DEFAULT 0 COMMENT 'Thời lượng bài học (giây)',
     `is_preview` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Cho phép xem thử miễn phí không cần mua',
+    `scheduled_date` DATE NULL COMMENT 'Ngày học dự kiến theo thời khóa biểu',
+    `unlock_at` DATETIME NULL COMMENT 'Mốc ngày giờ mở bài học',
+    `prerequisite_lesson_id` BIGINT NULL COMMENT 'Bài học tiên quyết bắt buộc hoàn thành trước',
+    `is_sequential` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Bật chế độ khóa tuần tự đối với bài này',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT `fk_lessons_chapter` FOREIGN KEY (`chapter_id`) REFERENCES `course_chapters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    INDEX `idx_lessons_order` (`chapter_id`, `order_index`)
+    CONSTRAINT `fk_lessons_prerequisite` FOREIGN KEY (`prerequisite_lesson_id`) REFERENCES `lessons` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+    INDEX `idx_lessons_order` (`chapter_id`, `order_index`),
+    INDEX `idx_lessons_schedule` (`scheduled_date`, `unlock_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Bài học chi tiết';
 
 -- 3.3. Bảng Quản lý Video Streaming (Video_Assets)
@@ -272,6 +281,81 @@ CREATE TABLE `course_documents` (
     INDEX `idx_doc_rag` (`rag_indexed`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Metadata tài liệu môn học liên kết MongoDB';
 
+-- 3.5. Bảng Quản lý Bài thi Trắc nghiệm sau bài học (Quizzes & Questions)
+-- Chuẩn hoá 3NF hoàn chỉnh: Tách biệt đề quiz, câu hỏi, các lựa chọn và lịch sử làm bài
+DROP TABLE IF EXISTS `quiz_attempt_answers`;
+DROP TABLE IF EXISTS `quiz_attempts`;
+DROP TABLE IF EXISTS `quiz_options`;
+DROP TABLE IF EXISTS `quiz_questions`;
+DROP TABLE IF EXISTS `quizzes`;
+
+CREATE TABLE `quizzes` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `lesson_id` BIGINT NOT NULL UNIQUE COMMENT 'Gắn liền 1-1 với bài học tương ứng',
+    `title` VARCHAR(255) NOT NULL COMMENT 'Tiêu đề bài trắc nghiệm',
+    `description` TEXT COMMENT 'Hướng dẫn và lưu ý khi làm bài kiểm tra',
+    `time_limit_minutes` INT NOT NULL DEFAULT 15 COMMENT 'Thời gian làm bài tối đa (phút)',
+    `passing_score_percentage` DECIMAL(5,2) NOT NULL DEFAULT 80.00 COMMENT 'Ngưỡng điểm tối thiểu để đạt (%)',
+    `max_attempts` INT NOT NULL DEFAULT 5 COMMENT 'Số lần làm bài tối đa cho phép',
+    `is_active` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Kích hoạt bài quiz',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT `fk_quizzes_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Danh mục bài thi trắc nghiệm sau bài học';
+
+CREATE TABLE `quiz_questions` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `quiz_id` BIGINT NOT NULL COMMENT 'Thuộc bài quiz nào',
+    `question_text` TEXT NOT NULL COMMENT 'Nội dung câu hỏi',
+    `question_type` ENUM('SINGLE_CHOICE', 'MULTIPLE_CHOICE') NOT NULL DEFAULT 'SINGLE_CHOICE',
+    `explanation` TEXT COMMENT 'Giải thích đáp án chi tiết sau khi nộp bài',
+    `order_index` INT NOT NULL DEFAULT 1 COMMENT 'Thứ tự câu hỏi trong đề',
+    `points` DECIMAL(5,2) NOT NULL DEFAULT 1.00 COMMENT 'Thang điểm câu',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT `fk_questions_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX `idx_questions_quiz` (`quiz_id`, `order_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Ngân hàng câu hỏi trắc nghiệm';
+
+CREATE TABLE `quiz_options` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `question_id` BIGINT NOT NULL COMMENT 'Thuộc câu hỏi nào',
+    `option_text` TEXT NOT NULL COMMENT 'Nội dung phương án',
+    `is_correct` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Đáp án đúng',
+    `order_index` INT NOT NULL DEFAULT 1 COMMENT 'Thứ tự lựa chọn (A, B, C, D)',
+    CONSTRAINT `fk_options_question` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX `idx_options_question` (`question_id`, `order_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Các phương án trả lời trắc nghiệm (A, B, C, D)';
+
+CREATE TABLE `quiz_attempts` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `quiz_id` BIGINT NOT NULL COMMENT 'Thuộc đề quiz nào',
+    `student_id` BIGINT NOT NULL COMMENT 'UID học viên nộp bài',
+    `lesson_id` BIGINT NOT NULL COMMENT 'Bài học tương ứng',
+    `attempt_number` INT NOT NULL DEFAULT 1 COMMENT 'Lần thi thứ mấy',
+    `score_percentage` DECIMAL(5,2) NOT NULL DEFAULT 0.00 COMMENT 'Điểm số đạt được (thang 100%)',
+    `total_questions` INT NOT NULL DEFAULT 0 COMMENT 'Tổng số câu',
+    `correct_answers` INT NOT NULL DEFAULT 0 COMMENT 'Số câu trả lời đúng',
+    `is_passed` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Đạt bài kiểm tra hay không',
+    `time_spent_seconds` INT NOT NULL DEFAULT 0 COMMENT 'Thời gian làm bài thực tế (giây)',
+    `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời điểm nộp bài',
+    CONSTRAINT `fk_attempts_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_attempts_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_attempts_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX `idx_attempt_student` (`student_id`, `lesson_id`, `is_passed`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lịch sử các lần làm bài trắc nghiệm của sinh viên';
+
+CREATE TABLE `quiz_attempt_answers` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `attempt_id` BIGINT NOT NULL COMMENT 'Thuộc lượt làm bài nào',
+    `question_id` BIGINT NOT NULL COMMENT 'Câu hỏi',
+    `selected_option_id` BIGINT NULL COMMENT 'Phương án sinh viên đã chọn',
+    `is_correct` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Lựa chọn có chính xác không',
+    CONSTRAINT `fk_att_ans_attempt` FOREIGN KEY (`attempt_id`) REFERENCES `quiz_attempts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_att_ans_question` FOREIGN KEY (`question_id`) REFERENCES `quiz_questions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_att_ans_option` FOREIGN KEY (`selected_option_id`) REFERENCES `quiz_options` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Chi tiết từng câu trả lời trong lượt làm bài quiz';
+
 -- ------------------------------------------------------------------------------
 -- 4. PHÂN HỆ TIẾN TRÌNH HỌC TẬP & ĐIỂM DANH KHUÔN MẶT (PROGRESS & ATTENDANCE)
 -- ------------------------------------------------------------------------------
@@ -289,6 +373,9 @@ CREATE TABLE `learning_progress` (
     `completion_percentage` INT NOT NULL DEFAULT 0 COMMENT 'Tỷ lệ phần trăm hoàn thành (0 - 100%)',
     `is_completed` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Đã hoàn thành bài học chưa (ví dụ đạt >= 85% thời lượng)',
     `completed_at` DATETIME NULL COMMENT 'Thời điểm hoàn thành',
+    `quiz_passed` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Đã thi đạt bài trắc nghiệm sau bài học chưa',
+    `quiz_score` DECIMAL(5,2) NOT NULL DEFAULT 0.00 COMMENT 'Điểm trắc nghiệm cao nhất đạt được (%)',
+    `quiz_attempts_count` INT NOT NULL DEFAULT 0 COMMENT 'Số lần đã làm bài trắc nghiệm',
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT `fk_progress_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_progress_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -317,147 +404,30 @@ CREATE TABLE `face_attendance_logs` (
     INDEX `idx_face_att_time` (`capture_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Nhật ký điểm danh khuôn mặt ngẫu nhiên trong giờ học trực tuyến';
 
--- ------------------------------------------------------------------------------
--- 5. PHÂN HỆ THI TRẮC NGHIỆM ONLINE & NGÂN HÀNG CÂU HỎI (EXAMS & QUESTION BANK)
--- ------------------------------------------------------------------------------
-
--- 5.1. Bảng Ngân hàng câu hỏi (Question_Bank)
-DROP TABLE IF EXISTS `question_bank`;
-CREATE TABLE `question_bank` (
+-- 4.3. Bảng Tin tức, Thông báo & Hoạt động Sinh viên NTU (Announcements)
+DROP TABLE IF EXISTS `announcements`;
+CREATE TABLE `announcements` (
     `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `subject_id` BIGINT NOT NULL COMMENT 'Câu hỏi thuộc môn học nào',
-    `creator_id` BIGINT NOT NULL COMMENT 'Giảng viên biên soạn câu hỏi (UID số)',
-    `question_text` LONGTEXT NOT NULL COMMENT 'Nội dung câu hỏi (hỗ trợ văn bản/HTML/LaTeX)',
-    `question_type` ENUM('SINGLE_CHOICE', 'MULTI_CHOICE', 'TRUE_FALSE') NOT NULL DEFAULT 'SINGLE_CHOICE' 
-        COMMENT 'Loại câu hỏi trắc nghiệm',
-    `difficulty` ENUM('EASY', 'MEDIUM', 'HARD') NOT NULL DEFAULT 'EASY' COMMENT 'Mức độ nhận thức',
-    `explanation` TEXT COMMENT 'Lời giải thích đáp án chi tiết khi công bố điểm',
-    `default_point` DECIMAL(4, 2) NOT NULL DEFAULT 1.00 COMMENT 'Điểm mặc định',
+    `title` VARCHAR(255) NOT NULL COMMENT 'Tiêu đề thông báo / hoạt động',
+    `category` VARCHAR(50) NOT NULL COMMENT 'Mã phân loại: startup, charity, sports, honor, ...',
+    `category_name` VARCHAR(100) NOT NULL COMMENT 'Tên chuyên mục hiển thị',
+    `badge_class` VARCHAR(50) DEFAULT 'badge-startup' COMMENT 'CSS class hiển thị huy hiệu',
+    `summary` TEXT COMMENT 'Tóm tắt ngắn hiển thị trên thẻ',
+    `content` LONGTEXT COMMENT 'Nội dung chi tiết thông báo',
+    `image_url` VARCHAR(500) COMMENT 'Đường dẫn ảnh lưu trữ trên Cloudinary hoặc máy chủ',
+    `cloudinary_public_id` VARCHAR(200) COMMENT 'Mã nhận diện ảnh trên Cloudinary',
+    `event_date` VARCHAR(100) COMMENT 'Thời gian sự kiện hiển thị trên nhãn',
+    `location` VARCHAR(255) COMMENT 'Địa điểm tổ chức sự kiện',
+    `author` VARCHAR(100) DEFAULT 'Ban Truyền Thông NTU' COMMENT 'Tác giả bài đăng',
+    `is_featured` BOOLEAN DEFAULT FALSE COMMENT 'Đánh dấu bài viết nổi bật',
+    `status` ENUM('PUBLISHED', 'DRAFT', 'ARCHIVED') DEFAULT 'PUBLISHED' COMMENT 'Trạng thái bài đăng',
+    `view_count` INT DEFAULT 0 COMMENT 'Lượt xem bài viết',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT `fk_questions_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT `fk_questions_creator` FOREIGN KEY (`creator_id`) REFERENCES `lecturers` (`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    INDEX `idx_questions_diff` (`difficulty`),
-    INDEX `idx_questions_type` (`question_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Ngân hàng câu hỏi trắc nghiệm';
-
--- 5.2. Bảng Lựa chọn đáp án (Question_Options)
-DROP TABLE IF EXISTS `question_options`;
-CREATE TABLE `question_options` (
-    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `question_id` BIGINT NOT NULL COMMENT 'Thuộc câu hỏi nào',
-    `option_text` TEXT NOT NULL COMMENT 'Nội dung phương án lựa chọn (A, B, C, D...)',
-    `is_correct` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Đáp án đúng (TRUE) hay sai (FALSE)',
-    `order_index` INT NOT NULL DEFAULT 0 COMMENT 'Thứ tự lựa chọn',
-    CONSTRAINT `fk_options_question` FOREIGN KEY (`question_id`) REFERENCES `question_bank` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    INDEX `idx_options_question` (`question_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Các phương án lựa chọn của câu hỏi trắc nghiệm';
-
--- 5.3. Bảng Kỳ thi / Bài kiểm tra trắc nghiệm Online (Exams)
-DROP TABLE IF EXISTS `exams`;
-CREATE TABLE `exams` (
-    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `course_id` BIGINT NOT NULL COMMENT 'Thuộc khóa học nào',
-    `title` VARCHAR(255) NOT NULL COMMENT 'Tên bài thi (ví dụ: Thi giữa kỳ Lập trình Web, Thi thử Ôn tập)',
-    `description` TEXT COMMENT 'Quy chế và hướng dẫn làm bài thi',
-    `duration_minutes` INT NOT NULL COMMENT 'Thời lượng làm bài (phút)',
-    `pass_percentage` INT NOT NULL DEFAULT 50 COMMENT 'Ngưỡng đạt (% điểm số)',
-    `max_attempts` INT NOT NULL DEFAULT 1 COMMENT 'Số lần làm bài tối đa cho phép',
-    `shuffle_questions` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Đảo ngẫu nhiên thứ tự câu hỏi cho từng thí sinh',
-    `shuffle_options` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Đảo ngẫu nhiên thứ tự các đáp án trong câu hỏi',
-    `require_face_verification` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Bắt buộc xác thực khuôn mặt trước & trong khi thi',
-    `tab_lock_enabled` BOOLEAN NOT NULL DEFAULT TRUE COMMENT 'Bật chế độ khóa toàn màn hình & phát hiện chuyển Tab',
-    `max_violations_allowed` INT NOT NULL DEFAULT 3 COMMENT 'Số lần vi phạm gian lận tối đa trước khi tự động thu bài',
-    `start_time` DATETIME NULL COMMENT 'Thời gian mở đề',
-    `end_time` DATETIME NULL COMMENT 'Thời gian đóng đề thi',
-    `status` ENUM('DRAFT', 'PUBLISHED', 'CLOSED') NOT NULL DEFAULT 'DRAFT' COMMENT 'Trạng thái đề thi',
-    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT `fk_exams_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    INDEX `idx_exams_status` (`status`),
-    INDEX `idx_exams_time` (`start_time`, `end_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Cấu hình bài thi trắc nghiệm trực tuyến';
-
--- 5.4. Bảng Câu hỏi trong đề thi (Exam_Questions)
-DROP TABLE IF EXISTS `exam_questions`;
-CREATE TABLE `exam_questions` (
-    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `exam_id` BIGINT NOT NULL COMMENT 'Đề thi',
-    `question_id` BIGINT NOT NULL COMMENT 'Câu hỏi được đưa vào đề',
-    `custom_point` DECIMAL(4, 2) NOT NULL DEFAULT 1.00 COMMENT 'Thang điểm riêng cho câu này trong bài thi',
-    `order_index` INT NOT NULL DEFAULT 0 COMMENT 'Thứ tự câu hỏi trong đề gốc',
-    CONSTRAINT `fk_exam_questions_exam` FOREIGN KEY (`exam_id`) REFERENCES `exams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_exam_questions_question` FOREIGN KEY (`question_id`) REFERENCES `question_bank` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    UNIQUE KEY `uk_exam_question` (`exam_id`, `question_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Danh sách câu hỏi được gán vào đề thi';
-
--- ------------------------------------------------------------------------------
--- 6. PHÂN HỆ LƯỢT THI, KẾT QUẢ & GIÁM SÁT VI PHẠM (ATTEMPTS & PROCTORING)
--- ------------------------------------------------------------------------------
-
--- 6.1. Bảng Lượt làm bài thi (Exam_Attempts)
-DROP TABLE IF EXISTS `exam_attempts`;
-CREATE TABLE `exam_attempts` (
-    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `exam_id` BIGINT NOT NULL COMMENT 'Bài thi',
-    `student_id` BIGINT NOT NULL COMMENT 'Thí sinh (UID số)',
-    `attempt_number` INT NOT NULL DEFAULT 1 COMMENT 'Lần thi thứ mấy',
-    `started_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời điểm bấm Bắt đầu làm bài',
-    `submitted_at` DATETIME NULL COMMENT 'Thời điểm nộp bài',
-    `total_score` DECIMAL(5, 2) NOT NULL DEFAULT 0.00 COMMENT 'Tổng điểm đạt được',
-    `total_violations` INT NOT NULL DEFAULT 0 COMMENT 'Tổng số lần vi phạm ghi nhận trong ca thi',
-    `is_passed` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Kết quả Đạt / Chưa đạt',
-    `status` ENUM('IN_PROGRESS', 'SUBMITTED', 'DISQUALIFIED_BY_VIOLATION') NOT NULL DEFAULT 'IN_PROGRESS' 
-        COMMENT 'Trạng thái bài thi: Đang làm, Đã nộp, hoặc Bị đình chỉ do gian lận',
-    `ip_address` VARCHAR(45) COMMENT 'Địa chỉ IP của thí sinh khi thi',
-    `user_agent` TEXT COMMENT 'Thông tin trình duyệt / hệ điều hành',
-    CONSTRAINT `fk_attempts_exam` FOREIGN KEY (`exam_id`) REFERENCES `exams` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT `fk_attempts_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    INDEX `idx_attempts_student_exam` (`student_id`, `exam_id`),
-    INDEX `idx_attempts_status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lượt thi trắc nghiệm của thí sinh';
-
--- 6.2. Bảng Chi tiết câu trả lời của thí sinh (Attempt_Answers)
-DROP TABLE IF EXISTS `attempt_answers`;
-CREATE TABLE `attempt_answers` (
-    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `attempt_id` BIGINT NOT NULL COMMENT 'Lượt thi',
-    `question_id` BIGINT NOT NULL COMMENT 'Câu hỏi tương ứng',
-    `selected_option_ids` JSON NOT NULL COMMENT 'Mảng chứa ID các phương án thí sinh đã tick, ví dụ [12, 14]',
-    `is_correct` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Trả lời đúng hay sai',
-    `earned_point` DECIMAL(4, 2) NOT NULL DEFAULT 0.00 COMMENT 'Điểm số đạt được của câu này',
-    `answered_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT `fk_answers_attempt` FOREIGN KEY (`attempt_id`) REFERENCES `exam_attempts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_answers_question` FOREIGN KEY (`question_id`) REFERENCES `question_bank` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    UNIQUE KEY `uk_attempt_question` (`attempt_id`, `question_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lựa chọn chi tiết của thí sinh cho từng câu hỏi';
-
--- 6.3. Bảng Ghi nhận Vi phạm Gian lận trong phòng thi (Exam_Violations)
--- Hỗ trợ: Tab lock, F12 inspect lock, Window blur, Fullscreen exit, và AI Face Proctoring
-DROP TABLE IF EXISTS `exam_violations`;
-CREATE TABLE `exam_violations` (
-    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `attempt_id` BIGINT NOT NULL COMMENT 'Lượt thi tương ứng',
-    `student_id` BIGINT NOT NULL COMMENT 'UID số thí sinh vi phạm',
-    `violation_type` ENUM(
-        'TAB_SWITCH',            -- Chuyển đổi tab trình duyệt (Page Visibility API hidden)
-        'WINDOW_BLUR',           -- Mất tiêu điểm chuột / click ra ngoài ứng dụng
-        'INSPECT_KEY_PRESS',     -- Cố ý bấm F12, Ctrl+Shift+I, Ctrl+U, chuột phải ContextMenu
-        'FULLSCREEN_EXIT',       -- Thoát khỏi chế độ toàn màn hình bắt buộc
-        'NO_FACE_DETECTED',      -- AI không thấy khuôn mặt thí sinh trong khung hình
-        'MULTIPLE_FACES',        -- AI phát hiện có 2 người trở lên xuất hiện trước camera
-        'FACE_MISMATCH',         -- Khuôn mặt trước webcam không khớp sinh viên đăng ký (thi hộ)
-        'HEAD_POSE_LOOKING_AWAY' -- AI phát hiện quay đầu quá mức nghi vấn nhìn tài liệu/người bên cạnh
-    ) NOT NULL COMMENT 'Hành vi vi phạm',
-    `violation_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời điểm xảy ra vi phạm',
-    `details` TEXT COMMENT 'Chi tiết bổ sung (ví dụ: Pitch=32, Yaw=45, phím nhấn F12)',
-    `evidence_snapshot_url` VARCHAR(500) COMMENT 'Link ảnh chụp webcam bằng chứng vi phạm',
-    `severity_level` ENUM('WARNING', 'CRITICAL') NOT NULL DEFAULT 'WARNING' COMMENT 'Mức độ nghiêm trọng',
-    CONSTRAINT `fk_violations_attempt` FOREIGN KEY (`attempt_id`) REFERENCES `exam_attempts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_violations_student` FOREIGN KEY (`student_id`) REFERENCES `students` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    INDEX `idx_violations_attempt` (`attempt_id`),
-    INDEX `idx_violations_type` (`violation_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Nhật ký bắt quả tang hành vi gian lận trong lúc thi trực tuyến';
+    INDEX `idx_ann_category` (`category`),
+    INDEX `idx_ann_status` (`status`),
+    INDEX `idx_ann_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Bảng quản lý tin tức, thông báo và hoạt động ngoại khóa trường';
 
 -- Bật lại kiểm tra khóa ngoại
 SET FOREIGN_KEY_CHECKS = 1;
@@ -493,8 +463,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `phone`, `password_hash`, `full_
 INSERT INTO `lecturers` (`user_id`, `lecturer_code`, `faculty_id`, `academic_degree`, `bio`) VALUES
 (2, 'GV001', 1, 'Thạc sĩ Khoa học Máy tính', 'Chuyên gia giảng dạy Kiến trúc Vi dịch vụ Spring Boot và AI');
 
-INSERT INTO `students` (`user_id`, `student_code`, `class_id`, `major_id`, `date_of_birth`, `gender`, `face_registered`, `face_data_id`) VALUES
-(3, '2310900051', 1, 1, '2005-01-01', 'MALE', TRUE, 'FACE_2310900051_VEC'),
+INSERT INTO `students` (`user_id`, `student_code`, `class_id`, `major_id`, `date_of_birth`, `gender`, `face_registered`, `face_embed`) VALUES
+(3, '2310900051', 1, 1, '2005-01-01', 'MALE', FALSE, NULL),
 (4, '2310900052', 1, 1, '2005-05-15', 'FEMALE', FALSE, NULL);
 
 -- 5. Môn học & Khóa học
@@ -504,7 +474,7 @@ INSERT INTO `subjects` (`id`, `subject_code`, `name`, `credits`, `description`) 
 
 INSERT INTO `courses` (`id`, `subject_id`, `lecturer_id`, `title`, `slug`, `description`, `thumbnail_url`, `price`, `is_free`, `enrollment_type`, `status`) VALUES
 (1, 1, 2, 'Khóa học Spring Boot 3 & Microservice Fullstack', 'spring-boot-3-fullstack', 'Khóa học hoàn chỉnh xây dựng hệ thống quản lý học tập LMS.', '/uploads/thumbnails/springboot.png', 0.00, FALSE, 'ASSIGNED_BY_MAJOR', 'PUBLISHED'),
-(2, 2, 2, 'Chuyên đề Thị giác máy tính với Python & FastAPI', 'fastapi-computer-vision', 'Ứng dụng ArcFace và YuNet vào giám sát thi trực tuyến.', '/uploads/thumbnails/fastapi.png', 499000.00, FALSE, 'PURCHASED', 'PUBLISHED');
+(2, 2, 2, 'Chuyên đề Thị giác máy tính với Python & FastAPI', 'fastapi-computer-vision', 'Ứng dụng ArcFace và YuNet vào nhận diện và điểm danh trực tuyến.', '/uploads/thumbnails/fastapi.png', 499000.00, FALSE, 'PURCHASED', 'PUBLISHED');
 
 -- 6. Phân bổ khóa học theo chuyên ngành (Cấp tự động cho ngành SE)
 INSERT INTO `course_majors` (`course_id`, `major_id`, `is_mandatory`) VALUES
@@ -527,24 +497,3 @@ INSERT INTO `video_assets` (`lesson_id`, `original_file_name`, `storage_provider
 (1, 'lesson1_db_design.mp4', 'LOCAL', '/videos/hls/lesson1/master.m3u8', 1800, '1080p', 'READY'),
 (2, 'lesson2_hls_stream.mp4', 'LOCAL', '/videos/hls/lesson2/master.m3u8', 2400, '1080p', 'READY');
 
--- 9. Ngân hàng câu hỏi trắc nghiệm & Đề thi
-INSERT INTO `question_bank` (`id`, `subject_id`, `creator_id`, `question_text`, `question_type`, `difficulty`, `explanation`, `default_point`) VALUES
-(1, 1, 2, 'Trong kiến trúc Spring Boot, Annotation nào dùng để đánh dấu một lớp là REST Controller?', 'SINGLE_CHOICE', 'EASY', '@RestController là kết hợp của @Controller và @ResponseBody', 2.50),
-(2, 1, 2, 'Giao thức nào thường được sử dụng phổ biến nhất để truyền phát video thích ứng băng thông trên Web?', 'SINGLE_CHOICE', 'EASY', 'HLS (HTTP Live Streaming) và MPEG-DASH là hai giao thức thích ứng băng thông phổ biến nhất.', 2.50);
-
-INSERT INTO `question_options` (`id`, `question_id`, `option_text`, `is_correct`, `order_index`) VALUES
-(1, 1, '@Controller', FALSE, 1),
-(2, 1, '@RestController', TRUE, 2),
-(3, 1, '@Service', FALSE, 3),
-(4, 1, '@Component', FALSE, 4),
-(5, 2, 'FTP', FALSE, 1),
-(6, 2, 'HLS (HTTP Live Streaming)', TRUE, 2),
-(7, 2, 'SMTP', FALSE, 3),
-(8, 2, 'Telnet', FALSE, 4);
-
-INSERT INTO `exams` (`id`, `course_id`, `title`, `description`, `duration_minutes`, `pass_percentage`, `max_attempts`, `shuffle_questions`, `shuffle_options`, `require_face_verification`, `tab_lock_enabled`, `max_violations_allowed`, `status`) VALUES
-(1, 1, 'Bài kiểm tra trắc nghiệm số 1 - Khảo sát kiến trúc', 'Thí sinh bật webcam để xác thực khuôn mặt. Nghiêm cấm chuyển tab hoặc mở F12.', 15, 60, 2, TRUE, TRUE, TRUE, TRUE, 3, 'PUBLISHED');
-
-INSERT INTO `exam_questions` (`exam_id`, `question_id`, `custom_point`, `order_index`) VALUES
-(1, 1, 5.00, 1),
-(1, 2, 5.00, 2);

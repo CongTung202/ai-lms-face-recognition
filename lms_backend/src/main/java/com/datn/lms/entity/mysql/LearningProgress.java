@@ -56,6 +56,18 @@ public class LearningProgress {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
+    @Column(name = "quiz_passed", nullable = false)
+    @Builder.Default
+    private Boolean quizPassed = false;
+
+    @Column(name = "quiz_score", precision = 5, scale = 2)
+    @Builder.Default
+    private java.math.BigDecimal quizScore = java.math.BigDecimal.ZERO;
+
+    @Column(name = "quiz_attempts_count", nullable = false)
+    @Builder.Default
+    private Integer quizAttemptsCount = 0;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;

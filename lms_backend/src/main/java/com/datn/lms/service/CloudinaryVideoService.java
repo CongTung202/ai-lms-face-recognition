@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -60,6 +62,38 @@ public class CloudinaryVideoService {
 
         String secureUrl = (String) uploadResult.get("secure_url");
         log.info("Upload Cloudinary thành công! URL: {}", secureUrl);
+        return secureUrl;
+    }
+
+    /**
+     * Tải ảnh bìa (thumbnail) khóa học lên Cloudinary CDN
+     *
+     * @param file Tệp ảnh tải lên từ máy tính (MultipartFile)
+     * @param folder Thư mục lưu trữ trên Cloudinary (vd: "lms_datn/thumbnails")
+     * @return URL CDN an toàn (HTTPS)
+     */
+    public String uploadImageToCloudinary(MultipartFile file, String folder) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Tệp ảnh tải lên không được để trống");
+        }
+
+        String originalName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "thumbnail.jpg";
+        String baseName = originalName.contains(".") ? originalName.substring(0, originalName.lastIndexOf('.')) : originalName;
+        String cleanName = baseName.replaceAll("[^a-zA-Z0-9_-]", "_");
+        String publicId = "course_thumb_" + System.currentTimeMillis() + "_" + cleanName;
+
+        log.info("Bắt đầu tải ảnh bìa lên Cloudinary (File: {}, Dung lượng: {} KB)...",
+                originalName, file.getSize() / 1024);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                "resource_type", "image",
+                "folder", folder != null ? folder : "lms_datn/thumbnails",
+                "public_id", publicId
+        ));
+
+        String secureUrl = (String) uploadResult.get("secure_url");
+        log.info("Upload ảnh bìa lên Cloudinary thành công! URL: {}", secureUrl);
         return secureUrl;
     }
 }

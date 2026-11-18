@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bản Vẽ Trực Quan Các Biểu Đồ Chương 3 - EduFace DATN</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00539F;
+      --primary-light: #e0f2fe;
+      --accent: #DA291C;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 25px 20px;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    header {
+      background: linear-gradient(135deg, #00539F 0%, #002d54 100%);
+      color: white;
+      padding: 28px 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 83, 159, 0.25);
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 83, 159, 0.2);
+    }
+    .card {
+      display: none;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      padding: 28px;
+      margin-bottom: 30px;
+    }
+    .card.active { display: block; }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .card-title h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .card-title span {
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+    .btn-action {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #334155;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+    .canvas-box {
+      background: #ffffff;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 12px;
+      padding: 25px 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      margin-bottom: 22px;
+    }
+    .guide-box {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 13.5px;
+      margin-top: 15px;
+    }
+    .guide-box strong { color: #1e40af; }
+    .code-box {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      padding: 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin-top: 15px;
+      display: none;
+    }
+    .code-box.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge">ĐỒ ÁN TỐT NGHIỆP • EDUFACE LMS</div>
+        <h1>Bản Vẽ Trực Quan Các Biểu Đồ Chương 3</h1>
+        <p>Đã đồng bộ chuẩn xác cấu trúc dự án EduFace (Spring Boot 3 + Python Face AI) và bám sát 100% mẫu hình của trường.</p>
+      </div>
+      <div>
+        <span style="font-size: 13px; opacity: 0.85;">Sinh viên: <strong>Nguyễn Công Tùng</strong> • K23CNT3</span>
+      </div>
+    </header>
+
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="showTab(1)">📦 Hình 3.1: Thiết kế tổng quát gói</button>
+      <button class="tab-btn" onclick="showTab(2)">🔍 Hình 3.2: Thiết kế chi tiết gói</button>
+      <button class="tab-btn" onclick="showTab(3)">🖥️ Hình 3.3: Giao diện trang chủ (Desktop)</button>
+      <button class="tab-btn" onclick="showTab(4)">📱 Hình 3.4: Giao diện Mobile</button>
+      <button class="tab-btn" onclick="showTab(5)">🏷️ Hình 3.5: Sơ đồ lớp (Class Diagram)</button>
+      <button class="tab-btn" onclick="showTab(6)">🗄️ Hình 3.6: Biểu đồ thực thể liên kết (ERD)</button>
+    </div>
+
+    <!-- TAB 1: HÌNH 3.1 (THIẾT KẾ CHUẨN 100% THEO ĐÚNG MẪU ẢNH CỦA TRƯỜNG & ĐÚNG CẤU TRÚC EDUFACE) -->
+    <div class="card active" id="tab1">
+      <div class="card-header">
+        <div class="card-title">
+          <h2>Hình 3.1. Thiết kế tổng quát gói (UML Package Diagram)</h2>
+          <span>Cấu trúc chuẩn theo mẫu hình của trường: Gồm tầng Dịch vụ ngoài (Face AI Service / PayOS), Tầng Giao diện (UI), Tầng Nghiệp vụ (com.datn.lms), và Tầng Dữ liệu (DataManagement).</span>
+        </div>
+        <div>
+          <button class="btn-action" onclick="toggleCode('code1')">📋 Xem mã PlantUML</button>
+        </div>
+      </div>
+
+      <div class="canvas-box">
+        <!-- SVG VẼ ĐÚNG 100% BỐ CỤC HÌNH 3.1 TRONG ẢNH MẪU CỦA TRƯỜNG -->
+        <svg width="100%" height="auto" viewBox="0 0 860 620" style="max-width: 860px;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow1" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#00539F" />
+            </marker>
+            <marker id="arrow-red1" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#DA291C" />
+            </marker>
+          </defs>
+
+          <!-- ================= CỘT BÊN TRÁI ================= -->
+          <!-- 1. Gói Dịch vụ ngoài (tương ứng gói "Bank" trong ảnh mẫu) -->
+          <!-- Chú thích: "Package" màu đỏ có mũi tên chỉ xuống y hệt ảnh mẫu -->
+          <text x="110" y="80" font-size="13" font-weight="700" fill="#DA291C" text-anchor="middle">Package</text>
+          <line x1="110" y1="88" x2="110" y2="118" stroke="#DA291C" stroke-width="1.8" stroke-dasharray="4,3" marker-end="url(#arrow-red1)" />
+
+          <g transform="translate(40, 125)">
+            <path d="M 0,16 L 0,0 L 50,0 L 60,16 Z" fill="#66c2ff" stroke="#0077b6" stroke-width="1.6" />
+            <rect x="0" y="16" width="140" height="75" rx="3" fill="#80d4ff" stroke="#0077b6" stroke-width="1.6" />
+            <text x="70" y="58" font-size="13" font-weight="700" fill="#004080" text-anchor="middle">Face AI Service</text>
+            <text x="70" y="74" font-size="10.5" fill="#00539F" text-anchor="middle">(Python ArcFace)</text>
+          </g>
+
+          <!-- 2. Gói Giao diện UI (tương ứng gói "UI" trong ảnh mẫu) -->
+          <g transform="translate(40, 310)">
+            <path d="M 0,16 L 0,0 L 40,0 L 50,16 Z" fill="#66c2ff" stroke="#0077b6" stroke-width="1.6" />
+            <rect x="0" y="16" width="140" height="75" rx="3" fill="#80d4ff" stroke="#0077b6" stroke-width="1.6" />
+            <text x="70" y="58" font-size="14" font-weight="700" fill="#004080" text-anchor="middle">UI</text>
+            <text x="70" y="74" font-size="10.5" fill="#00539F" text-anchor="middle">(Web Client / SPA)</text>
+          </g>
+
+          <!-- ================= CỘT BÊN PHẢI ================= -->
+          <!-- 3. Gói lớn tầng nghiệp vụ com.datn.lms (tương ứng "com.aBusiness" trong ảnh mẫu) -->
+          <g transform="translate(250, 40)">
+            <!-- Outer Package Folder Tab & Body -->
+            <path d="M 0,22 L 0,0 L 120,0 L 135,22 Z" fill="#4db8ff" stroke="#0077b6" stroke-width="1.8" />
+            <rect x="0" y="22" width="560" height="310" rx="5" fill="#cceeff" stroke="#0077b6" stroke-width="1.8" />
+            <text x="280" y="16" font-size="13" font-weight="700" fill="#004080" text-anchor="middle">com.datn.lms</text>
+
+            <!-- Gói con 1: FaceAI (tương ứng vị trí gói "Accounting" ở trên) -->
+            <g transform="translate(60, 45)">
+              <path d="M 0,14 L 0,0 L 45,0 L 55,14 Z" fill="#66c2ff" stroke="#0077b6" stroke-width="1.5" />
+              <rect x="0" y="14" width="180" height="70" rx="3" fill="#80d4ff" stroke="#0077b6" stroke-width="1.5" />
+              <text x="90" y="55" font-size="13" font-weight="700" fill="#004080" text-anchor="middle">FaceAI</text>
+            </g>
+
+            <!-- Gói con 2: Course (tương ứng vị trí gói "Ordering" ở dưới trái) -->
+            <g transform="translate(60, 195)">
+              <path d="M 0,14 L 0,0 L 45,0 L 55,14 Z" fill="#66c2ff" stroke="#0077b6" stroke-width="1.5" />
+              <rect x="0" y="14" width="180" height="70" rx="3" fill="#80d4ff" stroke="#0077b6" stroke-width="1.5" />
+              <text x="90" y="55" font-size="13" font-weight="700" fill="#004080" text-anchor="middle">Course</text>
+            </g>
+
+            <!-- Gói con 3: Learning (tương ứng vị trí gói "Shipping" ở dưới phải) -->
+            <g transform="translate(320, 195)">
+              <path d="M 0,14 L 0,0 L 45,0 L 55,14 Z" fill="#66c2ff" stroke="#0077b6" stroke-width="1.5" />
+              <rect x="0" y="14" width="180" height="70" rx="3" fill="#80d4ff" stroke="#0077b6" stroke-width="1.5" />
+              <text x="90" y="55" font-size="13" font-weight="700" fill="#004080" text-anchor="middle">Learning</text>
+            </g>
+
+            <!-- Mũi tên nội bộ com.datn.lms (y hệt ảnh mẫu): -->
+            <!-- Course -> FaceAI (mũi tên hướng lên) -->
+            <line x1="150" y1="195" x2="150" y2="125" stroke="#00539F" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow1)" />
+            <!-- Course -> Learning (mũi tên hướng sang phải) -->
+            <line x1="240" y1="230" x2="310" y2="230" stroke="#00539F" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow1)" />
+          </g>
+
+          <!-- 4. Gói lớn tầng dữ liệu DataManagement (tương ứng "DataManagement" trong ảnh mẫu) -->
+          <g transform="translate(250, 410)">
+            <!-- Outer Package Folder Tab & Body -->
+            <path d="M 0,22 L 0,0 L 130,0 L 145,22 Z" fill="#4db8ff" stroke="#0077b6" stroke-width="1.8" />
+            <rect x="0" y="22" width="560" height="175" rx="5" fill="#cceeff" stroke="#0077b6" stroke-width="1.8" />
+            <text x="280" y="16" font-size="13" font-weight="700" fill="#004080" text-anchor="middle">DataManagement</text>
+
+            <!-- Gói con 4: Course Data (tương ứng gói "Ordering" trong DataManagement) -->
+            <g transform="translate(60, 50)">
+              <path d="M 0,14 L 0,0 L 45,0 L 55,14 Z" fill="#66c2ff" stroke="#0077b6" stroke-width="1.5" />
+              <rect x="0" y="14" width="180" height="70" rx="3" fill="#80d4ff" stroke="#0077b6" stroke-width="1.5" />
+              <text x="90" y="55" font-size="13" font-weight="700" fill="#004080" text-anchor="middle">Course</text>
+            </g>
+
+            <!-- Gói con 5: Learning Data (tương ứng gói "Shipping" trong DataManagement) -->
+            <g transform="translate(320, 50)">
+              <path d="M 0,14 L 0,0 L 45,0 L 55,14 Z" fill="#66c2ff" stroke="#0077b6" stroke-width="1.5" />
+              <rect x="0" y="14" width="180" height="70" rx="3" fill="#80d4ff" stroke="#0077b6" stroke-width="1.5" />
+              <text x="90" y="55" font-size="13" font-weight="700" fill="#004080" text-anchor="middle">Learning</text>
+            </g>
+
+            <!-- Course Data -> Learning Data (mũi tên hướng sang phải) -->
+            <line x1="240" y1="85" x2="310" y2="85" stroke="#00539F" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow1)" />
+          </g>
+
+          <!-- ================= MŨI TÊN PHỤ THUỘC GIỮA CÁC GÓI (DEPENDENCY) ================= -->
+          <!-- 1. Face AI Service (ngoài) -> FaceAI (trong com.datn.lms) -->
+          <line x1="180" y1="162" x2="310" y2="120" stroke="#00539F" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow1)" />
+
+          <!-- 2. UI -> Course (trong com.datn.lms) -->
+          <line x1="180" y1="347" x2="300" y2="280" stroke="#00539F" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow1)" />
+
+          <!-- 3. Course (com.datn.lms) -> Course (DataManagement) (mũi tên thẳng đứng từ trên xuống) -->
+          <line x1="400" y1="350" x2="400" y2="450" stroke="#00539F" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow1)" />
+
+          <!-- 4. Learning (com.datn.lms) -> Learning (DataManagement) (mũi tên thẳng đứng từ trên xuống) -->
+          <line x1="660" y1="350" x2="660" y2="450" stroke="#00539F" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arrow1)" />
+
+          <!-- Chú thích: Nhãn "Dependency" màu đỏ có mũi tên chỉ sang y hệt ảnh mẫu của thầy -->
+          <text x="740" y="390" font-size="13" font-weight="700" fill="#DA291C">Dependency</text>
+          <line x1="730" y1="387" x2="675" y2="387" stroke="#DA291C" stroke-width="1.8" stroke-dasharray="4,3" marker-end="url(#arrow-red1)" />
+        </svg>
+      </div>
+
+      <div class="guide-box">
+        <strong>💡 Giải thích sự tương đồng 100% với mẫu trong giáo trình của thầy:</strong>
+        <ul style="margin-left: 20px; margin-top: 6px;">
+          <li><strong>Gói Face AI Service</strong>: Đóng vai trò dịch vụ bên thứ 3 (như gói <em>Bank</em> trong mẫu).</li>
+          <li><strong>Gói UI</strong>: Tầng giao diện người dùng (như gói <em>UI</em> trong mẫu).</li>
+          <li><strong>Gói lớn com.datn.lms</strong>: Tầng xử lý nghiệp vụ chính gồm 3 phân hệ cốt lõi: <code>FaceAI</code> (xác thực khuôn mặt - như <em>Accounting</em>), <code>Course</code> (khóa học - như <em>Ordering</em>), <code>Learning</code> (học tập &amp; tài liệu - như <em>Shipping</em>).</li>
+          <li><strong>Gói lớn DataManagement</strong>: Tầng dữ liệu chứa các thực thể và cơ sở dữ liệu tương ứng: <code>Course</code> (MySQL) và <code>Learning</code> (MongoDB).</li>
+          <li><strong>Đúng nguyên tắc thiết kế</strong>: Tầng trên gọi tầng dưới, không phụ thuộc ngược, không bỏ tầng.</li>
+        </ul>
+      </div>
+
+      <pre class="code-box" id="code1">
+@startuml
+skinparam style strictuml
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+package "Face AI Service" as FaceAIService
+package "UI" as UI
+
+package "com.datn.lms" as Business {
+    package "FaceAI" as Pkg_FaceAI
+    package "Course" as Pkg_Course
+    package "Learning" as Pkg_Learning
+    
+    Pkg_Course ..> Pkg_FaceAI
+    Pkg_Course ..> Pkg_Learning
+}
+
+package "DataManagement" as Data {
+    package "Course" as Data_Course
+    package "Learning" as Data_Learning
+    
+    Data_Course ..> Data_Learning
+}
+
+FaceAIService ..> Pkg_FaceAI
+UI ..> Pkg_Course
+Pkg_Course ..> Data_Course
+Pkg_Learning ..> Data_Learning
+@enduml
+      </pre>
+    </div>
+
+    <!-- TAB 2: HÌNH 3.2 -->
+    <div class="card" id="tab2">
+      <div class="card-header">
+        <div class="card-title">
+          <h2>Hình 3.2. Thiết kế chi tiết các gói (Detailed Package Dependencies)</h2>
+          <span>Mô tả các quan hệ phụ thuộc chi tiết với stereotype <code>&lt;&lt;access&gt;&gt;</code> và <code>&lt;&lt;import&gt;&gt;</code>.</span>
+        </div>
+        <div>
+          <button class="btn-action" onclick="toggleCode('code2')">📋 Xem mã PlantUML</button>
+        </div>
+      </div>
+
+      <div class="canvas-box">
+        <svg width="100%" height="auto" viewBox="0 0 860 520" style="max-width: 860px;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#00539F" />
+            </marker>
+          </defs>
+
+          <!-- Package 1: UI Framework -->
+          <g transform="translate(60, 60)">
+            <path d="M 0,15 L 0,0 L 50,0 L 60,15 Z" fill="#60a5fa" stroke="#0284c7" stroke-width="1.8" />
+            <rect x="0" y="15" width="200" height="90" rx="4" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.8" />
+            <text x="100" y="65" font-size="14" font-weight="700" fill="#0369a1" text-anchor="middle">UI Framework (Web)</text>
+          </g>
+
+          <!-- Package 2: Course & Learning -->
+          <g transform="translate(500, 60)">
+            <path d="M 0,15 L 0,0 L 55,0 L 65,15 Z" fill="#60a5fa" stroke="#0284c7" stroke-width="1.8" />
+            <rect x="0" y="15" width="220" height="90" rx="4" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.8" />
+            <text x="110" y="65" font-size="14" font-weight="700" fill="#0369a1" text-anchor="middle">Course &amp; Learning</text>
+          </g>
+
+          <!-- Package 3: Face AI Verification -->
+          <g transform="translate(240, 320)">
+            <path d="M 0,15 L 0,0 L 55,0 L 65,15 Z" fill="#60a5fa" stroke="#0284c7" stroke-width="1.8" />
+            <rect x="0" y="15" width="200" height="90" rx="4" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.8" />
+            <text x="100" y="65" font-size="14" font-weight="700" fill="#0369a1" text-anchor="middle">Face AI Verification</text>
+          </g>
+
+          <!-- Package 4: Payment PayOS -->
+          <g transform="translate(540, 320)">
+            <path d="M 0,15 L 0,0 L 50,0 L 60,15 Z" fill="#60a5fa" stroke="#0284c7" stroke-width="1.8" />
+            <rect x="0" y="15" width="190" height="90" rx="4" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.8" />
+            <text x="95" y="65" font-size="14" font-weight="700" fill="#0369a1" text-anchor="middle">Payment PayOS</text>
+          </g>
+
+          <!-- 1. UI Framework -> Course & Learning (<<access>>) -->
+          <line x1="260" y1="105" x2="500" y2="105" stroke="#00539F" stroke-width="1.6" stroke-dasharray="6,4" marker-end="url(#arrow2)" />
+          <text x="380" y="95" font-size="12" font-weight="600" fill="#00539F" text-anchor="middle">&lt;&lt;access&gt;&gt;</text>
+
+          <!-- 2. UI Framework -> Face AI Verification (<<access>>) -->
+          <path d="M 160,165 L 160,365 L 240,365" fill="none" stroke="#00539F" stroke-width="1.6" stroke-dasharray="6,4" marker-end="url(#arrow2)" />
+          <text x="175" y="270" font-size="12" font-weight="600" fill="#00539F" text-anchor="start">&lt;&lt;access&gt;&gt;</text>
+
+          <!-- 3. Course & Learning -> Face AI Verification (<<access>>) -->
+          <path d="M 520,165 L 520,250 L 390,250 L 390,320" fill="none" stroke="#00539F" stroke-width="1.6" stroke-dasharray="6,4" marker-end="url(#arrow2)" />
+          <text x="460" y="240" font-size="12" font-weight="600" fill="#00539F" text-anchor="middle">&lt;&lt;access&gt;&gt;</text>
+
+          <!-- 4. Payment PayOS -> Course & Learning (<<import>>) -->
+          <line x1="635" y1="320" x2="635" y2="165" stroke="#00539F" stroke-width="1.6" stroke-dasharray="6,4" marker-end="url(#arrow2)" />
+          <text x="645" y="245" font-size="12" font-weight="600" fill="#00539F" text-anchor="start">&lt;&lt;import&gt;&gt;</text>
+        </svg>
+      </div>
+
+      <div class="guide-box">
+        <strong>💡 Ý nghĩa các quan hệ Stereotype:</strong>
+        <p style="margin-top: 6px;">
+          - <code>&lt;&lt;access&gt;&gt;</code>: Cho phép gói nguồn gọi và truy cập các API / Service công khai của gói đích.<br>
+          - <code>&lt;&lt;import&gt;&gt;</code>: Gói nguồn nhập toàn bộ không gian tên (namespace / entities) của gói đích để sử dụng trực tiếp các đối tượng dữ liệu.
+        </p>
+      </div>
+
+      <pre class="code-box" id="code2">
+@startuml
+skinparam style strictuml
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+package "UI Framework" as UI
+package "Course & Learning" as Course
+package "Face AI Verification" as FaceAI
+package "Payment PayOS" as Payment
+
+UI ..> Course : <<access>>
+UI ..> FaceAI : <<access>>
+Course ..> FaceAI : <<access>>
+Payment ..> Course : <<import>>
+@enduml
+      </pre>
+    </div>
+
+        <!-- TAB 3: HÌNH 3.3 (THIẾT KẾ GIAO DIỆN TRANG CHỦ DESKTOP THỰC TẾ) -->
+    <div class="card" id="tab3">
+      <div class="card-header">
+        <div class="card-title">
+          <h2>Hình 3.3. Thiết kế giao diện trang chủ Cổng sinh viên (Desktop - student_portal/index.html)</h2>
+          <span>Cấu trúc thực tế: Sidebar điều hướng cố định 240px, Topbar tìm kiếm & người dùng, Banner chào mừng, 4 Bento Stats KPI (Môn học, Bài giảng, Face ID 96%, AI RAG) và Lưới 2 cột.</span>
+        </div>
+        <div>
+          <button class="btn-action" onclick="toggleCode('code-wf-desktop')">💻 Xem mã Wireframe</button>
+        </div>
+      </div>
+
+      <div class="canvas-box">
+        <svg id="svg-desktop" width="100%" height="auto" viewBox="0 0 740 540" style="max-width: 740px;" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer canvas border -->
+  <rect x="2" y="2" width="736" height="536" fill="#ffffff" stroke="#23497d" stroke-width="1.5" />
+
+  <!-- 1. Header (Top full-width) -->
+  <rect x="14" y="14" width="712" height="68" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+  <text x="370" y="58" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="middle">Header</text>
+
+  <!-- 2. Middle Row: Left Sidebar (width 136), Content (width 418), Right Sidebar (width 142) -->
+  <!-- Left Sidebar -->
+  <rect x="14" y="90" width="136" height="268" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+  <text x="82" y="232" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="24" font-weight="700" fill="#000000" text-anchor="middle">Sidebar</text>
+
+  <!-- Content (Center) -->
+  <rect x="158" y="90" width="424" height="268" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+  <text x="370" y="232" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="middle">Content</text>
+
+  <!-- Right Sidebar -->
+  <rect x="590" y="90" width="136" height="268" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+  <text x="658" y="232" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="24" font-weight="700" fill="#000000" text-anchor="middle">Sidebar</text>
+
+  <!-- 3. Bottom Horizontal Sidebar -->
+  <rect x="14" y="366" width="712" height="88" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+  <text x="370" y="420" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="28" font-weight="700" fill="#000000" text-anchor="middle">Sidebar</text>
+
+  <!-- 4. Footer -->
+  <rect x="14" y="462" width="712" height="48" fill="#cfcfcf" stroke="#23497d" stroke-width="2" />
+  <text x="370" y="493" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="20" font-weight="600" fill="#000000" text-anchor="middle">Footer</text>
+</svg>
+      </div>
+
+      <div class="guide-box">
+        <strong>💡 Ý nghĩa phân vùng thực tế trên giao diện Desktop Cổng sinh viên (index.html):</strong>
+        <p style="margin-top: 6px;">
+          • <strong>Sidebar trái (240px)</strong>: Logo ĐH Nguyễn Trãi, 7 menu học tập (Trang chủ, Khóa học của tôi, Phòng học, Thư viện, Lịch học, Trợ lý AI RAG, Quản trị) và hộp hỗ trợ kỹ thuật.<br>
+          • <strong>Topbar phía trên</strong>: Thanh tìm kiếm bài học, badge đồng bộ CSDL trực tuyến, chuông thông báo, avatar và hồ sơ sinh viên (Nguyễn Công Tùng - 2310900051).<br>
+          • <strong>Hero Card &amp; 4 Bento Stats</strong>: Chào mừng cá nhân hóa, 4 nút tác vụ nhanh và 4 chỉ số KPI học tập trực quan.<br>
+          • <strong>Lưới 2 cột</strong>: Cột trái gồm bộ lọc tabs môn học, thẻ khóa học kèm thanh tiến độ % và khung hỏi đáp Trợ lý AI RAG; Cột phải gồm widget "Sẵn sàng học", widget "Mục tiêu tuần" (vòng tròn tiến độ SVG) và widget "Lịch học hôm nay".
+        </p>
+      </div>
+
+      <pre class="code-box" id="code-wf-desktop">
+&lt;!-- Bố cục giao diện Desktop thực tế (student_portal/index.html) --&gt;
+&lt;div class="app"&gt;
+  &lt;aside class="sidebar"&gt;...&lt;/aside&gt;
+  &lt;div class="main"&gt;
+    &lt;header class="topbar"&gt;...&lt;/header&gt;
+    &lt;main class="content"&gt;
+      &lt;section class="hero"&gt;...&lt;/section&gt;
+      &lt;div class="grid"&gt;
+        &lt;div class="col"&gt;&lt;!-- Khóa học &amp; Trợ lý AI RAG --&gt;&lt;/div&gt;
+        &lt;aside class="col side"&gt;&lt;!-- Sẵn sàng học &amp; Mục tiêu tuần --&gt;&lt;/aside&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </pre>
+    </div>
+
+        <!-- TAB 4: HÌNH 3.4 (THIẾT KẾ GIAO DIỆN MOBILE THỰC TẾ) -->
+    <div class="card" id="tab4">
+      <div class="card-header">
+        <div class="card-title">
+          <h2>Hình 3.4. Thiết kế giao diện Mobile Cổng sinh viên (Smartphone - student_portal/index.html)</h2>
+          <span>Cấu trúc Responsive Mobile: Topbar thu gọn với nút Drawer Menu ☰, Hero Banner, 4 Bento Stats lưới 2x2, Filter tabs cuộn ngang, danh sách Card 1 cột và Bottom Navigation Bar.</span>
+        </div>
+        <div>
+          <button class="btn-action" onclick="toggleCode('code-wf-mobile')">💻 Xem mã Wireframe</button>
+        </div>
+      </div>
+
+      <div class="canvas-box">
+        <svg id="svg-mobile" width="100%" height="auto" viewBox="0 0 380 660" style="max-width: 380px;" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Phone Body Frame -->
+  <rect x="15" y="10" width="350" height="640" rx="42" fill="#ffffff" stroke="#94a3b8" stroke-width="2.5" />
+  <rect x="22" y="17" width="336" height="626" rx="36" fill="#fafafa" stroke="#e2e8f0" stroke-width="1.2" />
+
+  <!-- Top Speaker Notch -->
+  <rect x="145" y="26" width="90" height="5" rx="2.5" fill="#cbd5e1" />
+
+  <!-- Title: Chairs -->
+  <text x="40" y="70" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="20" font-weight="700" fill="#1e293b">Chairs</text>
+
+  <!-- Horizontal Filter Chips: Category, Size, Colour, + Filters -->
+  <rect x="40" y="86" width="70" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+  <text x="75" y="103" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#475569" text-anchor="middle">Category</text>
+
+  <rect x="116" y="86" width="46" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+  <text x="139" y="103" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#475569" text-anchor="middle">Size</text>
+
+  <rect x="168" y="86" width="56" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+  <text x="196" y="103" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#475569" text-anchor="middle">Colour</text>
+
+  <rect x="230" y="86" width="62" height="26" rx="13" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
+  <text x="261" y="103" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#475569" text-anchor="middle">+ Filters</text>
+
+  <!-- Hero Box with Diagonal 'X' Cross lines -->
+  <g transform="translate(40, 126)">
+    <rect x="0" y="0" width="300" height="98" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+    <line x1="0" y1="0" x2="300" y2="98" stroke="#94a3b8" stroke-width="1.2" />
+    <line x1="0" y1="98" x2="300" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+  </g>
+
+  <!-- Section Title: Products -->
+  <text x="40" y="252" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="18" font-weight="700" fill="#1e293b">Products</text>
+
+  <!-- 4 Cards with Diagonal 'X' Cross lines (Staggered Masonry Grid) -->
+  <!-- Card 1: Top Left -->
+  <g transform="translate(40, 268)">
+    <rect x="0" y="0" width="144" height="152" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+    <line x1="0" y1="0" x2="144" y2="152" stroke="#94a3b8" stroke-width="1.2" />
+    <line x1="0" y1="152" x2="144" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+  </g>
+
+  <!-- Card 2: Top Right -->
+  <g transform="translate(196, 268)">
+    <rect x="0" y="0" width="144" height="126" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+    <line x1="0" y1="0" x2="144" y2="126" stroke="#94a3b8" stroke-width="1.2" />
+    <line x1="0" y1="126" x2="144" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+  </g>
+
+  <!-- Card 3: Bottom Left -->
+  <g transform="translate(40, 430)">
+    <rect x="0" y="0" width="144" height="136" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+    <line x1="0" y1="0" x2="144" y2="136" stroke="#94a3b8" stroke-width="1.2" />
+    <line x1="0" y1="136" x2="144" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+  </g>
+
+  <!-- Card 4: Bottom Right -->
+  <g transform="translate(196, 404)">
+    <rect x="0" y="0" width="144" height="162" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" />
+    <line x1="0" y1="0" x2="144" y2="162" stroke="#94a3b8" stroke-width="1.2" />
+    <line x1="0" y1="162" x2="144" y2="0" stroke="#94a3b8" stroke-width="1.2" />
+  </g>
+
+  <!-- Bottom Home Swipe Bar -->
+  <rect x="130" y="626" width="120" height="4.5" rx="2.25" fill="#475569" />
+</svg>
+      </div>
+
+      <div class="guide-box">
+        <strong>💡 Ý nghĩa phân vùng thực tế trên giao diện Mobile Cổng sinh viên (index.html):</strong>
+        <p style="margin-top: 6px;">
+          • <strong>Topbar thu gọn</strong>: Nút Hamburger ☰ mở menu trượt Drawer từ trái sang, logo NTU nhỏ, avatar sinh viên và thanh tìm kiếm.<br>
+          • <strong>Hero Banner &amp; 4 Bento Stats</strong>: Xếp dạng lưới 2x2 gọn gàng, hiển thị đầy đủ số môn học, bài giảng video, tỷ lệ điểm danh Face ID 96% và tài liệu AI RAG.<br>
+          • <strong>Thanh lọc cuộn ngang (Filter chips)</strong>: Cho phép vuốt ngang chọn nhanh các nhóm môn học bằng ngón tay.<br>
+          • <strong>Thẻ khóa học dạng danh thiếp 1 cột</strong>: Tối ưu cho thao tác cuộn dọc trên màn hình cảm ứng, hiển thị tiến độ % và nút học tiếp.<br>
+          • <strong>Bottom Navigation Bar</strong>: Cố định ở đáy màn hình với 5 nút điều hướng chính (Trang chủ, Khóa học, Phòng học, AI RAG, Hồ sơ).
+        </p>
+      </div>
+
+      <pre class="code-box" id="code-wf-mobile">
+&lt;!-- Bố cục Responsive Mobile (student_portal/index.html) --&gt;
+@media (max-width: 860px) {
+  .sidebar { position: fixed; transform: translateX(-105%); } /* Off-canvas drawer */
+  .grid { grid-template-columns: 1fr; } /* 1 cột vuốt dọc */
+}
+@media (max-width: 520px) {
+  .stats { grid-template-columns: 1fr 1fr; } /* Lưới 2x2 */
+}
+      </pre>
+    </div>
+
+    <!-- TAB 5: HÌNH 3.5 (SƠ ĐỒ LỚP CHUẨN) -->
+    <div class="card" id="tab5">
+      <div class="card-header">
+        <div class="card-title">
+          <h2>Hình 3.5. Sơ đồ lớp chủ đạo (UML Class Diagram)</h2>
+          <span>Chuẩn UML: Tên lớp, Thuộc tính (- private), Phương thức (+ public), Kế thừa (tam giác rỗng) và Liên kết đa bội (1, 1..*, 0..*).</span>
+        </div>
+        <div>
+          <button class="btn-action" onclick="toggleCode('code5')">📋 Xem mã PlantUML</button>
+        </div>
+      </div>
+
+      <div class="canvas-box">
+        <svg width="100%" height="auto" viewBox="0 0 980 620" style="max-width: 980px;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="inheritance-arrow" viewBox="0 0 12 12" refX="1" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+              <polygon points="1,1 11,6 1,11" fill="#ffffff" stroke="#00539F" stroke-width="1.6" />
+            </marker>
+          </defs>
+
+          <!-- CLASS 1: User (Top Left) -->
+          <g transform="translate(40, 30)">
+            <rect x="0" y="0" width="180" height="28" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5" />
+            <text x="90" y="19" font-size="13" font-weight="700" fill="#0c4a6e" text-anchor="middle">User</text>
+            <rect x="0" y="28" width="180" height="98" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+            <text x="10" y="47" font-size="11.5" fill="#334155">- id : Long</text>
+            <text x="10" y="65" font-size="11.5" fill="#334155">- username : String</text>
+            <text x="10" y="83" font-size="11.5" fill="#334155">- fullName : String</text>
+            <text x="10" y="101" font-size="11.5" fill="#334155">- email : String</text>
+            <text x="10" y="118" font-size="11.5" fill="#334155">- role : RoleEnum</text>
+          </g>
+
+          <!-- CLASS 2: Student (Middle Left) -->
+          <g transform="translate(40, 230)">
+            <rect x="0" y="0" width="180" height="28" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5" />
+            <text x="90" y="19" font-size="13" font-weight="700" fill="#0c4a6e" text-anchor="middle">Student</text>
+            <rect x="0" y="28" width="180" height="110" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+            <text x="10" y="48" font-size="11.5" fill="#334155">- studentCode : String</text>
+            <text x="10" y="66" font-size="11.5" fill="#334155">- faceEmbedding : String</text>
+            <text x="10" y="84" font-size="11.5" fill="#334155">- faceConfidence : Double</text>
+            <line x1="0" y1="94" x2="180" y2="94" stroke="#0284c7" stroke-width="1" />
+            <text x="10" y="111" font-size="11" fill="#0284c7">+ getVectorArray() : float[]</text>
+            <text x="10" y="128" font-size="11" fill="#0284c7">+ assignClass() : void</text>
+          </g>
+
+          <!-- CLASS 3: Course (Top Center) -->
+          <g transform="translate(380, 30)">
+            <rect x="0" y="0" width="220" height="28" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5" />
+            <text x="110" y="19" font-size="13" font-weight="700" fill="#0c4a6e" text-anchor="middle">Course</text>
+            <rect x="0" y="28" width="220" height="118" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+            <text x="10" y="47" font-size="11.5" fill="#334155">- id : Long</text>
+            <text x="10" y="65" font-size="11.5" fill="#334155">- code : String</text>
+            <text x="10" y="83" font-size="11.5" fill="#334155">- title : String</text>
+            <text x="10" y="101" font-size="11.5" fill="#334155">- credits : Integer</text>
+            <text x="10" y="119" font-size="11.5" fill="#334155">- price : BigDecimal</text>
+            <text x="10" y="137" font-size="11.5" fill="#334155">- status : CourseStatus</text>
+          </g>
+
+          <!-- CLASS 4: Chapter (Top Right) -->
+          <g transform="translate(740, 30)">
+            <rect x="0" y="0" width="180" height="28" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5" />
+            <text x="90" y="19" font-size="13" font-weight="700" fill="#0c4a6e" text-anchor="middle">Chapter</text>
+            <rect x="0" y="28" width="180" height="70" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+            <text x="10" y="50" font-size="11.5" fill="#334155">- id : Long</text>
+            <text x="10" y="70" font-size="11.5" fill="#334155">- title : String</text>
+            <text x="10" y="88" font-size="11.5" fill="#334155">- orderIndex : Integer</text>
+          </g>
+
+          <!-- CLASS 5: Lesson (Middle Right) -->
+          <g transform="translate(740, 230)">
+            <rect x="0" y="0" width="180" height="28" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5" />
+            <text x="90" y="19" font-size="13" font-weight="700" fill="#0c4a6e" text-anchor="middle">Lesson</text>
+            <rect x="0" y="28" width="180" height="90" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+            <text x="10" y="50" font-size="11.5" fill="#334155">- id : Long</text>
+            <text x="10" y="68" font-size="11.5" fill="#334155">- title : String</text>
+            <text x="10" y="86" font-size="11.5" fill="#334155">- videoUrl : String</text>
+            <text x="10" y="104" font-size="11.5" fill="#334155">- duration : Integer</text>
+          </g>
+
+          <!-- CLASS 6: Transaction / Order (Middle Center) -->
+          <g transform="translate(380, 230)">
+            <rect x="0" y="0" width="220" height="28" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5" />
+            <text x="110" y="19" font-size="13" font-weight="700" font-style="italic" fill="#0c4a6e" text-anchor="middle">Order (Transaction)</text>
+            <rect x="0" y="28" width="220" height="110" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+            <text x="10" y="48" font-size="11.5" fill="#334155">- id : Long</text>
+            <text x="10" y="66" font-size="11.5" fill="#334155">- orderCode : Long</text>
+            <text x="10" y="84" font-size="11.5" fill="#334155">- amount : BigDecimal</text>
+            <text x="10" y="102" font-size="11.5" fill="#334155">- status : OrderStatus</text>
+            <line x1="0" y1="110" x2="220" y2="110" stroke="#0284c7" stroke-width="1" />
+            <text x="10" y="126" font-size="11" fill="#0284c7">+ markAsPaid() : void</text>
+          </g>
+
+          <!-- CLASS 7: VietQRPayment (Bottom Left) -->
+          <g transform="translate(260, 470)">
+            <rect x="0" y="0" width="200" height="28" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5" />
+            <text x="100" y="19" font-size="12.5" font-weight="700" fill="#0c4a6e" text-anchor="middle">VietQRPayment</text>
+            <rect x="0" y="28" width="200" height="70" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+            <text x="10" y="48" font-size="11.5" fill="#334155">- qrCodeUrl : String</text>
+            <text x="10" y="66" font-size="11.5" fill="#334155">- paymentLinkId : String</text>
+            <text x="10" y="86" font-size="11" fill="#0284c7">+ verifyChecksum() : boolean</text>
+          </g>
+
+          <!-- CLASS 8: FreeEnrollment (Bottom Right) -->
+          <g transform="translate(520, 470)">
+            <rect x="0" y="0" width="200" height="28" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5" />
+            <text x="100" y="19" font-size="12.5" font-weight="700" fill="#0c4a6e" text-anchor="middle">FreeEnrollment</text>
+            <rect x="0" y="28" width="200" height="70" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+            <text x="10" y="48" font-size="11.5" fill="#334155">- enrolledAt : Date</text>
+            <text x="10" y="66" font-size="11.5" fill="#334155">- isApproved : boolean</text>
+            <text x="10" y="86" font-size="11.5" fill="#334155">+ activateAccess() : void</text>
+          </g>
+
+          <!-- LIÊN KẾT GIỮA CÁC LỚP -->
+          <line x1="130" y1="156" x2="130" y2="230" stroke="#00539F" stroke-width="1.5" />
+          <text x="140" y="175" font-size="12" font-weight="700" fill="#00539F">1</text>
+          <text x="140" y="220" font-size="12" font-weight="700" fill="#00539F">1</text>
+
+          <line x1="600" y1="80" x2="740" y2="80" stroke="#00539F" stroke-width="1.5" />
+          <text x="615" y="72" font-size="12" font-weight="700" fill="#00539F">1</text>
+          <text x="710" y="72" font-size="12" font-weight="700" fill="#00539F">1..*</text>
+
+          <line x1="830" y1="128" x2="830" y2="230" stroke="#00539F" stroke-width="1.5" />
+          <text x="840" y="155" font-size="12" font-weight="700" fill="#00539F">1</text>
+          <text x="840" y="220" font-size="12" font-weight="700" fill="#00539F">1..*</text>
+
+          <line x1="490" y1="176" x2="490" y2="230" stroke="#00539F" stroke-width="1.5" />
+          <text x="500" y="195" font-size="12" font-weight="700" fill="#00539F">1</text>
+          <text x="500" y="220" font-size="12" font-weight="700" fill="#00539F">0..*</text>
+
+          <line x1="220" y1="285" x2="380" y2="285" stroke="#00539F" stroke-width="1.5" />
+          <text x="235" y="275" font-size="12" font-weight="700" fill="#00539F">1</text>
+          <text x="355" y="275" font-size="12" font-weight="700" fill="#00539F">0..*</text>
+
+          <path d="M 360,470 L 360,405 L 490,405 L 490,378" fill="none" stroke="#00539F" stroke-width="1.5" marker-end="url(#inheritance-arrow)" />
+          <path d="M 620,470 L 620,405 L 490,405" fill="none" stroke="#00539F" stroke-width="1.5" />
+        </svg>
+      </div>
+
+      <div class="guide-box">
+        <strong>💡 Điểm nổi bật chuẩn UML giống hệt ảnh mẫu của trường:</strong>
+        <p style="margin-top: 6px;">
+          - Hộp lớp chia 3 phần rõ ràng: Tên lớp (in nghiêng nếu trừu tượng), Thuộc tính (dấu <code>-</code> thể hiện private), Phương thức (dấu <code>+</code> thể hiện public).<br>
+          - Các quan hệ kết hợp có chỉ số đa bội <code>1</code>, <code>1..*</code>, <code>0..*</code>.<br>
+          - Mũi tên tam giác rỗng hướng lên lớp cha <code>Order (Transaction)</code> thể hiện tính chất kế thừa đa hình (Generalization).
+        </p>
+      </div>
+
+      <pre class="code-box" id="code5">
+@startuml
+skinparam style strictuml
+skinparam classAttributeIconSize 0
+
+class User {
+  - id : Long
+  - username : String
+  - fullName : String
+  - email : String
+  - role : RoleEnum
+}
+
+class Student {
+  - studentCode : String
+  - faceEmbedding : String
+  - faceConfidence : Double
+  + getVectorArray() : float[]
+  + assignClass() : void
+}
+
+class Course {
+  - id : Long
+  - code : String
+  - title : String
+  - credits : Integer
+  - price : BigDecimal
+  - status : CourseStatus
+}
+
+class Chapter {
+  - id : Long
+  - title : String
+  - orderIndex : Integer
+}
+
+class Lesson {
+  - id : Long
+  - title : String
+  - videoUrl : String
+  - duration : Integer
+}
+
+class Order {
+  - id : Long
+  - orderCode : Long
+  - amount : BigDecimal
+  - status : OrderStatus
+  + markAsPaid() : void
+}
+
+class VietQRPayment {
+  - qrCodeUrl : String
+  - paymentLinkId : String
+  + verifyChecksum() : boolean
+}
+
+class FreeEnrollment {
+  - enrolledAt : Date
+  - isApproved : boolean
+  + activateAccess() : void
+}
+
+User "1" <-- "1" Student
+Course "1" *-- "1..*" Chapter
+Chapter "1" *-- "1..*" Lesson
+Course "1" <-- "0..*" Order
+Student "1" <-- "0..*" Order
+
+Order <|-- VietQRPayment
+Order <|-- FreeEnrollment
+@enduml
+      </pre>
+    
+      <!-- DANH SÁCH BẢNG THIẾT KẾ CHI TIẾT CÁC LỚP CHỦ ĐẠO (CHUẨN BỐ CỤC 2 CỘT CỦA KHOA) -->
+      <div style="margin-top: 30px;">
+        <h3 style="color: var(--primary); font-size: 17px; font-weight: 800; margin-bottom: 14px;">
+          📋 3.3.1. Thiết kế chi tiết các lớp chủ đạo (Bảng 3.1, 3.2, 3.3, 3.4)
+        </h3>
+        <p style="font-size: 13.5px; color: var(--muted); margin-bottom: 18px;">
+          Bố cục chuẩn mẫu của khoa &amp; trường: Gồm 2 cột với <em>Phương thức</em> ở cột bên trái và <em>Thuộc tính</em> ở cột bên phải.
+        </p>
+
+        <!-- BẢNG 3.1: LỚP USER -->
+        <div style="margin-bottom: 25px;">
+          <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px;"><em>Bảng 3.1. Lớp User</em></h4>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; border: 1px solid #000;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 1px solid #000;">
+                <th style="width: 50%; padding: 10px 14px; border-right: 1px solid #000; text-align: center; font-style: italic; font-weight: 700;">Phương thức</th>
+                <th style="width: 50%; padding: 10px 14px; text-align: center; font-style: italic; font-weight: 700;">Thuộc tính</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 12px 16px; border-right: 1px solid #000; vertical-align: top; line-height: 1.8; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0284c7;">
+                  + validatePassword(rawPassword: String): Boolean<br>
+                  + updateProfile(fullName: String, email: String, phone: String): void<br>
+                  + updateAvatar(avatarUrl: String): void<br>
+                  + changePassword(newPasswordHash: String): void<br>
+                  + lockAccount(): void<br>
+                  + unlockAccount(): void<br>
+                  + hasRole(requiredRole: Role): Boolean<br>
+                  + getAuthorities(): Collection&lt;? extends GrantedAuthority&gt;<br>
+                  + isEnabled(): boolean
+                </td>
+                <td style="padding: 12px 16px; vertical-align: top; line-height: 1.8; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #334155;">
+                  - id: Long<br>
+                  - username: String<br>
+                  - email: String<br>
+                  - phone: String<br>
+                  - passwordHash: String<br>
+                  - fullName: String<br>
+                  - avatarUrl: String<br>
+                  - role: Role<br>
+                  - status: UserStatus<br>
+                  - createdAt: LocalDateTime<br>
+                  - updatedAt: LocalDateTime
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- BẢNG 3.2: LỚP STUDENT -->
+        <div style="margin-bottom: 25px;">
+          <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px;"><em>Bảng 3.2. Lớp Student</em></h4>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; border: 1px solid #000;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 1px solid #000;">
+                <th style="width: 50%; padding: 10px 14px; border-right: 1px solid #000; text-align: center; font-style: italic; font-weight: 700;">Phương thức</th>
+                <th style="width: 50%; padding: 10px 14px; text-align: center; font-style: italic; font-weight: 700;">Thuộc tính</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 12px 16px; border-right: 1px solid #000; vertical-align: top; line-height: 1.8; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0284c7;">
+                  + registerFaceProfile(vector512D: String, imageUrl: String): void<br>
+                  + updateFaceVector(newVector: String): void<br>
+                  + verifyFace(inputVector: String, threshold: Double): Boolean<br>
+                  + getDecryptedVector(): float[]<br>
+                  + assignClass(classId: Long, facultyId: Long, majorId: Long): void<br>
+                  + updateStudentInfo(studentCode: String, dob: LocalDate, gender: Gender): void<br>
+                  + hasFaceRegistered(): Boolean
+                </td>
+                <td style="padding: 12px 16px; vertical-align: top; line-height: 1.8; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #334155;">
+                  - userId: Long<br>
+                  - user: User<br>
+                  - studentCode: String<br>
+                  - classId: Long<br>
+                  - facultyId: Long<br>
+                  - majorId: Long<br>
+                  - dateOfBirth: LocalDate<br>
+                  - gender: Gender<br>
+                  - faceRegistered: Boolean<br>
+                  - faceRegisteredAt: LocalDateTime<br>
+                  - faceImageUrl: String<br>
+                  - faceEmbed: String<br>
+                  - createdAt: LocalDateTime<br>
+                  - updatedAt: LocalDateTime
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- BẢNG 3.3: LỚP COURSE -->
+        <div style="margin-bottom: 25px;">
+          <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px;"><em>Bảng 3.3. Lớp Course</em></h4>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; border: 1px solid #000;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 1px solid #000;">
+                <th style="width: 50%; padding: 10px 14px; border-right: 1px solid #000; text-align: center; font-style: italic; font-weight: 700;">Phương thức</th>
+                <th style="width: 50%; padding: 10px 14px; text-align: center; font-style: italic; font-weight: 700;">Thuộc tính</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 12px 16px; border-right: 1px solid #000; vertical-align: top; line-height: 1.8; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0284c7;">
+                  + calculateOverallProgress(studentId: Long): Double<br>
+                  + isEligibleForEnrollment(studentMajor: Long): Boolean<br>
+                  + publishCourse(): void<br>
+                  + archiveCourse(): void<br>
+                  + updatePricing(price: BigDecimal, isFree: Boolean): void<br>
+                  + getCurriculumChapters(): List&lt;CourseChapter&gt;<br>
+                  + getTotalDuration(): Integer<br>
+                  + addChapter(chapter: CourseChapter): void
+                </td>
+                <td style="padding: 12px 16px; vertical-align: top; line-height: 1.8; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #334155;">
+                  - id: Long<br>
+                  - faculty: Faculty<br>
+                  - majors: String<br>
+                  - subject: Subject<br>
+                  - lecturer: Lecturer<br>
+                  - title: String<br>
+                  - slug: String<br>
+                  - description: String<br>
+                  - thumbnailUrl: String<br>
+                  - price: BigDecimal<br>
+                  - isFree: Boolean<br>
+                  - enrollmentType: EnrollmentType<br>
+                  - status: CourseStatus<br>
+                  - createdAt: LocalDateTime<br>
+                  - updatedAt: LocalDateTime
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- BẢNG 3.4: LỚP LESSON -->
+        <div style="margin-bottom: 25px;">
+          <h4 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px;"><em>Bảng 3.4. Lớp Lesson</em></h4>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; border: 1px solid #000;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 1px solid #000;">
+                <th style="width: 50%; padding: 10px 14px; border-right: 1px solid #000; text-align: center; font-style: italic; font-weight: 700;">Phương thức</th>
+                <th style="width: 50%; padding: 10px 14px; text-align: center; font-style: italic; font-weight: 700;">Thuộc tính</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 12px 16px; border-right: 1px solid #000; vertical-align: top; line-height: 1.8; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0284c7;">
+                  + trackStudyHeartbeat(studentId: Long, currentSeconds: Integer): void<br>
+                  + markAsCompleted(studentId: Long): Boolean<br>
+                  + getVideoHlsStreamUrl(): String<br>
+                  + checkAttendanceRequired(): Boolean<br>
+                  + updateOrderIndex(newIndex: Integer): void<br>
+                  + isPreviewAllowed(): Boolean
+                </td>
+                <td style="padding: 12px 16px; vertical-align: top; line-height: 1.8; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #334155;">
+                  - id: Long<br>
+                  - chapter: CourseChapter<br>
+                  - title: String<br>
+                  - lessonType: LessonType<br>
+                  - orderIndex: Integer<br>
+                  - durationSeconds: Integer<br>
+                  - isPreview: Boolean<br>
+                  - videoAsset: VideoAsset<br>
+                  - createdAt: LocalDateTime<br>
+                  - updatedAt: LocalDateTime
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 6: HÌNH 3.6 -->
+    
+    <div class="card" id="tab6">
+      <div class="card-header">
+        <div class="card-title">
+          <h2>Hình 3.6. Biểu đồ thực thể liên kết (E-R Diagram)</h2>
+          <span>Cấu trúc toàn diện các bảng dữ liệu trong hệ quản trị MySQL 8.0 kèm khóa chính PK và khóa ngoại FK.</span>
+        </div>
+        <div>
+          <button class="btn-action" onclick="toggleCode('code6')">📋 Xem mã Mermaid</button>
+        </div>
+      </div>
+
+      <div class="canvas-box">
+        <div class="mermaid">
+erDiagram
+    USERS ||--o| STUDENTS : has_profile
+    FACULTIES ||--o{ STUDENTS : contains
+    CLASSES ||--o{ STUDENTS : contains
+    USERS ||--o{ COURSES : teaches
+    COURSES ||--|{ CHAPTERS : contains
+    CHAPTERS ||--|{ LESSONS : includes
+    STUDENTS ||--o{ ATTENDANCES : attends
+    LESSONS ||--o{ ATTENDANCES : logs
+    USERS ||--o{ ORDERS : places
+    COURSES ||--o{ ORDERS : includes
+
+    USERS {
+        bigint id PK
+        string username
+        string password
+        string full_name
+        string email
+        string role
+        boolean is_active
+        boolean is_face_registered
+    }
+    STUDENTS {
+        bigint id PK
+        bigint user_id FK
+        string student_code
+        bigint class_id FK
+        bigint faculty_id FK
+        string face_embedding
+        float face_confidence
+    }
+    COURSES {
+        bigint id PK
+        string code
+        string title
+        int credits
+        decimal price
+        string status
+        bigint instructor_id FK
+    }
+    CHAPTERS {
+        bigint id PK
+        bigint course_id FK
+        string title
+        int order_index
+    }
+    LESSONS {
+        bigint id PK
+        bigint chapter_id FK
+        string title
+        string video_url
+        int duration
+        int order_index
+    }
+    ORDERS {
+        bigint id PK
+        bigint order_code
+        bigint user_id FK
+        bigint course_id FK
+        decimal amount
+        string status
+        datetime paid_at
+    }
+    ATTENDANCES {
+        bigint id PK
+        bigint student_id FK
+        bigint lesson_id FK
+        float similarity_score
+        string status
+        datetime checked_at
+    }
+        </div>
+      </div>
+
+      <div class="guide-box">
+        <strong>💡 Ý nghĩa các quan hệ thực thể:</strong>
+        <p style="margin-top: 6px;">
+          - <code>USERS ||--o| STUDENTS</code>: Quan hệ 1 - 1 giữa tài khoản và hồ sơ sinh viên kèm dữ liệu sinh trắc học Face AI.<br>
+          - <code>COURSES ||--|{ CHAPTERS ||--|{ LESSONS</code>: Cấu trúc phân cấp 1 - N của khóa học trực tuyến.<br>
+          - <code>STUDENTS, LESSONS -&gt; ATTENDANCES</code>: Điểm danh tự động lưu vết sinh trắc học theo từng buổi học.
+        </p>
+      </div>
+
+      <pre class="code-box" id="code6">
+erDiagram
+    USERS ||--o| STUDENTS : has_profile
+    FACULTIES ||--o{ STUDENTS : contains
+    CLASSES ||--o{ STUDENTS : contains
+    USERS ||--o{ COURSES : teaches
+    COURSES ||--|{ CHAPTERS : contains
+    CHAPTERS ||--|{ LESSONS : includes
+    STUDENTS ||--o{ ATTENDANCES : attends
+    LESSONS ||--o{ ATTENDANCES : logs
+    USERS ||--o{ ORDERS : places
+    COURSES ||--o{ ORDERS : includes
+      </pre>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+
+    function showTab(idx) {
+      document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === idx - 1));
+      document.querySelectorAll('.card').forEach((card, i) => card.classList.toggle('active', i === idx - 1));
+    }
+
+    function toggleCode(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('show');
+    }
+  </script>
+</body>
+</html>

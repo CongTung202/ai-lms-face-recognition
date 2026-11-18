@@ -50,8 +50,8 @@ class FaceEnrollResponse(BaseModel):
     face_detected: bool
     quality_passed: bool
     image_saved_path: Optional[str] = None
-    cloudinary_url: Optional[str] = None
     registered_angles: List[str] = []
+    embeddings: Optional[Dict[str, List[float]]] = None
     reasons: List[str] = []
 
 class FaceVerifyResponse(BaseModel):

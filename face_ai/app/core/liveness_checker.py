@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from app.config import settings
 from app.schemas.models import LivenessCheck, BoundingBox
 

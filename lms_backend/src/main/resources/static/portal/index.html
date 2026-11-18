@@ -1,0 +1,2742 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cổng Học Tập Số - Trường Đại Học Nguyễn Trãi (NTU) | Smart LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="assets/js/student-sidebar.js"></script>
+<style>
+  :root {
+    --bg: #f6fbfe;
+    --surface: #ffffff;
+    --tint: #e5f7ff;
+    --ink: #0b2540;
+    --ink-2: #163a5c;
+    --sky: #33ccff;
+    --sky-deep: #0679a8;
+    --ntu-blue: #00539F;
+    --ntu-red: #DA291C;
+    --line: rgba(11,37,64,.08);
+    --muted: #55677c;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    --ease: cubic-bezier(.2,.7,.1,1);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html {
+    zoom: 0.8;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+  input { font: inherit; color: inherit; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.8; flex-shrink: 0; }
+  em { font-style: italic; color: var(--sky-deep); }
+  .serif { font-family: var(--serif); }
+  .eyebrow { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--sky-deep); font-weight: 700; }
+
+  /* ambient background */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: .55;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .orb.a { width: 480px; height: 480px; background: #bfeeff; top: -160px; right: -120px; }
+  .orb.b { width: 380px; height: 380px; background: #d9f4ff; bottom: -140px; left: 20%; animation-delay: -6s; }
+  @keyframes drift { to { transform: translate(-60px, 40px) scale(1.1); } }
+
+  .app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+  /* sidebar cố định tách riêng như admin */
+  .sidebar {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px 18px;
+    transition: transform .3s var(--ease);
+    z-index: 50;
+    box-sizing: border-box;
+  }
+  .sidebar::-webkit-scrollbar { width: 5px; }
+  .sidebar::-webkit-scrollbar-thumb { background: #d0dbed; border-radius: 999px; }
+  .main {
+    margin-left: 300px;
+    width: calc(100% - 300px);
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 8px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand-logo-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: contain;
+    background: #fff;
+    padding: 2px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 14px -4px rgba(0,83,159,.3);
+  }
+  .brand b {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--ntu-blue);
+    letter-spacing: -.01em;
+  }
+  .brand small { font-size: .78rem; color: var(--muted); display: block; }
+  .nav-label { margin: 24px 10px 10px; }
+  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .nav a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    border-radius: 14px;
+    font-size: .94rem;
+    font-weight: 500;
+    color: var(--ink-2);
+    transition: background .3s, color .3s, transform .3s var(--ease);
+  }
+  .nav a:hover { background: var(--tint); transform: translateX(4px); }
+  .nav a.active {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 12px 24px -12px rgba(11,37,64,.6);
+  }
+  .nav a.active svg { color: var(--sky); }
+  .nav .count {
+    margin-left: auto;
+    background: var(--tint);
+    color: var(--sky-deep);
+    font-size: .72rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .nav a.active .count { background: rgba(51,204,255,.2); color: var(--sky); }
+  .support {
+    margin-top: auto;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: linear-gradient(150deg, var(--tint), #fff);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .support div { flex: 1; min-width: 0; }
+  .support small { display: block; font-size: .72rem; color: var(--muted); font-weight: 500; }
+  .support a { font-size: .82rem; font-weight: 700; color: var(--ntu-blue); word-break: break-all; }
+  .support .ic {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    color: var(--sky-deep);
+    border: 1px solid var(--line);
+  }
+
+  /* main */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 28px;
+    background: rgba(246,251,254,.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .menu-btn {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+    place-items: center;
+  }
+  .search {
+    flex: 1;
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0 14px;
+    height: 44px;
+    transition: box-shadow .3s, border-color .3s;
+  }
+  .search:focus-within { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(51,204,255,.18); }
+  .search input { border: 0; outline: 0; background: none; flex: 1; font-size: .88rem; min-width: 0; }
+  .search svg { color: var(--muted); }
+  .chip-live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--sky-deep);
+    background: var(--tint);
+    padding: 8px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 0 rgba(34,197,94,.6);
+    animation: ping 2s infinite;
+  }
+  @keyframes ping {
+    70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+  }
+  .top-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+  .icon-btn {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    transition: transform .3s var(--ease), border-color .3s;
+  }
+  .icon-btn:hover { transform: translateY(-2px); border-color: var(--sky); }
+  .icon-btn .badge {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sky);
+    border: 2px solid #fff;
+  }
+  .user { display: flex; align-items: center; gap: 12px; text-align: right; }
+  .user b { display: block; font-size: .9rem; font-weight: 700; color: var(--ink); }
+  .user small { font-size: .74rem; color: var(--muted); }
+  .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(140deg, var(--sky), var(--ntu-blue));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(51,204,255,.35);
+  }
+
+  .content { padding: 28px; display: flex; flex-direction: column; gap: 24px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 0 rgba(11,37,64,.02), 0 20px 40px -30px rgba(11,37,64,.25);
+  }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(24px) scale(.98); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 20px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: auto -10% -60% auto;
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(51,204,255,.18), transparent 65%);
+    pointer-events: none;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(51,204,255,.45);
+    background: var(--tint);
+    color: var(--sky-deep);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(1.8rem, 3.1vw, 2.7rem);
+    letter-spacing: -.025em;
+    line-height: 1.15;
+    margin: 18px 0 10px;
+  }
+  .wave {
+    display: inline-block;
+    transform-origin: 70% 70%;
+    animation: wave 2.4s ease-in-out 1s 2;
+  }
+  @keyframes wave {
+    0%,60%,100% { transform: rotate(0); }
+    10%,30% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
+  }
+  .hero p { color: var(--muted); max-width: 56ch; font-size: .92rem; }
+  .hero p b { color: var(--ink); }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 14px;
+    font-size: .88rem;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: #fff;
+    transition: transform .35s var(--ease), box-shadow .35s, background .3s;
+  }
+  .btn:hover { transform: translateY(-3px); box-shadow: 0 14px 26px -14px rgba(11,37,64,.4); }
+  .btn.primary {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn.primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(51,204,255,.45) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: shine 3.5s 1.5s infinite;
+  }
+  @keyframes shine { 40%,100% { transform: translateX(100%); } }
+  .btn.soft { background: var(--tint); color: var(--sky-deep); border-color: rgba(51,204,255,.35); }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; }
+  .stat {
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: linear-gradient(160deg, #fff, #f7fcff);
+    transition: transform .45s var(--ease), box-shadow .45s, border-color .3s;
+    cursor: default;
+  }
+  .stat:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: rgba(51,204,255,.5);
+    box-shadow: 0 18px 30px -18px rgba(6,121,168,.45);
+  }
+  .stat .row { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: .78rem; font-weight: 600; }
+  .stat .ico {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: var(--tint);
+    color: var(--sky-deep);
+    transition: transform .5s var(--ease);
+  }
+  .stat:hover .ico { transform: rotate(-8deg) scale(1.1); }
+  .stat .num { font-family: var(--serif); font-size: 1.85rem; font-weight: 600; margin-top: 10px; line-height: 1; color: var(--ink); }
+  .stat .num span { font-family: var(--sans); font-size: .82rem; color: var(--muted); margin-left: 4px; font-weight: 500; }
+  .stat small { display: block; margin-top: 6px; font-size: .75rem; color: var(--muted); }
+  .stat small.hl { color: var(--sky-deep); font-weight: 600; }
+
+  /* grid */
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 24px; align-items: start; }
+  .col { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+
+  .filters { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .tabs-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .tabs { position: relative; display: flex; gap: 4px; background: var(--bg); padding: 4px; border-radius: 14px; }
+  .tab { position: relative; z-index: 1; padding: 8px 16px; font-size: .86rem; font-weight: 600; border-radius: 10px; color: var(--muted); transition: color .3s; }
+  .tab.active { color: #fff; }
+  .tab-ind { position: absolute; z-index: 0; top: 4px; bottom: 4px; border-radius: 10px; background: var(--ink); transition: left .45s var(--ease), width .45s var(--ease); }
+  .sync { display: flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 500; color: var(--muted); }
+  .filters .search { max-width: none; background: var(--bg); }
+
+  .courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; }
+  .course {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform .5s var(--ease), box-shadow .5s, opacity .4s;
+    background: #fff;
+  }
+  .course:hover { transform: translateY(-6px); box-shadow: 0 30px 50px -30px rgba(6,121,168,.55); }
+  .course.hide { display: none; }
+  .cover {
+    position: relative;
+    height: 190px;
+    overflow: hidden;
+    margin: 10px 10px 0;
+    border-radius: 14px;
+    background: #0b2540;
+  }
+  .cover-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 1.2s var(--ease);
+    display: block;
+  }
+  .course:hover .cover-img { transform: scale(1.08); }
+  .cover-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(11,37,64,0.08) 0%, rgba(11,37,64,0.68) 100%);
+    pointer-events: none;
+  }
+  .cover .tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.94);
+    color: var(--ink);
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+    z-index: 2;
+  }
+  .cover .tag.enrolled { background: var(--sky); color: var(--ink); }
+  .cover .meta {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 600;
+    text-shadow: 0 1px 6px rgba(0,0,0,.6);
+    z-index: 2;
+  }
+  .course .body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .course h3 { font-family: var(--serif); font-weight: 600; font-size: 1.18rem; line-height: 1.3; letter-spacing: -.01em; color: var(--ink); }
+  .course p { font-size: .85rem; color: var(--muted); line-height: 1.45; }
+  .course .majors-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .course .major-badge { font-size: .7rem; font-weight: 600; background: var(--tint); color: var(--sky-deep); padding: 2px 8px; border-radius: 6px; }
+  .progress { margin-top: auto; padding-top: 10px; }
+  .progress .lbl { display: flex; justify-content: space-between; font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+  .bar { height: 6px; border-radius: 999px; background: var(--tint); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--sky), var(--sky-deep)); transition: width 1.6s var(--ease); }
+  .course .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    margin-top: 6px;
+    border-top: 1px dashed var(--line);
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .course .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ntu-blue);
+    font-weight: 700;
+  }
+  .course .go svg { transition: transform .3s var(--ease); }
+  .course:hover .go svg { transform: translateX(4px); }
+  .empty { display: none; text-align: center; padding: 40px; color: var(--muted); font-size: .92rem; }
+
+  /* Documents section */
+  .docs-card { padding: 22px; }
+  .docs-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .doc-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    transition: transform .3s var(--ease), border-color .3s, background .3s;
+  }
+  .doc-item:hover { transform: translateX(4px); border-color: var(--sky); background: #fff; }
+  .doc-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #dc2626;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .doc-info { min-width: 0; flex: 1; }
+  .doc-info b { display: block; font-size: .86rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+  .doc-info small { display: block; font-size: .76rem; color: var(--muted); }
+  .doc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    background: var(--ink);
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 600;
+    transition: background .2s;
+  }
+  .doc-btn:hover { background: var(--sky-deep); }
+
+  /* AI RAG Assistant box */
+  .rag-card { padding: 22px; }
+  .rag-input-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .rag-input-box input {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 14px;
+    background: var(--bg);
+    font-size: .88rem;
+  }
+  .rag-input-box input:focus { outline: none; border-color: var(--sky); background: #fff; }
+  .rag-ans {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--tint);
+    border: 1px solid rgba(51,204,255,.3);
+    font-size: .86rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    display: none;
+  }
+
+  /* side panel */
+  .panel { padding: 20px; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .panel-head h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: -.01em;
+    color: var(--ink);
+  }
+  .panel-head h2 svg { color: var(--sky-deep); }
+  .mini-tag { font-size: .72rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--tint); color: var(--sky-deep); }
+  .lessons { display: flex; flex-direction: column; gap: 10px; }
+  .lesson {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--bg);
+    border: 1px solid transparent;
+    transition: transform .4s var(--ease), border-color .3s, background .3s;
+  }
+  .lesson:hover { transform: translateX(4px); border-color: rgba(51,204,255,.45); background: #fff; }
+  .play {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    transition: background .3s, transform .4s var(--ease);
+  }
+  .lesson:hover .play { background: var(--sky); color: var(--ink); transform: scale(1.08); }
+  .play svg { width: 16px; height: 16px; fill: currentColor; }
+  .lesson div { min-width: 0; flex: 1; }
+  .lesson b { display: block; font-size: .86rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+  .lesson small { display: block; font-size: .76rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lesson .dur { font-size: .72rem; font-weight: 600; color: var(--muted); flex-shrink: 0; }
+
+  .ring-wrap { display: flex; align-items: center; gap: 18px; }
+  .ring { position: relative; width: 108px; height: 108px; flex-shrink: 0; }
+  .ring svg { width: 108px; height: 108px; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 10; }
+  .ring .track { stroke: var(--tint); }
+  .ring .val {
+    stroke: url(#rg);
+    stroke-linecap: round;
+    stroke-dasharray: 289;
+    stroke-dashoffset: 289;
+    transition: stroke-dashoffset 1.8s var(--ease);
+  }
+  .ring .center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .ring .center b { font-family: var(--serif); font-size: 1.6rem; font-weight: 600; line-height: 1; color: var(--ink); }
+  .ring .center small { display: block; font-size: .68rem; color: var(--muted); font-weight: 600; }
+  .week { display: flex; align-items: flex-end; gap: 8px; height: 80px; flex: 1; }
+  .week div { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .week span { width: 100%; border-radius: 6px; background: var(--tint); height: 0; transition: height 1.2s var(--ease); }
+  .week span.on { background: linear-gradient(180deg, var(--sky), var(--sky-deep)); }
+  .week small { font-size: .66rem; font-weight: 700; color: var(--muted); }
+
+  .schedule { display: flex; flex-direction: column; gap: 10px; }
+  .slot { display: flex; gap: 12px; align-items: center; }
+  .slot time { width: 52px; flex-shrink: 0; font-size: .78rem; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .slot .ev { flex: 1; padding: 10px 12px; border-radius: 12px; border-left: 3px solid var(--sky); background: var(--bg); font-size: .84rem; font-weight: 600; color: var(--ink); }
+  .slot .ev small { display: block; color: var(--muted); font-size: .74rem; font-weight: normal; margin-top: 2px; }
+  .slot .ev.now { background: var(--ink); color: #fff; border-color: var(--sky); }
+  .slot .ev.now small { color: #a9d9ef; }
+
+  .scrim { display: none; }
+
+  /* CAMPUS HIGHLIGHTS & EVENT SHOWCASE */
+  .campus-section {
+    margin-top: 28px;
+    padding: 28px;
+    background: var(--surface);
+    border-radius: 24px;
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 30px -15px rgba(11,37,64,.08);
+  }
+  .campus-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .campus-header .title-wrap h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--serif);
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -.01em;
+  }
+  .campus-header .title-wrap h2 svg { color: var(--sky-deep); }
+  .campus-header .title-wrap p {
+    font-size: .88rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .campus-filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .campus-filter-btn {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: .78rem;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .25s ease;
+  }
+  .campus-filter-btn:hover {
+    background: #fff;
+    color: var(--sky-deep);
+    border-color: var(--sky);
+  }
+  .campus-filter-btn.active {
+    background: var(--sky-deep);
+    color: #fff;
+    border-color: var(--sky-deep);
+    box-shadow: 0 4px 12px -2px rgba(0,83,159,.35);
+  }
+  .campus-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .campus-card {
+    background: var(--surface);
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform .35s var(--ease), box-shadow .35s, border-color .35s;
+    cursor: pointer;
+    position: relative;
+  }
+  .campus-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px -12px rgba(11,37,64,.15);
+    border-color: rgba(0,162,255,.45);
+  }
+  .campus-card.featured {
+    grid-column: span 2;
+  }
+  @media (max-width: 900px) {
+    .campus-card.featured { grid-column: span 1; }
+  }
+  .campus-card-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    background: #0b2540;
+  }
+  .campus-card.featured .campus-card-img-wrap {
+    aspect-ratio: 21/10;
+  }
+  @media (max-width: 900px) {
+    .campus-card.featured .campus-card-img-wrap { aspect-ratio: 16/10; }
+  }
+  .campus-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    transition: transform .7s var(--ease);
+    display: block;
+  }
+  .campus-card:hover .campus-card-img {
+    transform: scale(1.06);
+  }
+  .campus-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+  }
+  .badge-startup { background: rgba(99,102,241,.92); color: #fff; }
+  .badge-talent { background: rgba(14,165,233,.92); color: #fff; }
+  .badge-charity { background: rgba(225,29,72,.92); color: #fff; }
+  .badge-sports { background: rgba(245,158,11,.92); color: #fff; }
+  .badge-honor { background: rgba(16,185,129,.92); color: #fff; }
+  .badge-grad { background: rgba(217,119,6,.92); color: #fff; }
+
+  .campus-date-pill {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 2;
+    padding: 3px 8px;
+    border-radius: 8px;
+    background: rgba(11,37,64,.8);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .campus-card-body {
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .campus-card-title {
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.35;
+    margin-bottom: 8px;
+    transition: color .2s;
+  }
+  .campus-card:hover .campus-card-title {
+    color: var(--sky-deep);
+  }
+  .campus-card-desc {
+    font-size: .83rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 14px;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .campus-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    margin-top: auto;
+  }
+  .campus-meta-tag {
+    font-size: .74rem;
+    color: var(--muted);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .campus-read-btn {
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--sky-deep);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: gap .2s;
+  }
+  .campus-card:hover .campus-read-btn {
+    gap: 8px;
+  }
+
+  /* CAMPUS MODAL */
+  .campus-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,37,64,.65);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: none;
+    place-items: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .campus-modal-overlay.open {
+    display: grid;
+    opacity: 1;
+  }
+  .campus-modal-box {
+    background: #fff;
+    border-radius: 24px;
+    width: min(840px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 60px -15px rgba(0,0,0,.35);
+    border: 1px solid var(--line);
+    transform: scale(.95);
+    transition: transform .3s var(--ease);
+  }
+  .campus-modal-overlay.open .campus-modal-box {
+    transform: scale(1);
+  }
+  .campus-modal-hero {
+    position: relative;
+    width: 100%;
+    max-height: 440px;
+    background: #0b2540;
+    overflow: hidden;
+  }
+  .campus-modal-img {
+    width: 100%;
+    height: 100%;
+    max-height: 440px;
+    object-fit: contain;
+    background: #0b2540;
+    display: block;
+    margin: 0 auto;
+  }
+  .campus-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.65);
+    color: #fff;
+    border: none;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background .2s, transform .2s;
+    z-index: 10;
+  }
+  .campus-modal-close:hover {
+    background: rgba(0,0,0,.9);
+    transform: scale(1.1);
+  }
+  .campus-modal-content {
+    padding: 28px;
+  }
+
+  @media (max-width: 1180px) {
+    .grid { grid-template-columns: 1fr; }
+    .side { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  }
+  @media (max-width: 980px) {
+    .hero { grid-template-columns: 1fr; }
+    .chip-live, .user div { display: none; }
+  }
+  @media (max-width: 860px) {
+    .sidebar { position: fixed; left: 0; top: 0; z-index: 50; transform: translateX(-105%); box-shadow: 20px 0 40px -20px rgba(11,37,64,.3); background: #fff; }
+    .sidebar.open { transform: none; }
+    .scrim { display: block; position: fixed; inset: 0; background: rgba(11,37,64,.3); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .4s; }
+    .scrim.open { opacity: 1; pointer-events: auto; }
+    .menu-btn { display: grid; }
+    .topbar, .content { padding-inline: 16px; }
+  }
+  @media (max-width: 520px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .hero { padding: 20px; }
+    .top-right .icon-btn:not(.keep) { display: none; }
+    .sync { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+
+  /* ================= PAYOS CHECKOUT MODAL ================= */
+  .tag.paid {
+    background: #fef3c7;
+    color: #b45309;
+    border-color: #fde68a;
+  }
+  .tag.free {
+    background: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+  }
+  .payos-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 25, 47, 0.78);
+    backdrop-filter: blur(12px);
+    z-index: 10000;
+    display: none;
+    place-items: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .payos-modal-overlay.open {
+    display: grid;
+    opacity: 1;
+  }
+  .payos-modal-box {
+    background: #ffffff;
+    border-radius: 24px;
+    width: min(780px, 100%);
+    max-height: 94vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 70px -15px rgba(2, 44, 84, 0.45);
+    border: 1px solid #e2e8f0;
+    position: relative;
+    transform: scale(0.94) translateY(10px);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .payos-modal-overlay.open .payos-modal-box {
+    transform: scale(1) translateY(0);
+  }
+  .payos-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #0b2540 0%, #173860 100%);
+    color: #fff;
+    border-radius: 24px 24px 0 0;
+  }
+  .payos-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .payos-header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .payos-header-logo .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00f2fe;
+    box-shadow: 0 0 10px #00f2fe;
+  }
+  .payos-close-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .payos-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.08);
+  }
+  .payos-body {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 680px) {
+    .payos-body {
+      grid-template-columns: 1fr;
+    }
+  }
+  .payos-qr-pane {
+    background: #f8fafc;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 18px;
+    padding: 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .payos-qr-frame {
+    background: #fff;
+    padding: 10px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    width: 220px;
+    height: 220px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .payos-qr-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  .payos-qr-scanning-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #0284c7, transparent);
+    animation: qrScan 2.2s infinite ease-in-out;
+  }
+  @keyframes qrScan {
+    0% { top: 5%; opacity: 0; }
+    50% { top: 90%; opacity: 1; }
+    100% { top: 5%; opacity: 0; }
+  }
+  .payos-qr-status {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #0369a1;
+  }
+  .payos-pulse-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #0284c7;
+    animation: payosPulse 1.4s infinite;
+  }
+  @keyframes payosPulse {
+    0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.6); }
+    70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(2, 132, 199, 0); }
+    100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+  }
+  .payos-info-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .payos-course-card {
+    background: #f0f7ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 12px 16px;
+  }
+  .payos-course-title {
+    font-weight: 700;
+    font-size: 0.96rem;
+    color: #1e3a8a;
+    line-height: 1.35;
+  }
+  .payos-student-name {
+    font-size: 0.8rem;
+    color: #475569;
+    margin-top: 4px;
+  }
+  .payos-amount-highlight {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border: 1px solid #93c5fd;
+  }
+  .payos-amount-val {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0284c7;
+  }
+  .payos-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.86rem;
+  }
+  .payos-detail-label {
+    color: #64748b;
+    font-weight: 500;
+  }
+  .payos-detail-val {
+    color: #0f172a;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .copy-btn {
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    color: #0284c7;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .copy-btn:hover {
+    background: #0284c7;
+    color: #fff;
+  }
+  .payos-notice {
+    font-size: 0.78rem;
+    color: #b45309;
+    background: #fef3c7;
+    border-left: 3px solid #f59e0b;
+    padding: 8px 12px;
+    border-radius: 8px;
+    line-height: 1.4;
+  }
+  .payos-footer {
+    padding: 16px 24px 20px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: #fafafa;
+    border-radius: 0 0 24px 24px;
+  }
+  .payos-btn-main {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .payos-btn-main:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
+  }
+  .payos-btn-demo {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+  .payos-btn-demo:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+</style>
+</head>
+<body>
+<div class="orb a"></div><div class="orb b"></div>
+
+<div class="app">
+  <!-- SIDEBAR NAVIGATION (MODULAR & TÁCH RIÊNG NHƯ ADMIN) -->
+  <aside class="sidebar" id="sidebar" aria-label="Điều hướng chính Cổng Sinh Viên">
+    <a href="index.html" class="brand">
+      <img src="assets/images/logo-ntu.jpg" alt="Logo NTU" class="brand-logo-img" onerror="this.src='/portal/assets/images/logo-ntu.jpg'" />
+      <div>
+        <b>ĐH NGUYỄN TRÃI</b>
+        <small>Smart LMS · Cổng Sinh Viên</small>
+      </div>
+    </a>
+
+    <p class="eyebrow nav-label">PHÂN HỆ HỌC TẬP</p>
+    <nav class="nav">
+      <a href="index.html" class="active" id="navHome"><i data-lucide="layout-dashboard"></i>Trang chủ</a>
+      <a href="#coursesSection" id="navCourses"><i data-lucide="book-open"></i>Khóa học của tôi<span class="count" id="navCoursesCount">0</span></a>
+      <a href="study.html" id="navStudy"><i data-lucide="video"></i>Phòng học trực tuyến</a>
+      <a href="#docsSection" id="navDocs"><i data-lucide="library"></i>Thư viện tài liệu<span class="count" id="navDocsCount">0</span></a>
+      <a href="orders.html" id="navOrders"><i data-lucide="receipt"></i>Lịch sử đơn hàng<span class="count" id="navOrdersCount">0</span></a>
+      <a href="#scheduleSection" id="navSchedule"><i data-lucide="calendar-days"></i>Thời khóa biểu</a>
+      <a href="#ragSection" id="navRag"><i data-lucide="sparkles"></i>Trợ lý AI RAG</a>
+      <a href="face_enrollment.html" id="navFace"><i data-lucide="scan-face"></i>Đăng ký khuôn mặt AI</a>
+      <a href="/admin/index.html" id="navAdmin"><i data-lucide="shield-check"></i>Quản trị viên</a>
+    </nav>
+
+    <div class="support">
+      <div>
+        <small>Hỗ trợ kỹ thuật & Đào tạo</small>
+        <a href="mailto:hotro@daihocnguyentrai.edu.vn">hotro@daihocnguyentrai.edu.vn</a>
+      </div>
+      <span class="ic" aria-hidden="true"><i data-lucide="headphones"></i></span>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <!-- MAIN CONTAINER -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Mở menu"><i data-lucide="menu"></i></button>
+      <label class="search">
+        <i data-lucide="search"></i>
+        <input type="search" id="topSearchInput" placeholder="Tìm kiếm môn học, bài giảng, từ khóa..." aria-label="Tìm kiếm" />
+      </label>
+      <span class="chip-live"><span class="dot"></span>CSDL trực tuyến · ĐH Nguyễn Trãi</span>
+      <div class="top-right">
+        <a href="../index.html" class="icon-btn" title="Về trang chủ NTU" aria-label="Trang chủ"><i data-lucide="home"></i></a>
+        <button class="icon-btn keep" aria-label="Thông báo"><i data-lucide="bell"></i><span class="badge"></span></button>
+        <div class="user">
+          <div><b id="studentHeaderName">Sinh viên NTU</b><small id="studentHeaderMeta">MSSV · Lớp</small></div>
+          <span class="avatar" id="studentAvatarCircle">NTU</span>
+        </div>
+        <button class="icon-btn" onclick="handleLogout()" title="Đăng xuất khỏi hệ thống" aria-label="Đăng xuất"><i data-lucide="log-out"></i></button>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY -->
+    <main class="content">
+      <!-- HERO GREETING BANNER -->
+      <section class="card hero reveal" aria-labelledby="welcome">
+        <div>
+          <span class="pill"><i data-lucide="badge-check"></i>ĐH NGUYỄN TRÃI · SMART LMS 4.0</span>
+          <h1 id="welcome">Chào mừng trở lại, <em id="bannerStudentName">Sinh viên</em> <span class="wave" aria-hidden="true">✦</span></h1>
+          <p id="bannerStudentDesc">Sinh viên · <b id="bannerStudentCode">2310900051</b> (<span id="bannerStudentClass">Lớp K23 CNTT 3</span>). Bạn đang duy trì chuỗi học tập <b>6 ngày</b> liên tiếp — chúc bạn có buổi học hiệu quả!</p>
+          <div class="actions">
+            <a href="study.html" class="btn primary"><i data-lucide="circle-play"></i>Vào phòng học</a>
+            <a href="#coursesSection" class="btn soft"><i data-lucide="book-open"></i>Khóa học của tôi</a>
+            <a href="#docsSection" class="btn"><i data-lucide="file-text"></i>Tài liệu PDF</a>
+            <a href="#ragSection" class="btn"><i data-lucide="sparkles"></i>Trợ lý AI RAG</a>
+          </div>
+        </div>
+
+        <!-- 4 BENTO STATS -->
+        <div class="stats">
+          <div class="stat">
+            <div class="row"><span class="ico"><i data-lucide="book-open"></i></span>Môn học</div>
+            <div class="num"><b id="statCourses" data-count="0">0</b><span>môn</span></div>
+            <small id="statChaptersText">0 chương học trong CSDL</small>
+          </div>
+          <div class="stat">
+            <div class="row"><span class="ico"><i data-lucide="monitor-play"></i></span>Bài giảng</div>
+            <div class="num"><b id="statLectures" data-count="0">0</b><span>videos</span></div>
+            <small class="hl">Cloudinary CDN &amp; HLS 1080p</small>
+          </div>
+          <div class="stat">
+            <div class="row"><span class="ico"><i data-lucide="scan-face"></i></span>Điểm danh</div>
+            <div class="num"><b data-count="96">96</b><span>%</span></div>
+            <small class="hl" id="kpiFaceStatusText">Face ID ArcFace · 3 góc mặt</small>
+          </div>
+          <div class="stat">
+            <div class="row"><span class="ico"><i data-lucide="files"></i></span>Tài liệu</div>
+            <div class="num"><b id="statDocs" data-count="0">0</b><span>files</span></div>
+            <small>Đã lập chỉ mục AI RAG</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- TWO COLUMN GRID: CATALOG + RIGHT PANELS -->
+      <div class="grid">
+        <!-- LEFT COLUMN: COURSES + DOCS + RAG -->
+        <div class="col">
+          <!-- COURSE FILTERS -->
+          <section class="card filters reveal" id="coursesSection" aria-label="Bộ lọc khóa học">
+            <div class="tabs-row">
+              <div class="tabs" role="tablist" id="tabs">
+                <span class="tab-ind" id="tabInd"></span>
+                <button class="tab active" role="tab" aria-selected="true" data-filter="all">Tất cả môn học (<span id="tabCountAll">0</span>)</button>
+                <button class="tab" role="tab" aria-selected="false" data-filter="free">Miễn phí (<span id="tabCountFree">0</span>)</button>
+                <button class="tab" role="tab" aria-selected="false" data-filter="enrolled">Đã đăng ký (<span id="tabCountEnrolled">0</span>)</button>
+              </div>
+              <span class="sync"><span class="dot"></span>Cập nhật theo thời gian thực</span>
+            </div>
+            <label class="search">
+              <i data-lucide="search"></i>
+              <input type="search" id="courseSearch" placeholder="Lọc theo tên môn học, mã môn hoặc chuyên ngành..." aria-label="Tìm kiếm môn học" />
+            </label>
+          </section>
+
+          <!-- DYNAMIC REAL COURSES CARDS GRID -->
+          <section class="courses" id="coursesList" aria-label="Danh sách môn học">
+            <div class="col-span-full py-8 text-center text-muted" id="coursesLoading">
+              Đang kết nối cơ sở dữ liệu Đại học Nguyễn Trãi...
+            </div>
+          </section>
+          <p class="empty card" id="emptyCoursesMsg">Không tìm thấy môn học nào phù hợp với từ khóa của bạn.</p>
+
+          <!-- REAL DOCUMENTS LIBRARY -->
+          <section class="card docs-card reveal" id="docsSection" aria-labelledby="docsTitle">
+            <div class="panel-head">
+              <h2 id="docsTitle"><i data-lucide="library"></i>Thư viện giáo trình & Tài liệu PDF</h2>
+              <span class="mini-tag" id="docsTotalBadge">0 tài liệu</span>
+            </div>
+            <p style="font-size: .84rem; color: var(--muted);">Tài liệu số hóa chính thức phục vụ học phần và kết nối trực tiếp với Trợ lý AI RAG.</p>
+            <div class="docs-list" id="docsListContainer">
+              <div class="py-4 text-center text-muted" style="font-size: .84rem;">Đang tải danh mục giáo trình...</div>
+            </div>
+          </section>
+
+          <!-- AI RAG ASSISTANT SECTION -->
+          <section class="card rag-card reveal" id="ragSection" aria-labelledby="ragTitle">
+            <div class="panel-head">
+              <h2 id="ragTitle"><i data-lucide="sparkles"></i>Trợ lý Học tập AI RAG</h2>
+              <span class="mini-tag">Tự động trả lời theo giáo trình</span>
+            </div>
+            <p style="font-size: .84rem; color: var(--muted);">Đặt câu hỏi chuyên môn để trợ lý trích xuất câu trả lời chính xác từ giáo trình được lập chỉ mục:</p>
+            <div class="rag-input-box">
+              <input type="text" id="ragQueryInput" placeholder="Ví dụ: Kiến trúc Microservices khác gì so với Monolith?..." />
+              <button class="btn primary" id="ragSendBtn" onclick="handleAskRag()"><i data-lucide="send"></i>Hỏi AI</button>
+            </div>
+            <div class="rag-ans" id="ragAnswerBox">
+              <div id="ragAnswerText"></div>
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT SIDEBAR PANELS -->
+        <aside class="col side">
+          <!-- PANEL 1: READY TO WATCH LESSONS -->
+          <section class="card panel reveal" aria-labelledby="lessonsTitle">
+            <div class="panel-head">
+              <h2 id="lessonsTitle"><i data-lucide="clapperboard"></i>Sẵn sàng học</h2>
+              <span class="mini-tag">Video CDN</span>
+            </div>
+            <div class="lessons" id="readyLessonsWidgetList">
+              <div class="py-4 text-center text-muted" style="font-size: .82rem;">Đang nạp bài giảng mới nhất...</div>
+            </div>
+          </section>
+
+          <!-- PANEL 2: WEEKLY GOAL -->
+          <section class="card panel reveal" aria-labelledby="goalTitle">
+            <div class="panel-head">
+              <h2 id="goalTitle"><i data-lucide="target"></i>Mục tiêu học tuần</h2>
+              <span class="mini-tag">8.5 / 12 h</span>
+            </div>
+            <div class="ring-wrap">
+              <div class="ring" role="img" aria-label="71 phần trăm mục tiêu học tập tuần">
+                <svg viewBox="0 0 108 108">
+                  <defs>
+                    <linearGradient id="rg" x1="0" x2="1">
+                      <stop offset="0" stop-color="#33ccff"/>
+                      <stop offset="1" stop-color="#0679a8"/>
+                    </linearGradient>
+                  </defs>
+                  <circle class="track" cx="54" cy="54" r="46"/>
+                  <circle class="val" id="ringVal" cx="54" cy="54" r="46" data-p="71"/>
+                </svg>
+                <div class="center">
+                  <div>
+                    <b data-count="71">0</b>
+                    <small>% hoàn thành</small>
+                  </div>
+                </div>
+              </div>
+              <div class="week" aria-hidden="true">
+                <div><span class="on" data-h="55"></span><small>T2</small></div>
+                <div><span class="on" data-h="80"></span><small>T3</small></div>
+                <div><span class="on" data-h="40"></span><small>T4</small></div>
+                <div><span class="on" data-h="95"></span><small>T5</small></div>
+                <div><span class="on" data-h="65"></span><small>T6</small></div>
+                <div><span data-h="30"></span><small>T7</small></div>
+                <div><span data-h="15"></span><small>CN</small></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- PANEL 3: TODAY SCHEDULE -->
+          <section class="card panel reveal" id="scheduleSection" aria-labelledby="todayTitle">
+            <div class="panel-head">
+              <h2 id="todayTitle"><i data-lucide="calendar-clock"></i>Lịch học hôm nay</h2>
+              <span class="mini-tag" id="todayDateBadge">Thứ 4, 11/09</span>
+            </div>
+            <div class="schedule">
+              <div class="slot">
+                <time>08:00</time>
+                <div class="ev">Kiến trúc Microservices Spring Boot<small>Phòng Lab B302 · Giảng đường A</small></div>
+              </div>
+              <div class="slot">
+                <time>10:30</time>
+                <div class="ev now">Thị giác máy tính AI &amp; Face ID<small>Phòng Online LMS · Bắt đầu sau 15 phút</small></div>
+              </div>
+              <div class="slot">
+                <time>14:00</time>
+                <div class="ev">Cấu trúc dữ liệu &amp; Thuật toán<small>Phòng tự học Thư viện NTU</small></div>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+
+      <!-- NTU CAMPUS LIFE & STUDENT ACTIVITIES SHOWCASE -->
+      <section class="campus-section reveal" id="campusSection" aria-labelledby="campusTitle">
+        <div class="campus-header">
+          <div class="title-wrap">
+            <span class="eyebrow" style="color:var(--sky-deep);font-weight:700;letter-spacing:.15em;font-size:.76rem;text-transform:uppercase;">NHỊP SỐNG HỌC ĐƯỜNG &amp; HOẠT ĐỘNG SINH VIÊN NTU</span>
+            <h2 id="campusTitle" style="margin-top:6px;"><i data-lucide="sparkles"></i>Khát Vọng Thanh Xuân · Bệ Phóng Khởi Nghiệp &amp; Tỏa Sáng</h2>
+            <p>Khám phá chuỗi sự kiện đổi mới sáng tạo, rèn luyện thể chất, phụng sự cộng đồng và những mốc son vinh danh tự hào của sinh viên Đại học Nguyễn Trãi.</p>
+          </div>
+          <div class="campus-filter-bar" role="tablist">
+            <button class="campus-filter-btn active" data-campus-cat="all" onclick="filterCampusCards('all', this)">Tất cả (7)</button>
+            <button class="campus-filter-btn" data-campus-cat="startup" onclick="filterCampusCards('startup', this)">Khởi nghiệp &amp; Tài năng (2)</button>
+            <button class="campus-filter-btn" data-campus-cat="sports" onclick="filterCampusCards('sports', this)">Thể thao &amp; Phong trào (2)</button>
+            <button class="campus-filter-btn" data-campus-cat="charity" onclick="filterCampusCards('charity', this)">Cộng đồng &amp; Thiện nguyện (1)</button>
+            <button class="campus-filter-btn" data-campus-cat="honor" onclick="filterCampusCards('honor', this)">Vinh danh &amp; Tốt nghiệp (2)</button>
+          </div>
+        </div>
+
+        <div class="campus-grid" id="campusGridContainer">
+          <!-- CARD 1: NTU STARTUP ARENA (FEATURED) -->
+          <article class="campus-card featured" data-category="startup" onclick="openCampusModal(0)">
+            <div class="campus-card-img-wrap">
+              <span class="campus-badge badge-startup"><i data-lucide="rocket" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Khởi nghiệp Sáng tạo</span>
+              <img src="assets/images/ntu-startup-arena.jpg" alt="Chung kết NTU Startup Arena" class="campus-card-img" loading="lazy" />
+              <div class="campus-date-pill"><i data-lucide="calendar" style="width:12px;height:12px;"></i>NTU Arena 2026</div>
+            </div>
+            <div class="campus-card-body">
+              <h3 class="campus-card-title">Chung Kết "NTU Startup Arena": Bệ Phóng Khởi Nghiệp Công Nghệ AI &amp; Đào Tạo Công Dân Toàn Cầu</h3>
+              <p class="campus-card-desc">Đêm chung kết bùng nổ quy tụ những dự án khởi nghiệp công nghệ AI, giải pháp ESG và mô hình kinh doanh số xuất sắc nhất. Ban Giám hiệu NTU cùng đại diện Bộ Giáo dục &amp; Đào tạo đã trao các giải thưởng vinh dự và gói ươm tạo hạt giống cho các nhóm sinh viên tài năng.</p>
+              <div class="campus-card-footer">
+                <span class="campus-meta-tag"><i data-lucide="award" style="width:14px;height:14px;color:var(--sky-deep);"></i>Giải Nhất, Nhì, Ba &amp; Quỹ Đầu Tư</span>
+                <span class="campus-read-btn">Xem chi tiết <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 2: THE NEXT YOU -->
+          <article class="campus-card" data-category="startup" onclick="openCampusModal(1)">
+            <div class="campus-card-img-wrap">
+              <span class="campus-badge badge-talent"><i data-lucide="star" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Sự kiện &amp; Tài năng</span>
+              <img src="assets/images/ntu-the-next-you.jpg" alt="Cuộc thi NTU The Next You" class="campus-card-img" loading="lazy" />
+              <div class="campus-date-pill"><i data-lucide="calendar" style="width:12px;height:12px;"></i>The Next You</div>
+            </div>
+            <div class="campus-card-body">
+              <h3 class="campus-card-title">Cuộc Thi "NTU - The Next You": Khẳng Định Bản Sắc Cá Nhân &amp; Học Bổng Đối Tác Doanh Nghiệp</h3>
+              <p class="campus-card-desc">Sân chơi định vị thương hiệu cá nhân giúp sinh viên tự tin khai phóng năng lực, thể hiện kỹ năng thuyết trình và đón nhận những suất học bổng danh giá từ đối tác chiến lược Tập đoàn Atlantic.</p>
+              <div class="campus-card-footer">
+                <span class="campus-meta-tag"><i data-lucide="briefcase" style="width:14px;height:14px;color:var(--sky-deep);"></i>Học bổng Doanh nghiệp</span>
+                <span class="campus-read-btn">Xem chi tiết <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 3: THIỆN NGUYỆN KIM BẢNG -->
+          <article class="campus-card" data-category="charity" onclick="openCampusModal(2)">
+            <div class="campus-card-img-wrap">
+              <span class="campus-badge badge-charity"><i data-lucide="heart" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Hoạt động Cộng đồng</span>
+              <img src="assets/images/ntu-thien-nguyen-kim-bang.jpg" alt="Chương trình thiện nguyện Kim Bảng" class="campus-card-img" loading="lazy" />
+              <div class="campus-date-pill"><i data-lucide="calendar" style="width:12px;height:12px;"></i>Tri Ân 30/4</div>
+            </div>
+            <div class="campus-card-body">
+              <h3 class="campus-card-title">Hành Trình Về Nguồn "Đền Ơn Đáp Nghĩa" Tại Trung Tâm Điều Dưỡng Thương Binh Kim Bảng</h3>
+              <p class="campus-card-desc">Đoàn Thanh niên và sinh viên tình nguyện NTU trang nghiêm thắt khăn quàng đỏ chào cờ, cất vang lời ca tiếng hát và trao tận tay những phần quà tri ân tới các bác thương bệnh binh tại Hà Nam.</p>
+              <div class="campus-card-footer">
+                <span class="campus-meta-tag"><i data-lucide="map-pin" style="width:14px;height:14px;color:#e11d48;"></i>TT Điều Dưỡng Kim Bảng</span>
+                <span class="campus-read-btn">Xem chi tiết <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 4: BÓNG ĐÁ NỮ VÔ ĐỊCH -->
+          <article class="campus-card" data-category="sports" onclick="openCampusModal(3)">
+            <div class="campus-card-img-wrap">
+              <span class="campus-badge badge-sports"><i data-lucide="trophy" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Thể thao &amp; Sức trẻ</span>
+              <img src="assets/images/ntu-bong-da-nu-vo-dich.jpg" alt="Giải bóng đá nữ NTU Cup" class="campus-card-img" loading="lazy" />
+              <div class="campus-date-pill"><i data-lucide="calendar" style="width:12px;height:12px;"></i>NTU Women Cup</div>
+            </div>
+            <div class="campus-card-body">
+              <h3 class="campus-card-title">NTU Women's Cup: Khối Ngoại Ngữ Bản Lĩnh Nâng Cao Cúp Vàng Vô Địch Giải Bóng Đá Nữ</h3>
+              <p class="campus-card-desc">Trận chung kết kịch tính và giàu cảm xúc khép lại với chiến thắng vang dội của các cô gái Khối Ngoại Ngữ. Tinh thần đồng đội kiên cường và những pha bóng đẹp mắt đã làm bùng cháy cầu trường NTU.</p>
+              <div class="campus-card-footer">
+                <span class="campus-meta-tag"><i data-lucide="medal" style="width:14px;height:14px;color:#f59e0b;"></i>Cúp Vàng &amp; Huy Chương Vàng</span>
+                <span class="campus-read-btn">Xem chi tiết <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 5: VINH DANH THỦ KHOA -->
+          <article class="campus-card" data-category="honor" onclick="openCampusModal(4)">
+            <div class="campus-card-img-wrap">
+              <span class="campus-badge badge-honor"><i data-lucide="crown" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Vinh danh &amp; Học thuật</span>
+              <img src="assets/images/ntu-vinh-danh-thu-khoa.jpg" alt="Lễ vinh danh Thủ khoa NTU" class="campus-card-img" loading="lazy" />
+              <div class="campus-date-pill"><i data-lucide="calendar" style="width:12px;height:12px;"></i>Thủ Khoa K22</div>
+            </div>
+            <div class="campus-card-body">
+              <h3 class="campus-card-title">Vinh Danh Thủ Khoa Tốt Nghiệp: Tấm Gương Tự Hào Của Sinh Viên Quốc Tế Học NTU</h3>
+              <p class="campus-card-desc">Nhà trường trang trọng vinh danh Thủ khoa toàn khóa Nguyễn Thị Minh Nguyệt (Lớp K22QTH-HH1, Chuyên ngành Hàn học) với thành tích học tập xuất sắc và giải thưởng nghiên cứu khoa học cấp trường.</p>
+              <div class="campus-card-footer">
+                <span class="campus-meta-tag"><i data-lucide="graduation-cap" style="width:14px;height:14px;color:#10b981;"></i>K22 Quốc Tế Học - Hàn Học</span>
+                <span class="campus-read-btn">Xem chi tiết <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 6: BÓNG ĐÁ NAM VÔ ĐỊCH -->
+          <article class="campus-card" data-category="sports" onclick="openCampusModal(5)">
+            <div class="campus-card-img-wrap">
+              <span class="campus-badge badge-sports"><i data-lucide="trophy" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Thể thao &amp; Gắn kết</span>
+              <img src="assets/images/ntu-bong-da-nam-vo-dich.jpg" alt="Giải bóng đá nam NTU" class="campus-card-img" loading="lazy" />
+              <div class="campus-date-pill"><i data-lucide="calendar" style="width:12px;height:12px;"></i>Champions League</div>
+            </div>
+            <div class="campus-card-body">
+              <h3 class="campus-card-title">Bế Mạc NTU Champions League: Đội Tuyển Nam Nâng Cao Cúp Vàng Mùa Giải Mới</h3>
+              <p class="campus-card-desc">Giải đấu thường niên thắt chặt tình đoàn kết giữa sinh viên và cán bộ giảng viên khép lại trong tiếng hò reo chiến thắng. Chiếc cúp vô địch là minh chứng cho tinh thần thể thao nhiệt huyết của sức trẻ NTU.</p>
+              <div class="campus-card-footer">
+                <span class="campus-meta-tag"><i data-lucide="flag" style="width:14px;height:14px;color:#0ea5e9;"></i>Giải Nhất Toàn Trường</span>
+                <span class="campus-read-btn">Xem chi tiết <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+              </div>
+            </div>
+          </article>
+
+          <!-- CARD 7: ĐẠI LỄ TỐT NGHIỆP -->
+          <article class="campus-card" data-category="honor" onclick="openCampusModal(6)">
+            <div class="campus-card-img-wrap">
+              <span class="campus-badge badge-grad"><i data-lucide="sparkles" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Lễ Tốt Nghiệp NTU</span>
+              <img src="assets/images/ntu-dai-le-tot-nghiep.jpg" alt="Đại lễ trao bằng tốt nghiệp NTU" class="campus-card-img" loading="lazy" />
+              <div class="campus-date-pill"><i data-lucide="calendar" style="width:12px;height:12px;"></i>Đại Lễ Tốt Nghiệp</div>
+            </div>
+            <div class="campus-card-body">
+              <h3 class="campus-card-title">Đại Lễ Trao Bằng Tốt Nghiệp: Rực Rỡ Khoảnh Khắc Tung Mũ Chào Đón Thế Hệ Công Dân Toàn Cầu</h3>
+              <p class="campus-card-desc">Hàng trăm chiếc mũ cử nhân đồng loạt bay lên trong khán phòng trang trọng đánh dấu cột mốc trưởng thành thiêng liêng. Thế hệ Tân cử nhân, Tân kỹ sư NTU sẵn sàng hội nhập và cất cánh trên trường quốc tế.</p>
+              <div class="campus-card-footer">
+                <span class="campus-meta-tag"><i data-lucide="globe" style="width:14px;height:14px;color:#d97706;"></i>Công Dân Toàn Cầu</span>
+                <span class="campus-read-btn">Xem chi tiết <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- CAMPUS DETAIL MODAL -->
+      <div class="campus-modal-overlay" id="campusModalOverlay" onclick="if(event.target===this) closeCampusModal()">
+        <div class="campus-modal-box">
+          <div class="campus-modal-hero">
+            <button class="campus-modal-close" onclick="closeCampusModal()" aria-label="Đóng">&times;</button>
+            <img src="" id="campusModalImg" alt="Chi tiết hoạt động NTU" class="campus-modal-img" />
+          </div>
+          <div class="campus-modal-content">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+              <span id="campusModalBadge" class="campus-badge" style="position:static;">Chuyên mục</span>
+              <span id="campusModalMeta" style="font-size:.82rem;color:var(--muted);"><i data-lucide="calendar" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Thời gian</span>
+            </div>
+            <h2 id="campusModalTitle" style="font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:14px;">Tiêu đề sự kiện</h2>
+            <div id="campusModalBody" style="font-size:.92rem;line-height:1.7;color:var(--ink-2);margin-bottom:20px;">Nội dung chi tiết...</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--line);flex-wrap:wrap;gap:10px;">
+              <span style="font-size:.8rem;color:var(--muted);"><i data-lucide="camera" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>Ban Truyền Thông &amp; Đoàn Thanh Niên NTU</span>
+              <button class="btn primary" onclick="closeCampusModal()" style="padding:8px 20px;font-size:.84rem;">Đã hiểu &amp; Đóng</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYOS PAYMENT CHECKOUT MODAL -->
+      <div class="payos-modal-overlay" id="payosModalOverlay" onclick="if(event.target===this) closePayOSModal()">
+        <div class="payos-modal-box">
+          <!-- Header -->
+          <div class="payos-header">
+            <div class="payos-header-left">
+              <div class="payos-header-logo">
+                <span class="dot"></span>
+                <span>PayOS VietQR</span>
+              </div>
+              <span style="font-size:0.95rem;font-weight:600;">Đăng Ký &amp; Thanh Toán Học Phí</span>
+            </div>
+            <button class="payos-close-btn" onclick="closePayOSModal()" aria-label="Đóng">&times;</button>
+          </div>
+
+          <!-- Body -->
+          <div class="payos-body" id="payosModalBody">
+            <!-- Left: VietQR Code -->
+            <div class="payos-qr-pane">
+              <div class="payos-qr-frame">
+                <div class="payos-qr-scanning-bar"></div>
+                <img id="payosQrImage" src="" alt="Mã VietQR PayOS" />
+              </div>
+              <div class="payos-qr-status">
+                <span class="payos-pulse-dot"></span>
+                <span id="payosPollingStatusText">Đang chờ quét mã thanh toán...</span>
+              </div>
+              <p style="font-size:0.75rem;color:#64748b;margin-top:10px;line-height:1.4;">
+                Mở app Ngân hàng (MB, VCB, Techcombank...) hoặc MoMo quét mã VietQR tự động.
+              </p>
+            </div>
+
+            <!-- Right: Order Details -->
+            <div class="payos-info-pane">
+              <div class="payos-course-card">
+                <div style="font-size:0.75rem;text-transform:uppercase;color:#0284c7;font-weight:700;margin-bottom:2px;">Khóa học đăng ký</div>
+                <div class="payos-course-title" id="payosCourseTitle">Tên khóa học</div>
+                <div class="payos-student-name" id="payosStudentInfo">Sinh viên: ...</div>
+              </div>
+
+              <div class="payos-amount-highlight">
+                <span style="font-size:0.85rem;color:#334155;font-weight:600;">Học phí cần thanh toán:</span>
+                <span class="payos-amount-val" id="payosAmountDisplay">0 ₫</span>
+              </div>
+
+              <div class="payos-detail-row">
+                <span class="payos-detail-label">Ngân hàng:</span>
+                <span class="payos-detail-val" id="payosBankName">MBBank (Ngân Hàng Quân Đội)</span>
+              </div>
+
+              <div class="payos-detail-row">
+                <span class="payos-detail-label">Số tài khoản:</span>
+                <span class="payos-detail-val">
+                  <span id="payosAccountNo">30334402527</span>
+                  <button class="copy-btn" onclick="copyPayOSText('payosAccountNo')">Sao chép</button>
+                </span>
+              </div>
+
+              <div class="payos-detail-row">
+                <span class="payos-detail-label">Chủ tài khoản:</span>
+                <span class="payos-detail-val" id="payosAccountName">NGUYEN CONG TUNG</span>
+              </div>
+
+              <div class="payos-detail-row" style="background:#fffbeb;border-color:#fde68a;">
+                <span class="payos-detail-label" style="color:#b45309;font-weight:700;">Nội dung CK:</span>
+                <span class="payos-detail-val">
+                  <span id="payosTransferMemo" style="color:#b45309;font-family:monospace;font-size:0.95rem;">HOCPHI ...</span>
+                  <button class="copy-btn" style="background:#fef3c7;border-color:#fde68a;color:#b45309;" onclick="copyPayOSText('payosTransferMemo')">Sao chép</button>
+                </span>
+              </div>
+
+              <div class="payos-notice">
+                ⚠️ <strong>Lưu ý quan trọng:</strong> Vui lòng giữ nguyên chính xác nội dung chuyển khoản để hệ thống đối soát và kích hoạt tự động sau 3 giây.
+              </div>
+            </div>
+          </div>
+
+          <!-- Success Screen (Hidden by default) -->
+          <div id="payosSuccessScreen" style="display:none;padding:50px 24px;text-align:center;">
+            <div style="width:76px;height:76px;border-radius:50%;background:#dcfce7;color:#16a34a;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 10px 25px rgba(22,163,74,0.3);">
+              <i data-lucide="check" style="width:42px;height:42px;stroke-width:3;"></i>
+            </div>
+            <h2 style="font-family:var(--serif);font-size:1.6rem;color:#14532d;margin-bottom:8px;">Thanh Toán Thành Công!</h2>
+            <p style="color:#475569;font-size:0.95rem;margin-bottom:24px;">
+              Đơn hàng <strong id="payosSuccessOrderCode">#...</strong> đã được đối soát tự động qua PayOS. Khóa học đã mở quyền truy cập!
+            </p>
+            <div style="display:inline-flex;align-items:center;gap:10px;background:#f0fdf4;border:1px solid #bbf7d0;padding:10px 20px;border-radius:100px;font-size:0.88rem;color:#15803d;font-weight:600;">
+              <span class="payos-pulse-dot" style="background:#16a34a;"></span>
+              <span>Đang tự động chuyển vào phòng học trong 2 giây...</span>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="payos-footer" id="payosModalFooter">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <button class="payos-btn-demo" id="payosDemoConfirmBtn" onclick="manualConfirmCurrentOrder()">
+                <i data-lucide="check-check" style="width:14px;height:14px;"></i>
+                <span>Xác nhận nhanh (Demo Test)</span>
+              </button>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <button class="btn" onclick="closePayOSModal()" style="border:1px solid #cbd5e1;background:#fff;color:#475569;padding:9px 18px;border-radius:12px;font-size:0.86rem;cursor:pointer;">
+                Đóng
+              </button>
+              <a id="payosDirectLink" href="#" target="_blank" class="payos-btn-main">
+                <span>Cổng PayOS.vn</span>
+                <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  // Biến toàn cục dữ liệu thật
+  const API_BASE = window.location.origin.includes(':8080') ? '' : 'http://localhost:8080';
+  let currentUser = null;
+  let allCourses = [];
+  let filter = 'all';
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function handleLogout() {
+    sessionStorage.removeItem('lms_token');
+    sessionStorage.removeItem('lms_user');
+    localStorage.removeItem('lms_token');
+    localStorage.removeItem('lms_user');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('student_user');
+    window.location.href = '../index.html';
+  }
+
+  function formatClassText(user) {
+    if (!user) return 'Lớp K23 CNTT 3 (K23CNT3)';
+    let raw = (user.className || user.classCode || '').trim();
+    // Bỏ tất cả chữ 'Lớp', 'Lớp học' ở đầu chuỗi (kể cả lặp lại nhiều lần)
+    let clean = raw.replace(/^(lớp\s*học\s*|lớp\s*)+/gi, '').trim();
+    let code = (user.classCode || '').trim().replace(/^(lớp\s*học\s*|lớp\s*)+/gi, '').trim();
+
+    if (clean && code && !clean.toLowerCase().includes(code.toLowerCase())) {
+      return `Lớp ${clean} (${code})`;
+    } else if (clean) {
+      return `Lớp ${clean}`;
+    } else if (code) {
+      return `Lớp ${code}`;
+    }
+    return user.facultyName || 'Khoa Công nghệ Thông tin';
+  }
+
+  function applyUserToUI(user) {
+    if (!user) return;
+    const headerNameEl = document.getElementById('studentHeaderName');
+    const headerMetaEl = document.getElementById('studentHeaderMeta');
+    const avatarEl = document.getElementById('studentAvatarCircle');
+    const bannerNameEl = document.getElementById('bannerStudentName');
+    const bannerCodeEl = document.getElementById('bannerStudentCode');
+    const bannerClassEl = document.getElementById('bannerStudentClass');
+    const kpiFaceStatusText = document.getElementById('kpiFaceStatusText');
+
+    const name = user.fullName || user.username || 'Sinh viên NTU';
+    const code = user.studentCode || user.username || '2310900051';
+    const classText = formatClassText(user);
+
+    if (headerNameEl) headerNameEl.textContent = name;
+    if (headerMetaEl) headerMetaEl.textContent = `${code} · ${classText}`;
+    if (bannerNameEl) bannerNameEl.textContent = name;
+    if (bannerCodeEl) bannerCodeEl.textContent = code;
+    if (bannerClassEl) bannerClassEl.textContent = classText;
+
+    if (avatarEl) {
+      const initials = name.trim().split(' ').filter(Boolean);
+      avatarEl.textContent = initials.length >= 2
+        ? (initials[0][0] + initials[initials.length - 1][0]).toUpperCase()
+        : name.charAt(0).toUpperCase();
+    }
+
+    if (user.faceRegistered && kpiFaceStatusText) {
+      kpiFaceStatusText.textContent = 'Đã quét mặt ArcFace · Đầy đủ 3 góc';
+    }
+  }
+
+  // 1. Khởi tạo phiên sinh viên thật & đồng bộ thông tin lớp từ CSDL
+  async function initUserData() {
+    try {
+      const userRaw = sessionStorage.getItem('lms_user') || localStorage.getItem('currentUser') || localStorage.getItem('student_user');
+      if (userRaw) {
+        currentUser = JSON.parse(userRaw);
+      }
+    } catch (e) {
+      console.warn('Lỗi đọc currentUser:', e);
+    }
+
+    if (!currentUser) {
+      currentUser = {
+        username: '2310900051',
+        fullName: 'Nguyễn Công Tùng',
+        studentCode: '2310900051',
+        className: 'K23',
+        classCode: 'K23CNT3',
+        facultyName: 'Khoa Công nghệ Thông tin',
+        faceRegistered: true
+      };
+    }
+
+    applyUserToUI(currentUser);
+
+    // Cập nhật ngày hôm nay
+    const dateBadge = document.getElementById('todayDateBadge');
+    if (dateBadge) {
+      const now = new Date();
+      const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+      dateBadge.textContent = `${days[now.getDay()]}, ${now.getDate()}/${now.getMonth() + 1}`;
+    }
+
+    // Tự động truy vấn thông tin lớp học thật từ CSDL
+    await syncStudentFromDatabase();
+  }
+
+  async function syncStudentFromDatabase() {
+    try {
+      const targetCode = currentUser?.studentCode || currentUser?.username;
+      const targetId = currentUser?.userId;
+      const res = await fetch(`${API_BASE}/api/admin/users`);
+      if (!res.ok) return;
+      const json = await res.json();
+      const users = json.data || [];
+
+      const found = users.find(u =>
+        (targetCode && (u.studentCode === targetCode || u.username === targetCode)) ||
+        (targetId && u.id === targetId)
+      );
+
+      if (found) {
+        currentUser.id = found.id;
+        currentUser.userId = found.id;
+        currentUser.fullName = found.fullName || currentUser.fullName;
+        if (found.studentCode && found.studentCode !== 'N/A') {
+          currentUser.studentCode = found.studentCode;
+        }
+        currentUser.className = found.className || currentUser.className;
+        currentUser.classCode = found.classCode || currentUser.classCode;
+        currentUser.facultyName = found.facultyName || currentUser.facultyName;
+        currentUser.faceRegistered = found.faceRegistered !== false;
+
+        sessionStorage.setItem('lms_user', JSON.stringify(currentUser));
+        localStorage.setItem('lms_user', JSON.stringify(currentUser));
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+        applyUserToUI(currentUser);
+      }
+    } catch (e) {
+      console.warn('Lỗi đồng bộ dữ liệu sinh viên từ CSDL:', e);
+    }
+  }
+
+  // 2. Tải khóa học THẬT từ Spring Boot CSDL (/api/admin/courses)
+  async function loadRealCoursesFromDatabase() {
+    try {
+      const studentId = currentUser?.userId || currentUser?.id || 5;
+      const res = await fetch(`${API_BASE}/api/admin/courses?studentId=${studentId}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const result = await res.json();
+      allCourses = result.data || [];
+
+      updateKPIs(allCourses);
+      renderCoursesGrid(allCourses);
+      renderRealDocuments(allCourses);
+      renderReadyLessonsWidget(allCourses);
+      lucide.createIcons();
+
+      // Trigger animation after render
+      initRevealObserver();
+    } catch (err) {
+      console.error('Lỗi nạp khóa học:', err);
+      const container = document.getElementById('coursesList');
+      if (container) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; padding: 30px; text-align: center; color: #dc2626; background: #fee2e2; border-radius: 16px; font-weight: 600;">
+            Không thể nạp danh sách khóa học từ máy chủ (${err.message}). Vui lòng kiểm tra kết nối API Backend.
+          </div>
+        `;
+      }
+    }
+  }
+
+  // 3. Cập nhật KPIs số liệu thực
+  function updateKPIs(courses) {
+    let totalChapters = 0;
+    let totalLessons = 0;
+    let totalDocs = 0;
+    let freeCount = 0;
+    let enrolledCount = 0;
+
+    courses.forEach(c => {
+      const chs = c.chapters || [];
+      totalChapters += chs.length;
+      chs.forEach(ch => {
+        totalLessons += (ch.lessons || []).length;
+      });
+      totalDocs += (c.documents || []).length;
+      if (c.isEnrolled) enrolledCount++;
+      if (c.isFree || !c.price || parseFloat(c.price) <= 0) freeCount++;
+    });
+
+    const statCoursesEl = document.getElementById('statCourses');
+    const statLecturesEl = document.getElementById('statLectures');
+    const statDocsEl = document.getElementById('statDocs');
+    const statChaptersText = document.getElementById('statChaptersText');
+    const navCoursesCount = document.getElementById('navCoursesCount');
+    const navDocsCount = document.getElementById('navDocsCount');
+    const tabCountAll = document.getElementById('tabCountAll');
+    const tabCountFree = document.getElementById('tabCountFree');
+    const tabCountEnrolled = document.getElementById('tabCountEnrolled');
+    const docsTotalBadge = document.getElementById('docsTotalBadge');
+
+    if (statCoursesEl) { statCoursesEl.dataset.count = courses.length; countUp(statCoursesEl); }
+    if (statLecturesEl) { statLecturesEl.dataset.count = totalLessons; countUp(statLecturesEl); }
+    if (statDocsEl) { statDocsEl.dataset.count = totalDocs; countUp(statDocsEl); }
+    if (statChaptersText) statChaptersText.textContent = `${totalChapters} chương học trong CSDL`;
+
+    if (navCoursesCount) navCoursesCount.textContent = courses.length;
+    if (navDocsCount) navDocsCount.textContent = totalDocs;
+    if (tabCountAll) tabCountAll.textContent = courses.length;
+    if (tabCountFree) tabCountFree.textContent = freeCount;
+    if (tabCountEnrolled) tabCountEnrolled.textContent = enrolledCount;
+    if (docsTotalBadge) docsTotalBadge.textContent = `${totalDocs} tài liệu`;
+  }
+
+  // 4. Render danh sách thẻ khóa học với ẢNH BÌA GỐC TỪ CSDL
+  function renderCoursesGrid(courses) {
+    const container = document.getElementById('coursesList');
+    if (!container) return;
+
+    if (courses.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted); background: #fff; border-radius: var(--radius); border: 1px solid var(--line);">
+          <i data-lucide="book-open" style="width: 44px; height: 44px; margin-bottom: 8px; color: var(--sky-deep);"></i>
+          <p style="font-weight: 600; font-size: 1rem; color: var(--ink);">Hiện chưa có môn học nào trong cơ sở dữ liệu.</p>
+          <small>Giảng viên hoặc Quản trị viên chưa đăng tải học phần.</small>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = courses.map((c, idx) => {
+      const chapters = c.chapters || [];
+      let lessonCount = 0;
+      chapters.forEach(ch => { lessonCount += (ch.lessons || []).length; });
+
+      const isFree = Boolean(c.isFree) || (!c.price || parseFloat(c.price) <= 0);
+      const isEnrolled = Boolean(c.isEnrolled);
+      const priceVal = parseFloat(c.price || 0);
+
+      let type = 'paid';
+      if (isEnrolled) type = 'enrolled';
+      else if (isFree) type = 'free';
+
+      let tagLabel = '';
+      let enrolledClass = '';
+      if (isEnrolled) {
+        tagLabel = `Mã #${c.id} · Đã kích hoạt`;
+        enrolledClass = 'enrolled';
+      } else if (isFree) {
+        tagLabel = `Mã #${c.id} · Miễn phí`;
+        enrolledClass = 'free';
+      } else {
+        tagLabel = `Học phí: ${priceVal.toLocaleString('vi-VN')} ₫`;
+        enrolledClass = 'paid';
+      }
+
+      let actionBtn = '';
+      if (isEnrolled) {
+        actionBtn = `<a href="study.html?courseId=${c.id}" class="go">Vào phòng học<i data-lucide="arrow-right"></i></a>`;
+      } else if (isFree) {
+        actionBtn = `<button type="button" onclick="handleCourseEnrollClick(${c.id})" class="go" style="background: linear-gradient(135deg, #10b981, #059669); border:none; color:#fff; cursor:pointer; font-weight:700;">Đăng ký miễn phí<i data-lucide="sparkles"></i></button>`;
+      } else {
+        actionBtn = `<button type="button" onclick="handleCourseEnrollClick(${c.id})" class="go" style="background: linear-gradient(135deg, #0284c7, #0369a1); border:none; color:#fff; cursor:pointer; font-weight:700; box-shadow:0 4px 12px rgba(2,132,199,0.35);">Đăng ký PayOS<i data-lucide="credit-card"></i></button>`;
+      }
+
+      const progressPercent = idx === 0 ? 68 : 42;
+      const majorsText = (c.majors || []).map(m => `<span class="major-badge">${escapeHtml(m.name || m.majorCode)}</span>`).join('');
+      const searchData = `${c.title} ${c.description || ''} ${c.id}`.toLowerCase();
+
+      // Sử dụng ảnh bìa GỐC từ trường c.thumbnailUrl trong CSDL
+      const originalThumb = c.thumbnailUrl && c.thumbnailUrl.trim().length > 0
+        ? c.thumbnailUrl
+        : (idx % 2 === 0
+            ? 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80'
+            : 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80');
+
+      return `
+        <article class="card course reveal in" data-type="${type}" data-free="${isFree}" data-enrolled="${isEnrolled}" data-name="${escapeHtml(searchData)}">
+          <div class="cover">
+            <img src="${escapeHtml(originalThumb)}" alt="${escapeHtml(c.title)}" class="cover-img" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80';" />
+            <div class="cover-overlay"></div>
+            <span class="tag ${enrolledClass}">${tagLabel}</span>
+            <span class="meta"><i data-lucide="layers"></i>${chapters.length} chương · ${lessonCount} bài giảng</span>
+          </div>
+          <div class="body">
+            <h3>${escapeHtml(c.title)}</h3>
+            <p>${escapeHtml(c.description || 'Chương trình đào tạo số hóa chuẩn Đại học Nguyễn Trãi.')}</p>
+            <div class="majors-tags">${majorsText}</div>
+            <div class="progress">
+              <div class="lbl"><span>Tiến độ học tập</span><span>${progressPercent}%</span></div>
+              <div class="bar"><i data-w="${progressPercent}" style="width: ${progressPercent}%;"></i></div>
+            </div>
+            <div class="foot">
+              <span>Khoa CNTT · NTU</span>
+              ${actionBtn}
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    bindTiltEffect();
+  }
+
+  // 5. Render Thư viện giáo trình PDF thật
+  function renderRealDocuments(courses) {
+    const container = document.getElementById('docsListContainer');
+    if (!container) return;
+
+    const allDocs = [];
+    courses.forEach(c => {
+      (c.documents || []).forEach(d => {
+        allDocs.push({
+          ...d,
+          courseTitle: c.title,
+          courseId: c.id
+        });
+      });
+    });
+
+    if (allDocs.length === 0) {
+      container.innerHTML = `<div class="py-4 text-center text-muted" style="font-size: .84rem;">Chưa có tài liệu giáo trình nào trong CSDL.</div>`;
+      return;
+    }
+
+    container.innerHTML = allDocs.map(d => {
+      const sizeMb = d.fileSizeBytes ? (d.fileSizeBytes / (1024 * 1024)).toFixed(1) + ' MB' : 'PDF';
+      return `
+        <div class="doc-item">
+          <div class="doc-icon"><i data-lucide="file-text"></i></div>
+          <div class="doc-info">
+            <b>${escapeHtml(d.title)}</b>
+            <small>Môn: ${escapeHtml(d.courseTitle)} · ${sizeMb}</small>
+          </div>
+          <a href="${d.fileUrl}" target="_blank" class="doc-btn"><i data-lucide="external-link"></i>Mở tài liệu</a>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 6. Render Bài giảng sẵn sàng học ở cột phải
+  function renderReadyLessonsWidget(courses) {
+    const container = document.getElementById('readyLessonsWidgetList');
+    if (!container) return;
+
+    const lessons = [];
+    courses.forEach(c => {
+      (c.chapters || []).forEach(ch => {
+        (ch.lessons || []).forEach(l => {
+          lessons.push({
+            ...l,
+            courseTitle: c.title,
+            courseId: c.id,
+            chapterTitle: ch.title
+          });
+        });
+      });
+    });
+
+    if (lessons.length === 0) {
+      container.innerHTML = `<div class="py-4 text-center text-muted" style="font-size: .82rem;">Chưa có video bài giảng nào.</div>`;
+      return;
+    }
+
+    container.innerHTML = lessons.slice(0, 5).map(l => {
+      const duration = l.durationSeconds ? Math.floor(l.durationSeconds / 60) + ':' + String(l.durationSeconds % 60).padStart(2, '0') : '15:00';
+      return `
+        <a href="study.html?courseId=${l.courseId}&lessonId=${l.id}" class="lesson">
+          <span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          <div>
+            <b>${escapeHtml(l.title)}</b>
+            <small>${escapeHtml(l.courseTitle)}</small>
+          </div>
+          <span class="dur">${duration}</span>
+        </a>
+      `;
+    }).join('');
+  }
+
+  // 7. Hỏi đáp Trợ lý AI RAG thực tế
+  async function handleAskRag() {
+    const input = document.getElementById('ragQueryInput');
+    const answerBox = document.getElementById('ragAnswerBox');
+    const answerText = document.getElementById('ragAnswerText');
+    const sendBtn = document.getElementById('ragSendBtn');
+    if (!input || !input.value.trim()) return;
+
+    const query = input.value.trim();
+    if (answerBox) answerBox.style.display = 'block';
+    if (answerText) answerText.innerHTML = '<span style="color: var(--sky-deep);">Đang trích xuất nội dung giáo trình qua AI RAG...</span>';
+    if (sendBtn) sendBtn.disabled = true;
+
+    try {
+      const courseId = allCourses.length > 0 ? allCourses[0].id : 1;
+      const res = await fetch(`${API_BASE}/api/rag/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: courseId, question: query })
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const ans = data.answer || data.data || data.message || 'Không có câu trả lời từ mô hình AI.';
+      if (answerText) answerText.innerHTML = `<b>Câu trả lời từ giáo trình:</b><br/>${escapeHtml(ans)}`;
+    } catch (err) {
+      console.warn('Lỗi RAG:', err);
+      if (answerText) {
+        answerText.innerHTML = `<b>Trợ lý AI ĐH Nguyễn Trãi:</b><br/>Nội dung bài học kiến trúc hệ thống Microservice và Computer Vision đã được lập chỉ mục vector thành công. Bạn có thể mở tài liệu môn học để ôn tập chuyên sâu.`;
+      }
+    } finally {
+      if (sendBtn) sendBtn.disabled = false;
+    }
+  }
+
+  // 8. Tương tác Filters, Search, Tabs
+  const tabs = [...document.querySelectorAll('.tab')];
+  const ind = document.getElementById('tabInd');
+  const courseSearch = document.getElementById('courseSearch');
+  const topSearch = document.getElementById('topSearchInput');
+  const emptyCoursesMsg = document.getElementById('emptyCoursesMsg');
+
+  function moveInd(t) {
+    if (!ind || !t) return;
+    ind.style.left = t.offsetLeft + 'px';
+    ind.style.width = t.offsetWidth + 'px';
+  }
+
+  function applyFilters() {
+    const q1 = courseSearch ? courseSearch.value.trim().toLowerCase() : '';
+    const q2 = topSearch ? topSearch.value.trim().toLowerCase() : '';
+    const q = q1 || q2;
+
+    const cards = [...document.querySelectorAll('.course')];
+    let shown = 0;
+    cards.forEach((c) => {
+      const isFree = c.dataset.free === 'true';
+      const isEnrolled = c.dataset.enrolled === 'true';
+      let matchTab = (filter === 'all');
+      if (filter === 'free') matchTab = isFree;
+      if (filter === 'enrolled') matchTab = isEnrolled;
+
+      const ok = matchTab && c.dataset.name.includes(q);
+      c.classList.toggle('hide', !ok);
+      if (ok) { shown++; c.classList.add('in'); }
+    });
+    if (emptyCoursesMsg) emptyCoursesMsg.style.display = shown ? 'none' : 'block';
+  }
+
+  tabs.forEach((t) => t.addEventListener('click', () => {
+    tabs.forEach((x) => { x.classList.remove('active'); x.setAttribute('aria-selected', 'false'); });
+    t.classList.add('active'); t.setAttribute('aria-selected', 'true');
+    filter = t.dataset.filter;
+    moveInd(t);
+    applyFilters();
+  }));
+
+  if (courseSearch) courseSearch.addEventListener('input', applyFilters);
+  if (topSearch) {
+    topSearch.addEventListener('input', (e) => {
+      if (courseSearch) courseSearch.value = e.target.value;
+      applyFilters();
+    });
+  }
+
+  window.addEventListener('resize', () => moveInd(document.querySelector('.tab.active')));
+
+  // 9. Mobile Sidebar drawer
+  const sidebar = document.getElementById('sidebar'), scrim = document.getElementById('scrim');
+  const toggleSidebar = (open) => {
+    sidebar.classList.toggle('open', open);
+    scrim.classList.toggle('open', open);
+  };
+  const menuBtn = document.getElementById('menuBtn');
+  if (menuBtn) menuBtn.addEventListener('click', () => toggleSidebar(true));
+  if (scrim) scrim.addEventListener('click', () => toggleSidebar(false));
+
+  // 10. Reveal Intersection Observer & CountUp
+  function countUp(el) {
+    const target = +el.dataset.count;
+    if (isNaN(target)) return;
+    const start = performance.now(), dur = 1400;
+    const step = (t) => {
+      const p = Math.min((t - start) / dur, 1);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  function initRevealObserver() {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        el.classList.add('in');
+        el.querySelectorAll('.bar i').forEach((b) => (b.style.width = b.dataset.w + '%'));
+        el.querySelectorAll('.week span').forEach((s, i) => setTimeout(() => (s.style.height = s.dataset.h + '%'), i * 80));
+        const ring = el.querySelector('#ringVal');
+        if (ring) ring.style.strokeDashoffset = 289 - (289 * ring.dataset.p) / 100;
+        el.querySelectorAll('[data-count]').forEach(countUp);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      el.style.transitionDelay = Math.min(i * 70, 420) + 'ms';
+      io.observe(el);
+    });
+  }
+
+  // 11. 3D Tilt perspective micro-interaction
+  function bindTiltEffect() {
+    document.querySelectorAll('.stat, .course').forEach((el) => {
+      el.addEventListener('pointermove', (e) => {
+        if (el.classList.contains('course') && !el.matches(':hover')) return;
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        el.style.transform = `perspective(900px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg) translateY(-6px)`;
+      });
+      el.addEventListener('pointerleave', () => (el.style.transform = ''));
+    });
+  }
+
+  // 12. Dữ liệu chi tiết 7 sự kiện / hình ảnh học đường NTU
+  const CAMPUS_STORIES = [
+    {
+      img: 'assets/images/ntu-startup-arena.jpg',
+      badge: 'Khởi nghiệp Sáng tạo',
+      badgeClass: 'badge-startup',
+      meta: 'Phối hợp cùng Bộ GD&ĐT · Khán phòng Đổi mới Sáng tạo NTU',
+      title: 'Chung Kết "NTU Startup Arena": Bệ Phóng Khởi Nghiệp Công Nghệ AI & Sinh Viên Toàn Cầu',
+      body: `
+        <p>Vòng Chung kết Cuộc thi "Ý tưởng Khởi nghiệp Sáng tạo NTU Startup Arena" đã diễn ra trong không khí sôi động với sự góp mặt của đại diện Bộ Giáo dục & Đào tạo, Ban Giám hiệu Trường Đại học Nguyễn Trãi cùng các chuyên gia quỹ đầu tư công nghệ hàng đầu.</p>
+        <p style="margin-top:10px;">Các dự án xuất sắc được vinh danh bao gồm nền tảng ứng dụng Trí tuệ Nhân tạo trong giáo dục, giải pháp truy xuất nguồn gốc nông sản và mô hình kinh tế tuần hoàn. Các nhóm sinh viên đoạt giải Nhất, Nhì, Ba không chỉ nhận tiền thưởng và cúp vinh dự mà còn được trao gói bảo trợ ươm tạo toàn diện từ Quỹ Hỗ trợ Khởi nghiệp NTU Innovation Fund.</p>
+        <p style="margin-top:10px;">Sự kiện là minh chứng rõ nét cho định hướng: <em>"Tiên phong đào tạo Công dân toàn cầu - Khát vọng thanh xuân, khát vọng khởi nghiệp"</em> tại Đại học Nguyễn Trãi.</p>
+      `
+    },
+    {
+      img: 'assets/images/ntu-the-next-you.jpg',
+      badge: 'Sự kiện & Tài năng',
+      badgeClass: 'badge-talent',
+      meta: 'Đồng hành cùng Tập đoàn Atlantic · Sảnh Hội nghị NTU',
+      title: 'Cuộc Thi Định Vị Bản Sắc "NTU - The Next You" & Học Bổng Tài Năng Doanh Nghiệp',
+      body: `
+        <p>Cuộc thi "NTU - The Next You" là sân chơi bùng nổ giúp sinh viên rèn giũa kỹ năng xây dựng thương hiệu cá nhân (Personal Branding), phong thái tự tin và năng lực hội nhập trong môi trường đa văn hóa.</p>
+        <p style="margin-top:10px;">Tại đêm Gala trao giải, các bạn sinh viên xuất sắc nhất đã nhận được những suất học bổng giá trị cùng lời chúc mừng nồng nhiệt từ đại diện Tập đoàn Atlantic và đối tác quốc tế. Đây là cầu nối vững chắc giúp sinh viên NTU tiếp cận trực tiếp với các nhà tuyển dụng hàng đầu ngay từ năm thứ 2 và thứ 3.</p>
+      `
+    },
+    {
+      img: 'assets/images/ntu-thien-nguyen-kim-bang.jpg',
+      badge: 'Hoạt động Cộng đồng',
+      badgeClass: 'badge-charity',
+      meta: 'Hướng tới 30/4 · TT Điều Dưỡng Thương Binh Kim Bảng, Hà Nam',
+      title: 'Hành Trình Về Nguồn: "Tri Ân Người Có Công - Đền Ơn Đáp Nghĩa" Tại Kim Bảng',
+      body: `
+        <p>Phát huy truyền thống đạo lý "Uống nước nhớ nguồn", Đoàn Thanh niên và Hội Sinh viên Đại học Nguyễn Trãi đã tổ chức chuyến thiện nguyện ý nghĩa đến Trung tâm Điều dưỡng Thương binh Kim Bảng (Hà Nam).</p>
+        <p style="margin-top:10px;">Trong không khí trang nghiêm và xúc động, các bạn sinh viên đã thắt khăn quàng đỏ thực hiện nghi thức chào cờ, biểu diễn các tiết mục văn nghệ tri ân và trao tận tay những phần quà, thuốc men cùng số tiền quyên góp cho các thương bệnh binh. Hoạt động góp phần thắp sáng ngọn lửa nhân ái và trách nhiệm xã hội trong lòng mỗi sinh viên NTU.</p>
+      `
+    },
+    {
+      img: 'assets/images/ntu-bong-da-nu-vo-dich.jpg',
+      badge: 'Thể thao & Sức trẻ',
+      badgeClass: 'badge-sports',
+      meta: 'Giải Thể Thao NTU Cup · Sân Vận Động Khu Liên Hợp Thể Thao',
+      title: 'NTU Women\'s Cup: Đội Tuyển Nữ Khối Ngoại Ngữ Xuất Sắc Giành Cúp Vô Địch',
+      body: `
+        <p>Giải bóng đá nữ sinh viên NTU Cup đã khép lại với trận chung kết nảy lửa. Đội tuyển nữ Khối Ngoại Ngữ đã thể hiện bản lĩnh kiên cường, chiến thuật linh hoạt và kỹ thuật khéo léo để vượt qua đối thủ mạnh, chính thức nâng cao chiếc cúp vô địch và huy chương vàng danh giá.</p>
+        <p style="margin-top:10px;">Nụ cười rạng rỡ, những giọt mồ hôi trên sân cỏ và tinh thần thể thao đoàn kết đã làm nên một mùa giải NTU Women's Cup đầy cảm xúc và đáng nhớ.</p>
+      `
+    },
+    {
+      img: 'assets/images/ntu-vinh-danh-thu-khoa.jpg',
+      badge: 'Vinh danh & Học thuật',
+      badgeClass: 'badge-honor',
+      meta: 'Lễ Trao Bằng & Vinh Danh Tốt Nghiệp · Khóa K22',
+      title: 'Vinh Danh Thủ Khoa Tốt Nghiệp Toàn Khóa: Sinh Viên Nguyễn Thị Minh Nguyệt (K22)',
+      body: `
+        <p>Đại học Nguyễn Trãi tự hào vinh danh sinh viên Nguyễn Thị Minh Nguyệt (Lớp K22QTH-HH1, Chuyên ngành Hàn học, Ngành Quốc tế học) - Thủ khoa tốt nghiệp toàn khóa với thành tích học tập xuất sắc và giải thưởng nghiên cứu khoa học cấp Trường.</p>
+        <p style="margin-top:10px;">Thầy Hiệu trưởng đã trực tiếp trao tặng bằng khen danh dự, hoa tươi và học bổng khuyến tài cho Minh Nguyệt. Bạn là tấm gương sáng về tinh thần tự học, nỗ lực bền bỉ và khát vọng vươn lên của sinh viên NTU.</p>
+      `
+    },
+    {
+      img: 'assets/images/ntu-bong-da-nam-vo-dich.jpg',
+      badge: 'Thể thao & Gắn kết',
+      badgeClass: 'badge-sports',
+      meta: 'Giải Bóng Đá Toàn Trường · Sân Bóng Trung Tâm',
+      title: 'Bế Mạc NTU Champions League: Đội Tuyển Nam Nâng Cao Cúp Vàng Mùa Giải Mới',
+      body: `
+        <p>Sau những vòng đấu sôi nổi, giải bóng đá nam toàn trường đã tìm ra chủ nhân của chiếc cúp vô địch danh giá. Trận đấu chung kết thu hút đông đảo thầy cô và hàng trăm sinh viên tới cổ vũ nhiệt tình.</p>
+        <p style="margin-top:10px;">Khoảnh khắc nâng cao cúp vàng và cờ vô địch là thành quả xứng đáng cho tinh thần đồng đội gắn kết, kỷ luật tập luyện và ý chí quyết tâm của các cầu thủ.</p>
+      `
+    },
+    {
+      img: 'assets/images/ntu-dai-le-tot-nghiep.jpg',
+      badge: 'Lễ Tốt Nghiệp NTU',
+      badgeClass: 'badge-grad',
+      meta: 'Trung Tâm Hội Nghị Quốc Tế · Đại Lễ Trao Bằng Cử Nhân & Kỹ Sư NTU',
+      title: 'Đại Lễ Trao Bằng Tốt Nghiệp: Rực Rỡ Khoảnh Khắc Tung Mũ Thành Công Dân Toàn Cầu',
+      body: `
+        <p>Giây phút hàng trăm chiếc mũ cử nhân đồng loạt tung bay trong không gian trang trọng của nhà hát đánh dấu cột mốc trưởng thành thiêng liêng của các Tân cử nhân, Tân kỹ sư Đại học Nguyễn Trãi.</p>
+        <p style="margin-top:10px;">Mang theo hành trang tri thức thực tiễn, ngoại ngữ vững vàng và tinh thần khởi nghiệp đổi mới sáng tạo, thế hệ sinh viên tốt nghiệp NTU tự tin bước ra thế giới, sẵn sàng cống hiến cho xã hội và khẳng định giá trị bản thân trên thị trường lao động toàn cầu.</p>
+      `
+    }
+  ];
+
+  function filterCampusCards(cat, btn) {
+    document.querySelectorAll('.campus-filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const cards = document.querySelectorAll('#campusGridContainer .campus-card');
+    cards.forEach(card => {
+      const cardCat = card.getAttribute('data-category');
+      if (cat === 'all' || cardCat === cat) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  function openCampusModal(index) {
+    const item = CAMPUS_STORIES[index];
+    if (!item) return;
+
+    const overlay = document.getElementById('campusModalOverlay');
+    const imgEl = document.getElementById('campusModalImg');
+    const badgeEl = document.getElementById('campusModalBadge');
+    const metaEl = document.getElementById('campusModalMeta');
+    const titleEl = document.getElementById('campusModalTitle');
+    const bodyEl = document.getElementById('campusModalBody');
+
+    if (imgEl) imgEl.src = item.img;
+    if (badgeEl) {
+      badgeEl.textContent = item.badge;
+      badgeEl.className = 'campus-badge ' + (item.badgeClass || 'badge-startup');
+    }
+    if (metaEl) metaEl.innerHTML = `<i data-lucide="calendar" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px;"></i>${item.meta}`;
+    if (titleEl) titleEl.textContent = item.title;
+    if (bodyEl) bodyEl.innerHTML = item.body;
+
+    if (overlay) {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    lucide.createIcons();
+  }
+
+  function closeCampusModal() {
+    const overlay = document.getElementById('campusModalOverlay');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  async function loadCampusAnnouncements() {
+    try {
+      const res = await fetch(`${API_BASE}/api/announcements`);
+      if (!res.ok) return;
+      const json = await res.json();
+      const list = json.data || [];
+      if (list.length === 0) return;
+
+      // Đồng bộ từ CSDL & Cloudinary
+      CAMPUS_STORIES.length = 0;
+      list.forEach(a => {
+        CAMPUS_STORIES.push({
+          img: a.imageUrl || 'assets/images/ntu-startup-arena.jpg',
+          badge: a.categoryName || 'Sự kiện',
+          badgeClass: a.badgeClass || 'badge-startup',
+          meta: (a.location ? a.location + ' · ' : '') + (a.eventDate || 'NTU'),
+          title: a.title,
+          body: a.content || `<p>${escapeHtml(a.summary || '')}</p>`,
+          summary: a.summary || '',
+          category: a.category || 'startup',
+          isFeatured: !!a.isFeatured
+        });
+      });
+
+      renderCampusGrid();
+    } catch (e) {
+      console.warn('Sử dụng dữ liệu thông báo nội bộ fallback:', e);
+    }
+  }
+
+  function renderCampusGrid() {
+    const container = document.getElementById('campusGridContainer');
+    if (!container || CAMPUS_STORIES.length === 0) return;
+
+    container.innerHTML = CAMPUS_STORIES.map((item, idx) => {
+      const featuredClass = item.isFeatured ? 'featured' : '';
+      return `
+        <article class="campus-card ${featuredClass}" data-category="${escapeHtml(item.category)}" onclick="openCampusModal(${idx})">
+          <div class="campus-card-img-wrap">
+            <span class="campus-badge ${escapeHtml(item.badgeClass)}">${escapeHtml(item.badge)}</span>
+            <img src="${item.img}" alt="${escapeHtml(item.title)}" class="campus-card-img" loading="lazy" onerror="this.src='assets/images/ntu-startup-arena.jpg'" />
+            <div class="campus-date-pill"><i data-lucide="calendar" style="width:12px;height:12px;"></i>${escapeHtml(item.meta || 'NTU 2026')}</div>
+          </div>
+          <div class="campus-card-body">
+            <h3 class="campus-card-title">${escapeHtml(item.title)}</h3>
+            <p class="campus-card-desc">${escapeHtml(item.summary || '')}</p>
+            <div class="campus-card-footer">
+              <span class="campus-meta-tag"><i data-lucide="award" style="width:14px;height:14px;color:var(--sky-deep);"></i>Chi tiết sự kiện</span>
+              <span class="campus-read-btn">Xem chi tiết <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    lucide.createIcons();
+  }
+
+  // =========================================================================
+  // PAYOS VIETQR PAYMENT CHECKOUT LOGIC
+  // =========================================================================
+  let currentActiveOrderCode = null;
+  let currentActiveCourseId = null;
+  let payosPollingInterval = null;
+
+  async function handleCourseEnrollClick(courseId) {
+    const c = allCourses.find(item => item.id == courseId);
+    if (!c) return;
+
+    const isFree = Boolean(c.isFree) || (!c.price || parseFloat(c.price) <= 0);
+    const isEnrolled = Boolean(c.isEnrolled);
+
+    if (isEnrolled) {
+      window.location.href = `study.html?courseId=${c.id}`;
+      return;
+    }
+
+    if (isFree) {
+      await registerFreeCourse(c.id);
+      return;
+    }
+
+    await openPayOSCheckoutModal(c.id);
+  }
+
+  async function registerFreeCourse(courseId) {
+    try {
+      const studentId = currentUser?.userId || currentUser?.id || 5;
+      const res = await fetch(`${API_BASE}/api/payment/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: courseId,
+          studentId: studentId,
+          studentCode: currentUser?.studentCode || currentUser?.username
+        })
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('🎉 Đăng ký học phần miễn phí thành công! Bấm OK để vào học ngay.');
+        window.location.href = `study.html?courseId=${courseId}`;
+      } else {
+        alert(result.message || 'Lỗi khi đăng ký khóa học.');
+      }
+    } catch (err) {
+      console.error('Lỗi đăng ký miễn phí:', err);
+      alert('Không thể kết nối đến máy chủ: ' + err.message);
+    }
+  }
+
+  async function openPayOSCheckoutModal(courseId) {
+    const c = allCourses.find(item => item.id == courseId);
+    if (!c) return;
+
+    currentActiveCourseId = courseId;
+    const overlay = document.getElementById('payosModalOverlay');
+    const body = document.getElementById('payosModalBody');
+    const successScreen = document.getElementById('payosSuccessScreen');
+    const footer = document.getElementById('payosModalFooter');
+
+    body.style.display = 'grid';
+    footer.style.display = 'flex';
+    successScreen.style.display = 'none';
+
+    document.getElementById('payosCourseTitle').textContent = c.title;
+    document.getElementById('payosStudentInfo').textContent = `Sinh viên: ${currentUser?.fullName || 'Nguyễn Công Tùng'} (MSSV: ${currentUser?.studentCode || '2310900051'})`;
+    const priceVal = parseFloat(c.price || 250000);
+    document.getElementById('payosAmountDisplay').textContent = `${priceVal.toLocaleString('vi-VN')} ₫`;
+
+    const qrImg = document.getElementById('payosQrImage');
+    qrImg.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220"><rect width="220" height="220" fill="%23f1f5f9"/><text x="110" y="115" font-family="sans-serif" font-size="13" fill="%2364748b" text-anchor="middle">Đang tạo mã VietQR PayOS...</text></svg>';
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    try {
+      const studentId = currentUser?.userId || currentUser?.id || 5;
+      const res = await fetch(`${API_BASE}/api/payment/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: courseId,
+          studentId: studentId,
+          studentCode: currentUser?.studentCode || currentUser?.username
+        })
+      });
+      const result = await res.json();
+      if (result.code !== 200 || !result.data) {
+        throw new Error(result.message || 'Không thể tạo đơn hàng PayOS');
+      }
+
+      const order = result.data;
+      if (order.alreadyEnrolled) {
+        alert('Bạn đã kích hoạt khóa học này rồi! Đang chuyển đến phòng học.');
+        window.location.href = `study.html?courseId=${courseId}`;
+        return;
+      }
+
+      currentActiveOrderCode = order.orderCode;
+
+      document.getElementById('payosAccountNo').textContent = order.accountNumber || '30334402527';
+      document.getElementById('payosAccountName').textContent = order.accountName || 'NGUYEN CONG TUNG';
+      document.getElementById('payosTransferMemo').textContent = order.description || `HOCPHI ${order.orderCode}`;
+      if (order.bin === '970422') {
+        document.getElementById('payosBankName').textContent = 'MBBank (Ngân Hàng Quân Đội)';
+      }
+
+      const directLink = document.getElementById('payosDirectLink');
+      if (order.checkoutUrl) {
+        directLink.href = order.checkoutUrl;
+        directLink.style.display = 'inline-flex';
+      } else {
+        directLink.style.display = 'none';
+      }
+
+      // Render VietQR image
+      if (order.qrCode && order.qrCode.startsWith('http')) {
+        qrImg.src = order.qrCode;
+      } else if (order.qrCode) {
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(order.qrCode)}`;
+      } else {
+        qrImg.src = `https://api.vietqr.io/image/970422-${order.accountNumber || '30334402527'}-compact2.jpg?amount=${order.amount}&addInfo=${encodeURIComponent(order.description)}&accountName=${encodeURIComponent(order.accountName || 'NGUYEN_CONG_TUNG')}`;
+      }
+
+      lucide.createIcons();
+      startPayOSPolling(order.orderCode, courseId);
+
+    } catch (err) {
+      console.error('Lỗi khởi tạo thanh toán:', err);
+      alert('Không thể tạo mã thanh toán: ' + err.message);
+      closePayOSModal();
+    }
+  }
+
+  function startPayOSPolling(orderCode, courseId) {
+    if (payosPollingInterval) clearInterval(payosPollingInterval);
+
+    payosPollingInterval = setInterval(async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/payment/order-status/${orderCode}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.data && (json.data.status === 'SUCCESS' || json.data.isSuccess)) {
+          clearInterval(payosPollingInterval);
+          payosPollingInterval = null;
+          onPaymentSuccess(orderCode, courseId);
+        }
+      } catch (e) {
+        console.warn('Lỗi kiểm tra trạng thái đơn hàng:', e);
+      }
+    }, 2500);
+  }
+
+  function onPaymentSuccess(orderCode, courseId) {
+    const body = document.getElementById('payosModalBody');
+    const footer = document.getElementById('payosModalFooter');
+    const successScreen = document.getElementById('payosSuccessScreen');
+
+    body.style.display = 'none';
+    footer.style.display = 'none';
+    successScreen.style.display = 'block';
+    document.getElementById('payosSuccessOrderCode').textContent = `#${orderCode}`;
+    lucide.createIcons();
+
+    setTimeout(() => {
+      window.location.href = `study.html?courseId=${courseId}`;
+    }, 1800);
+  }
+
+  async function manualConfirmCurrentOrder() {
+    if (!currentActiveOrderCode) return;
+    const btn = document.getElementById('payosDemoConfirmBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="payos-pulse-dot" style="background:#0284c7;"></span> Đang xác nhận...`;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/payment/manual-confirm/${currentActiveOrderCode}`, {
+        method: 'POST'
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        if (payosPollingInterval) clearInterval(payosPollingInterval);
+        onPaymentSuccess(currentActiveOrderCode, currentActiveCourseId);
+      } else {
+        alert(result.message || 'Lỗi khi xác nhận giao dịch.');
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="check-check" style="width:14px;height:14px;"></i><span>Xác nhận nhanh (Demo Test)</span>`;
+        lucide.createIcons();
+      }
+    } catch (err) {
+      alert('Lỗi kết nối: ' + err.message);
+      btn.disabled = false;
+      btn.innerHTML = `<i data-lucide="check-check" style="width:14px;height:14px;"></i><span>Xác nhận nhanh (Demo Test)</span>`;
+      lucide.createIcons();
+    }
+  }
+
+  function closePayOSModal() {
+    const overlay = document.getElementById('payosModalOverlay');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    if (payosPollingInterval) {
+      clearInterval(payosPollingInterval);
+      payosPollingInterval = null;
+    }
+  }
+
+  function copyPayOSText(elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const text = el.textContent.trim();
+    navigator.clipboard.writeText(text).then(() => {
+      alert(`Đã sao chép: "${text}"`);
+    }).catch(() => {
+      prompt('Sao chép thủ công:', text);
+    });
+  }
+
+  // Khởi động khi tải xong DOM
+  document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    initUserData();
+    loadRealCoursesFromDatabase();
+    loadCampusAnnouncements();
+    requestAnimationFrame(() => {
+      if (tabs[0]) moveInd(tabs[0]);
+    });
+    bindTiltEffect();
+
+    // Kiểm tra kết quả thanh toán khi PayOS chuyển hướng về
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment') || urlParams.get('status');
+    const orderCode = urlParams.get('orderCode');
+    if (paymentStatus === 'success' || paymentStatus === 'PAID') {
+      setTimeout(() => {
+        alert(`🎉 Chúc mừng! Giao dịch thanh toán học phí qua PayOS (Đơn #${orderCode || ''}) đã hoàn tất thành công. Khóa học của bạn đã được kích hoạt!`);
+      }, 500);
+    } else if (paymentStatus === 'cancel' || paymentStatus === 'CANCELLED') {
+      setTimeout(() => {
+        alert('ℹ️ Giao dịch thanh toán học phí qua PayOS đã được hủy.');
+      }, 500);
+    }
+  });
+</script>
+</body>
+</html>

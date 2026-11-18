@@ -1,1088 +1,2767 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cấu Trúc Khóa Học &amp; Xếp Buổi Học - EduFace LMS</title>
-    <!-- Google Fonts Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS v3 Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#0068ff',
-                            600: '#0054d1',
-                            700: '#0043a8',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
-        .drag-ghost {
-            opacity: 0.4;
-            transform: scale(0.99);
-        }
-        .drag-over {
-            border-color: #0068ff !important;
-            background-color: #eff6ff !important;
-        }
-        .cursor-grab {
-            cursor: grab;
-        }
-        .cursor-grab:active {
-            cursor: grabbing;
-        }
-        .sidebar-item-active {
-            background-color: #eff6ff;
-            color: #0068ff;
-            font-weight: 600;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cấu Trúc Khóa Học &amp; Quản Lý Buổi Học — Trường Đại Học Nguyễn Trãi (NTU)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg: #f6fbfe;
+    --surface: #ffffff;
+    --tint: #e5f7ff;
+    --ink: #0b2540;
+    --ink-2: #163a5c;
+    --sky: #33ccff;
+    --sky-deep: #0679a8;
+    --ntu-blue: #00539F;
+    --ntu-red: #DA291C;
+    --line: rgba(11,37,64,.08);
+    --muted: #55677c;
+    --ok: #0f9d76;
+    --ok-bg: #e3f7f0;
+    --warn: #b26a00;
+    --warn-bg: #fff4e0;
+    --danger: #d6455d;
+    --danger-bg: #fee2e2;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    --mono: "Geist Mono", monospace;
+    --ease: cubic-bezier(.2,.7,.1,1);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { zoom: 0.85; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  svg { width: 18px; height: 18px; stroke-width: 1.8; flex-shrink: 0; }
+  em { font-style: italic; color: var(--sky-deep); }
+  .serif { font-family: var(--serif); }
+  .app { display: flex; min-height: 100vh; }
+
+  /* ambient drift orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: .45;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .orb.a { width: 420px; height: 420px; background: #bfeeff; top: -140px; right: -80px; }
+  .orb.b { width: 340px; height: 340px; background: #d9f4ff; bottom: -100px; left: 15%; animation-delay: -6s; }
+  @keyframes drift { to { transform: translate(-50px, 30px) scale(1.08); } }
+
+  /* Sidebar */
+  .side {
+    width: 320px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 18px;
+    position: sticky;
+    top: 0;
+    height: calc(100vh / 0.85);
+    min-height: calc(100vh / 0.85);
+    transition: transform .5s var(--ease);
+    z-index: 30;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 6px 18px;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .brand-logo-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    object-fit: contain;
+    background: #fff;
+    padding: 2px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 14px -4px rgba(0,83,159,.3);
+  }
+  .brand b {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.12rem;
+    letter-spacing: -.01em;
+    color: var(--ntu-blue);
+  }
+  .brand small { font-size: .75rem; color: var(--muted); display: block; }
+  .office {
+    margin: 16px 0 6px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: var(--tint);
+  }
+  .office .av {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--sky);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .office b { display: block; font-size: .88rem; font-weight: 700; color: var(--ink); }
+  .office small { font-size: .74rem; color: var(--muted); display: block; }
+  .label {
+    font-size: .7rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--sky-deep);
+    font-weight: 700;
+    padding: 16px 10px 8px;
+  }
+  .side nav { display: flex; flex-direction: column; gap: 4px; }
+  .side nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 500;
+    position: relative;
+    transition: background .3s, transform .3s var(--ease), color .3s;
+  }
+  .side nav a:hover { background: var(--tint); transform: translateX(4px); }
+  .side nav a .count {
+    margin-left: auto;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: var(--tint);
+    font-size: .74rem;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: var(--sky-deep);
+    padding: 0 6px;
+  }
+  .side nav a.active {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 12px 24px -12px rgba(11,37,64,.6);
+  }
+  .side nav a.active svg { color: var(--sky); }
+  .side nav a.active .count { background: var(--sky); color: var(--ink); }
+  .side-foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .78rem;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--bg);
+    color: var(--muted);
+  }
+  .side-foot b { color: var(--ntu-blue); }
+
+  /* Main area */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; z-index: 1; }
+
+  /* Header */
+  .top {
+    height: 74px;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255,255,255,.8);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .menu-btn { display: none; padding: 8px; border-radius: 10px; background: var(--tint); }
+  @media (max-width: 1024px) {
+    .menu-btn { display: block; }
+    .side { position: fixed; left: -340px; }
+    .side.open { transform: translateX(340px); }
+  }
+
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .84rem;
+    color: var(--muted);
+  }
+  .crumbs a { color: inherit; text-decoration: none; }
+  .crumbs a:hover { color: var(--ntu-blue); }
+  .crumbs b { color: var(--ink); font-weight: 600; }
+
+  .term {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .term select { border: 0; outline: 0; background: none; font-weight: 600; cursor: pointer; }
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--ok-bg);
+    color: var(--ok);
+    white-space: nowrap;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+  .user { display: flex; align-items: center; gap: 12px; margin-left: auto; text-align: right; }
+  .user b { display: block; font-size: .88rem; font-weight: 700; color: var(--ink); }
+  .user small { font-size: .74rem; color: var(--muted); }
+  .user .av {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--sky), var(--ntu-blue));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px rgba(51,204,255,.35);
+  }
+
+  /* Content */
+  .content { padding: 28px; display: flex; flex-direction: column; gap: 24px; max-width: 1720px; width: 100%; margin: 0 auto; }
+
+  /* Page Head Banner */
+  .page-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .page-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 2.8vw, 2.3rem);
+    letter-spacing: -.02em;
+    line-height: 1.25;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .page-desc { color: var(--muted); font-size: .92rem; margin-top: 6px; }
+
+  .btn-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: .86rem;
+    transition: all .25s var(--ease);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 12px 24px -10px rgba(11,37,64,.6);
+  }
+  .btn-primary:hover {
+    background: var(--ntu-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px -10px rgba(0,83,159,.5);
+  }
+  .btn-primary svg { color: var(--sky); }
+  .btn-ghost {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+  }
+  .btn-ghost:hover {
+    background: var(--tint);
+    border-color: var(--sky);
+    color: var(--ntu-blue);
+    transform: translateY(-2px);
+  }
+  .btn-tint {
+    background: var(--tint);
+    color: var(--sky-deep);
+    border: 1px solid rgba(51,204,255,.3);
+  }
+  .btn-tint:hover {
+    background: #d4f2ff;
+    transform: translateY(-2px);
+  }
+
+  /* Course Hero Card */
+  .hero-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 12px 32px -12px rgba(11,37,64,.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .hero-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-width: 320px;
+  }
+  .hero-thumb {
+    width: 90px;
+    height: 90px;
+    border-radius: 16px;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    background: var(--tint);
+    box-shadow: 0 8px 20px -6px rgba(0,83,159,.25);
+    flex-shrink: 0;
+  }
+  .hero-info { flex: 1; min-width: 0; }
+  .hero-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .code-badge {
+    font-family: var(--mono);
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--ntu-blue);
+    background: var(--tint);
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(51,204,255,.3);
+  }
+  .status-badge {
+    font-size: .72rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+  }
+  .status-badge.published { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .status-badge.draft { background: #f1f5f9; color: var(--muted); border: 1px solid var(--line); }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: .84rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .hero-stats span { display: inline-flex; align-items: center; gap: 5px; }
+
+  /* 2-Column Curriculum Layout */
+  .curriculum-layout {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1200px) {
+    .curriculum-layout { grid-template-columns: 1fr; }
+  }
+
+  /* Section Card */
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 8px 24px -10px rgba(11,37,64,.06);
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .section-title {
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title svg { color: var(--sky-deep); }
+  .section-desc { font-size: .82rem; color: var(--muted); margin-top: 4px; }
+
+  /* Chapters & Drag List */
+  .chapter-card {
+    background: #fbfdff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 16px;
+    transition: all .25s var(--ease);
+  }
+  .chapter-card:hover { border-color: rgba(51,204,255,.5); box-shadow: 0 8px 20px -8px rgba(0,83,159,.12); }
+  .chapter-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .drag-handle {
+    cursor: grab;
+    color: var(--muted);
+    padding: 4px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .drag-handle:active { cursor: grabbing; }
+  .chapter-title {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .chapter-actions { display: flex; align-items: center; gap: 6px; }
+
+  /* Lesson Row */
+  .lessons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+    padding-left: 14px;
+    border-left: 2px solid rgba(51,204,255,.3);
+  }
+  .lesson-row {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    transition: all .2s;
+  }
+  .lesson-row:hover { border-color: var(--sky); background: #f9fdff; }
+  .lesson-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 240px; }
+  .lesson-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--tint);
+    color: var(--sky-deep);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .lesson-icon.video { background: #fee2e2; color: #dc2626; }
+  .lesson-name { font-weight: 700; font-size: .88rem; color: var(--ink); }
+  .lesson-meta { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+
+  .action-btn-sm {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: .76rem;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .action-btn-sm:hover { background: var(--tint); border-color: var(--sky); color: var(--ntu-blue); }
+  .action-btn-sm.del { color: var(--danger); }
+  .action-btn-sm.del:hover { background: var(--danger-bg); border-color: #fca5a5; }
+  .action-btn-sm.play { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+  .action-btn-sm.play:hover { background: #fca5a5; color: #991b1b; }
+
+  /* Attached Doc Pill */
+  .attached-doc-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: .72rem;
+    background: #f1f5f9;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    margin-top: 4px;
+  }
+
+  /* Right Docs Sidebar */
+  .doc-card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    transition: all .2s;
+  }
+  .doc-card:hover { border-color: var(--sky); box-shadow: 0 4px 14px -4px rgba(0,83,159,.15); }
+  .doc-top { display: flex; align-items: flex-start; gap: 10px; }
+  .doc-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .doc-icon.pdf { background: #fee2e2; color: #dc2626; }
+  .doc-icon.doc { background: #e0f2fe; color: #0284c7; }
+  .doc-title { font-weight: 700; font-size: .86rem; color: var(--ink); line-height: 1.35; }
+  .doc-meta { font-size: .74rem; color: var(--muted); margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .chunk-pill {
+    font-size: .7rem;
+    font-weight: 700;
+    color: #047857;
+    background: #ecfdf5;
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid #a7f3d0;
+  }
+
+  /* Search & Filter inputs */
+  .input {
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: .84rem;
+    outline: none;
+    transition: all .2s;
+  }
+  .input:focus { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(51,204,255,.18); }
+
+  /* Modals */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11,37,64,.55);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s var(--ease);
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 24px;
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -20px rgba(11,37,64,.4);
+    padding: 24px 28px;
+    transform: translateY(20px) scale(.98);
+    transition: transform .35s var(--ease);
+  }
+  .overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .modal-head h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; color: var(--ink); }
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: var(--tint);
+    color: var(--sky-deep);
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+
+  /* Toast Notification */
+  #toastNotification {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,.3);
+    z-index: 9999;
+    font-size: .88rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: all .3s var(--ease);
+  }
+  #toastNotification.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; }
+
+  .attachment-box {
+    border: 1px dashed var(--line);
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 14px 16px;
+    transition: all .2s ease;
+  }
+  .attachment-box:hover {
+    border-color: var(--ntu-blue);
+    background: #f0f7ff;
+  }
+  .attachment-box.has-file {
+    border-style: solid;
+    border-color: #93c5fd;
+    background: #eff6ff;
+  }
+  .upload-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 10px;
+    cursor: pointer;
+  }
+
+  .drag-over {
+    border-color: var(--ntu-blue) !important;
+    background-color: var(--tint) !important;
+  }
+  .drag-ghost {
+    opacity: 0.35;
+    transform: scale(0.98);
+  }
+</style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800">
+<body>
 
-    <!-- ===================================================================== -->
-    <!-- 1. TOP HEADER / NAVBAR -->
-    <!-- ===================================================================== -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 lg:px-6 py-2.5 flex items-center justify-between shadow-sm">
-        <div class="flex items-center space-x-4">
-            <button id="sidebarToggleBtn" onclick="toggleSidebar()"
-                class="p-1.5 rounded-md hover:bg-slate-100 text-slate-600 focus:outline-none"
-                title="Đóng/Mở thanh điều hướng">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
-            <a href="../index.html" class="flex items-center space-x-2">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-amber-400 flex items-center justify-center text-white font-black text-lg shadow-sm">
-                    10
-                </div>
-                <div class="flex items-baseline space-x-1">
-                    <span class="text-xl font-bold tracking-tight text-slate-800">EduFace</span>
-                    <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">LMS</span>
-                </div>
-            </a>
-            <span class="text-slate-300">/</span>
-            <div class="hidden sm:flex items-center space-x-2 text-xs">
-                <a href="../index.html#courses" class="text-slate-500 hover:text-blue-600 font-medium">Khóa học</a>
-                <span class="text-slate-300">/</span>
-                <span class="font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded" id="topBreadcrumbId">Chi tiết &amp; Sắp xếp</span>
-            </div>
+<div class="orb a"></div>
+<div class="orb b"></div>
+
+<div class="app">
+  <!-- SIDEBAR COMPONENT -->
+  <aside class="side" id="side" data-active="courses"></aside>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+    <!-- Top Header -->
+    <header class="top">
+      <button class="menu-btn" id="menuBtn" aria-label="Mở menu"><i data-lucide="menu"></i></button>
+      <div class="crumbs">
+        <a href="/admin/index.html">Trang chủ</a>
+        <span>/</span>
+        <a href="list.html">Khóa học &amp; Học phần</a>
+        <span>/</span>
+        <b id="topBreadcrumbId">Cấu trúc &amp; Quản lý buổi học</b>
+      </div>
+
+      <div style="flex: 1;"></div>
+
+      <div class="term">
+        <i data-lucide="calendar"></i>
+        <select aria-label="Học kỳ">
+          <option>Học kỳ 1 · Năm học 2026–2027</option>
+          <option>Học kỳ 2 · Năm học 2025–2026</option>
+        </select>
+      </div>
+
+      <div class="status-pill">
+        <span class="dot"></span>
+        <span>Hệ thống sẵn sàng</span>
+      </div>
+
+      <div class="user">
+        <div>
+          <b>Ban Giám Hiệu</b>
+          <small>Quản trị Cấp cao</small>
         </div>
-
-        <div class="flex items-center space-x-3">
-            <div class="hidden sm:flex items-center px-2.5 py-1 rounded-full text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-                <span>Kéo thả sắp xếp: Bật</span>
-            </div>
-
-            <a id="btnEditCourse" href="#"
-               class="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                </svg>
-                <span>Sửa Thông Tin Khóa</span>
-            </a>
-
-            <a href="../index.html#courses"
-               class="text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
-                ← Danh Sách Khóa Học
-            </a>
-
-            <div class="flex items-center space-x-2 pl-2 border-l border-slate-200">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                    alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-slate-300 shadow-sm">
-                <div class="hidden xl:block text-left">
-                    <div class="text-xs font-semibold text-slate-800 leading-tight">NGUYỄN CÔNG TÙNG</div>
-                    <div class="text-[10px] text-slate-500">Quản trị viên</div>
-                </div>
-            </div>
-        </div>
+        <div class="av">NTU</div>
+      </div>
     </header>
 
-    <!-- ===================================================================== -->
-    <!-- 2. MAIN LAYOUT: SIDEBAR + CONTENT -->
-    <!-- ===================================================================== -->
-    <div class="flex flex-1 overflow-hidden">
+    <!-- CONTENT -->
+    <main class="content">
+      <!-- Page Head -->
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">
+            <span>Cấu Trúc Khóa Học &amp; Buổi Học</span>
+            <span id="courseCodeTag" class="code-badge">#...</span>
+          </h1>
+          <p class="page-desc">Xếp thứ tự buổi học, bài giảng video và phân phối tài liệu giáo trình RAG NoSQL</p>
+        </div>
+        <div class="btn-group">
+          <button type="button" onclick="toggleDocSidebar()" class="btn btn-tint">
+            <i data-lucide="book-marked"></i>
+            <span>Tài Liệu Giáo Trình (<b id="btnDocCountBadge">0</b>)</span>
+          </button>
+          <a id="btnCourseMajors" href="#" class="btn btn-ghost">
+            <i data-lucide="library"></i>
+            <span>Chuyên Ngành</span>
+          </a>
+          <a id="btnEditCourse" href="#" class="btn btn-ghost">
+            <i data-lucide="edit-3"></i>
+            <span>Sửa Khóa</span>
+          </a>
+          <a href="list.html" class="btn btn-ghost">
+            <i data-lucide="arrow-left"></i>
+            <span>Danh Sách</span>
+          </a>
+        </div>
+      </div>
 
-        <!-- SIDEBAR NAVIGATION (ALWAYS PRESERVED, NEVER DISAPPEARS) -->
-        <aside id="mainSidebar"
-            class="w-64 bg-white border-r border-slate-200 flex-shrink-0 flex flex-col justify-between transition-all duration-300 z-30">
-            <div class="py-4 overflow-y-auto flex-1">
-                <div class="px-3 space-y-1">
-                    <a href="../index.html"
-                        class="sidebar-nav-item flex items-center px-3 py-2.5 text-sm rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
-                        <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
-                            </path>
-                        </svg>
-                        <span>Bảng điều khiển</span>
-                    </a>
-
-                    <a href="../index.html#courses"
-                        class="sidebar-nav-item sidebar-item-active flex items-center justify-between px-3 py-2.5 text-sm rounded-lg transition-colors">
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
-                                </path>
-                            </svg>
-                            <span>Khóa học &amp; Buổi học</span>
-                        </div>
-                        <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Đang xếp</span>
-                    </a>
-
-                    <a href="../index.html#students"
-                        class="sidebar-nav-item flex items-center justify-between px-3 py-2.5 text-sm rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                                </path>
-                            </svg>
-                            <span>Học viên &amp; Điểm danh</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="mt-6 pt-4 border-t border-slate-200 px-3">
-                    <div class="px-3 text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">HỆ SINH THÁI CLOUD &amp; AI</div>
-                    <div class="space-y-1">
-                        <div class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 bg-slate-50">
-                            <span class="flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2.5"></span>
-                                Cloudinary CDN
-                            </span>
-                            <span class="text-[10px] font-semibold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-mono">dhefmthim</span>
-                        </div>
-                        <div class="flex items-center justify-between px-3 py-2 text-sm rounded-lg text-slate-600 bg-slate-50">
-                            <span class="flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-indigo-500 mr-2.5"></span>
-                                Face AI Engine
-                            </span>
-                            <span class="text-[10px] font-semibold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-mono">Port 8001</span>
-                        </div>
-                    </div>
-                </div>
+      <!-- COURSE OVERVIEW BANNER CARD -->
+      <div class="hero-card">
+        <div class="hero-left">
+          <img id="courseThumbnail" src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=160&auto=format&fit=crop&q=80" alt="Course Thumb" class="hero-thumb">
+          <div class="hero-info">
+            <div class="hero-meta-row">
+              <span class="code-badge" id="courseSlug">#...</span>
+              <span id="courseStatusBadge" class="status-badge published">PUBLISHED</span>
+              <div id="courseMajorsBadges" style="display:inline-flex; gap:6px;"></div>
             </div>
-
-            <!-- BOTTOM TAB: CÀI ĐẶT & HỒ SƠ eKYC (MOVED DOWN TO BOTTOM AS REQUESTED) -->
-            <div class="border-t border-slate-200 p-3 space-y-2 bg-slate-50/50">
-                <a href="../index.html#profile"
-                    class="sidebar-nav-item flex items-center px-3 py-2 text-sm rounded-lg text-slate-700 hover:bg-slate-200/60 transition-colors">
-                    <svg class="w-5 h-5 mr-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-                        </path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    <span>Cài đặt &amp; Hồ sơ eKYC</span>
-                </a>
-
-                <div class="pt-2 border-t border-slate-200/80 text-xs text-slate-500 flex items-center justify-between px-1">
-                    <span>LMS Spring Boot 3</span>
-                    <span class="font-mono text-[11px] text-emerald-600 font-semibold" id="systemClock">--:--:--</span>
-                </div>
+            <h2 class="hero-title" id="courseTitle">Đang nạp dữ liệu khóa học...</h2>
+            <div class="hero-stats">
+              <span><i data-lucide="calendar"></i><b id="courseStatsChapters">0 Buổi học</b></span>
+              <span>•</span>
+              <span><i data-lucide="circle-play"></i><b id="courseStatsLessons">0 Bài giảng</b></span>
+              <span>•</span>
+              <span><i data-lucide="file-text"></i><b id="courseStatsDocs">0 Tài liệu</b></span>
+              <span>•</span>
+              <span id="coursePriceTag" style="font-weight:700; color:var(--ok);">Miễn phí</span>
             </div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" onclick="openAddChapterModal()" class="btn btn-primary">
+            <i data-lucide="plus-circle"></i>
+            <span>+ Thêm Buổi Học</span>
+          </button>
+          <button type="button" onclick="openUploadDocModal()" class="btn btn-tint">
+            <i data-lucide="upload-cloud"></i>
+            <span>Tải Tài Liệu</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2-COLUMN LAYOUT -->
+      <div class="curriculum-layout">
+        <!-- LEFT: CHAPTERS & LESSONS -->
+        <section class="section-card">
+          <div class="section-header">
+            <div>
+              <div class="section-title">
+                <i data-lucide="list-tree"></i>
+                <span>Cấu Trúc Chương Trình &amp; Kéo Xếp Buổi Học</span>
+              </div>
+              <p class="section-desc">Kéo biểu tượng tay nắm để đổi thứ tự buổi học hoặc bài giảng. Đính kèm tài liệu vào từng buổi từ danh sách bên phải.</p>
+            </div>
+            <button type="button" onclick="openAddChapterModal()" class="btn btn-tint" style="height:36px; font-size:.82rem;">
+              <i data-lucide="plus"></i>
+              <span>Thêm Buổi Học Mới</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Chapters Container -->
+          <div id="chaptersListContainer">
+            <div style="text-align:center; padding:48px; color:var(--muted);">
+              <p>Đang tải danh sách buổi học...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT: DOCUMENTS MANAGEMENT SIDEBAR -->
+        <aside class="section-card" id="docSidebarSection">
+          <div class="section-header">
+            <div>
+              <div class="section-title">
+                <i data-lucide="files"></i>
+                <span>Quản Lý Tài Liệu Khóa Học</span>
+              </div>
+              <p class="section-desc">Bóc tách Chunks MongoDB &amp; Gắn cho Buổi học</p>
+            </div>
+            <button type="button" onclick="openUploadDocModal()" class="btn btn-primary" style="height:34px; font-size:.8rem; padding:0 12px;">
+              <i data-lucide="upload"></i>
+              <span>+ Tải lên</span>
+            </button>
+          </div>
+
+          <!-- Filters -->
+          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+            <input type="text" id="docSearchInput" placeholder="Tìm tài liệu theo tên..." class="input" oninput="filterDocumentsList()" />
+            <select id="docSessionFilterSelect" class="input" onchange="filterDocumentsList()">
+              <option value="ALL">Tất cả tài liệu môn học</option>
+              <option value="UNASSIGNED">Chưa gắn vào buổi học nào</option>
+              <!-- Dynamic session options populated -->
+            </select>
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:.78rem; color:var(--muted);">
+              <span>Hiển thị: <b id="visibleDocsCount" style="color:var(--ink);">0</b> tài liệu</span>
+              <span id="totalMongoChunksBadge" class="chunk-pill" style="display:inline-flex; align-items:center; gap:4px;">
+                <span class="dot" style="background:var(--ok); width:6px; height:6px;"></span>
+                <span>MongoDB Chunks: 0</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Documents List Container -->
+          <div id="courseDocumentsContainer" style="max-height: 650px; overflow-y: auto; padding-right: 4px;">
+            <div style="text-align:center; padding:32px; color:var(--muted); font-size:.84rem;">
+              Đang tải danh sách tài liệu...
+            </div>
+          </div>
         </aside>
+      </div>
+    </main>
+  </div>
+</div>
 
-        <!-- MAIN CONTENT AREA (LIGHT THEME) -->
-        <main class="flex-1 overflow-y-auto bg-[#f8fafc] p-4 sm:p-6 lg:p-8 space-y-6 max-w-6xl">
-            
-            <!-- COURSE OVERVIEW BANNER (LIGHT CARD) -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
-                <div class="flex items-start sm:items-center space-x-4">
-                    <img id="courseThumbnail" src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=160&auto=format&fit=crop&q=80"
-                         alt="Course Thumb" class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-slate-200 flex-shrink-0 bg-slate-50 shadow-2xs">
-                    <div>
-                        <div class="flex items-center space-x-2 flex-wrap gap-y-1">
-                            <span class="text-xs font-bold text-blue-600 font-mono" id="courseSlug">#...</span>
-                            <span id="courseStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                PUBLISHED
-                            </span>
-                            <div id="courseMajorsBadges" class="flex items-center space-x-1"></div>
-                        </div>
-                        <h1 class="text-lg sm:text-xl font-bold text-slate-900 mt-1" id="courseTitle">Đang tải thông tin khóa học...</h1>
-                        <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-3">
-                            <span id="courseStatsChapters" class="font-medium text-slate-700">0 Buổi học</span>
-                            <span>•</span>
-                            <span id="courseStatsLessons" class="font-medium text-slate-700">0 Bài giảng</span>
-                            <span>•</span>
-                            <span id="coursePriceTag" class="font-bold text-emerald-600">Miễn phí</span>
-                        </div>
-                    </div>
-                </div>
+<!-- ===================================================================== -->
+<!-- MODALS -->
+<!-- ===================================================================== -->
 
-                <div class="flex items-center space-x-3 self-end md:self-center">
-                    <button type="button" onclick="openAddChapterModal()"
-                            class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-colors flex items-center space-x-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        <span>+ Thêm Buổi Học</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- MAIN SECTION: CHAPTERS & SESSIONS WITH DRAG & DROP -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-6 shadow-xs">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                    <div>
-                        <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-wide uppercase flex items-center space-x-2">
-                            <span>Cấu Trúc Chương Trình &amp; Kéo Xếp Buổi Học</span>
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Kéo biểu tượng <span class="text-blue-600 font-bold">⠿</span> để sắp xếp lại thứ tự các buổi học hoặc bài giảng. Thứ tự được lưu tự động vào CSDL.
-                        </p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button type="button" onclick="openAddChapterModal()"
-                                class="px-3.5 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors">
-                            + Thêm Buổi Mới (Tự điền số)
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Draggable Chapters Container -->
-                <div id="chaptersListContainer" class="space-y-4">
-                    <!-- Chapters populated dynamically -->
-                </div>
-            </div>
-        </main>
+<!-- 1. MODAL CHAPTER -->
+<div class="overlay" id="chapterModal" onclick="if(event.target===this) closeChapterModal()">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 id="chapterModalTitle">Thêm Buổi Học Mới</h3>
+      <button class="modal-close" onclick="closeChapterModal()" aria-label="Đóng"><i data-lucide="x"></i></button>
     </div>
+    <form id="chapterForm" onsubmit="submitChapterForm(event)">
+      <input type="hidden" id="formChapterId" value="">
+      <div class="form-group">
+        <label class="form-label">Tên Buổi Học / Chương Học *</label>
+        <input type="text" id="formChapterTitle" required placeholder="vd: Buổi 1: Giới thiệu kiến trúc Microservices..." class="input" style="width:100%;">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Thứ tự buổi học (#)</label>
+        <input type="number" id="formChapterOrderIndex" min="1" value="1" class="input" style="width:100%; font-family:var(--mono);">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+        <button type="button" onclick="closeChapterModal()" class="btn btn-ghost">Hủy</button>
+        <button type="submit" class="btn btn-primary">Lưu Buổi Học</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-    <!-- ===================================================================== -->
-    <!-- MODALS (LIGHT THEME) -->
-    <!-- ===================================================================== -->
-
-    <!-- MODAL: BUỔI HỌC (CHAPTER) -->
-    <div id="chapterModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl p-6 space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="text-base font-bold text-slate-900" id="chapterModalTitle">Thêm Buổi Học Mới</h3>
-                <button type="button" onclick="closeChapterModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
-            </div>
-            <form id="chapterForm" onsubmit="submitChapterForm(event)" class="space-y-4">
-                <input type="hidden" id="formChapterId">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tên buổi học *</label>
-                    <input type="text" id="formChapterTitle" required placeholder="vd: Buổi 1: Giới thiệu kiến trúc..."
-                           class="w-full text-xs px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Số thứ tự hiển thị (#)</label>
-                    <input type="number" id="formChapterOrderIndex" min="1" value="1"
-                           class="w-full text-xs px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 font-mono">
-                    <span class="text-[11px] text-slate-500 mt-1 block">Hệ thống tự động tính số thứ tự tiếp theo</span>
-                </div>
-                <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
-                    <button type="button" onclick="closeChapterModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Hủy</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">Lưu Buổi Học</button>
-                </div>
-            </form>
+<!-- 2. MODAL LESSON -->
+<div class="overlay" id="lessonModal" onclick="if(event.target===this) closeLessonModal()">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width: 680px;">
+    <div class="modal-head">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:38px; height:38px; border-radius:12px; background:var(--tint); color:var(--ntu-blue); display:grid; place-items:center; flex-shrink:0;">
+          <i data-lucide="book-open"></i>
         </div>
-    </div>
-
-    <!-- MODAL: BÀI HỌC (LESSON) -->
-    <div id="lessonModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl p-6 space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="text-base font-bold text-slate-900" id="lessonModalTitle">Thêm Bài Giảng Mới</h3>
-                <button type="button" onclick="closeLessonModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
-            </div>
-            <form id="lessonForm" onsubmit="submitLessonForm(event)" class="space-y-4">
-                <input type="hidden" id="formLessonId">
-                <input type="hidden" id="formLessonChapterId">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tên bài giảng *</label>
-                    <input type="text" id="formLessonTitle" required placeholder="vd: Bài 1.1: Cấu trúc cơ sở dữ liệu..."
-                           class="w-full text-xs px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Loại bài học</label>
-                        <select id="formLessonType" class="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500">
-                            <option value="VIDEO">Video Bài giảng</option>
-                            <option value="DOCUMENT">Tài liệu đọc</option>
-                            <option value="QUIZ">Trắc nghiệm Quiz</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Thời lượng (Phút)</label>
-                        <input type="number" id="formLessonDuration" min="1" value="15"
-                               class="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Số thứ tự bài (#)</label>
-                    <input type="number" id="formLessonOrderIndex" min="1" value="1"
-                           class="w-full text-xs px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-500 font-mono">
-                </div>
-                <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
-                    <button type="button" onclick="closeLessonModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Hủy</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">Lưu Bài Giảng</button>
-                </div>
-            </form>
+        <div>
+          <h3 id="lessonModalTitle" style="margin:0; font-size:1.22rem;">Thêm Bài Giảng Mới</h3>
+          <p id="lessonModalSubtitle" style="margin:2px 0 0; font-size:.78rem; color:var(--muted);">Khởi tạo nội dung bài học, đính kèm video và tài liệu RAG AI</p>
         </div>
+      </div>
+      <button class="modal-close" onclick="closeLessonModal()" aria-label="Đóng"><i data-lucide="x"></i></button>
     </div>
 
-    <!-- MODAL: XÁC NHẬN XÓA (DELETE) -->
-    <div id="deleteModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
-            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto border border-red-200">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                </svg>
+    <form id="lessonForm" onsubmit="submitLessonForm(event)">
+      <input type="hidden" id="formLessonId" value="">
+      <input type="hidden" id="formLessonChapterId" value="">
+
+      <!-- Buổi học trực thuộc -->
+      <div class="form-group">
+        <label class="form-label">Buổi học trực thuộc</label>
+        <div id="formLessonChapterNameDisplay" style="font-weight:700; color:var(--ntu-blue); font-size:.88rem; padding:8px 12px; background:var(--tint); border-radius:10px; display:flex; align-items:center; gap:6px;">
+          <i data-lucide="layers" style="width:14px; height:14px;"></i>
+          <span>--</span>
+        </div>
+      </div>
+
+      <!-- Tiêu đề bài học -->
+      <div class="form-group">
+        <label class="form-label">Tiêu đề bài học *</label>
+        <input type="text" id="formLessonTitle" required placeholder="vd: Bài 1. Cài đặt môi trường Spring Boot & MySQL..." class="input" style="width:100%;">
+      </div>
+
+      <!-- Grid 3 cột cấu hình -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;" class="form-group">
+        <div>
+          <label class="form-label">Hình thức bài học</label>
+          <select id="formLessonType" class="input" style="width:100%;">
+            <option value="VIDEO">Video bài giảng</option>
+            <option value="DOCUMENT">Tài liệu đọc</option>
+            <option value="QUIZ">Trắc nghiệm</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Thời lượng (phút)</label>
+          <input type="number" id="formLessonDurationMinutes" min="1" value="15" class="input" style="width:100%;">
+        </div>
+        <div>
+          <label class="form-label">Thứ tự bài (#)</label>
+          <input type="number" id="formLessonOrderIndex" min="1" value="1" class="input" style="width:100%; font-family:var(--mono);">
+        </div>
+      </div>
+
+      <!-- BOX ĐÍNH KÈM VIDEO BÀI GIẢNG -->
+      <div class="form-group" id="lessonVideoAttachmentGroup" style="margin-top:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label class="form-label" style="margin-bottom:0; display:inline-flex; align-items:center; gap:6px; color:#b91c1c;">
+            <i data-lucide="video" style="width:14px; height:14px;"></i>
+            Video Bài Giảng (HLS Streaming / Cloudinary)
+          </label>
+          <span style="font-size:.72rem; color:var(--muted); font-weight:600;">(Tùy chọn)</span>
+        </div>
+
+        <input type="file" id="formLessonVideoFile" accept="video/mp4,video/mkv,video/webm,video/quicktime" style="display:none;" onchange="handleLessonVideoFileChange(event)">
+        
+        <div class="attachment-box" id="lessonVideoPickerBox">
+          <!-- Dropzone -->
+          <div class="upload-dropzone" id="lessonVideoDropzone" onclick="document.getElementById('formLessonVideoFile').click()">
+            <div style="width:38px; height:38px; border-radius:50%; background:#fee2e2; color:#ef4444; display:grid; place-items:center; margin-bottom:6px;">
+              <i data-lucide="upload-cloud" style="width:18px; height:18px;"></i>
+            </div>
+            <div style="font-size:.85rem; font-weight:600; color:var(--ink);">Nhấp hoặc kéo thả file video bài giảng vào đây</div>
+            <div style="font-size:.74rem; color:var(--muted); margin-top:2px;">Hỗ trợ MP4, WebM, MOV dung lượng lớn (lên tới 500MB+)</div>
+          </div>
+
+          <!-- Video Selected Info -->
+          <div id="lessonVideoSelectedInfo" style="display:none; align-items:center; justify-content:space-between; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px; overflow:hidden;">
+              <div style="width:36px; height:36px; border-radius:8px; background:#fee2e2; color:#dc2626; display:grid; place-items:center; flex-shrink:0;">
+                <i data-lucide="file-video" style="width:18px; height:18px;"></i>
+              </div>
+              <div style="overflow:hidden;">
+                <div id="lessonVideoFileName" style="font-weight:700; font-size:.85rem; color:var(--ink); white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">video.mp4</div>
+                <div id="lessonVideoFileSize" style="font-size:.75rem; color:var(--muted); font-family:var(--mono);">0 MB</div>
+              </div>
+            </div>
+            <button type="button" class="action-btn-sm del" style="flex-shrink:0;" onclick="clearLessonVideoFile(event)">
+              <i data-lucide="x" style="width:13px; height:13px;"></i>
+              <span>Gỡ file</span>
+            </button>
+          </div>
+
+          <!-- Current Video Badge (when editing) -->
+          <div id="lessonCurrentVideoBadge" style="display:none; align-items:center; justify-content:space-between; gap:10px; padding:6px 10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; margin-top:6px;">
+            <span style="font-size:.78rem; color:#166534; display:inline-flex; align-items:center; gap:5px; font-weight:600;">
+              <i data-lucide="check-circle-2" style="width:14px; height:14px;"></i>
+              <span id="lessonCurrentVideoName">Bài học hiện đã có video bài giảng</span>
+            </span>
+            <button type="button" class="action-btn-sm" style="font-size:.7rem; padding:2px 8px;" onclick="document.getElementById('formLessonVideoFile').click()">Thay video</button>
+          </div>
+        </div>
+
+        <!-- Real-time Video Upload Progress Bar -->
+        <div id="lessonVideoProgressBox" style="display:none; margin-top:10px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:12px 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-weight:700; color:var(--ntu-blue); font-size:.82rem; display:inline-flex; align-items:center; gap:6px;">
+              <i data-lucide="loader-2" class="spin" style="width:14px; height:14px;"></i>
+              <span id="lessonVideoProgressLabel">Đang tải video lên máy chủ...</span>
+            </span>
+            <span id="lessonVideoProgressPercent" style="font-weight:800; color:var(--ntu-blue); font-family:var(--mono); font-size:.88rem;">0%</span>
+          </div>
+          <div style="width:100%; height:8px; background:#e0f2fe; border-radius:999px; overflow:hidden;">
+            <div id="lessonVideoProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #38bdf8, #00539F); transition:width .15s ease; border-radius:999px;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; font-size:.74rem; color:var(--muted); font-family:var(--mono);">
+            <span id="lessonVideoProgressBytes">0.0 MB / 0.0 MB</span>
+            <span id="lessonVideoProgressSpeed">Tiến trình thực tế</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOX ĐÍNH KÈM TÀI LIỆU ĐI KÈM -->
+      <div class="form-group" id="lessonDocAttachmentGroup" style="margin-top:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label class="form-label" style="margin-bottom:0; display:inline-flex; align-items:center; gap:6px; color:var(--ntu-blue);">
+            <i data-lucide="file-text" style="width:14px; height:14px;"></i>
+            Tài Liệu Học Tập Đi Kèm (Tự động bóc tách RAG AI)
+          </label>
+          <span style="font-size:.72rem; color:var(--muted); font-weight:600;">(Tùy chọn)</span>
+        </div>
+
+        <input type="file" id="formLessonDocFile" accept=".pdf,.docx,.doc,.pptx,.ppt,.xlsx,.xls,.txt" style="display:none;" onchange="handleLessonDocFileChange(event)">
+
+        <div class="attachment-box" id="lessonDocPickerBox">
+          <!-- Picker dropzone -->
+          <div class="upload-dropzone" id="lessonDocDropzone" onclick="document.getElementById('formLessonDocFile').click()">
+            <div style="width:38px; height:38px; border-radius:50%; background:var(--tint); color:var(--sky-deep); display:grid; place-items:center; margin-bottom:6px;">
+              <i data-lucide="file-plus-2" style="width:18px; height:18px;"></i>
+            </div>
+            <div style="font-size:.85rem; font-weight:600; color:var(--ink);">Chọn hoặc kéo thả file tài liệu (PDF, DOCX, PPTX...)</div>
+            <div style="font-size:.74rem; color:var(--muted); margin-top:2px;">Tự động phân trang và lưu Vector Chunks vào MongoDB</div>
+          </div>
+
+          <!-- Selected Doc Preview & Title -->
+          <div id="lessonDocSelectedInfo" style="display:none; padding-top:4px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;">
+              <div style="display:flex; align-items:center; gap:10px; overflow:hidden;">
+                <div style="width:36px; height:36px; border-radius:8px; background:var(--tint); color:var(--ntu-blue); display:grid; place-items:center; flex-shrink:0;">
+                  <i data-lucide="file-check-2" style="width:18px; height:18px;"></i>
+                </div>
+                <div style="overflow:hidden;">
+                  <div id="lessonDocFileName" style="font-weight:700; font-size:.85rem; color:var(--ink); white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">document.pdf</div>
+                  <div id="lessonDocFileSize" style="font-size:.75rem; color:var(--muted); font-family:var(--mono);">0 KB</div>
+                </div>
+              </div>
+              <button type="button" class="action-btn-sm del" style="flex-shrink:0;" onclick="clearLessonDocFile(event)">
+                <i data-lucide="x" style="width:13px; height:13px;"></i>
+                <span>Gỡ file</span>
+              </button>
             </div>
             <div>
-                <h3 class="text-base font-bold text-slate-900" id="deleteModalTitle">Xác nhận xóa?</h3>
-                <p class="text-xs text-slate-500 mt-1" id="deleteModalMessage">Dữ liệu sẽ bị xóa vĩnh viễn.</p>
+              <label style="font-size:.74rem; font-weight:700; color:var(--muted); display:block; margin-bottom:4px;">TIÊU ĐỀ TÀI LIỆU HIỂN THỊ</label>
+              <input type="text" id="formLessonDocTitle" placeholder="Tiêu đề tài liệu đính kèm..." class="input" style="width:100%; font-size:.85rem; height:34px;">
             </div>
-            <div class="flex items-center justify-center space-x-3 pt-2">
-                <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Hủy</button>
-                <button type="button" id="confirmDeleteBtn" class="px-5 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm">Xác nhận Xóa</button>
+          </div>
+
+          <!-- Existing Course Documents Selector -->
+          <div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:.75rem; font-weight:600; color:var(--muted);">Hoặc gắn tài liệu đã có trong khóa:</span>
             </div>
+            <select id="formLessonExistingDocSelect" class="input" style="width:100%; font-size:.82rem; height:34px;">
+              <option value="">-- Chọn tài liệu có sẵn trong khóa (nếu có) --</option>
+            </select>
+          </div>
+
+          <!-- Attached docs display if editing -->
+          <div id="lessonCurrentDocsList" style="display:none; margin-top:8px;"></div>
         </div>
-    </div>
+      </div>
 
-    <!-- MODAL: XEM VIDEO HTML5 (CLOUDINARY) -->
-    <div id="videoModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-black border border-slate-800 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl flex flex-col">
-            <div class="px-5 py-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                    <span class="text-sm font-bold text-white" id="videoModalTitle">Video Bài Giảng Cloudinary</span>
-                </div>
-                <button type="button" onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
-            </div>
-            <div class="aspect-video bg-black flex items-center justify-center">
-                <video id="videoPlayer" controls autoplay class="w-full h-full max-h-[70vh]">
-                    Trình duyệt không hỗ trợ video HTML5.
-                </video>
-            </div>
-            <div class="px-5 py-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                <span>Cloudinary CDN Ready • H.264 MP4</span>
-                <a id="videoDownloadLink" href="#" target="_blank" class="text-blue-400 hover:underline">Mở link CDN gốc</a>
-            </div>
+      <!-- Action buttons -->
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:22px; padding-top:14px; border-top:1px solid var(--line);">
+        <button type="button" id="btnCancelLesson" onclick="closeLessonModal()" class="btn btn-ghost">Hủy</button>
+        <button type="submit" id="btnSaveLesson" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
+          <i data-lucide="check" style="width:16px; height:16px;"></i>
+          <span>Lưu Bài Giảng</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 3. MODAL UPLOAD DOCUMENT -->
+<div class="overlay" id="uploadDocModal" onclick="if(event.target===this) closeUploadDocModal()">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:var(--tint); color:var(--sky-deep); display:grid; place-items:center;">
+          <i data-lucide="file-up"></i>
         </div>
+        <h3 style="margin:0;">Tải Lên Tài Liệu Giáo Trình</h3>
+      </div>
+      <button class="modal-close" onclick="closeUploadDocModal()" aria-label="Đóng"><i data-lucide="x"></i></button>
     </div>
-
-    <!-- OVERLAY: UPLOAD VIDEO CLOUDINARY LOADING -->
-    <div id="videoUploadOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
-            <div class="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-100 animate-spin">
-                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </div>
-            <div>
-                <h3 class="text-base font-bold text-slate-900">Đang tải video lên Cloudinary CDN</h3>
-                <p class="text-xs text-slate-500 mt-2 leading-relaxed" id="uploadOverlayText">
-                    Đang truyền tải lên máy chủ Cloudinary (<code class="text-blue-600 font-bold">dhefmthim</code>)... Vui lòng giữ kết nối.
-                </p>
-            </div>
-            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                <div class="bg-blue-600 h-2 rounded-full animate-pulse" style="width: 75%"></div>
-            </div>
+    <form id="uploadDocForm" onsubmit="submitUploadDocForm(event)">
+      <div class="form-group">
+        <label class="form-label">Tiêu đề tài liệu</label>
+        <input type="text" id="uploadDocTitle" placeholder="vd: Slide bài giảng Buổi 1 - Kiến trúc mô hình..." class="input" style="width:100%;">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Gán vào Buổi học (Lesson)</label>
+        <select id="uploadDocLessonSelect" class="input" style="width:100%;">
+          <option value="">-- Tài liệu chung của khóa học (Chưa gán riêng) --</option>
+        </select>
+        <small style="color:var(--muted); font-size:.76rem; display:block; margin-top:4px;">Tài liệu sau khi gán sẽ xuất hiện trực tiếp trong bài học cho sinh viên xem.</small>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Chọn tệp (.pdf, .docx, .txt) *</label>
+        <div id="dropZone" onclick="document.getElementById('docFileInput').click()"
+             style="border:2px dashed #93c5fd; border-radius:14px; padding:24px; text-align:center; background:#f8fbff; cursor:pointer;">
+          <i data-lucide="upload-cloud" style="width:36px; height:36px; color:var(--sky-deep); margin-bottom:6px;"></i>
+          <p id="selectedDocFileName" style="font-size:.88rem; font-weight:600; color:var(--ink);">Nhấp để chọn file hoặc kéo thả vào đây</p>
+          <small style="color:var(--muted); font-size:.76rem; display:block; margin-top:2px;">Hệ thống tự động bóc tách thành các Chunks lưu vào MongoDB NoSQL</small>
+          <input type="file" id="docFileInput" accept=".pdf,.docx,.doc,.txt" style="display:none;" onchange="handleDocFileSelected(event)">
         </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+        <button type="button" onclick="closeUploadDocModal()" class="btn btn-ghost">Hủy</button>
+        <button type="submit" id="btnSubmitDocUpload" class="btn btn-primary">
+          <i data-lucide="send"></i>
+          <span>Bắt Đầu Bóc Tách &amp; Lưu</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 4. MODAL ASSIGN LESSON -->
+<div class="overlay" id="assignLessonModal" onclick="if(event.target===this) closeAssignLessonModal()">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width: 520px;">
+    <div class="modal-head">
+      <h3>Gán Tài Liệu Vào Buổi Học</h3>
+      <button class="modal-close" onclick="closeAssignLessonModal()" aria-label="Đóng"><i data-lucide="x"></i></button>
     </div>
-
-    <!-- Hidden Video File Input -->
-    <input type="file" id="videoFileInput" accept="video/mp4,video/mkv,video/quicktime,video/webm" class="hidden" onchange="handleVideoFileSelected(event)">
-
-    <!-- Toast Notification -->
-    <div id="toastNotification" class="fixed top-5 right-5 z-50 hidden bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg border border-slate-700 text-xs font-semibold transition">
-        <span id="toastMessage">Thông báo</span>
+    <div style="margin-bottom:16px;">
+      <p style="font-size:.84rem; color:var(--muted);">Đang gán tài liệu: <b id="assignDocTitleDisplay" style="color:var(--ink);">--</b></p>
     </div>
+    <div class="form-group">
+      <label class="form-label">Chọn Buổi / Bài học tiếp nhận *</label>
+      <select id="assignTargetLessonSelect" class="input" style="width:100%;">
+        <option value="">-- Hủy gán (Đưa về tài liệu chung) --</option>
+      </select>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+      <button type="button" onclick="closeAssignLessonModal()" class="btn btn-ghost">Hủy</button>
+      <button type="button" onclick="submitAssignLesson()" class="btn btn-primary">Lưu Thay Đổi</button>
+    </div>
+  </div>
+</div>
 
-    <!-- ===================================================================== -->
-    <!-- JAVASCRIPT LOGIC -->
-    <!-- ===================================================================== -->
-    <script>
-        const API_BASE = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
-            ? 'http://localhost:8080'
-            : window.location.origin;
+<!-- 5. MODAL DOC VIEWER -->
+<div class="overlay" id="docViewerModal" onclick="if(event.target===this) closeDocViewerModal()">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width: 900px; height: 85vh; display:flex; flex-direction:column;">
+    <div class="modal-head" style="margin-bottom:12px;">
+      <h3 id="docViewerModalTitle" style="font-size:1.15rem;">Xem Tài Liệu Trực Tuyến</h3>
+      <button class="modal-close" onclick="closeDocViewerModal()" aria-label="Đóng"><i data-lucide="x"></i></button>
+    </div>
+    <div style="flex:1; border-radius:14px; overflow:hidden; border:1px solid var(--line); background:#f8fafc;">
+      <iframe id="docViewerIframe" src="" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+  </div>
+</div>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const courseId = urlParams.get('id');
+<!-- 6. MODAL CHUNKS RAG VIEWER -->
+<div class="overlay" id="chunksModal" onclick="if(event.target===this) closeChunksModal()">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width: 820px; max-height: 85vh; display:flex; flex-direction:column;">
+    <div class="modal-head" style="margin-bottom:12px;">
+      <div>
+        <h3 id="chunksModalTitle" style="font-size:1.15rem; margin:0;">Bóc Tách Chunks MongoDB</h3>
+        <small id="chunksModalDocName" style="color:var(--muted); font-size:.78rem;">--</small>
+      </div>
+      <button class="modal-close" onclick="closeChunksModal()" aria-label="Đóng"><i data-lucide="x"></i></button>
+    </div>
+    <div id="chunksContentContainer" style="flex:1; overflow-y:auto; padding:12px; background:#f8fafc; border:1px solid var(--line); border-radius:14px; font-size:.82rem; line-height:1.6;">
+      Đang tải dữ liệu chunks...
+    </div>
+  </div>
+</div>
 
-        let courseData = null;
-        let chapters = [];
-        let draggedChapterIdx = null;
-        let draggedLessonIdx = null;
-        let currentUploadLessonId = null;
-        let deleteActionCallback = null;
+<!-- 7. MODAL VIDEO PLAYER -->
+<div class="overlay" id="videoPlayerModal" onclick="if(event.target===this) closeVideoModal()">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width: 820px;">
+    <div class="modal-head" style="margin-bottom:12px;">
+      <h3 id="videoModalTitle" style="font-size:1.15rem;">Phát Video Bài Giảng</h3>
+      <button class="modal-close" onclick="closeVideoModal()" aria-label="Đóng"><i data-lucide="x"></i></button>
+    </div>
+    <div style="border-radius:14px; overflow:hidden; background:#000; aspect-ratio:16/9; display:grid; place-items:center;">
+      <video id="videoPlayerEl" controls style="width:100%; height:100%;"></video>
+    </div>
+  </div>
+</div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initSystemClock();
-            if (!courseId) {
-                alert('Không tìm thấy mã khóa học!');
-                location.href = '../index.html#courses';
-                return;
-            }
-            document.getElementById('btnEditCourse').href = `edit.html?id=${courseId}`;
-            loadCourseDetail();
-        });
+<!-- 8. MODAL DELETE CONFIRM -->
+<div class="overlay" id="deleteConfirmModal" onclick="if(event.target===this) closeDeleteModal()">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width: 440px;">
+    <div class="modal-head">
+      <h3 id="deleteModalTitle" style="color:var(--danger); font-size:1.2rem;">Xác Nhận Xóa</h3>
+      <button class="modal-close" onclick="closeDeleteModal()" aria-label="Đóng"><i data-lucide="x"></i></button>
+    </div>
+    <div id="deleteModalMessage" style="font-size:.88rem; color:var(--ink); line-height:1.5; margin-bottom:20px;">
+      Bạn có chắc chắn muốn xóa mục này không? Thao tác này không thể hoàn tác.
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;">
+      <button type="button" onclick="closeDeleteModal()" class="btn btn-ghost">Hủy Bỏ</button>
+      <button type="button" id="btnConfirmDelete" class="btn btn-primary" style="background:var(--danger);">Xóa Ngay</button>
+    </div>
+  </div>
+</div>
 
-        function initSystemClock() {
-            setInterval(() => {
-                const now = new Date();
-                const clock = document.getElementById('systemClock');
-                if (clock) clock.textContent = now.toLocaleTimeString('vi-VN');
-            }, 1000);
+<!-- 9. LOADING OVERLAY -->
+<div id="globalLoadingOverlay" class="overlay" style="z-index: 9999;">
+  <div style="background:#fff; border-radius:20px; padding:28px 36px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,.2); min-width:320px; max-width:440px;">
+    <div class="dot" style="width:16px; height:16px; background:var(--ntu-blue); margin:0 auto 12px;"></div>
+    <h4 id="loadingOverlayTitle" style="font-size:1.1rem; font-weight:700; color:var(--ink); margin-bottom:4px;">Đang xử lý...</h4>
+    <p id="loadingOverlayText" style="font-size:.84rem; color:var(--muted); margin-bottom:0;">Vui lòng chờ giây lát</p>
+    <div id="loadingOverlayProgressBox" style="display:none; margin-top:14px; text-align:left;">
+      <div style="display:flex; justify-content:space-between; font-size:.78rem; font-weight:700; color:var(--ntu-blue); margin-bottom:4px;">
+        <span id="loadingOverlayProgressLabel">Tiến độ truyền tải</span>
+        <span id="loadingOverlayProgressPercent">0%</span>
+      </div>
+      <div style="width:100%; height:8px; background:#e0f2fe; border-radius:999px; overflow:hidden;">
+        <div id="loadingOverlayProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #38bdf8, #00539F); transition:width .15s ease;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:.72rem; color:var(--muted); font-family:var(--mono); margin-top:4px;">
+        <span id="loadingOverlayProgressBytes">0 MB / 0 MB</span>
+        <span id="loadingOverlayProgressSpeed">Tiến trình</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 10. TOAST -->
+<div id="toastNotification">
+  <i data-lucide="check-circle-2"></i>
+  <span id="toastMessage">Thông báo</span>
+</div>
+
+<!-- HIDDEN VIDEO INPUT -->
+<input type="file" id="videoFileInput" accept="video/*" style="display:none;" onchange="handleVideoFileSelected(event)">
+
+<!-- ===================================================================== -->
+<!-- JAVASCRIPT LOGIC -->
+<!-- ===================================================================== -->
+<script>
+  if (typeof API_BASE === 'undefined') {
+    window.API_BASE = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
+      ? 'http://localhost:8080'
+      : window.location.origin;
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const courseId = urlParams.get('id');
+
+  let courseData = null;
+  let chapters = [];
+  let allDocuments = [];
+  let draggedChapterIdx = null;
+  let draggedLessonIdx = null;
+  let currentUploadLessonId = null;
+  let activeAssignDocId = null;
+  let deleteActionCallback = null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!courseId) {
+      alert('Không tìm thấy mã khóa học!');
+      location.href = 'list.html';
+      return;
+    }
+    const btnEdit = document.getElementById('btnEditCourse');
+    if (btnEdit) btnEdit.href = `edit.html?id=${courseId}`;
+    const btnMajors = document.getElementById('btnCourseMajors');
+    if (btnMajors) btnMajors.href = `../majors/list.html?courseId=${courseId}`;
+
+    const menuBtn = document.getElementById('menuBtn');
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        document.getElementById('side').classList.toggle('open');
+      });
+    }
+
+    loadCourseDetail();
+    loadCourseDocuments();
+    setupDropzones();
+  });
+
+  function setupDropzones() {
+    const vBox = document.getElementById('lessonVideoPickerBox');
+    if (vBox) {
+      vBox.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        vBox.classList.add('drag-over');
+      });
+      vBox.addEventListener('dragleave', () => vBox.classList.remove('drag-over'));
+      vBox.addEventListener('drop', (e) => {
+        e.preventDefault();
+        vBox.classList.remove('drag-over');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          const file = e.dataTransfer.files[0];
+          const input = document.getElementById('formLessonVideoFile');
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          handleLessonVideoFileChange({ target: input });
         }
+      });
+    }
 
-        function toggleSidebar() {
-            const sb = document.getElementById('mainSidebar');
-            if (sb) sb.classList.toggle('hidden');
+    const dBox = document.getElementById('lessonDocPickerBox');
+    if (dBox) {
+      dBox.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dBox.classList.add('drag-over');
+      });
+      dBox.addEventListener('dragleave', () => dBox.classList.remove('drag-over'));
+      dBox.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dBox.classList.remove('drag-over');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          const file = e.dataTransfer.files[0];
+          const input = document.getElementById('formLessonDocFile');
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          handleLessonDocFileChange({ target: input });
         }
+      });
+    }
+  }
 
-        async function loadCourseDetail() {
-            try {
-                const res = await fetch(`${API_BASE}/api/admin/courses/${courseId}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const result = await res.json();
-                courseData = result.data;
-                chapters = courseData.chapters || [];
+  // =====================================================================
+  // LOAD COURSE DETAILS & CHAPTERS
+  // =====================================================================
+  async function loadCourseDetail() {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/courses/${courseId}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const result = await res.json();
+      courseData = result.data || {};
+      chapters = courseData.chapters || [];
 
-                renderCourseHeader();
-                renderChaptersList();
-            } catch (err) {
-                showToast('Lỗi nạp dữ liệu: ' + err.message);
-            }
-        }
+      renderCourseHeader();
+      renderChaptersList();
+      populateSessionDropdownOptions();
+    } catch (err) {
+      console.error("Lỗi khi tải chi tiết khóa học:", err);
+      showToast("Không thể tải thông tin khóa học: " + err.message);
+    }
+  }
 
-        function renderCourseHeader() {
-            document.getElementById('topBreadcrumbId').textContent = `Khóa #${courseData.id}`;
-            document.getElementById('courseTitle').textContent = courseData.title || 'Khóa học';
-            document.getElementById('courseSlug').textContent = `#${courseData.id} • ${courseData.slug || '-'}`;
-            if (courseData.thumbnailUrl) {
-                document.getElementById('courseThumbnail').src = courseData.thumbnailUrl;
-            }
+  function renderCourseHeader() {
+    document.getElementById('topBreadcrumbId').textContent = `Khóa #${courseData.id} • ${courseData.title || ''}`;
+    document.getElementById('courseCodeTag').textContent = `#${courseData.id}`;
+    document.getElementById('courseTitle').textContent = courseData.title || 'Khóa học';
+    document.getElementById('courseSlug').textContent = `#${courseData.id} • ${courseData.slug || '-'}`;
+    if (courseData.thumbnailUrl) {
+      document.getElementById('courseThumbnail').src = courseData.thumbnailUrl;
+    }
 
-            const isPub = courseData.status === 'PUBLISHED';
-            const badge = document.getElementById('courseStatusBadge');
-            badge.textContent = courseData.status || 'DRAFT';
-            badge.className = isPub 
-                ? 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200'
-                : 'text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200';
+    const isPub = courseData.status === 'PUBLISHED';
+    const badge = document.getElementById('courseStatusBadge');
+    badge.textContent = courseData.status || 'DRAFT';
+    badge.className = isPub ? 'status-badge published' : 'status-badge draft';
 
-            const chapCount = chapters.length;
-            const lessonCount = courseData.lessonsCount || 0;
-            document.getElementById('courseStatsChapters').textContent = `${chapCount} Buổi học`;
-            document.getElementById('courseStatsLessons').textContent = `${lessonCount} Bài giảng`;
+    const chapCount = chapters.length;
+    const lessonCount = courseData.lessonsCount || 0;
+    document.getElementById('courseStatsChapters').textContent = `${chapCount} Buổi học`;
+    document.getElementById('courseStatsLessons').textContent = `${lessonCount} Bài giảng`;
 
-            const priceTag = document.getElementById('coursePriceTag');
-            if (courseData.isFree) {
-                priceTag.textContent = 'Miễn phí';
-                priceTag.className = 'font-bold text-emerald-600';
-            } else {
-                priceTag.textContent = `${(courseData.price || 0).toLocaleString('vi-VN')} VND`;
-                priceTag.className = 'font-bold text-slate-800';
-            }
+    const priceTag = document.getElementById('coursePriceTag');
+    if (courseData.isFree) {
+      priceTag.textContent = 'Miễn phí';
+      priceTag.style.color = 'var(--ok)';
+    } else {
+      priceTag.textContent = `${(courseData.price || 0).toLocaleString('vi-VN')} VND`;
+      priceTag.style.color = 'var(--ink)';
+    }
 
-            // Render major badges
-            const majorsContainer = document.getElementById('courseMajorsBadges');
-            if (majorsContainer) {
-                const majors = courseData.majors || [];
-                if (majors.length > 0) {
-                    majorsContainer.innerHTML = majors.map(m => {
-                        let colorCls = 'bg-slate-100 text-slate-700 border-slate-200';
-                        switch (m.majorCode) {
-                            case 'AI': colorCls = 'bg-purple-50 text-purple-700 border-purple-200'; break;
-                            case 'SE': colorCls = 'bg-teal-50 text-teal-700 border-teal-200'; break;
-                            case 'CNTT': colorCls = 'bg-blue-50 text-blue-700 border-blue-200'; break;
-                            case 'ATTT': colorCls = 'bg-rose-50 text-rose-700 border-rose-200'; break;
-                            case 'IOT': colorCls = 'bg-amber-50 text-amber-700 border-amber-200'; break;
-                            case 'KHMT': colorCls = 'bg-emerald-50 text-emerald-700 border-emerald-200'; break;
-                        }
-                        return `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${colorCls}" title="${escapeHtml(m.name || m.majorCode)}">${m.majorCode} • ${escapeHtml(m.name)}</span>`;
-                    }).join(' ');
-                } else {
-                    majorsContainer.innerHTML = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">Chung / Đại cương</span>`;
-                }
-            }
-        }
+    // Render majors
+    const majorsContainer = document.getElementById('courseMajorsBadges');
+    if (majorsContainer) {
+      const majors = courseData.majors || [];
+      if (majors.length > 0) {
+        majorsContainer.innerHTML = majors.map(m => {
+          return `<span class="code-badge">${escapeHtml(m.majorCode)}</span>`;
+        }).join(' ');
+      } else {
+        majorsContainer.innerHTML = `<span class="code-badge" style="opacity:.7;">Chung / Đại cương</span>`;
+      }
+    }
+    lucide.createIcons();
+  }
 
-        // =====================================================================
-        // RENDER CHAPTERS & LESSONS (LIGHT THEME + DRAG & DROP REORDER)
-        // =====================================================================
-        function renderChaptersList() {
-            const container = document.getElementById('chaptersListContainer');
-            if (!container) return;
+  // =====================================================================
+  // LOAD & RENDER DOCUMENTS
+  // =====================================================================
+  async function loadCourseDocuments() {
+    try {
+      const res = await fetch(`${API_BASE}/api/documents/course/${courseId}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const result = await res.json();
+      allDocuments = result.data || [];
 
-            if (chapters.length === 0) {
-                container.innerHTML = `
-                    <div class="p-8 text-center text-slate-400 border border-dashed border-slate-300 rounded-xl bg-slate-50">
-                        <p class="text-xs">Khóa học chưa có buổi học nào.</p>
-                        <button type="button" onclick="openAddChapterModal()" class="mt-2 text-xs font-bold text-blue-600 hover:underline">
-                            + Thêm Buổi 1 ngay
-                        </button>
-                    </div>`;
-                return;
-            }
+      document.getElementById('btnDocCountBadge').textContent = allDocuments.length;
+      document.getElementById('courseStatsDocs').textContent = `${allDocuments.length} Tài liệu`;
 
-            container.innerHTML = chapters.map((chap, cIdx) => {
-                const lessons = chap.lessons || [];
-                return `
-                <div class="chapter-card border border-slate-200 bg-white rounded-xl p-4 sm:p-5 space-y-4 shadow-xs transition hover:border-slate-300"
+      let totalChunks = 0;
+      allDocuments.forEach(d => totalChunks += (d.chunkCount || 0));
+      document.getElementById('totalMongoChunksBadge').innerHTML = `
+        <span class="dot" style="background:var(--ok); width:6px; height:6px;"></span>
+        <span>MongoDB Chunks: ${totalChunks}</span>
+      `;
+
+      renderDocumentsList(allDocuments);
+      renderChaptersList();
+      const currentLesId = document.getElementById('formLessonId') ? document.getElementById('formLessonId').value : "";
+      populateExistingDocSelect(currentLesId);
+    } catch (err) {
+      console.error("Lỗi khi tải tài liệu:", err);
+      document.getElementById('courseDocumentsContainer').innerHTML = `
+        <div style="padding:24px; text-align:center; color:var(--muted); font-size:.82rem;">
+          <p style="color:var(--danger); margin-bottom:4px;">Không thể tải tài liệu</p>
+          <button type="button" onclick="loadCourseDocuments()" style="color:var(--ntu-blue); text-decoration:underline;">Thử lại</button>
+        </div>
+      `;
+    }
+  }
+
+  function renderDocumentsList(docs) {
+    const container = document.getElementById('courseDocumentsContainer');
+    document.getElementById('visibleDocsCount').textContent = docs.length;
+
+    if (docs.length === 0) {
+      container.innerHTML = `
+        <div style="padding:32px 16px; text-align:center; border:1px dashed var(--line); border-radius:14px; background:#fbfdff;">
+          <i data-lucide="file-question" style="color:var(--muted); width:32px; height:32px; margin-bottom:6px;"></i>
+          <p style="font-size:.84rem; font-weight:600; color:var(--muted);">Chưa có tài liệu nào phù hợp</p>
+          <button type="button" onclick="openUploadDocModal()" style="margin-top:6px; font-size:.82rem; font-weight:700; color:var(--ntu-blue); text-decoration:underline;">
+            + Tải lên tài liệu mới
+          </button>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = docs.map(doc => {
+      const isPdf = (doc.fileType || '').toUpperCase() === 'PDF';
+      const assignedLessonId = doc.lessonId;
+      const assignedLessonTitle = doc.lessonTitle;
+
+      const fileKb = doc.fileSizeBytes
+        ? (doc.fileSizeBytes > 1024 * 1024 ? (doc.fileSizeBytes / (1024 * 1024)).toFixed(1) + ' MB' : Math.round(doc.fileSizeBytes / 1024) + ' KB')
+        : '0 KB';
+
+      return `
+        <div class="doc-card">
+          <div class="doc-top">
+            <div class="doc-icon ${isPdf ? 'pdf' : 'doc'}">
+              <i data-lucide="${isPdf ? 'file-text' : 'file'}"></i>
+            </div>
+            <div style="flex:1; min-width:0;">
+              <h4 class="doc-title" title="${escapeHtml(doc.title)}">${escapeHtml(doc.title)}</h4>
+              <div class="doc-meta">
+                <span style="font-family:var(--mono);">${fileKb}</span>
+                <span>•</span>
+                <span>${doc.totalPages || 1} trang</span>
+                <span>•</span>
+                <span class="chunk-pill">${doc.chunkCount || 0} chunks</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lesson Attachment Status Badge -->
+          <div style="padding-top:8px; margin-top:8px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; font-size:.76rem;">
+            ${assignedLessonId ? `
+              <div style="display:flex; align-items:center; gap:4px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Đã gắn vào: ${escapeHtml(assignedLessonTitle)}">
+                <i data-lucide="bookmark-check" style="color:var(--ntu-blue); width:14px; height:14px;"></i>
+                <span style="font-weight:600; color:var(--ink-2); overflow:hidden; text-overflow:ellipsis;">${escapeHtml(assignedLessonTitle)}</span>
+              </div>
+            ` : `
+              <span style="color:var(--muted); font-style:italic;">Tài liệu chung</span>
+            `}
+
+            <button type="button" onclick="openAssignLessonModal(${doc.id}, '${escapeJs(doc.title)}', ${assignedLessonId || 0})"
+                    style="font-weight:700; color:var(--ntu-blue); display:inline-flex; align-items:center; gap:3px;">
+              <i data-lucide="link-2" style="width:13px; height:13px;"></i>
+              <span>${assignedLessonId ? 'Đổi Buổi' : 'Gán Buổi'}</span>
+            </button>
+          </div>
+
+          <!-- Quick Actions on Card -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px solid var(--line);">
+            <div style="display:flex; gap:6px;">
+              <button type="button" onclick="viewOnlineDoc('${escapeJs(doc.title)}', '${doc.fileUrl}')" class="action-btn-sm">
+                <i data-lucide="eye" style="width:13px; height:13px;"></i>
+                <span>Đọc</span>
+              </button>
+              <button type="button" onclick="viewDocChunks(${doc.id}, '${escapeJs(doc.title)}')" class="action-btn-sm" title="Xem các đoạn chunks MongoDB">
+                <i data-lucide="boxes" style="width:13px; height:13px; color:var(--ok);"></i>
+                <span>Chunks</span>
+              </button>
+            </div>
+
+            <button type="button" onclick="promptDeleteDocument(${doc.id}, '${escapeJs(doc.title)}')" class="action-btn-sm del" title="Xóa tài liệu">
+              <i data-lucide="trash-2" style="width:13px; height:13px;"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    lucide.createIcons();
+  }
+
+  function filterDocumentsList() {
+    const keyword = (document.getElementById('docSearchInput').value || '').trim().toLowerCase();
+    const sessionVal = document.getElementById('docSessionFilterSelect').value;
+
+    let filtered = allDocuments.filter(doc => {
+      const matchKey = !keyword || (doc.title || '').toLowerCase().includes(keyword);
+      let matchSession = true;
+
+      if (sessionVal === 'UNASSIGNED') {
+        matchSession = !doc.lessonId;
+      } else if (sessionVal !== 'ALL') {
+        matchSession = String(doc.lessonId) === String(sessionVal);
+      }
+      return matchKey && matchSession;
+    });
+
+    renderDocumentsList(filtered);
+  }
+
+  // =====================================================================
+  // RENDER CHAPTERS & SESSIONS
+  // =====================================================================
+  function renderChaptersList() {
+    const container = document.getElementById('chaptersListContainer');
+    if (!container) return;
+
+    if (chapters.length === 0) {
+      container.innerHTML = `
+        <div style="padding:48px 24px; text-align:center; border:1px dashed var(--line); border-radius:16px; background:#fbfdff;">
+          <i data-lucide="folder-plus" style="width:38px; height:38px; color:var(--muted); margin-bottom:8px;"></i>
+          <p style="font-size:.9rem; font-weight:600; color:var(--muted);">Khóa học chưa có buổi học nào.</p>
+          <button type="button" onclick="openAddChapterModal()" class="btn btn-primary" style="margin-top:12px;">
+            <i data-lucide="plus"></i>
+            <span>Thêm Buổi 1 ngay</span>
+          </button>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = chapters.map((chap, cIdx) => {
+      const lessons = chap.lessons || [];
+      return `
+        <div class="chapter-card"
+             draggable="true"
+             ondragstart="handleChapterDragStart(event, ${cIdx})"
+             ondragover="handleChapterDragOver(event, ${cIdx})"
+             ondragleave="handleChapterDragLeave(event)"
+             ondrop="handleChapterDrop(event, ${cIdx})"
+             ondragend="handleChapterDragEnd(event)"
+             id="chap-card-${cIdx}">
+
+          <!-- Chapter Header & Drag Handle -->
+          <div class="chapter-head">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="drag-handle" title="Giữ và kéo để đổi thứ tự Buổi học">
+                <i data-lucide="grip-vertical"></i>
+                <span class="code-badge">Buổi #${chap.orderIndex || (cIdx + 1)}</span>
+              </div>
+              <h3 class="chapter-title">${escapeHtml(chap.title)}</h3>
+            </div>
+
+            <div class="chapter-actions">
+              <button type="button" onclick="openAddLessonModal(${chap.id}, '${escapeJs(chap.title)}', ${lessons.length + 1}, ${chap.orderIndex || (cIdx + 1)})"
+                      class="btn btn-tint" style="height:32px; font-size:.78rem; padding:0 10px;">
+                <i data-lucide="plus"></i>
+                <span>Thêm Bài</span>
+              </button>
+              <button type="button" onclick="openEditChapterModal(${chap.id}, '${escapeJs(chap.title)}', ${chap.orderIndex || (cIdx + 1)})"
+                      class="action-btn-sm">
+                <i data-lucide="edit-3" style="width:13px; height:13px;"></i>
+                <span>Sửa</span>
+              </button>
+              <button type="button" onclick="promptDeleteChapter(${chap.id}, '${escapeJs(chap.title)}')"
+                      class="action-btn-sm del">
+                <i data-lucide="trash-2" style="width:13px; height:13px;"></i>
+                <span>Xóa</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Lessons in this session (Sub-draggable) -->
+          <div class="lessons-list">
+            ${lessons.length === 0 ? `
+              <div style="padding:12px; font-size:.82rem; color:var(--muted); font-style:italic; background:#fff; border-radius:10px; border:1px solid var(--line);">
+                Buổi học này chưa có bài giảng. Bấm "+ Thêm Bài" để khởi tạo bài giảng video hoặc đính kèm tài liệu.
+              </div>
+            ` : lessons.map((les, lIdx) => {
+              const hasVideo = les.videoAsset && les.videoAsset.videoUrl;
+              const attachedDocs = allDocuments.filter(d => d.lessonId === les.id);
+
+              return `
+                <div class="lesson-row"
                      draggable="true"
-                     ondragstart="handleChapterDragStart(event, ${cIdx})"
-                     ondragover="handleChapterDragOver(event, ${cIdx})"
-                     ondragleave="handleChapterDragLeave(event)"
-                     ondrop="handleChapterDrop(event, ${cIdx})"
-                     ondragend="handleChapterDragEnd(event)"
-                     id="chap-card-${cIdx}">
-                    
-                    <!-- Chapter Header & Drag Handle -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                        <div class="flex items-center space-x-3">
-                            <div class="cursor-grab text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-blue-50 transition select-none flex items-center space-x-1.5"
-                                 title="Giữ và kéo để đổi thứ tự Buổi học">
-                                <span class="text-base font-bold">⠿</span>
-                                <span class="text-[11px] font-mono font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Buổi #${chap.orderIndex || (cIdx + 1)}</span>
-                            </div>
-                            <h3 class="text-sm sm:text-base font-bold text-slate-900">${escapeHtml(chap.title)}</h3>
-                        </div>
+                     ondragstart="handleLessonDragStart(event, ${cIdx}, ${lIdx})"
+                     ondragover="handleLessonDragOver(event, ${cIdx}, ${lIdx})"
+                     ondragleave="handleLessonDragLeave(event)"
+                     ondrop="handleLessonDrop(event, ${cIdx}, ${lIdx})"
+                     ondragend="handleLessonDragEnd(event)"
+                     id="les-card-${cIdx}-${lIdx}">
 
-                        <div class="flex items-center space-x-2 self-end sm:self-center">
-                            <button type="button" onclick="openAddLessonModal(${chap.id}, '${escapeJs(chap.title)}', ${lessons.length + 1}, ${chap.orderIndex || (cIdx + 1)})"
-                                    class="px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-md transition shadow-2xs">
-                                + Thêm Bài
-                            </button>
-                            <button type="button" onclick="openEditChapterModal(${chap.id}, '${escapeJs(chap.title)}', ${chap.orderIndex || (cIdx + 1)})"
-                                    class="px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 bg-white border border-slate-200 rounded-md transition">
-                                Sửa
-                            </button>
-                            <button type="button" onclick="promptDeleteChapter(${chap.id}, '${escapeJs(chap.title)}')"
-                                    class="px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50 bg-white border border-red-200 rounded-md transition">
-                                Xóa
-                            </button>
-                        </div>
+                  <div class="lesson-left">
+                    <span class="drag-handle" title="Kéo xếp thứ tự bài học"><i data-lucide="grip-vertical"></i></span>
+                    <div class="lesson-icon ${hasVideo ? 'video' : ''}">
+                      <i data-lucide="${les.lessonType === 'QUIZ' ? 'help-circle' : (les.lessonType === 'DOCUMENT' ? 'file-text' : 'circle-play')}"></i>
                     </div>
+                    <div>
+                      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span class="lesson-name">${escapeHtml(les.title)}</span>
+                        <span class="code-badge" style="font-size:.68rem;">${les.lessonType || 'VIDEO'}</span>
+                      </div>
+                      <div class="lesson-meta">
+                        <span>${les.durationSeconds ? Math.floor(les.durationSeconds / 60) + ' phút' : '15 phút'}</span>
+                        <span>•</span>
+                        ${hasVideo ? `
+                          <span style="color:#b91c1c; font-weight:600; display:inline-flex; align-items:center; gap:3px;">
+                            <i data-lucide="video" style="width:12px; height:12px;"></i>
+                            ${escapeHtml(les.videoAsset.provider || 'Cloudinary')} Video
+                          </span>
+                        ` : `
+                          <span style="color:var(--muted);">Chưa có video</span>
+                        `}
+                      </div>
 
-                    <!-- Lessons in this session (Sub-draggable) -->
-                    <div class="space-y-2.5 pl-2 sm:pl-4 border-l-2 border-blue-400">
-                        ${lessons.length === 0 ? `
-                            <div class="p-3 text-xs text-slate-500 italic bg-slate-50 rounded-lg border border-slate-200">
-                                Buổi học này chưa có bài giảng. Bấm "+ Thêm Bài" để khởi tạo video hoặc tài liệu.
-                            </div>
-                        ` : lessons.map((les, lIdx) => {
-                            const hasVideo = les.videoAsset && les.videoAsset.videoUrl;
-                            return `
-                            <div class="lesson-row flex flex-col md:flex-row md:items-center justify-between p-3 bg-slate-50/70 border border-slate-200 rounded-xl gap-3 transition hover:bg-white hover:border-slate-300 shadow-2xs"
-                                 draggable="true"
-                                 ondragstart="handleLessonDragStart(event, ${cIdx}, ${lIdx})"
-                                 ondragover="handleLessonDragOver(event, ${cIdx}, ${lIdx})"
-                                 ondragleave="handleLessonDragLeave(event)"
-                                 ondrop="handleLessonDrop(event, ${cIdx}, ${lIdx})"
-                                 ondragend="handleLessonDragEnd(event)"
-                                 id="les-card-${cIdx}-${lIdx}">
-                                
-                                <div class="flex items-start space-x-3">
-                                    <span class="cursor-grab text-slate-400 hover:text-blue-600 select-none text-sm font-bold pt-0.5 px-0.5" title="Kéo xếp thứ tự bài học">⠿</span>
-                                    <div class="w-7 h-7 rounded-lg ${hasVideo ? 'bg-blue-100 text-blue-600' : 'bg-slate-200 text-slate-500'} flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">
-                                        ${les.lessonType === 'QUIZ' ? '?' : (les.lessonType === 'DOCUMENT' ? '📄' : '▶')}
-                                    </div>
-                                    <div>
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-xs font-bold text-slate-900">${escapeHtml(les.title)}</span>
-                                            <span class="px-1.5 py-0.2 rounded text-[10px] font-semibold ${les.lessonType === 'VIDEO' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}">
-                                                ${les.lessonType || 'VIDEO'}
-                                            </span>
-                                        </div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
-                                            <span>Thời lượng: ${les.durationSeconds ? Math.floor(les.durationSeconds / 60) + ' phút' : '15 phút'}</span>
-                                            ${hasVideo ? `
-                                                <span>•</span>
-                                                <span class="text-emerald-600 font-semibold flex items-center">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>
-                                                    Cloudinary CDN Ready
-                                                </span>
-                                            ` : `
-                                                <span>•</span>
-                                                <span class="text-amber-600 font-medium italic">Chưa upload video</span>
-                                            `}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Action Buttons: Video & Edit/Delete -->
-                                <div class="flex flex-wrap items-center gap-1.5 self-end md:self-center">
-                                    ${hasVideo ? `
-                                        <button type="button" onclick="playVideo('${escapeJs(les.title)}', '${les.videoAsset.videoUrl}')"
-                                                class="px-2.5 py-1 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition shadow-2xs flex items-center space-x-1">
-                                            <span>▶ Phát Video</span>
-                                        </button>
-                                        <button type="button" onclick="triggerUploadVideo(${les.id})"
-                                                class="px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 bg-white border border-slate-200 rounded-md transition" title="Đổi video khác">
-                                            Đổi Video
-                                        </button>
-                                        <button type="button" onclick="promptDeleteVideo(${les.id}, '${escapeJs(les.title)}')"
-                                                class="px-2 py-1 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-md transition" title="Xóa bỏ video">
-                                            Xóa Video
-                                        </button>
-                                    ` : `
-                                        <button type="button" onclick="triggerUploadVideo(${les.id})"
-                                                class="px-2.5 py-1 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md transition shadow-2xs flex items-center space-x-1">
-                                            <span>+ Upload Video</span>
-                                        </button>
-                                    `}
-                                    <button type="button" onclick="openEditLessonModal(${les.id}, ${chap.id}, '${escapeJs(les.title)}', '${les.lessonType || 'VIDEO'}', ${les.durationSeconds || 900}, ${les.orderIndex || 1})"
-                                            class="px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 bg-white border border-slate-200 rounded-md transition">
-                                        Sửa
-                                    </button>
-                                    <button type="button" onclick="promptDeleteLesson(${les.id}, '${escapeJs(les.title)}')"
-                                            class="px-2 py-1 text-xs font-semibold text-red-600 bg-white border border-red-200 hover:bg-red-50 rounded-md transition">
-                                        Xóa
-                                    </button>
-                                </div>
-                            </div>`;
-                        }).join('')}
+                      <!-- Attached Docs Pill -->
+                      ${attachedDocs.length > 0 ? `
+                        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
+                          ${attachedDocs.map(ad => `
+                            <span class="attached-doc-pill">
+                              <i data-lucide="file-check" style="width:12px; height:12px; color:var(--ntu-blue);"></i>
+                              <span>${escapeHtml(ad.title)}</span>
+                            </span>
+                          `).join('')}
+                        </div>
+                      ` : ''}
                     </div>
-                </div>`;
-            }).join('');
+                  </div>
+
+                  <!-- Actions on Lesson -->
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    ${hasVideo ? `
+                      <button type="button" onclick="playVideo('${escapeJs(les.title)}', '${les.videoAsset.videoUrl}')" class="action-btn-sm play">
+                        <i data-lucide="play" style="width:12px; height:12px;"></i>
+                        <span>Phát</span>
+                      </button>
+                      <button type="button" onclick="triggerUploadVideo(${les.id})" class="action-btn-sm">Đổi Video</button>
+                      <button type="button" onclick="promptDeleteVideo(${les.id}, '${escapeJs(les.title)}')" class="action-btn-sm del" title="Xóa video">Xóa Video</button>
+                    ` : `
+                      <button type="button" onclick="triggerUploadVideo(${les.id})" class="action-btn-sm" style="color:var(--ntu-blue); font-weight:700;">
+                        <i data-lucide="upload" style="width:12px; height:12px;"></i>
+                        <span>Nạp Video</span>
+                      </button>
+                    `}
+
+                    <button type="button" onclick="promptAttachDocToLesson(${les.id}, '${escapeJs(les.title)}')" class="action-btn-sm" title="Gắn tài liệu giáo trình">
+                      <i data-lucide="paperclip" style="width:12px; height:12px;"></i>
+                      <span>Gắn TL</span>
+                    </button>
+                    <button type="button" onclick="openEditLessonModal(${les.id}, ${chap.id}, '${escapeJs(les.title)}', '${les.lessonType || 'VIDEO'}', ${les.durationSeconds || 900}, ${les.orderIndex || (lIdx + 1)})" class="action-btn-sm">Sửa</button>
+                    <button type="button" onclick="promptDeleteLesson(${les.id}, '${escapeJs(les.title)}')" class="action-btn-sm del">Xóa</button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    lucide.createIcons();
+  }
+
+  // Populate session dropdown for uploading / filtering
+  function populateSessionDropdownOptions() {
+    const uploadSelect = document.getElementById('uploadDocLessonSelect');
+    const filterSelect = document.getElementById('docSessionFilterSelect');
+    const assignSelect = document.getElementById('assignTargetLessonSelect');
+
+    let lessonOptionsHtml = '';
+    chapters.forEach((ch, cIdx) => {
+      const chTitle = `Buổi ${ch.orderIndex || (cIdx + 1)}: ${ch.title}`;
+      const lessons = ch.lessons || [];
+      if (lessons.length > 0) {
+        lessonOptionsHtml += `<optgroup label="${escapeHtml(chTitle)}">`;
+        lessons.forEach(l => {
+          lessonOptionsHtml += `<option value="${l.id}">-- ${escapeHtml(l.title)}</option>`;
+        });
+        lessonOptionsHtml += `</optgroup>`;
+      }
+    });
+
+    if (uploadSelect) {
+      uploadSelect.innerHTML = `<option value="">-- Tài liệu chung của khóa học (Chưa gán riêng) --</option>` + lessonOptionsHtml;
+    }
+    if (filterSelect) {
+      filterSelect.innerHTML = `
+        <option value="ALL">Tất cả tài liệu môn học</option>
+        <option value="UNASSIGNED">Chưa gắn vào buổi học nào</option>
+      ` + lessonOptionsHtml;
+    }
+    if (assignSelect) {
+      assignSelect.innerHTML = `<option value="">-- Hủy gán (Đưa về tài liệu chung) --</option>` + lessonOptionsHtml;
+    }
+  }
+
+  function promptAttachDocToLesson(lessonId, lessonTitle) {
+    currentUploadLessonId = lessonId;
+    openUploadDocModal(lessonId);
+  }
+
+  function toggleDocSidebar() {
+    const sidebar = document.getElementById('docSidebarSection');
+    if (sidebar) {
+      sidebar.scrollIntoView({ behavior: 'smooth' });
+      sidebar.style.borderColor = 'var(--sky)';
+      setTimeout(() => sidebar.style.borderColor = 'var(--line)', 1500);
+    }
+  }
+
+  // =====================================================================
+  // DRAG & DROP CHAPTERS
+  // =====================================================================
+  function handleChapterDragStart(e, idx) {
+    draggedChapterIdx = idx;
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.classList.add('drag-ghost');
+  }
+
+  function handleChapterDragOver(e, idx) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const card = document.getElementById(`chap-card-${idx}`);
+    if (card && idx !== draggedChapterIdx) {
+      card.classList.add('drag-over');
+    }
+  }
+
+  function handleChapterDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+
+  async function handleChapterDrop(e, targetIdx) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    if (draggedChapterIdx === null || draggedChapterIdx === targetIdx) return;
+
+    const moved = chapters.splice(draggedChapterIdx, 1)[0];
+    chapters.splice(targetIdx, 0, moved);
+
+    chapters.forEach((ch, i) => ch.orderIndex = i + 1);
+    renderChaptersList();
+
+    const orderPayload = chapters.map((ch, i) => ({ id: ch.id, orderIndex: i + 1 }));
+    try {
+      showLoadingOverlay("Cập nhật thứ tự", "Đang lưu vị trí buổi học...");
+      await fetch(`${API_BASE}/api/admin/courses/${courseId}/chapters/reorder`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+      hideLoadingOverlay();
+      showToast("Đã lưu thứ tự buổi học mới thành công!");
+    } catch (err) {
+      hideLoadingOverlay();
+      console.error(err);
+      showToast("Lỗi khi cập nhật thứ tự: " + err.message);
+      loadCourseDetail();
+    }
+  }
+
+  function handleChapterDragEnd(e) {
+    draggedChapterIdx = null;
+    document.querySelectorAll('.chapter-card').forEach(el => {
+      el.classList.remove('drag-ghost');
+      el.classList.remove('drag-over');
+    });
+  }
+
+  // =====================================================================
+  // DRAG & DROP LESSONS
+  // =====================================================================
+  function handleLessonDragStart(e, cIdx, lIdx) {
+    e.stopPropagation();
+    draggedLessonIdx = { cIdx, lIdx };
+    e.dataTransfer.effectAllowed = 'move';
+    e.currentTarget.classList.add('drag-ghost');
+  }
+
+  function handleLessonDragOver(e, cIdx, lIdx) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    const row = document.getElementById(`les-card-${cIdx}-${lIdx}`);
+    if (row) row.classList.add('drag-over');
+  }
+
+  function handleLessonDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+
+  async function handleLessonDrop(e, targetCIdx, targetLIdx) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('drag-over');
+    if (!draggedLessonIdx) return;
+
+    const { cIdx: srcCIdx, lIdx: srcLIdx } = draggedLessonIdx;
+    if (srcCIdx === targetCIdx && srcLIdx === targetLIdx) return;
+
+    const sourceLessons = chapters[srcCIdx].lessons;
+    const targetLessons = chapters[targetCIdx].lessons;
+    const movedLesson = sourceLessons.splice(srcLIdx, 1)[0];
+    targetLessons.splice(targetLIdx, 0, movedLesson);
+
+    targetLessons.forEach((l, i) => l.orderIndex = i + 1);
+    renderChaptersList();
+
+    const targetChapterId = chapters[targetCIdx].id;
+    const orderPayload = targetLessons.map((l, i) => ({ id: l.id, orderIndex: i + 1 }));
+
+    try {
+      showLoadingOverlay("Cập nhật bài học", "Đang lưu vị trí bài giảng...");
+      await fetch(`${API_BASE}/api/admin/chapters/${targetChapterId}/lessons/reorder`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+      hideLoadingOverlay();
+      showToast("Đã lưu thứ tự bài giảng mới!");
+    } catch (err) {
+      hideLoadingOverlay();
+      console.error(err);
+      showToast("Lỗi cập nhật bài giảng: " + err.message);
+      loadCourseDetail();
+    }
+  }
+
+  function handleLessonDragEnd(e) {
+    draggedLessonIdx = null;
+    document.querySelectorAll('.lesson-row').forEach(el => {
+      el.classList.remove('drag-ghost');
+      el.classList.remove('drag-over');
+    });
+  }
+
+  // =====================================================================
+  // MODAL LOGIC: CHAPTERS
+  // =====================================================================
+  function openAddChapterModal() {
+    document.getElementById('chapterModalTitle').textContent = "Thêm Buổi Học Mới";
+    document.getElementById('formChapterId').value = "";
+    document.getElementById('formChapterTitle').value = "";
+    document.getElementById('formChapterOrderIndex').value = chapters.length + 1;
+    document.getElementById('chapterModal').classList.add('open');
+    document.getElementById('formChapterTitle').focus();
+    lucide.createIcons();
+  }
+
+  function openEditChapterModal(id, title, orderIndex) {
+    document.getElementById('chapterModalTitle').textContent = "Chỉnh Sửa Buổi Học";
+    document.getElementById('formChapterId').value = id;
+    document.getElementById('formChapterTitle').value = title;
+    document.getElementById('formChapterOrderIndex').value = orderIndex;
+    document.getElementById('chapterModal').classList.add('open');
+    document.getElementById('formChapterTitle').focus();
+    lucide.createIcons();
+  }
+
+  function closeChapterModal() {
+    document.getElementById('chapterModal').classList.remove('open');
+  }
+
+  async function submitChapterForm(e) {
+    e.preventDefault();
+    const id = document.getElementById('formChapterId').value;
+    const title = document.getElementById('formChapterTitle').value.trim();
+    const orderIndex = parseInt(document.getElementById('formChapterOrderIndex').value, 10) || 1;
+
+    if (!title) {
+      alert("Vui lòng nhập tên buổi học!");
+      return;
+    }
+
+    const payload = { 
+      title, 
+      orderIndex,
+      courseId: parseInt(courseId, 10)
+    };
+    const method = id ? 'PUT' : 'POST';
+    const url = id 
+      ? `${API_BASE}/api/admin/chapters/${id}`
+      : `${API_BASE}/api/admin/courses/${courseId}/chapters`;
+
+    try {
+      showLoadingOverlay("Lưu buổi học", "Đang cập nhật CSDL...");
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      hideLoadingOverlay();
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.message || `HTTP ${res.status}`);
+      }
+      closeChapterModal();
+      showToast(id ? "Đã cập nhật buổi học thành công!" : "Đã tạo buổi học mới thành công!");
+      await loadCourseDetail();
+    } catch (err) {
+      hideLoadingOverlay();
+      alert("Lỗi khi lưu buổi học: " + err.message);
+    }
+  }
+
+  function promptDeleteChapter(id, title) {
+    openDeleteModal(
+      `Xóa Buổi Học: ${title}`,
+      `Bạn có chắc chắn muốn xóa <b>${escapeHtml(title)}</b> không?<br><small style="color:var(--danger);">Tất cả bài giảng và liên kết tài liệu trong buổi học này sẽ bị xóa theo.</small>`,
+      async () => {
+        try {
+          showLoadingOverlay("Đang xóa", "Vui lòng chờ...");
+          const res = await fetch(`${API_BASE}/api/admin/chapters/${id}`, { method: 'DELETE' });
+          hideLoadingOverlay();
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          showToast("Đã xóa buổi học thành công!");
+          await loadCourseDetail();
+          await loadCourseDocuments();
+        } catch (err) {
+          hideLoadingOverlay();
+          alert("Lỗi khi xóa buổi học: " + err.message);
         }
+      }
+    );
+  }
 
-        // =====================================================================
-        // CHAPTER DRAG & DROP HANDLERS WITH LIVE REORDER API
-        // =====================================================================
-        function handleChapterDragStart(e, idx) {
-            e.stopPropagation();
-            draggedChapterIdx = idx;
-            e.target.classList.add('drag-ghost');
-            e.dataTransfer.effectAllowed = 'move';
+  // =====================================================================
+  // MODAL LOGIC: LESSONS & ATTACHMENTS (VIDEO + DOCS + PROGRESS BAR)
+  // =====================================================================
+  function uploadVideoWithProgress(lessonId, file, onProgress) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${API_BASE}/api/admin/lessons/${lessonId}/video`);
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable && typeof onProgress === 'function') {
+          const percent = Math.min(100, Math.round((e.loaded / e.total) * 100));
+          onProgress({
+            percent,
+            loaded: e.loaded,
+            total: e.total,
+            loadedMB: (e.loaded / (1024 * 1024)).toFixed(1),
+            totalMB: (e.total / (1024 * 1024)).toFixed(1)
+          });
         }
+      };
 
-        function handleChapterDragOver(e, idx) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (draggedChapterIdx === null || draggedChapterIdx === idx) return;
-            const el = document.getElementById(`chap-card-${idx}`);
-            if (el) el.classList.add('drag-over');
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            resolve(res);
+          } catch (e) {
+            resolve({ code: 200 });
+          }
+        } else {
+          try {
+            const errRes = JSON.parse(xhr.responseText);
+            reject(new Error(errRes.message || `Lỗi tải video HTTP ${xhr.status}`));
+          } catch {
+            reject(new Error(`Lỗi tải video HTTP ${xhr.status}`));
+          }
         }
+      };
 
-        function handleChapterDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over');
+      xhr.onerror = () => reject(new Error("Lỗi mạng khi tải video bài học"));
+      xhr.ontimeout = () => reject(new Error("Quá thời gian tải video"));
+
+      const formData = new FormData();
+      formData.append('file', file);
+      xhr.send(formData);
+    });
+  }
+
+  function uploadDocForLesson(cId, lessonId, file, title) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${API_BASE}/api/documents/upload`);
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            resolve(res);
+          } catch (e) {
+            resolve({ code: 200 });
+          }
+        } else {
+          try {
+            const errRes = JSON.parse(xhr.responseText);
+            reject(new Error(errRes.message || `Lỗi tải tài liệu HTTP ${xhr.status}`));
+          } catch {
+            reject(new Error(`Lỗi tải tài liệu HTTP ${xhr.status}`));
+          }
         }
+      };
 
-        async function handleChapterDrop(e, targetIdx) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.currentTarget.classList.remove('drag-over');
+      xhr.onerror = () => reject(new Error("Lỗi mạng khi tải tài liệu đính kèm"));
 
-            if (draggedChapterIdx !== null && draggedChapterIdx !== targetIdx) {
-                const movedChapter = chapters.splice(draggedChapterIdx, 1)[0];
-                chapters.splice(targetIdx, 0, movedChapter);
+      const formData = new FormData();
+      formData.append('courseId', cId);
+      formData.append('lessonId', lessonId);
+      formData.append('title', title || file.name.replace(/\.[^/.]+$/, ""));
+      formData.append('file', file);
+      xhr.send(formData);
+    });
+  }
 
-                // Re-calculate orderIndex
-                const reorderPayload = chapters.map((ch, idx) => {
-                    ch.orderIndex = idx + 1;
-                    return { id: ch.id, orderIndex: ch.orderIndex };
-                });
+  function handleLessonVideoFileChange(e) {
+    const file = e.target.files && e.target.files[0];
+    const dropzone = document.getElementById('lessonVideoDropzone');
+    const info = document.getElementById('lessonVideoSelectedInfo');
+    const nameEl = document.getElementById('lessonVideoFileName');
+    const sizeEl = document.getElementById('lessonVideoFileSize');
+    const box = document.getElementById('lessonVideoPickerBox');
 
-                renderChaptersList();
-                showToast(`Đang lưu thứ tự mới của các Buổi học...`);
+    if (file) {
+      if (dropzone) dropzone.style.display = 'none';
+      if (info) info.style.display = 'flex';
+      if (nameEl) nameEl.textContent = file.name;
+      if (sizeEl) sizeEl.textContent = `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+      if (box) box.classList.add('has-file');
 
-                // Call Reorder API
-                try {
-                    await fetch(`${API_BASE}/api/admin/chapters/reorder`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(reorderPayload)
-                    });
-                    showToast(`Đã lưu thứ tự Buổi học vào CSDL thành công!`);
-                } catch (err) {
-                    showToast('Lỗi lưu thứ tự: ' + err.message);
-                }
+      try {
+        const v = document.createElement('video');
+        v.preload = 'metadata';
+        v.onloadedmetadata = function() {
+          window.URL.revokeObjectURL(v.src);
+          if (v.duration && !isNaN(v.duration)) {
+            const durMin = Math.max(1, Math.round(v.duration / 60));
+            const durInput = document.getElementById('formLessonDurationMinutes');
+            if (durInput && (!durInput.value || durInput.value === '15')) {
+              durInput.value = durMin;
             }
-            draggedChapterIdx = null;
+          }
+        };
+        v.src = URL.createObjectURL(file);
+      } catch (ignore) {}
+    } else {
+      clearLessonVideoFile();
+    }
+    lucide.createIcons();
+  }
+
+  function clearLessonVideoFile(e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const input = document.getElementById('formLessonVideoFile');
+    if (input) input.value = "";
+    const dropzone = document.getElementById('lessonVideoDropzone');
+    const info = document.getElementById('lessonVideoSelectedInfo');
+    const box = document.getElementById('lessonVideoPickerBox');
+    if (dropzone) dropzone.style.display = 'flex';
+    if (info) info.style.display = 'none';
+    if (box) box.classList.remove('has-file');
+    lucide.createIcons();
+  }
+
+  function handleLessonDocFileChange(e) {
+    const file = e.target.files && e.target.files[0];
+    const dropzone = document.getElementById('lessonDocDropzone');
+    const info = document.getElementById('lessonDocSelectedInfo');
+    const nameEl = document.getElementById('lessonDocFileName');
+    const sizeEl = document.getElementById('lessonDocFileSize');
+    const titleInput = document.getElementById('formLessonDocTitle');
+    const box = document.getElementById('lessonDocPickerBox');
+
+    if (file) {
+      if (dropzone) dropzone.style.display = 'none';
+      if (info) info.style.display = 'block';
+      if (nameEl) nameEl.textContent = file.name;
+      const sizeKB = (file.size / 1024).toFixed(0);
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      if (sizeEl) sizeEl.textContent = file.size > 1024 * 1024 ? `${sizeMB} MB` : `${sizeKB} KB`;
+      if (titleInput && !titleInput.value) {
+        titleInput.value = file.name.replace(/\.[^/.]+$/, "");
+      }
+      if (box) box.classList.add('has-file');
+    } else {
+      clearLessonDocFile();
+    }
+    lucide.createIcons();
+  }
+
+  function clearLessonDocFile(e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const input = document.getElementById('formLessonDocFile');
+    if (input) input.value = "";
+    const dropzone = document.getElementById('lessonDocDropzone');
+    const info = document.getElementById('lessonDocSelectedInfo');
+    const titleInput = document.getElementById('formLessonDocTitle');
+    const box = document.getElementById('lessonDocPickerBox');
+    if (dropzone) dropzone.style.display = 'flex';
+    if (info) info.style.display = 'none';
+    if (titleInput) titleInput.value = "";
+    if (box) box.classList.remove('has-file');
+    lucide.createIcons();
+  }
+
+  function populateExistingDocSelect(currentLessonId) {
+    const select = document.getElementById('formLessonExistingDocSelect');
+    if (!select) return;
+    select.innerHTML = '<option value="">-- Chọn tài liệu có sẵn trong khóa (nếu có) --</option>';
+    if (!allDocuments || allDocuments.length === 0) return;
+
+    allDocuments.forEach(doc => {
+      const isThisLesson = currentLessonId && doc.lessonId == currentLessonId;
+      const isOtherLesson = doc.lessonId && doc.lessonId != currentLessonId;
+      const opt = document.createElement('option');
+      opt.value = doc.id;
+      let label = `${doc.title || doc.fileName} (${doc.fileType || 'DOC'})`;
+      if (isThisLesson) label += ' [Đang gán với bài này]';
+      else if (isOtherLesson) label += ` [Đang gán bài #${doc.lessonId}]`;
+      opt.textContent = label;
+      if (isThisLesson) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+
+  function openAddLessonModal(chapterId, chapterTitle, nextLessonOrder, chapOrder) {
+    document.getElementById('lessonModalTitle').textContent = `Thêm Bài Giảng (Buổi #${chapOrder})`;
+    document.getElementById('lessonModalSubtitle').textContent = "Khởi tạo nội dung bài học, đính kèm video và tài liệu RAG AI";
+    document.getElementById('formLessonId').value = "";
+    document.getElementById('formLessonChapterId').value = chapterId;
+    document.getElementById('formLessonChapterNameDisplay').innerHTML = `
+      <i data-lucide="layers" style="width:14px; height:14px;"></i>
+      <span>${escapeHtml(chapterTitle || 'Buổi #' + chapOrder)}</span>
+    `;
+    document.getElementById('formLessonTitle').value = "";
+    document.getElementById('formLessonType').value = "VIDEO";
+    document.getElementById('formLessonDurationMinutes').value = 15;
+    document.getElementById('formLessonOrderIndex').value = nextLessonOrder;
+
+    clearLessonVideoFile();
+    clearLessonDocFile();
+    document.getElementById('lessonCurrentVideoBadge').style.display = 'none';
+    document.getElementById('lessonCurrentDocsList').style.display = 'none';
+    document.getElementById('lessonVideoProgressBox').style.display = 'none';
+
+    populateExistingDocSelect("");
+
+    document.getElementById('lessonModal').classList.add('open');
+    document.getElementById('formLessonTitle').focus();
+    lucide.createIcons();
+  }
+
+  function openEditLessonModal(id, chapterId, title, type, durationSeconds, orderIndex) {
+    document.getElementById('lessonModalTitle').textContent = "Chỉnh Sửa Bài Giảng";
+    document.getElementById('lessonModalSubtitle').textContent = "Cập nhật bài học, thay đổi video hoặc bổ sung tài liệu";
+    document.getElementById('formLessonId').value = id;
+    document.getElementById('formLessonChapterId').value = chapterId;
+
+    const chap = chapters.find(c => c.id == chapterId);
+    const chapTitle = chap ? chap.title : `Buổi #${chapterId}`;
+    document.getElementById('formLessonChapterNameDisplay').innerHTML = `
+      <i data-lucide="layers" style="width:14px; height:14px;"></i>
+      <span>${escapeHtml(chapTitle)}</span>
+    `;
+
+    document.getElementById('formLessonTitle').value = title;
+    document.getElementById('formLessonType').value = type || 'VIDEO';
+    document.getElementById('formLessonDurationMinutes').value = Math.round((durationSeconds || 900) / 60);
+    document.getElementById('formLessonOrderIndex').value = orderIndex;
+
+    clearLessonVideoFile();
+    clearLessonDocFile();
+    document.getElementById('lessonVideoProgressBox').style.display = 'none';
+
+    let hasVideo = false;
+    if (chap && chap.lessons) {
+      const les = chap.lessons.find(l => l.id == id);
+      if (les && les.videoAsset && les.videoAsset.videoUrl) {
+        hasVideo = true;
+        document.getElementById('lessonCurrentVideoBadge').style.display = 'flex';
+        document.getElementById('lessonCurrentVideoName').textContent = `Đã có video: ${les.videoAsset.originalFileName || les.videoAsset.provider || 'Cloudinary'}`;
+      }
+    }
+    if (!hasVideo) {
+      document.getElementById('lessonCurrentVideoBadge').style.display = 'none';
+    }
+
+    const attachedDocs = allDocuments.filter(d => d.lessonId == id);
+    const currentDocsContainer = document.getElementById('lessonCurrentDocsList');
+    if (attachedDocs.length > 0) {
+      currentDocsContainer.style.display = 'block';
+      currentDocsContainer.innerHTML = `
+        <div style="font-size:.74rem; font-weight:700; color:var(--muted); margin-bottom:4px;">TÀI LIỆU ĐANG GẮN VỚI BÀI:</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${attachedDocs.map(ad => `
+            <span class="attached-doc-pill">
+              <i data-lucide="file-check" style="width:12px; height:12px; color:var(--ntu-blue);"></i>
+              <span>${escapeHtml(ad.title)}</span>
+            </span>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      currentDocsContainer.style.display = 'none';
+      currentDocsContainer.innerHTML = '';
+    }
+
+    populateExistingDocSelect(id);
+
+    document.getElementById('lessonModal').classList.add('open');
+    document.getElementById('formLessonTitle').focus();
+    lucide.createIcons();
+  }
+
+  function closeLessonModal() {
+    document.getElementById('lessonModal').classList.remove('open');
+  }
+
+  async function submitLessonForm(e) {
+    e.preventDefault();
+    const id = document.getElementById('formLessonId').value;
+    const chapterId = document.getElementById('formLessonChapterId').value;
+    const title = document.getElementById('formLessonTitle').value.trim();
+    const lessonType = document.getElementById('formLessonType').value;
+    const durationMinutes = parseInt(document.getElementById('formLessonDurationMinutes').value, 10) || 15;
+    const orderIndex = parseInt(document.getElementById('formLessonOrderIndex').value, 10) || 1;
+
+    const videoFileInput = document.getElementById('formLessonVideoFile');
+    const selectedVideoFile = videoFileInput && videoFileInput.files && videoFileInput.files[0];
+
+    const docFileInput = document.getElementById('formLessonDocFile');
+    const selectedDocFile = docFileInput && docFileInput.files && docFileInput.files[0];
+    const docTitleInput = document.getElementById('formLessonDocTitle');
+    const docCustomTitle = docTitleInput ? docTitleInput.value.trim() : "";
+
+    const existingDocSelect = document.getElementById('formLessonExistingDocSelect');
+    const selectedExistingDocId = existingDocSelect ? existingDocSelect.value : "";
+
+    if (!title) {
+      alert("Vui lòng nhập tiêu đề bài học!");
+      return;
+    }
+
+    const payload = {
+      chapterId: parseInt(chapterId, 10),
+      title,
+      lessonType,
+      durationSeconds: durationMinutes * 60,
+      orderIndex
+    };
+
+    const isEdit = !!id;
+    const method = isEdit ? 'PUT' : 'POST';
+    const url = isEdit 
+      ? `${API_BASE}/api/admin/lessons/${id}`
+      : `${API_BASE}/api/admin/chapters/${chapterId}/lessons`;
+
+    const btnSave = document.getElementById('btnSaveLesson');
+    const btnCancel = document.getElementById('btnCancelLesson');
+    btnSave.disabled = true;
+    btnCancel.disabled = true;
+    btnSave.innerHTML = `<i data-lucide="loader-2" class="spin" style="width:16px; height:16px;"></i><span>Đang lưu...</span>`;
+    lucide.createIcons();
+
+    try {
+      // 1. Lưu thông tin cơ bản bài học
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.message || `Lỗi lưu bài học HTTP ${res.status}`);
+      }
+      const resData = await res.json();
+      const savedLessonId = isEdit ? id : (resData.data && resData.data.id);
+
+      if (!savedLessonId) {
+        throw new Error("Không lấy được mã bài học vừa tạo!");
+      }
+
+      // 2. Nếu có chọn video: tải video lên kèm thanh tiến độ
+      if (selectedVideoFile) {
+        const progressBox = document.getElementById('lessonVideoProgressBox');
+        const progressLabel = document.getElementById('lessonVideoProgressLabel');
+        const progressBar = document.getElementById('lessonVideoProgressBar');
+        const progressPercent = document.getElementById('lessonVideoProgressPercent');
+        const progressBytes = document.getElementById('lessonVideoProgressBytes');
+        const progressSpeed = document.getElementById('lessonVideoProgressSpeed');
+
+        progressBox.style.display = 'block';
+        btnSave.innerHTML = `<i data-lucide="loader-2" class="spin" style="width:16px; height:16px;"></i><span>Đang nạp Video...</span>`;
+        lucide.createIcons();
+
+        const startTime = Date.now();
+
+        await uploadVideoWithProgress(savedLessonId, selectedVideoFile, (p) => {
+          progressBar.style.width = `${p.percent}%`;
+          progressPercent.textContent = `${p.percent}%`;
+          progressBytes.textContent = `${p.loadedMB} MB / ${p.totalMB} MB`;
+
+          const elapsedSec = (Date.now() - startTime) / 1000;
+          if (elapsedSec > 0.5 && p.loaded > 0) {
+            const speedKBps = (p.loaded / 1024 / elapsedSec).toFixed(0);
+            progressSpeed.textContent = `${speedKBps} KB/s`;
+          }
+
+          if (p.percent >= 100) {
+            progressLabel.textContent = "Hoàn tất truyền tải, đang xử lý nén & lưu trữ...";
+            progressSpeed.textContent = "Đang tối ưu HLS/Cloudinary";
+          }
+        });
+      }
+
+      // 3. Nếu có chọn file tài liệu mới: tải và tự động bóc tách Chunks RAG AI
+      if (selectedDocFile) {
+        btnSave.innerHTML = `<i data-lucide="loader-2" class="spin" style="width:16px; height:16px;"></i><span>Đang bóc tách RAG AI...</span>`;
+        lucide.createIcons();
+        await uploadDocForLesson(courseId, savedLessonId, selectedDocFile, docCustomTitle);
+      }
+
+      // 4. Nếu có chọn tài liệu có sẵn để gán
+      if (selectedExistingDocId) {
+        await fetch(`${API_BASE}/api/documents/${selectedExistingDocId}/assign-lesson?lessonId=${savedLessonId}`, {
+          method: 'PUT'
+        });
+      }
+
+      closeLessonModal();
+      showToast(isEdit ? "Cập nhật bài giảng và tệp đính kèm thành công!" : "Tạo bài giảng mới và nạp dữ liệu thành công!");
+      await loadCourseDetail();
+      await loadCourseDocuments();
+    } catch (err) {
+      alert("Lỗi khi lưu bài giảng: " + err.message);
+    } finally {
+      btnSave.disabled = false;
+      btnCancel.disabled = false;
+      btnSave.innerHTML = `<i data-lucide="check" style="width:16px; height:16px;"></i><span>Lưu Bài Giảng</span>`;
+      lucide.createIcons();
+    }
+  }
+
+  function promptDeleteLesson(id, title) {
+    openDeleteModal(
+      `Xóa Bài Giảng: ${title}`,
+      `Bạn có chắc chắn muốn xóa bài <b>${escapeHtml(title)}</b> không?<br><small style="color:var(--danger);">Video và liên kết tài liệu liên quan sẽ bị hủy bỏ.</small>`,
+      async () => {
+        try {
+          showLoadingOverlay("Đang xóa", "Vui lòng chờ...");
+          const res = await fetch(`${API_BASE}/api/admin/lessons/${id}`, { method: 'DELETE' });
+          hideLoadingOverlay();
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          showToast("Đã xóa bài giảng thành công!");
+          await loadCourseDetail();
+          await loadCourseDocuments();
+        } catch (err) {
+          hideLoadingOverlay();
+          alert("Lỗi khi xóa bài giảng: " + err.message);
+        }
+      }
+    );
+  }
+
+  // =====================================================================
+  // MODAL LOGIC: UPLOAD DOCUMENT & RAG
+  // =====================================================================
+  function openUploadDocModal(preselectedLessonId = null) {
+    document.getElementById('uploadDocTitle').value = "";
+    document.getElementById('docFileInput').value = "";
+    document.getElementById('selectedDocFileName').textContent = "Nhấp để chọn file hoặc kéo thả vào đây";
+    if (preselectedLessonId) {
+      document.getElementById('uploadDocLessonSelect').value = preselectedLessonId;
+    }
+    document.getElementById('uploadDocModal').classList.add('open');
+    lucide.createIcons();
+  }
+
+  function closeUploadDocModal() {
+    document.getElementById('uploadDocModal').classList.remove('open');
+    currentUploadLessonId = null;
+  }
+
+  function handleDocFileSelected(event) {
+    const file = event.target.files[0];
+    if (file) {
+      document.getElementById('selectedDocFileName').textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+      const titleInput = document.getElementById('uploadDocTitle');
+      if (!titleInput.value.trim()) {
+        titleInput.value = file.name.replace(/\.[^/.]+$/, "");
+      }
+    }
+  }
+
+  async function submitUploadDocForm(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById('docFileInput');
+    if (!fileInput.files || fileInput.files.length === 0) {
+      alert("Vui lòng chọn tệp tài liệu (.pdf, .docx, .txt)!");
+      return;
+    }
+
+    const file = fileInput.files[0];
+    const title = document.getElementById('uploadDocTitle').value.trim() || file.name;
+    const lessonId = document.getElementById('uploadDocLessonSelect').value;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', title);
+    formData.append('courseId', courseId);
+    if (lessonId) {
+      formData.append('lessonId', lessonId);
+    }
+
+    const submitBtn = document.getElementById('btnSubmitDocUpload');
+    submitBtn.disabled = true;
+    showLoadingOverlay("Đang xử lý tài liệu", "Đang tải tệp lên server và bóc tách thành các Chunks vector MongoDB...");
+
+    try {
+      const res = await fetch(`${API_BASE}/api/documents/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      hideLoadingOverlay();
+      submitBtn.disabled = false;
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.message || `Lỗi máy chủ HTTP ${res.status}`);
+      }
+
+      closeUploadDocModal();
+      showToast("Tải lên và bóc tách Chunks tài liệu thành công!");
+      await loadCourseDocuments();
+    } catch (err) {
+      hideLoadingOverlay();
+      submitBtn.disabled = false;
+      alert("Lỗi khi tải tài liệu: " + err.message);
+    }
+  }
+
+  // =====================================================================
+  // MODAL LOGIC: ASSIGN LESSON TO DOCUMENT
+  // =====================================================================
+  function openAssignLessonModal(docId, docTitle, currentLessonId) {
+    activeAssignDocId = docId;
+    document.getElementById('assignDocTitleDisplay').textContent = docTitle;
+    document.getElementById('assignTargetLessonSelect').value = currentLessonId || "";
+    document.getElementById('assignLessonModal').classList.add('open');
+    lucide.createIcons();
+  }
+
+  function closeAssignLessonModal() {
+    document.getElementById('assignLessonModal').classList.remove('open');
+    activeAssignDocId = null;
+  }
+
+  async function submitAssignLesson() {
+    if (!activeAssignDocId) return;
+    const targetLessonId = document.getElementById('assignTargetLessonSelect').value;
+
+    try {
+      showLoadingOverlay("Đang gán buổi học", "Vui lòng chờ...");
+      const url = targetLessonId
+        ? `${API_BASE}/api/documents/${activeAssignDocId}/assign-lesson?lessonId=${targetLessonId}`
+        : `${API_BASE}/api/documents/${activeAssignDocId}/unassign-lesson`;
+
+      const res = await fetch(url, { method: 'PUT' });
+      hideLoadingOverlay();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      closeAssignLessonModal();
+      showToast("Đã cập nhật bài học cho tài liệu!");
+      await loadCourseDocuments();
+    } catch (err) {
+      hideLoadingOverlay();
+      alert("Lỗi khi gán buổi học: " + err.message);
+    }
+  }
+
+  // =====================================================================
+  // MODAL LOGIC: DOC VIEWER & CHUNKS RAG
+  // =====================================================================
+  function viewOnlineDoc(title, fileUrl) {
+    document.getElementById('docViewerModalTitle').textContent = `Đọc Tài Liệu: ${title}`;
+    const iframe = document.getElementById('docViewerIframe');
+    iframe.src = fileUrl;
+    document.getElementById('docViewerModal').classList.add('open');
+    lucide.createIcons();
+  }
+
+  function closeDocViewerModal() {
+    document.getElementById('docViewerModal').classList.remove('open');
+    document.getElementById('docViewerIframe').src = "";
+  }
+
+  async function viewDocChunks(docId, title) {
+    document.getElementById('chunksModalTitle').textContent = "Bóc Tách Chunks MongoDB (RAG AI)";
+    document.getElementById('chunksModalDocName').textContent = title;
+    const container = document.getElementById('chunksContentContainer');
+    container.innerHTML = `<p style="color:var(--muted);">Đang kết nối MongoDB nạp dữ liệu vector chunks...</p>`;
+    document.getElementById('chunksModal').classList.add('open');
+    lucide.createIcons();
+
+    try {
+      const res = await fetch(`${API_BASE}/api/documents/${docId}/chunks`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const result = await res.json();
+      const chunks = result.data || [];
+
+      if (chunks.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:32px; color:var(--muted);">
+            Tài liệu này chưa có Chunks nào trong MongoDB.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = chunks.map((c, idx) => `
+        <div style="background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:.76rem; color:var(--muted);">
+            <span class="chunk-pill">Chunk #${c.chunkIndex || (idx + 1)}</span>
+            <span>Trang: <b>${c.pageNumber || 1}</b></span>
+          </div>
+          <p style="font-size:.82rem; color:var(--ink); line-height:1.5; white-space:pre-wrap; word-break:break-word;">${escapeHtml(c.content || '')}</p>
+        </div>
+      `).join('');
+    } catch (err) {
+      container.innerHTML = `<p style="color:var(--danger);">Lỗi khi nạp chunks: ${err.message}</p>`;
+    }
+  }
+
+  function closeChunksModal() {
+    document.getElementById('chunksModal').classList.remove('open');
+  }
+
+  function promptDeleteDocument(docId, title) {
+    openDeleteModal(
+      `Xóa Tài Liệu: ${title}`,
+      `Bạn có chắc chắn muốn xóa tài liệu <b>${escapeHtml(title)}</b> không?<br><small style="color:var(--danger);">Tất cả các Chunks MongoDB liên quan sẽ bị xóa vĩnh viễn.</small>`,
+      async () => {
+        try {
+          showLoadingOverlay("Đang xóa tài liệu", "Vui lòng chờ...");
+          const res = await fetch(`${API_BASE}/api/documents/${docId}`, { method: 'DELETE' });
+          hideLoadingOverlay();
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          showToast("Đã xóa tài liệu thành công!");
+          await loadCourseDocuments();
+        } catch (err) {
+          hideLoadingOverlay();
+          alert("Lỗi khi xóa tài liệu: " + err.message);
+        }
+      }
+    );
+  }
+
+  // =====================================================================
+  // VIDEO HANDLING: UPLOAD / PLAY / DELETE
+  // =====================================================================
+  let targetLessonIdForVideo = null;
+  function triggerUploadVideo(lessonId) {
+    targetLessonIdForVideo = lessonId;
+    document.getElementById('videoFileInput').click();
+  }
+
+  async function handleVideoFileSelected(event) {
+    const file = event.target.files[0];
+    if (!file || !targetLessonIdForVideo) return;
+
+    showLoadingOverlay("Tải Video Bài Giảng", `Đang chuẩn bị file ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)...`);
+    
+    const progressBox = document.getElementById('loadingOverlayProgressBox');
+    const progressBar = document.getElementById('loadingOverlayProgressBar');
+    const progressPercent = document.getElementById('loadingOverlayProgressPercent');
+    const progressBytes = document.getElementById('loadingOverlayProgressBytes');
+    const progressLabel = document.getElementById('loadingOverlayProgressLabel');
+    const progressSpeed = document.getElementById('loadingOverlayProgressSpeed');
+
+    if (progressBox) progressBox.style.display = 'block';
+    const startTime = Date.now();
+
+    try {
+      await uploadVideoWithProgress(targetLessonIdForVideo, file, (p) => {
+        if (progressBar) progressBar.style.width = `${p.percent}%`;
+        if (progressPercent) progressPercent.textContent = `${p.percent}%`;
+        if (progressBytes) progressBytes.textContent = `${p.loadedMB} MB / ${p.totalMB} MB`;
+
+        const elapsedSec = (Date.now() - startTime) / 1000;
+        if (elapsedSec > 0.5 && p.loaded > 0 && progressSpeed) {
+          const speedKBps = (p.loaded / 1024 / elapsedSec).toFixed(0);
+          progressSpeed.textContent = `${speedKBps} KB/s`;
         }
 
-        function handleChapterDragEnd(e) {
-            e.target.classList.remove('drag-ghost');
-            document.querySelectorAll('.chapter-card').forEach(el => el.classList.remove('drag-over'));
-            draggedChapterIdx = null;
+        if (p.percent >= 100 && progressLabel) {
+          progressLabel.textContent = "Đang tối ưu & chuyển đổi phát trực tuyến Cloudinary...";
         }
+      });
+      hideLoadingOverlay();
+      document.getElementById('videoFileInput').value = "";
+      showToast("Tải lên video bài giảng thành công!");
+      await loadCourseDetail();
+    } catch (err) {
+      hideLoadingOverlay();
+      document.getElementById('videoFileInput').value = "";
+      alert("Lỗi khi tải video: " + err.message);
+    } finally {
+      if (progressBox) progressBox.style.display = 'none';
+    }
+  }
 
-        // =====================================================================
-        // LESSON DRAG & DROP HANDLERS WITH LIVE REORDER API
-        // =====================================================================
-        function handleLessonDragStart(e, cIdx, lIdx) {
-            e.stopPropagation();
-            draggedLessonIdx = { chapIndex: cIdx, lessonIndex: lIdx };
-            e.target.classList.add('drag-ghost');
-            e.dataTransfer.effectAllowed = 'move';
+  function promptDeleteVideo(lessonId, lessonTitle) {
+    openDeleteModal(
+      `Xóa Video Bài Giảng`,
+      `Bạn có chắc chắn muốn gỡ video khỏi bài <b>${escapeHtml(lessonTitle)}</b> không?`,
+      async () => {
+        try {
+          showLoadingOverlay("Đang xóa video", "Vui lòng chờ...");
+          const res = await fetch(`${API_BASE}/api/admin/lessons/${lessonId}/video`, { method: 'DELETE' });
+          hideLoadingOverlay();
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          showToast("Đã gỡ video bài giảng!");
+          await loadCourseDetail();
+        } catch (err) {
+          hideLoadingOverlay();
+          alert("Lỗi khi xóa video: " + err.message);
         }
+      }
+    );
+  }
 
-        function handleLessonDragOver(e, cIdx, lIdx) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!draggedLessonIdx) return;
-            const el = document.getElementById(`les-card-${cIdx}-${lIdx}`);
-            if (el) el.classList.add('drag-over');
-        }
+  function playVideo(title, url) {
+    document.getElementById('videoModalTitle').textContent = `Bài Giảng: ${title}`;
+    const video = document.getElementById('videoPlayerEl');
+    video.src = url;
+    document.getElementById('videoPlayerModal').classList.add('open');
+    video.play();
+    lucide.createIcons();
+  }
 
-        function handleLessonDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over');
-        }
+  function closeVideoModal() {
+    const video = document.getElementById('videoPlayerEl');
+    video.pause();
+    video.src = "";
+    document.getElementById('videoPlayerModal').classList.remove('open');
+  }
 
-        async function handleLessonDrop(e, targetCIdx, targetLIdx) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.currentTarget.classList.remove('drag-over');
+  // =====================================================================
+  // DELETE CONFIRMATION & HELPERS
+  // =====================================================================
+  function openDeleteModal(title, htmlMessage, onConfirm) {
+    document.getElementById('deleteModalTitle').textContent = title;
+    document.getElementById('deleteModalMessage').innerHTML = htmlMessage;
+    deleteActionCallback = onConfirm;
 
-            if (draggedLessonIdx) {
-                const srcC = draggedLessonIdx.chapIndex;
-                const srcL = draggedLessonIdx.lessonIndex;
+    const btn = document.getElementById('btnConfirmDelete');
+    btn.onclick = async () => {
+      closeDeleteModal();
+      if (typeof deleteActionCallback === 'function') {
+        await deleteActionCallback();
+      }
+    };
+    document.getElementById('deleteConfirmModal').classList.add('open');
+    lucide.createIcons();
+  }
 
-                if (srcC === targetCIdx && srcL !== targetLIdx) {
-                    const movedLesson = chapters[srcC].lessons.splice(srcL, 1)[0];
-                    chapters[targetCIdx].lessons.splice(targetLIdx, 0, movedLesson);
+  function closeDeleteModal() {
+    document.getElementById('deleteConfirmModal').classList.remove('open');
+    deleteActionCallback = null;
+  }
 
-                    const reorderPayload = chapters[targetCIdx].lessons.map((l, idx) => {
-                        l.orderIndex = idx + 1;
-                        return { id: l.id, orderIndex: l.orderIndex, chapterId: chapters[targetCIdx].id };
-                    });
+  function showLoadingOverlay(title, text) {
+    document.getElementById('loadingOverlayTitle').textContent = title || "Đang xử lý...";
+    document.getElementById('loadingOverlayText').textContent = text || "Vui lòng chờ giây lát...";
+    document.getElementById('globalLoadingOverlay').classList.add('open');
+  }
 
-                    renderChaptersList();
-                    showToast('Đang lưu thứ tự bài học...');
+  function hideLoadingOverlay() {
+    document.getElementById('globalLoadingOverlay').classList.remove('open');
+  }
 
-                    try {
-                        await fetch(`${API_BASE}/api/admin/lessons/reorder`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(reorderPayload)
-                        });
-                        showToast('Đã lưu thứ tự bài giảng thành công!');
-                    } catch (err) {
-                        showToast('Lỗi lưu thứ tự: ' + err.message);
-                    }
-                }
-            }
-            draggedLessonIdx = null;
-        }
+  function showToast(msg) {
+    const toast = document.getElementById('toastNotification');
+    document.getElementById('toastMessage').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3200);
+  }
 
-        function handleLessonDragEnd(e) {
-            e.target.classList.remove('drag-ghost');
-            document.querySelectorAll('.lesson-row').forEach(el => el.classList.remove('drag-over'));
-            draggedLessonIdx = null;
-        }
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, s => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[s]));
+  }
 
-        // =====================================================================
-        // CHAPTER MODAL & CRUD
-        // =====================================================================
-        function openAddChapterModal() {
-            document.getElementById('chapterForm').reset();
-            document.getElementById('formChapterId').value = '';
-            document.getElementById('chapterModalTitle').textContent = 'Thêm Buổi Học Mới';
-
-            // AUTO-CALCULATE ORDER & AUTO-FILL TITLE
-            const nextOrder = chapters.length + 1;
-            document.getElementById('formChapterOrderIndex').value = nextOrder;
-            document.getElementById('formChapterTitle').value = `Buổi ${nextOrder}: `;
-            document.getElementById('chapterModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('formChapterTitle').focus(), 100);
-        }
-
-        function openEditChapterModal(id, title, orderIndex) {
-            document.getElementById('formChapterId').value = id;
-            document.getElementById('formChapterTitle').value = title;
-            document.getElementById('formChapterOrderIndex').value = orderIndex;
-            document.getElementById('chapterModalTitle').textContent = `Sửa Buổi Học #${id}`;
-            document.getElementById('chapterModal').classList.remove('hidden');
-        }
-
-        function closeChapterModal() {
-            document.getElementById('chapterModal').classList.add('hidden');
-        }
-
-        async function submitChapterForm(e) {
-            e.preventDefault();
-            const id = document.getElementById('formChapterId').value;
-            const title = document.getElementById('formChapterTitle').value.trim();
-            const orderIndex = parseInt(document.getElementById('formChapterOrderIndex').value, 10) || 1;
-
-            const isEdit = !!id;
-            const url = isEdit ? `${API_BASE}/api/admin/chapters/${id}` : `${API_BASE}/api/admin/chapters`;
-            const method = isEdit ? 'PUT' : 'POST';
-
-            try {
-                const res = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        courseId: parseInt(courseId, 10),
-                        title: title,
-                        orderIndex: orderIndex
-                    })
-                });
-                if (res.ok) {
-                    showToast(isEdit ? 'Cập nhật buổi học thành công!' : 'Thêm buổi học thành công!');
-                    closeChapterModal();
-                    loadCourseDetail();
-                } else {
-                    const err = await res.json();
-                    showToast('Lỗi: ' + (err.message || 'Không thể lưu buổi học'));
-                }
-            } catch (err) {
-                showToast('Lỗi mạng: ' + err.message);
-            }
-        }
-
-        function promptDeleteChapter(id, title) {
-            openDeleteModal(
-                'Xóa Buổi Học Này?',
-                `Buổi học <strong>"${escapeHtml(title)}"</strong> và toàn bộ bài học bên trong sẽ bị xóa.`,
-                async () => {
-                    try {
-                        const res = await fetch(`${API_BASE}/api/admin/chapters/${id}`, { method: 'DELETE' });
-                        if (res.ok) {
-                            showToast('Đã xóa buổi học!');
-                            closeDeleteModal();
-                            loadCourseDetail();
-                        } else {
-                            const err = await res.json();
-                            showToast('Lỗi: ' + err.message);
-                        }
-                    } catch (e) {
-                        showToast('Lỗi mạng: ' + e.message);
-                    }
-                }
-            );
-        }
-
-        // =====================================================================
-        // LESSON MODAL & CRUD
-        // =====================================================================
-        function openAddLessonModal(chapterId, chapterTitle, nextLessonOrder, chapOrder) {
-            document.getElementById('lessonForm').reset();
-            document.getElementById('formLessonId').value = '';
-            document.getElementById('formLessonChapterId').value = chapterId;
-            document.getElementById('lessonModalTitle').textContent = `Thêm Bài Giảng vào ${chapterTitle}`;
-
-            // AUTO-FILL LESSON ORDER & TITLE
-            document.getElementById('formLessonOrderIndex').value = nextLessonOrder || 1;
-            document.getElementById('formLessonTitle').value = `Bài ${chapOrder || 1}.${nextLessonOrder || 1}: `;
-            document.getElementById('lessonModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('formLessonTitle').focus(), 100);
-        }
-
-        function openEditLessonModal(id, chapterId, title, type, durationSeconds, orderIndex) {
-            document.getElementById('formLessonId').value = id;
-            document.getElementById('formLessonChapterId').value = chapterId;
-            document.getElementById('formLessonTitle').value = title;
-            document.getElementById('formLessonType').value = type || 'VIDEO';
-            document.getElementById('formLessonDuration').value = durationSeconds ? Math.floor(durationSeconds / 60) : 15;
-            document.getElementById('formLessonOrderIndex').value = orderIndex || 1;
-            document.getElementById('lessonModalTitle').textContent = `Sửa Bài Giảng #${id}`;
-            document.getElementById('lessonModal').classList.remove('hidden');
-        }
-
-        function closeLessonModal() {
-            document.getElementById('lessonModal').classList.add('hidden');
-        }
-
-        async function submitLessonForm(e) {
-            e.preventDefault();
-            const id = document.getElementById('formLessonId').value;
-            const chapterId = document.getElementById('formLessonChapterId').value;
-            const title = document.getElementById('formLessonTitle').value.trim();
-            const type = document.getElementById('formLessonType').value;
-            const durationMin = parseInt(document.getElementById('formLessonDuration').value, 10) || 15;
-            const orderIndex = parseInt(document.getElementById('formLessonOrderIndex').value, 10) || 1;
-
-            const isEdit = !!id;
-            const url = isEdit ? `${API_BASE}/api/admin/lessons/${id}` : `${API_BASE}/api/admin/lessons`;
-            const method = isEdit ? 'PUT' : 'POST';
-
-            try {
-                const res = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chapterId: parseInt(chapterId, 10),
-                        title: title,
-                        lessonType: type,
-                        durationSeconds: durationMin * 60,
-                        orderIndex: orderIndex
-                    })
-                });
-                if (res.ok) {
-                    showToast(isEdit ? 'Cập nhật bài giảng thành công!' : 'Thêm bài giảng thành công!');
-                    closeLessonModal();
-                    loadCourseDetail();
-                } else {
-                    const err = await res.json();
-                    showToast('Lỗi: ' + (err.message || 'Không thể lưu bài học'));
-                }
-            } catch (err) {
-                showToast('Lỗi mạng: ' + err.message);
-            }
-        }
-
-        function promptDeleteLesson(id, title) {
-            openDeleteModal(
-                'Xóa Bài Giảng Này?',
-                `Bài giảng <strong>"${escapeHtml(title)}"</strong> và video asset liên quan sẽ bị xóa hoàn toàn.`,
-                async () => {
-                    try {
-                        const res = await fetch(`${API_BASE}/api/admin/lessons/${id}`, { method: 'DELETE' });
-                        if (res.ok) {
-                            showToast('Đã xóa bài giảng!');
-                            closeDeleteModal();
-                            loadCourseDetail();
-                        } else {
-                            const err = await res.json();
-                            showToast('Lỗi: ' + err.message);
-                        }
-                    } catch (e) {
-                        showToast('Lỗi mạng: ' + e.message);
-                    }
-                }
-            );
-        }
-
-        // =====================================================================
-        // VIDEO MANAGEMENT: UPLOAD & DELETE (CLOUDINARY CDN)
-        // =====================================================================
-        function triggerUploadVideo(lessonId) {
-            currentUploadLessonId = lessonId;
-            const input = document.getElementById('videoFileInput');
-            input.value = '';
-            input.click();
-        }
-
-        async function handleVideoFileSelected(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file || !currentUploadLessonId) return;
-
-            const overlay = document.getElementById('videoUploadOverlay');
-            const overlayText = document.getElementById('uploadOverlayText');
-            overlayText.innerHTML = `Đang nén file <strong>"${escapeHtml(file.name)}"</strong> (${(file.size / (1024 * 1024)).toFixed(1)} MB) và truyền tải lên máy chủ Cloudinary CDN (<code class="text-blue-600 font-bold">dhefmthim</code>)...<br>Vui lòng không tắt hoặc tải lại trang!`;
-            overlay.classList.remove('hidden');
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const res = await fetch(`${API_BASE}/api/admin/lessons/${currentUploadLessonId}/video`, {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await res.json();
-                overlay.classList.add('hidden');
-                if (res.ok) {
-                    showToast('Tải lên và đồng bộ video Cloudinary CDN thành công!');
-                    loadCourseDetail();
-                } else {
-                    showToast('Lỗi upload: ' + (result.message || 'Không thể upload video'));
-                }
-            } catch (err) {
-                overlay.classList.add('hidden');
-                showToast('Lỗi mạng khi upload video: ' + err.message);
-            } finally {
-                currentUploadLessonId = null;
-            }
-        }
-
-        function promptDeleteVideo(lessonId, lessonTitle) {
-            openDeleteModal(
-                'Gỡ Bỏ Video Bài Giảng?',
-                `Video của bài học <strong>"${escapeHtml(lessonTitle)}"</strong> sẽ bị gỡ bỏ khỏi Cloudinary CDN. Trạng thái bài học sẽ trở về "Chưa upload video".`,
-                async () => {
-                    try {
-                        const res = await fetch(`${API_BASE}/api/admin/lessons/${lessonId}/video`, { method: 'DELETE' });
-                        if (res.ok) {
-                            showToast('Đã gỡ bỏ video khỏi bài học!');
-                            closeDeleteModal();
-                            loadCourseDetail();
-                        } else {
-                            const err = await res.json();
-                            showToast('Lỗi: ' + err.message);
-                        }
-                    } catch (e) {
-                        showToast('Lỗi mạng: ' + e.message);
-                    }
-                }
-            );
-        }
-
-        // =====================================================================
-        // VIDEO PLAYER MODAL (HTML5)
-        // =====================================================================
-        function playVideo(title, url) {
-            document.getElementById('videoModalTitle').textContent = title;
-            const player = document.getElementById('videoPlayer');
-            player.src = url;
-            document.getElementById('videoDownloadLink').href = url;
-            document.getElementById('videoModal').classList.remove('hidden');
-        }
-
-        function closeVideoModal() {
-            const player = document.getElementById('videoPlayer');
-            player.pause();
-            player.src = '';
-            document.getElementById('videoModal').classList.add('hidden');
-        }
-
-        // =====================================================================
-        // UNIVERSAL DELETE CONFIRMATION MODAL HELPER
-        // =====================================================================
-        function openDeleteModal(title, htmlMessage, onConfirm) {
-            document.getElementById('deleteModalTitle').textContent = title;
-            document.getElementById('deleteModalMessage').innerHTML = htmlMessage;
-            deleteActionCallback = onConfirm;
-            document.getElementById('confirmDeleteBtn').onclick = () => {
-                if (typeof deleteActionCallback === 'function') deleteActionCallback();
-            };
-            document.getElementById('deleteModal').classList.remove('hidden');
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
-            deleteActionCallback = null;
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toastNotification');
-            const m = document.getElementById('toastMessage');
-            m.textContent = msg;
-            t.classList.remove('hidden');
-            setTimeout(() => t.classList.add('hidden'), 3500);
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-        }
-
-        function escapeJs(str) {
-            if (!str) return '';
-            return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
-        }
-    </script>
+  function escapeJs(str) {
+    if (!str) return '';
+    return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+</script>
+<script src="../assets/js/admin-sidebar.js"></script>
 </body>
 </html>

@@ -22,6 +22,8 @@
             }
         }
     </script>
+    <!-- SheetJS for Excel Import / Export -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
     </style>
@@ -106,15 +108,15 @@
             <!-- Student Management Section -->
             <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                 <!-- Section Header & Filter Toolbar -->
-                <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
+                <div class="p-5 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50">
                     <div>
                         <h2 class="text-base font-bold text-slate-800">Danh Sách Sinh Viên Thuộc Lớp</h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Quản lý thành viên học tập và trạng thái đăng ký nhận diện khuôn mặt eKYC</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Tài khoản đăng nhập là Email, mật khẩu ban đầu là Số điện thoại (ngày sinh dd/mm/yyyy)</p>
                     </div>
 
-                    <div class="flex items-center space-x-3">
+                    <div class="flex flex-wrap items-center gap-2.5">
                         <!-- Quick Search in Class -->
-                        <div class="relative w-64">
+                        <div class="relative w-52 sm:w-60">
                             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
@@ -122,12 +124,36 @@
                                 class="w-full bg-white border border-slate-200 text-xs rounded-xl pl-9 pr-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
                         </div>
 
-                        <!-- Add Student Button -->
-                        <button onclick="openAddStudentModal()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5 shrink-0">
+                        <!-- 1. Download Excel Template -->
+                        <button onclick="downloadStudentExcelTemplate()" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-sm transition flex items-center space-x-1.5" title="Tải mẫu file Excel để điền danh sách sinh viên">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            <span>Tải Mẫu Excel</span>
+                        </button>
+
+                        <!-- 2. Import Excel Button -->
+                        <button onclick="openExcelImportModal()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5" title="Nhập danh sách sinh viên hàng loạt từ file Excel">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <span>Nhập Excel Hàng Loạt</span>
+                        </button>
+
+                        <!-- 3. Export Class Roster Button -->
+                        <button onclick="exportClassStudentsExcel()" class="px-3.5 py-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold shadow-sm transition flex items-center space-x-1.5" title="Xuất danh sách sinh viên hiện tại của lớp ra Excel">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span>Xuất Excel Lớp</span>
+                        </button>
+
+                        <!-- 4. Add Student from Available List Button -->
+                        <button onclick="openAddStudentModal()" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5 shrink-0" title="Chọn từ danh sách sinh viên chưa phân lớp trong hệ thống">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <span>Thêm Sinh Viên Vào Lớp</span>
+                            <span>Chọn Sinh Viên Khả Dụng</span>
                         </button>
                     </div>
                 </div>
@@ -139,10 +165,10 @@
                             <tr>
                                 <th class="p-3.5 pl-6 whitespace-nowrap">MSSV</th>
                                 <th class="p-3.5 whitespace-nowrap">Họ Và Tên</th>
-                                <th class="p-3.5 whitespace-nowrap">Email Liên Hệ</th>
-                                <th class="p-3.5 whitespace-nowrap">Số Điện Thoại</th>
-                                <th class="p-3.5 whitespace-nowrap">Trạng Thái Face eKYC</th>
-                                <th class="p-3.5 whitespace-nowrap">Tình Trạng</th>
+                                <th class="p-3.5 whitespace-nowrap">Tài Khoản (Email)</th>
+                                <th class="p-3.5 whitespace-nowrap">Mật Khẩu (SĐT)</th>
+                                <th class="p-3.5 whitespace-nowrap">Ngày Sinh</th>
+                                <th class="p-3.5 whitespace-nowrap">eKYC Face AI</th>
                                 <th class="p-3.5 pr-6 text-right whitespace-nowrap">Hành Động</th>
                             </tr>
                         </thead>
@@ -163,7 +189,7 @@
                 <!-- Footer Summary -->
                 <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs text-slate-500">
                     <div>
-                        Hiển thị <span id="filteredStudentCount" class="font-bold text-slate-800">0</span> sinh viên
+                        Hiển thị <span id="filteredStudentCount" class="font-bold text-slate-800">0</span> sinh viên trong lớp
                     </div>
                 </div>
             </div>
@@ -171,14 +197,14 @@
         </main>
     </div>
 
-    <!-- MODAL: ADD STUDENT TO CLASS -->
+    <!-- MODAL 1: ADD STUDENT FROM SYSTEM TO CLASS -->
     <div id="addStudentModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             <!-- Modal Header -->
             <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div>
-                    <h3 class="text-base font-bold text-slate-800">Thêm Sinh Viên Vào Lớp Học</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Chọn sinh viên từ danh sách chưa được phân vào lớp này</p>
+                    <h3 class="text-base font-bold text-slate-800">Chọn Sinh Viên Sẵn Có Vào Lớp</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Chọn sinh viên từ danh sách tài khoản đã có trong hệ thống</p>
                 </div>
                 <button onclick="closeAddStudentModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,6 +249,96 @@
         </div>
     </div>
 
+    <!-- MODAL 2: IMPORT EXCEL TO CLASS -->
+    <div id="excelImportModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800">Nhập Danh Sách Sinh Viên Từ Excel Vào Lớp</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Tài khoản là Email, mật khẩu ban đầu là Số điện thoại (ngày sinh định dạng dd/mm/yyyy)</p>
+                    </div>
+                </div>
+                <button onclick="closeExcelImportModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-5 space-y-4 overflow-y-auto flex-1">
+                <!-- Dropzone Area -->
+                <div id="dropzoneArea" onclick="document.getElementById('excelFileInput').click()"
+                    class="border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/30 rounded-2xl p-6 text-center cursor-pointer transition">
+                    <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelFileSelected(event)">
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-bold text-slate-700">Kéo thả file Excel vào đây hoặc <span class="text-emerald-600 underline">bấm để duyệt file</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Cột hỗ trợ: Mã Sinh Viên, Tên Sinh Viên, Số điện thoại, email, Ngày Sinh (dd/mm/yyyy), Giới tính, Quê Quán</p>
+                </div>
+
+                <!-- Preview Area -->
+                <div id="importPreviewArea" class="hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                                Xem trước dữ liệu: <span id="parsedRowCount" class="text-emerald-600 font-extrabold text-sm">0</span> sinh viên
+                            </span>
+                        </div>
+                        <button onclick="clearImportedFile()" class="text-xs text-red-500 hover:underline font-medium">Chọn file khác</button>
+                    </div>
+
+                    <div class="max-h-64 overflow-y-auto border border-slate-200 rounded-xl">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 text-slate-700 uppercase text-[10px] font-bold sticky top-0">
+                                <tr>
+                                    <th class="p-2.5 pl-3">STT</th>
+                                    <th class="p-2.5">MSSV</th>
+                                    <th class="p-2.5">Họ Và Tên</th>
+                                    <th class="p-2.5">Tài Khoản (Email)</th>
+                                    <th class="p-2.5">Mật Khẩu (SĐT)</th>
+                                    <th class="p-2.5">Ngày Sinh (dd/mm/yyyy)</th>
+                                    <th class="p-2.5">Giới Tính</th>
+                                    <th class="p-2.5 pr-3">Quê Quán</th>
+                                </tr>
+                            </thead>
+                            <tbody id="importPreviewTableBody" class="divide-y divide-slate-100 bg-white">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+                <button onclick="downloadStudentExcelTemplate()" class="text-xs text-blue-600 hover:underline font-semibold flex items-center space-x-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span>Tải lại file Excel mẫu</span>
+                </button>
+                <div class="flex items-center space-x-3">
+                    <button onclick="closeExcelImportModal()" class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-white text-slate-700 text-xs font-semibold transition">
+                        Hủy
+                    </button>
+                    <button id="btnConfirmImport" onclick="confirmImportStudentsToClass()" disabled
+                        class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-xs font-bold shadow-sm transition flex items-center space-x-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span id="btnConfirmImportText">Xác nhận Thêm Vào Lớp</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="../assets/js/admin-components.js"></script>
     <script>
@@ -232,6 +348,7 @@
         let currentClass = null;
         let classStudents = [];
         let availableStudents = [];
+        let parsedStudentsList = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             if (!classId) {
@@ -295,6 +412,36 @@
             }
         }
 
+        function formatDisplayPhone(phone) {
+            if (!phone || phone === '--' || phone === '-') return '--';
+            let p = String(phone).trim().replace(/[^0-9]/g, '');
+            if (p.length === 9 && !p.startsWith('0')) {
+                p = '0' + p;
+            } else if (p.length === 11 && p.startsWith('84')) {
+                p = '0' + p.substring(2);
+            }
+            return p || '--';
+        }
+
+        function formatDisplayDate(dateStr) {
+            if (!dateStr || dateStr === '--') return '--';
+            dateStr = String(dateStr).trim();
+            // If already dd/mm/yyyy
+            if (dateStr.includes('/')) return dateStr;
+            // If yyyy-mm-dd
+            if (dateStr.includes('-')) {
+                const parts = dateStr.split('T')[0].split('-');
+                if (parts.length === 3) {
+                    if (parts[0].length === 4) {
+                        return `${parts[2].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[0]}`;
+                    } else if (parts[2].length === 4) {
+                        return `${parts[0].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[2]}`;
+                    }
+                }
+            }
+            return dateStr;
+        }
+
         function renderStudentsTable(students) {
             const tbody = document.getElementById('classStudentsTableBody');
             document.getElementById('filteredStudentCount').textContent = students.length;
@@ -309,7 +456,7 @@
                                 </svg>
                             </div>
                             <p class="font-bold text-slate-700 text-sm">Chưa có sinh viên nào trong lớp này</p>
-                            <p class="text-xs mt-1">Bấm nút "Thêm Sinh Viên Vào Lớp" phía trên để bổ sung sinh viên.</p>
+                            <p class="text-xs mt-1">Bấm nút "Tải Mẫu Excel" hoặc "Nhập Excel Hàng Loạt" phía trên để nạp sinh viên.</p>
                         </td>
                     </tr>
                 `;
@@ -319,6 +466,8 @@
             tbody.innerHTML = students.map(s => {
                 const initial = (s.fullName || s.studentCode || 'S').charAt(0).toUpperCase();
                 const hasFace = s.faceRegistered || s.hasFaceData;
+                const formattedDob = formatDisplayDate(s.dateOfBirth);
+                const formattedPhone = formatDisplayPhone(s.phoneNumber || s.phone);
 
                 return `
                     <tr class="hover:bg-slate-50/80 transition group">
@@ -337,31 +486,28 @@
                                 </span>
                             </div>
                         </td>
-                        <td class="p-3.5 whitespace-nowrap text-slate-600">
-                            ${escapeHtml(s.email || '--')}
+                        <td class="p-3.5 whitespace-nowrap">
+                            <div class="text-slate-800 font-medium">${escapeHtml(s.email || '--')}</div>
+                            <div class="text-[10px] text-blue-600 font-semibold">Tài khoản đăng nhập</div>
+                        </td>
+                        <td class="p-3.5 whitespace-nowrap font-mono">
+                            <div class="text-slate-700 font-medium">${escapeHtml(formattedPhone)}</div>
+                            <div class="text-[10px] text-slate-400">Mật khẩu ban đầu</div>
                         </td>
                         <td class="p-3.5 whitespace-nowrap font-mono text-slate-600">
-                            ${escapeHtml(s.phoneNumber || '--')}
+                            ${escapeHtml(formattedDob)}
                         </td>
                         <td class="p-3.5 whitespace-nowrap">
                             ${hasFace ? `
                                 <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                    <svg class="w-3 h-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span>Đã đăng ký eKYC</span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span>Đã nạp 512D</span>
                                 </span>
                             ` : `
-                                <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                    <span>Chưa đăng ký</span>
+                                <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-500">
+                                    <span>Chưa nạp</span>
                                 </span>
                             `}
-                        </td>
-                        <td class="p-3.5 whitespace-nowrap">
-                            <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-blue-700">
-                                Đang học
-                            </span>
                         </td>
                         <td class="p-3.5 pr-6 text-right whitespace-nowrap">
                             <button onclick="removeStudentFromClass(${s.id}, '${escapeHtml(s.fullName || s.studentCode)}')"
@@ -387,9 +533,280 @@
             const filtered = classStudents.filter(s => {
                 return (s.studentCode && s.studentCode.toLowerCase().includes(q)) ||
                        (s.fullName && s.fullName.toLowerCase().includes(q)) ||
-                       (s.email && s.email.toLowerCase().includes(q));
+                       (s.email && s.email.toLowerCase().includes(q)) ||
+                       (s.phone && s.phone.toLowerCase().includes(q)) ||
+                       (s.phoneNumber && s.phoneNumber.toLowerCase().includes(q));
             });
             renderStudentsTable(filtered);
+        }
+
+        // --- EXCEL TEMPLATE DOWNLOAD ---
+        function downloadStudentExcelTemplate() {
+            if (typeof XLSX === 'undefined') {
+                alert('Thư viện Excel đang tải, vui lòng thử lại sau giây lát!');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+            const data = [
+                ["Mã Sinh Viên", "Tên Sinh Viên", "Số điện thoại", "email", "Ngày Sinh", "Giới tính", "Quê Quán"],
+                ["SV230101", "Nguyễn Văn An", "0981234567", "nguyenvanan@student.edu.vn", "15/05/2005", "Nam", "Hà Nội"],
+                ["SV230102", "Trần Thị Bình", "0912345678", "tranthibinh@student.edu.vn", "20/10/2005", "Nữ", "Nam Định"],
+                ["SV230103", "Lê Hoàng Long", "0976543210", "lehoanglong@student.edu.vn", "01/01/2005", "Nam", "Đà Nẵng"]
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            // Đảm bảo định dạng cột Số điện thoại (cột C) là chuỗi Text để Excel luôn giữ số 0 đứng đầu
+            for (let r = 1; r < data.length; r++) {
+                const phoneCell = XLSX.utils.encode_cell({ r: r, c: 2 });
+                if (ws[phoneCell]) {
+                    ws[phoneCell].t = 's';
+                    ws[phoneCell].z = '@';
+                }
+            }
+
+            ws['!cols'] = [
+                { wch: 16 }, // Mã Sinh Viên
+                { wch: 24 }, // Tên Sinh Viên
+                { wch: 16 }, // Số điện thoại
+                { wch: 32 }, // email
+                { wch: 15 }, // Ngày Sinh
+                { wch: 12 }, // Giới tính
+                { wch: 20 }  // Quê Quán
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, "Danh_Sach_Sinh_Vien");
+            XLSX.writeFile(wb, "Mau_Nhap_Sinh_Vien.xlsx");
+        }
+
+        // --- EXPORT CLASS STUDENTS EXCEL ---
+        function exportClassStudentsExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert('Thư viện Excel đang nạp, vui lòng thử lại!');
+                return;
+            }
+            if (classStudents.length === 0) {
+                alert('Lớp học này hiện chưa có sinh viên nào để xuất Excel!');
+                return;
+            }
+
+            const className = currentClass?.className || currentClass?.classCode || 'LopHoc';
+            const rows = [
+                ["STT", "Mã Sinh Viên", "Tên Sinh Viên", "Tài Khoản Đăng Nhập (Email)", "Mật Khẩu Khởi Tạo (SĐT)", "Lớp Học", "Khoa Đào Tạo", "Ngày Sinh (dd/mm/yyyy)", "Giới Tính", "eKYC Face AI"]
+            ];
+
+            classStudents.forEach((s, idx) => {
+                rows.push([
+                    idx + 1,
+                    s.studentCode || '',
+                    s.fullName || '',
+                    s.email || '',
+                    formatDisplayPhone(s.phone || s.phoneNumber),
+                    currentClass?.className || '',
+                    currentClass?.facultyName || '',
+                    formatDisplayDate(s.dateOfBirth),
+                    s.gender === 'FEMALE' ? 'Nữ' : 'Nam',
+                    s.faceRegistered ? 'Đã nạp 512D' : 'Chưa đăng ký'
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+
+            // Giữ số 0 cho cột Mật khẩu SĐT khi xuất Excel
+            for (let r = 1; r < rows.length; r++) {
+                const pCell = XLSX.utils.encode_cell({ r: r, c: 4 });
+                if (ws[pCell]) {
+                    ws[pCell].t = 's';
+                    ws[pCell].z = '@';
+                }
+            }
+            ws['!cols'] = [
+                { wch: 6 },
+                { wch: 16 },
+                { wch: 25 },
+                { wch: 30 },
+                { wch: 16 },
+                { wch: 20 },
+                { wch: 25 },
+                { wch: 16 },
+                { wch: 12 },
+                { wch: 18 }
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, "DanhSachSinhVien");
+            XLSX.writeFile(wb, `Danh_Sach_${className}.xlsx`);
+        }
+
+        // --- MODAL: IMPORT EXCEL ---
+        function openExcelImportModal() {
+            document.getElementById('excelImportModal').classList.remove('hidden');
+            clearImportedFile();
+        }
+
+        function closeExcelImportModal() {
+            document.getElementById('excelImportModal').classList.add('hidden');
+            clearImportedFile();
+        }
+
+        function clearImportedFile() {
+            parsedStudentsList = [];
+            document.getElementById('excelFileInput').value = '';
+            document.getElementById('importPreviewArea').classList.add('hidden');
+            document.getElementById('dropzoneArea').classList.remove('hidden');
+            document.getElementById('btnConfirmImport').disabled = true;
+            document.getElementById('btnConfirmImportText').textContent = 'Xác nhận Thêm Vào Lớp';
+        }
+
+        function handleExcelFileSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                    function getRowVal(row, ...keys) {
+                        const rowKeys = Object.keys(row);
+                        for (const key of keys) {
+                            const cleanKey = key.trim().toLowerCase();
+                            for (const rk of rowKeys) {
+                                if (rk.trim().toLowerCase() === cleanKey) {
+                                    const val = row[rk];
+                                    if (val !== undefined && val !== null && String(val).trim() !== "") {
+                                        return val;
+                                    }
+                                }
+                            }
+                        }
+                        return "";
+                    }
+
+                    parsedStudentsList = jsonRows.map(row => {
+                        const mssv = String(getRowVal(row, "Mã Sinh Viên", "MSSV", "studentCode", "student_code") || "").trim();
+                        const name = String(getRowVal(row, "Tên Sinh Viên", "Họ Và Tên", "fullName", "name", "Họ và tên") || "").trim();
+                        
+                        // Chuẩn hóa Số điện thoại: tự động thêm số 0 nếu Excel bỏ mất
+                        let phoneRaw = String(getRowVal(row, "Số điện thoại", "Số Điện Thoại", "SĐT", "sdt", "phone", "phoneNumber") || "").trim();
+                        let phone = phoneRaw.replace(/[^0-9]/g, '');
+                        if (phone.length === 9 && !phone.startsWith('0')) {
+                            phone = '0' + phone;
+                        } else if (phone.length === 11 && phone.startsWith('84')) {
+                            phone = '0' + phone.substring(2);
+                        } else if (phone.length === 12 && phone.startsWith('+84')) {
+                            phone = '0' + phone.substring(3);
+                        }
+
+                        const email = String(getRowVal(row, "email", "Email", "EMAIL") || "").trim();
+                        
+                        // Xử lý Ngày sinh linh hoạt (Date object, serial number, chuỗi dd/mm/yyyy)
+                        let rawDob = getRowVal(row, "Ngày Sinh", "Ngày sinh", "NGÀY SINH", "ngay_sinh", "dob", "dateOfBirth", "Ngày sinh (dd/mm/yyyy)");
+                        let dob = "";
+                        if (rawDob) {
+                            if (rawDob instanceof Date) {
+                                const d = String(rawDob.getDate()).padStart(2, '0');
+                                const m = String(rawDob.getMonth() + 1).padStart(2, '0');
+                                const y = rawDob.getFullYear();
+                                dob = `${d}/${m}/${y}`;
+                            } else if (!isNaN(rawDob) && String(rawDob).trim() !== "" && Number(rawDob) > 1000) {
+                                try {
+                                    const dateObj = XLSX.SSF.parse_date_code(Number(rawDob));
+                                    if (dateObj) {
+                                        dob = `${String(dateObj.d).padStart(2, '0')}/${String(dateObj.m).padStart(2, '0')}/${dateObj.y}`;
+                                    }
+                                } catch (err) {
+                                    dob = String(rawDob).trim();
+                                }
+                            } else {
+                                dob = String(rawDob).trim();
+                            }
+                        }
+
+                        const gender = String(getRowVal(row, "Giới tính", "Giới Tính", "gender") || "Nam").trim();
+                        const hometown = String(getRowVal(row, "Quê Quán", "Quê quán", "hometown") || "").trim();
+
+                        return {
+                            studentCode: mssv,
+                            fullName: name,
+                            phone: phone,
+                            email: email,
+                            dateOfBirth: dob,
+                            gender: gender,
+                            hometown: hometown
+                        };
+                    }).filter(s => s.fullName || s.studentCode || s.email);
+
+                    if (parsedStudentsList.length === 0) {
+                        alert('Không tìm thấy dòng dữ liệu sinh viên nào trong file Excel!');
+                        clearImportedFile();
+                        return;
+                    }
+
+                    renderImportPreview(parsedStudentsList);
+                } catch (err) {
+                    console.error(err);
+                    alert('Lỗi đọc file Excel: ' + err.message);
+                    clearImportedFile();
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function renderImportPreview(students) {
+            document.getElementById('dropzoneArea').classList.add('hidden');
+            document.getElementById('importPreviewArea').classList.remove('hidden');
+            document.getElementById('parsedRowCount').textContent = students.length;
+            document.getElementById('btnConfirmImport').disabled = false;
+            document.getElementById('btnConfirmImportText').textContent = `Xác nhận Thêm (${students.length} sinh viên)`;
+
+            const tbody = document.getElementById('importPreviewTableBody');
+            tbody.innerHTML = students.map((s, idx) => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-2.5 pl-3 font-mono text-slate-400">${idx + 1}</td>
+                    <td class="p-2.5 font-mono font-bold text-blue-700">${escapeHtml(s.studentCode || '--')}</td>
+                    <td class="p-2.5 font-bold text-slate-800">${escapeHtml(s.fullName || 'Chưa có tên')}</td>
+                    <td class="p-2.5 text-slate-700">${escapeHtml(s.email || '--')}</td>
+                    <td class="p-2.5 font-mono text-slate-700">${escapeHtml(s.phone || '--')}</td>
+                    <td class="p-2.5 font-mono text-slate-600">${escapeHtml(s.dateOfBirth || '--')}</td>
+                    <td class="p-2.5">${escapeHtml(s.gender || 'Nam')}</td>
+                    <td class="p-2.5 pr-3 text-slate-500">${escapeHtml(s.hometown || '--')}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function confirmImportStudentsToClass() {
+            if (!parsedStudentsList || parsedStudentsList.length === 0) return;
+            const btn = document.getElementById('btnConfirmImport');
+            const btnText = document.getElementById('btnConfirmImportText');
+            btn.disabled = true;
+            btnText.textContent = 'Đang nhập danh sách...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/classes/${classId}/import-students`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(parsedStudentsList)
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    showToast(`Thành công: Đã nhập ${result.data?.success || parsedStudentsList.length} sinh viên vào lớp!`);
+                    closeExcelImportModal();
+                    await loadClassAndStudents();
+                } else {
+                    alert('Lỗi nhập dữ liệu: ' + (result.message || 'Không thể nhập'));
+                    btn.disabled = false;
+                    btnText.textContent = 'Xác nhận Thêm Vào Lớp';
+                }
+            } catch (err) {
+                alert('Lỗi kết nối máy chủ: ' + err.message);
+                btn.disabled = false;
+                btnText.textContent = 'Xác nhận Thêm Vào Lớp';
+            }
         }
 
         // --- MODAL: AVAILABLE STUDENTS ---
@@ -495,10 +912,8 @@
                 const result = await res.json();
                 if (res.ok) {
                     showToast('Đã thêm sinh viên vào lớp thành công!');
-                    // Remove from available list
                     availableStudents = availableStudents.filter(s => s.id !== studentId);
                     renderAvailableStudents(availableStudents);
-                    // Reload class students
                     await loadStudentsInClass();
                 } else {
                     alert('Lỗi: ' + (result.message || 'Không thể thêm sinh viên vào lớp'));
@@ -533,5 +948,6 @@
             }
         }
     </script>
+    <script src="../assets/js/admin-components.js"></script>
 </body>
 </html>

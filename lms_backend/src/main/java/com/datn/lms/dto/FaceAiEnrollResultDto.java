@@ -33,5 +33,8 @@ public class FaceAiEnrollResultDto {
     @JsonProperty("registered_angles")
     private List<String> registeredAngles;
 
+    @JsonProperty("encrypted_face_embed")
+    private String encryptedFaceEmbed;
+
     private List<String> reasons;
 }

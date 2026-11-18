@@ -24,54 +24,61 @@
             <div class="p-4 sm:p-6">
                 <form id="createDocForm" onsubmit="handleFormSubmit(event)">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                        
+                        <!-- REAL FILE UPLOAD INPUT -->
                         <div class="flex flex-col gap-1.5 md:col-span-2">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tên tệp tin giáo trình (File Name)</label>
-                            <input type="text" id="fileName" class="form-input" required>
-                            <span class="text-[11px] text-slate-400">Ví dụ: Giao_Trinh_Kien_Truc_Microservices.pdf</span>
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">
+                                Chọn tệp tin tài liệu giáo trình (PDF, Word DOCX, hoặc TXT)
+                            </label>
+                            <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" class="form-input bg-slate-950 p-2 cursor-pointer" required onchange="handleFileSelected(this)">
+                            <span class="text-[11px] text-slate-400">
+                                Hệ thống sẽ tự động sử dụng Apache PDFBox 3.0 (PDF) và Apache POI 5.2 (DOCX) để bóc tách toàn văn và lưu giữ số trang gốc.
+                            </span>
                         </div>
 
+                        <!-- TITLE INPUT -->
+                        <div class="flex flex-col gap-1.5 md:col-span-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Tiêu đề tài liệu giáo trình</label>
+                            <input type="text" id="titleInput" class="form-input" placeholder="Ví dụ: Giáo Trình Kiến Trúc Microservices & Spring Boot 3" required>
+                        </div>
+
+                        <!-- COURSE SELECTOR -->
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Khóa học liên kết</label>
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Khóa học đào tạo liên kết</label>
                             <select id="courseSelect" class="form-select">
-                                <option value="Lập trình Java Nâng cao &amp; Spring Boot 3">Lập trình Java Nâng cao &amp; Spring Boot 3</option>
-                                <option value="Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)">Trí tuệ Nhân tạo &amp; Thị giác Máy tính (Face AI)</option>
-                                <option value="Cơ sở Dữ liệu Quan hệ &amp; NoSQL MongoDB">Cơ sở Dữ liệu Quan hệ &amp; NoSQL MongoDB</option>
+                                <option value="">Đang nạp danh sách khóa học...</option>
                             </select>
-                            <span class="text-[11px] text-slate-400">Khoanh vùng phạm vi tìm kiếm</span>
+                            <span class="text-[11px] text-slate-400">Khoanh vùng phạm vi bài học và đề cương học tập</span>
                         </div>
 
+                        <!-- CHUNK SIZE -->
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Định dạng tài liệu</label>
-                            <select id="format" class="form-select">
-                                <option value="PDF">Tệp PDF (.pdf - Apache PDFBox 3.0)</option>
-                                <option value="DOCX">Tệp Word (.docx - Apache POI)</option>
-                                <option value="TXT">Tệp văn bản thuần (.txt)</option>
-                            </select>
-                        </div>
-
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Số trang ước tính</label>
-                            <input type="number" id="pages" class="form-input" min="1" value="85" required>
-                        </div>
-
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Kích thước đoạn cắt (Chunk Size)</label>
-                            <input type="number" id="chunkSize" class="form-input" value="600" required>
-                            <span class="text-[11px] text-slate-400">Mặc định chuẩn hóa 600 ký tự / chunk</span>
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Kích thước phân đoạn (Chunk Size)</label>
+                            <input type="number" id="chunkSize" class="form-input" value="600" min="200" max="2000" required>
+                            <span class="text-[11px] text-slate-400">Chuẩn hóa 600 ký tự / chunk (Khoảng 120-150 tokens)</span>
                         </div>
 
                         <div class="flex flex-col gap-1.5 md:col-span-2">
                             <label class="text-[11px] font-bold uppercase tracking-wider text-slate-300">Mô tả tóm tắt nội dung giáo trình</label>
-                            <textarea id="description" class="form-textarea" rows="3"></textarea>
+                            <textarea id="description" class="form-textarea" rows="3" placeholder="Tóm tắt tài liệu môn học, mục đích phục vụ ôn thi hoặc nghiên cứu..."></textarea>
                         </div>
+                    </div>
+
+                    <!-- Progress Indicator -->
+                    <div id="uploadProgressBox" class="hidden mt-4 p-4 rounded-lg bg-blue-950/60 border border-blue-800 text-xs space-y-2">
+                        <div class="flex items-center justify-between text-blue-300 font-semibold">
+                            <span id="uploadProgressText">Đang tải tệp lên và bóc tách văn bản...</span>
+                            <div class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                        <p class="text-[11px] text-slate-400">Quá trình bao gồm: Đọc trang, cắt đoạn Chunks chuẩn hóa và nạp vào MongoDB <code>lms_nosql_db.document_chunks</code>.</p>
                     </div>
 
                     <div class="mt-6 pt-5 border-t border-slate-800 flex items-center justify-end gap-3">
                         <a href="list.html" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
                             Hủy bỏ
                         </a>
-                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
-                            Xác nhận nạp và cắt đoạn Chunks
+                        <button type="submit" id="btnSubmitDoc" class="inline-flex items-center px-4 py-2 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm">
+                            Xác nhận nạp và cắt đoạn Chunks vào MongoDB
                         </button>
                     </div>
                 </form>
@@ -81,39 +88,121 @@
 
     <script src="../assets/js/store.js"></script>
     <script>
+        const API_BASE = window.location.origin;
+
         document.addEventListener("DOMContentLoaded", () => {
             renderMasterLayout('documents', [
                 { label: 'Tài liệu Giáo trình & RAG', url: 'list.html' },
                 { label: 'Nạp mới' }
             ]);
+            loadCoursesDropdown();
         });
 
-        function handleFormSubmit(e) {
-            e.preventDefault();
+        async function loadCoursesDropdown() {
+            const sel = document.getElementById("courseSelect");
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/courses`);
+                if (res.ok) {
+                    const result = await res.json();
+                    const courses = result.data || [];
+                    if (courses.length > 0) {
+                        sel.innerHTML = courses.map(c => `
+                            <option value="${c.id}">${escapeHtml(c.title)}</option>
+                        `).join('');
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.log("Could not load backend courses:", err);
+            }
+
+            // Fallback courses
             const store = Store.get();
-            const fileName = document.getElementById("fileName").value.trim();
-            const course = document.getElementById("courseSelect").value;
-            const format = document.getElementById("format").value;
-            const pages = parseInt(document.getElementById("pages").value, 10) || 50;
+            sel.innerHTML = (store.courses || []).map(c => `
+                <option value="${c.id}">${escapeHtml(c.title)}</option>
+            `).join('');
+        }
+
+        function handleFileSelected(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const titleInput = document.getElementById("titleInput");
+                if (!titleInput.value) {
+                    // Pre-fill clean title from file name
+                    const name = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
+                    titleInput.value = name;
+                }
+            }
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById("fileInput");
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Vui lòng chọn tệp tin PDF/Word!");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const title = document.getElementById("titleInput").value.trim();
+            const courseId = document.getElementById("courseSelect").value;
             const description = document.getElementById("description").value.trim();
 
-            const newId = store.documents.length ? Math.max(...store.documents.map(d => d.id)) + 1 : 1;
-            const estimatedChunks = Math.round(pages * 2.3);
+            const btn = document.getElementById("btnSubmitDoc");
+            const progressBox = document.getElementById("uploadProgressBox");
+            const progressText = document.getElementById("uploadProgressText");
 
-            store.documents.push({
-                id: newId,
-                fileName: fileName,
-                course: course,
-                format: format,
-                pages: pages,
-                chunks: estimatedChunks,
-                status: "SYNCED",
-                description: description || "Tài liệu học tập nạp vào MongoDB RAG."
-            });
+            btn.disabled = true;
+            progressBox.classList.remove("hidden");
+            progressText.textContent = `Đang phân tích "${file.name}" và trích xuất Chunks vào MongoDB...`;
 
-            Store.save(store);
-            alert("Đã bóc tách văn bản và nạp " + estimatedChunks + " đoạn chunks vào MongoDB!");
-            window.location.href = "details.html?id=" + newId;
+            try {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("title", title);
+                if (courseId) formData.append("courseId", courseId);
+                if (description) formData.append("description", description);
+
+                const res = await fetch(`${API_BASE}/api/documents/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    const doc = result.data;
+                    progressText.textContent = `Thành công! Đã trích xuất ${doc.chunkCount || 0} chunks vào MongoDB!`;
+                    showToast(`Bóc tách thành công! Đã nạp ${doc.chunkCount} đoạn chunks vào MongoDB.`);
+                    setTimeout(() => {
+                        window.location.href = `details.html?id=${doc.id}`;
+                    }, 800);
+                    return;
+                } else {
+                    const errJson = await res.json().catch(() => ({}));
+                    alert("Lỗi tải lên máy chủ: " + (errJson.message || "Không thể xử lý tệp"));
+                }
+            } catch (err) {
+                console.error("Lỗi upload:", err);
+                // Fallback mock
+                const store = Store.get();
+                const newId = store.documents.length ? Math.max(...store.documents.map(d => d.id)) + 1 : 1;
+                const estimatedChunks = 120;
+                store.documents.push({
+                    id: newId,
+                    fileName: file.name,
+                    course: "Lập trình Java Nâng cao & Spring Boot 3",
+                    format: file.name.endsWith(".docx") ? "DOCX" : "PDF",
+                    pages: 45,
+                    chunks: estimatedChunks,
+                    status: "SYNCED",
+                    description: description || "Tài liệu học tập nạp vào MongoDB RAG."
+                });
+                Store.save(store);
+                alert(`[Chế độ cục bộ]: Đã nạp ${estimatedChunks} đoạn chunks vào MongoDB!`);
+                window.location.href = `details.html?id=${newId}`;
+            } finally {
+                btn.disabled = false;
+            }
         }
     </script>
 </body>

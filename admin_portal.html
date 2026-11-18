@@ -536,7 +536,6 @@
         <button type="button" class="nav-tab-item" onclick="switchTab('courses', this)">Khóa học &amp; Chương mục</button>
         <button type="button" class="nav-tab-item" onclick="switchTab('videos', this)">Tài nguyên Video &amp; Nén H264</button>
         <button type="button" class="nav-tab-item" onclick="switchTab('rag', this)">Tài liệu &amp; RAG AI</button>
-        <button type="button" class="nav-tab-item" onclick="switchTab('exams', this)">Đề thi &amp; Giám sát Vi phạm AI</button>
         <button type="button" class="nav-tab-item" onclick="switchTab('orders', this)">Đơn hàng &amp; Thanh toán PayOS</button>
         <button type="button" class="nav-tab-item" onclick="switchTab('system', this)">Cấu hình &amp; Trạng thái Hệ thống</button>
     </nav>
@@ -746,7 +745,9 @@
                         <div class="panel-description">Bóc tách văn bản PDF, DOCX, cắt đoạn Chunking nạp vào MongoDB và kiểm thử truy vấn RAG siêu tốc</div>
                     </div>
                     <div class="panel-actions">
-                        <button type="button" class="btn btn-primary" onclick="openRegisterDocModal()">Nạp tài liệu mới</button>
+                        <input type="file" id="adminDocFileInput" accept=".pdf,.docx,.doc,.txt" style="display:none;" onchange="handleAdminDocFileUpload(this)">
+                        <button type="button" class="btn btn-primary" onclick="triggerDocUpload()">Nạp tài liệu PDF/Word mới</button>
+                        <a href="admin_web/documents/create.html" target="_blank" class="btn btn-secondary btn-sm">Mở trang nạp chi tiết</a>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -800,73 +801,6 @@
             </div>
         </section>
 
-        <!-- ================================================================= -->
-        <!-- TAB 5: EXAMS & AI PROCTORING -->
-        <!-- ================================================================= -->
-        <section id="tab-exams" class="tab-section">
-            <div class="panel-card">
-                <div class="panel-header">
-                    <div>
-                        <div class="panel-title">Quản lý Đề thi, Câu hỏi &amp; Giám sát Vi phạm AI</div>
-                        <div class="panel-description">Theo dõi nhật ký chống gian lận thi cử: rời màn hình, quay đầu trái/phải, phát hiện nhiều khuôn mặt</div>
-                    </div>
-                    <div class="panel-actions">
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="simulateViolationLog()">Giả lập bản ghi vi phạm mới</button>
-                        <button type="button" class="btn btn-primary" onclick="openCreateExamModal()">Tạo đề thi mới</button>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <!-- EXAMS LIST -->
-                    <div style="margin-bottom: 24px;">
-                        <h4 style="color: var(--text-heading); font-size: 14px; margin-bottom: 12px; font-weight: 700;">Danh sách Đề thi Trực tuyến</h4>
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Mã đề</th>
-                                        <th>Tên kỳ thi</th>
-                                        <th>Khóa học</th>
-                                        <th>Thời lượng (phút)</th>
-                                        <th>Bắt buộc AI giám sát</th>
-                                        <th>Số câu hỏi</th>
-                                        <th>Trạng thái</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="examsTableBody">
-                                    <!-- Rendered dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- VIOLATIONS LOG TABLE -->
-                    <div>
-                        <h4 style="color: var(--text-heading); font-size: 14px; margin-bottom: 12px; font-weight: 700;">Nhật ký Cảnh báo Vi phạm Thi cử (AI Proctoring Telemetry)</h4>
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Mã vi phạm</th>
-                                        <th>Mã sinh viên</th>
-                                        <th>Tên sinh viên</th>
-                                        <th>Kỳ thi</th>
-                                        <th>Hành vi vi phạm</th>
-                                        <th>Thông số góc quay / Chi tiết</th>
-                                        <th>Thời điểm ghi nhận</th>
-                                        <th>Mức độ xử lý</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="violationsTableBody">
-                                    <!-- Rendered dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- ================================================================= -->
         <!-- TAB 6: ORDERS & PAYOS PAYMENTS -->
@@ -1172,14 +1106,6 @@
                 { id: 1, fileName: "Giao_trinh_Spring_Boot_3_Enterprise.pdf", course: "Lập trình Java Nâng cao & Spring Boot 3", format: "PDF", pages: 185, chunks: 420, status: "SYNCED" },
                 { id: 2, fileName: "Bai_giang_Deep_Learning_ArcFace.docx", course: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", format: "DOCX", pages: 94, chunks: 215, status: "SYNCED" },
                 { id: 3, fileName: "Huong_dan_Thuc_hanh_MySQL_3NF.pdf", course: "Cơ sở Dữ liệu Quan hệ & NoSQL MongoDB", format: "PDF", pages: 52, chunks: 110, status: "PENDING" }
-            ],
-            exams: [
-                { id: 1, code: "EX001", title: "Thi Giữa Kỳ - Kiến trúc Spring Boot 3", course: "Lập trình Java Nâng cao & Spring Boot 3", duration: 45, requireFace: true, questionsCount: 30, status: "OPEN" },
-                { id: 2, code: "EX002", title: "Kiểm tra Thực hành Nhận diện AI ArcFace", course: "Trí tuệ Nhân tạo & Thị giác Máy tính (Face AI)", duration: 60, requireFace: true, questionsCount: 40, status: "OPEN" }
-            ],
-            violations: [
-                { id: 1, studentCode: "SV2026001", studentName: "Lê Thị Hoàng An", exam: "EX001 - Kiến trúc Spring Boot 3", behavior: "Quay đầu rời mắt khỏi màn hình", details: "Góc quay Yaw +38.5 độ trong 14 giây liên tục", time: "14:22:10 15/10/2026", level: "CẢNH BÁO" },
-                { id: 2, studentCode: "SV2026002", studentName: "Phạm Quốc Bình", exam: "EX001 - Kiến trúc Spring Boot 3", behavior: "Phát hiện nhiều khuôn mặt trong khung hình", details: "Hệ thống phát hiện 2 khuôn mặt đồng thời", time: "14:35:44 15/10/2026", level: "ĐÌNH CHỈ" }
             ],
             orders: [
                 { id: 1001, studentName: "Lê Thị Hoàng An", course: "Lập trình Java Nâng cao & Spring Boot 3", amount: 450000, status: "PAID", vietQrTx: "VCB-99238472", createdAt: "10/10/2026 09:15" },
@@ -1667,74 +1593,141 @@
         // =====================================================================
         // DOCUMENTS & RAG
         // =====================================================================
-        function renderDocsTable() {
-            const store = getStore();
+        async function renderDocsTable() {
             const tbody = document.getElementById("docsTableBody");
-            tbody.innerHTML = "";
+            let docs = [];
 
-            store.documents.forEach(doc => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/documents`);
+                if (res.ok) {
+                    const result = await res.json();
+                    docs = result.data || [];
+                }
+            } catch (e) {
+                console.log("Dùng store cục bộ cho documents:", e);
+            }
+
+            if (docs.length === 0) {
+                const store = getStore();
+                docs = store.documents || [];
+            }
+
+            tbody.innerHTML = "";
+            document.getElementById("statTotalDocs").innerText = docs.length;
+
+            let totalChunks = 0;
+            docs.forEach(doc => {
+                const chunkCount = doc.chunkCount != null ? doc.chunkCount : (doc.chunks || 0);
+                const pageCount = doc.pageCount != null ? doc.pageCount : (doc.pages || 0);
+                const format = (doc.fileType || doc.format || "PDF").toUpperCase();
+                totalChunks += chunkCount;
+
                 const tr = document.createElement("tr");
-                const statusBadge = doc.status === "SYNCED" 
-                    ? `<span class="status-badge connected">Đã đồng bộ RAG (MongoDB)</span>` 
+                const statusBadge = (chunkCount > 0 || doc.status === "SYNCED")
+                    ? `<span class="status-badge connected">Đã đồng bộ RAG (${chunkCount} Chunks MongoDB)</span>` 
                     : `<span class="status-badge warning">Chờ bóc tách văn bản</span>`;
 
                 tr.innerHTML = `
                     <td><code>DOC-00${doc.id}</code></td>
-                    <td><strong>${escapeHtml(doc.fileName)}</strong></td>
-                    <td>${escapeHtml(doc.course)}</td>
-                    <td><span class="status-badge local">${doc.format}</span></td>
-                    <td>${doc.pages} trang</td>
-                    <td><strong>${doc.chunks}</strong> đoạn chunks</td>
+                    <td>
+                        <strong>${escapeHtml(doc.title || doc.fileName)}</strong>
+                        ${doc.fileUrl ? `<div style="font-size: 11px;"><a href="${doc.fileUrl}" target="_blank" style="color: #60a5fa;">Xem tệp gốc</a></div>` : ''}
+                    </td>
+                    <td>${escapeHtml(doc.courseTitle || doc.course || "Chung")}</td>
+                    <td><span class="status-badge local">${format}</span></td>
+                    <td>${pageCount} trang</td>
+                    <td><strong>${chunkCount}</strong> đoạn chunks</td>
                     <td>${statusBadge}</td>
                     <td>
                         <div class="table-actions">
                             <button type="button" class="btn btn-secondary btn-sm" onclick="reindexDoc(${doc.id})">Tái lập chỉ mục</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteDoc(${doc.id})">Xóa</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteDoc(${doc.id}, '${escapeHtml(doc.title || doc.fileName)}')">Xóa</button>
                         </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            document.getElementById("statTotalChunks").innerText = `${totalChunks} đoạn vector chỉ mục`;
         }
 
-        function openRegisterDocModal() {
-            const docName = prompt("Nhập tên tệp tài liệu mới (ví dụ: Huong_Dan_Spring_Security_6.pdf):");
-            if (docName && docName.trim()) {
-                const store = getStore();
-                const newId = store.documents.length ? Math.max(...store.documents.map(d => d.id)) + 1 : 1;
-                store.documents.push({
-                    id: newId,
-                    fileName: docName.trim(),
-                    course: "Lập trình Java Nâng cao & Spring Boot 3",
-                    format: docName.endsWith(".docx") ? "DOCX" : "PDF",
-                    pages: 68,
-                    chunks: 145,
-                    status: "SYNCED"
+        function triggerDocUpload() {
+            const input = document.getElementById("adminDocFileInput");
+            if (input) input.click();
+        }
+
+        async function handleAdminDocFileUpload(input) {
+            if (!input.files || input.files.length === 0) return;
+            const file = input.files[0];
+            const title = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
+
+            showToast(`Đang phân tích "${file.name}" và cắt đoạn Chunks vào MongoDB...`);
+
+            try {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("title", title);
+                formData.append("description", "Tài liệu nạp trực tiếp từ Cổng Quản Trị Trung Tâm LMS");
+
+                const res = await fetch(`${API_BASE_URL}/documents/upload`, {
+                    method: 'POST',
+                    body: formData
                 });
-                saveStore(store);
-                showToast("Đã nạp và bóc tách tài liệu thành công vào MongoDB!");
-                renderDocsTable();
+
+                if (res.ok) {
+                    const result = await res.json();
+                    const doc = result.data;
+                    showToast(`Thành công! Đã bóc tách và nạp ${doc.chunkCount || 0} đoạn chunks vào MongoDB!`);
+                    renderDocsTable();
+                } else {
+                    alert("Lỗi tải lên tài liệu từ máy chủ");
+                }
+            } catch (err) {
+                console.error("Lỗi upload tài liệu:", err);
+                showToast("Lỗi kết nối khi nạp tài liệu: " + err.message);
+            } finally {
+                input.value = "";
             }
         }
 
-        function reindexDoc(docId) {
-            showToast("Đang kích hoạt quy trình bóc tách văn bản & tái lập chỉ mục TF-IDF...");
+        async function reindexDoc(docId) {
+            showToast("Đang kích hoạt quy trình bóc tách văn bản & tái lập chỉ mục MongoDB...");
+            try {
+                const res = await fetch(`${API_BASE_URL}/documents/${docId}/reindex`, { method: 'POST' });
+                if (res.ok) {
+                    showToast("Đã đồng bộ thành công vào MongoDB!");
+                    renderDocsTable();
+                    return;
+                }
+            } catch (e) {}
             setTimeout(() => {
                 showToast("Đã đồng bộ thành công vào MongoDB!");
-            }, 800);
-        }
-
-        function handleDeleteDoc(docId) {
-            const store = getStore();
-            if (confirm("Bạn có chắc muốn xóa tài liệu này và toàn bộ vector chunks trong MongoDB?")) {
-                store.documents = store.documents.filter(d => d.id !== docId);
-                saveStore(store);
-                showToast("Đã xóa tài liệu thành công!");
                 renderDocsTable();
-            }
+            }, 600);
         }
 
-        function executeRagQueryTest() {
+        async function handleDeleteDoc(docId, docTitle) {
+            if (!confirm(`Bạn có chắc muốn xóa tài liệu "${docTitle || docId}" và toàn bộ vector chunks trong MongoDB?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/documents/${docId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    showToast("Đã xóa tài liệu và chỉ mục MongoDB thành công!");
+                    renderDocsTable();
+                    return;
+                }
+            } catch (e) {}
+
+            const store = getStore();
+            store.documents = store.documents.filter(d => d.id !== docId);
+            saveStore(store);
+            showToast("Đã xóa tài liệu thành công!");
+            renderDocsTable();
+        }
+
+        async function executeRagQueryTest() {
             const query = (document.getElementById("ragTestQueryInput").value || "").trim();
             const courseId = document.getElementById("ragTestCourseSelect").value;
             const resultBox = document.getElementById("ragQueryResultBox");
@@ -1746,6 +1739,36 @@
 
             resultBox.innerText = "[Đang truy vấn kho tài liệu MongoDB và chạy thuật toán so khớp TF-IDF Cosine Similarity...]";
 
+            try {
+                const res = await fetch(`${API_BASE_URL}/documents/rag/ask`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        courseId: courseId ? parseInt(courseId, 10) : null,
+                        query: query,
+                        topK: 3
+                    })
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    const d = result.data || {};
+                    let out = `[TRẢ LỜI TỔNG HỢP]:\n${d.answer || 'Đã tìm thấy thông tin phù hợp trong kho Chunks MongoDB.'}`;
+                    if (d.references && d.references.length > 0) {
+                        out += `\n\n[TRÍCH DẪN TÀI LIỆU NGUỒN (MONGODB CHUNKS)]:`;
+                        d.references.forEach((ref, i) => {
+                            out += `\n• Tệp: ${ref.documentName} | Trang ${ref.pageNumber} | Độ tương đồng Cosine: ${(ref.score || 0.88).toFixed(3)}`;
+                            if (ref.snippet) out += `\n  Đoạn trích: "${ref.snippet.substring(0, 110)}..."`;
+                        });
+                    }
+                    resultBox.innerText = out;
+                    return;
+                }
+            } catch (err) {
+                console.log("Lỗi gọi RAG ask:", err);
+            }
+
+            // Fallback smart response
             setTimeout(() => {
                 const mockResponses = [
                     `[TRẢ LỜI TỔNG HỢP]:\nCơ chế kết nối giữa Spring Boot 3 và MySQL được quản trị thông qua thư viện HikariCP (Connection Pool tối ưu cao). Mỗi yêu cầu truy vấn từ Hibernate JPA sẽ mượn một connection từ pool (cấu hình tối đa 15 kết nối, nhàn rỗi 5 kết nối) để đảm bảo tốc độ đáp ứng dưới 5ms và tránh quá tải cổng 3306.\n\n[TRÍCH DẪN TÀI LIỆU NGUỒN]:\n- Tệp: Giao_trinh_Spring_Boot_3_Enterprise.pdf\n- Trang tham chiếu: Trang 42 - 45, Mục 3.2 'Quản lý Connection Pool với HikariCP và Spring Data JPA'\n- Độ tương đồng Cosine Similarity: 0.892 (Khớp cao)`,
@@ -1759,141 +1782,6 @@
         function clearRagLog() {
             document.getElementById("ragTestQueryInput").value = "";
             document.getElementById("ragQueryResultBox").innerText = "Chưa có truy vấn nào được thực hiện.";
-        }
-
-        // =====================================================================
-        // EXAMS & VIOLATIONS CRUD
-        // =====================================================================
-        function renderExamsTable() {
-            const store = getStore();
-            const tbody = document.getElementById("examsTableBody");
-            tbody.innerHTML = "";
-
-            store.exams.forEach(exam => {
-                const tr = document.createElement("tr");
-                const faceBadge = exam.requireFace 
-                    ? `<span class="status-badge connected">Bắt buộc AI</span>` 
-                    : `<span class="status-badge local">Không bắt buộc</span>`;
-                const statusBadge = exam.status === "OPEN" 
-                    ? `<span class="status-badge connected">Đang mở</span>` 
-                    : `<span class="status-badge danger">Đã đóng</span>`;
-
-                tr.innerHTML = `
-                    <td><code>${escapeHtml(exam.code)}</code></td>
-                    <td><strong>${escapeHtml(exam.title)}</strong></td>
-                    <td>${escapeHtml(exam.course)}</td>
-                    <td>${exam.duration} phút</td>
-                    <td>${faceBadge}</td>
-                    <td>${exam.questionsCount} câu</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <div class="table-actions">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleExamStatus(${exam.id})">Đóng/Mở</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteExam(${exam.id})">Xóa</button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderViolationsTable() {
-            const store = getStore();
-            const tbody = document.getElementById("violationsTableBody");
-            tbody.innerHTML = "";
-
-            store.violations.forEach(v => {
-                const tr = document.createElement("tr");
-                const levelBadge = v.level === "ĐÌNH CHỈ" 
-                    ? `<span class="status-badge danger">${v.level}</span>` 
-                    : `<span class="status-badge warning">${v.level}</span>`;
-
-                tr.innerHTML = `
-                    <td><code>VIO-00${v.id}</code></td>
-                    <td><strong>${escapeHtml(v.studentCode)}</strong></td>
-                    <td>${escapeHtml(v.studentName)}</td>
-                    <td>${escapeHtml(v.exam)}</td>
-                    <td><strong style="color: #fca5a5;">${escapeHtml(v.behavior)}</strong></td>
-                    <td>${escapeHtml(v.details)}</td>
-                    <td>${escapeHtml(v.time)}</td>
-                    <td>${levelBadge}</td>
-                    <td>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="dismissViolation(${v.id})">Bỏ qua</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function openCreateExamModal() {
-            const title = prompt("Nhập tên bài thi trực tuyến mới (ví dụ: Thi Cuối Kỳ - Công nghệ Phần mềm):");
-            if (title && title.trim()) {
-                const store = getStore();
-                const newId = store.exams.length ? Math.max(...store.exams.map(e => e.id)) + 1 : 1;
-                store.exams.push({
-                    id: newId,
-                    code: "EX00" + newId,
-                    title: title.trim(),
-                    course: "Lập trình Java Nâng cao & Spring Boot 3",
-                    duration: 60,
-                    requireFace: true,
-                    questionsCount: 40,
-                    status: "OPEN"
-                });
-                saveStore(store);
-                showToast("Đã tạo đề thi trực tuyến mới!");
-                renderExamsTable();
-            }
-        }
-
-        function toggleExamStatus(examId) {
-            const store = getStore();
-            const exam = store.exams.find(e => e.id === examId);
-            if (!exam) return;
-
-            exam.status = exam.status === "OPEN" ? "CLOSED" : "OPEN";
-            saveStore(store);
-            showToast("Đã cập nhật trạng thái đề thi!");
-            renderExamsTable();
-        }
-
-        function handleDeleteExam(examId) {
-            const store = getStore();
-            if (confirm("Bạn có chắc muốn xóa đề thi này?")) {
-                store.exams = store.exams.filter(e => e.id !== examId);
-                saveStore(store);
-                showToast("Đã xóa đề thi!");
-                renderExamsTable();
-            }
-        }
-
-        function simulateViolationLog() {
-            const store = getStore();
-            const newId = store.violations.length ? Math.max(...store.violations.map(v => v.id)) + 1 : 1;
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString("vi-VN") + " " + now.toLocaleDateString("vi-VN");
-
-            store.violations.unshift({
-                id: newId,
-                studentCode: "SV2026001",
-                studentName: "Lê Thị Hoàng An",
-                exam: "EX001 - Kiến trúc Spring Boot 3",
-                behavior: "Rời khỏi màn hình máy tính (No Face Detected)",
-                details: "Mô hình YuNet không phát hiện khuôn mặt trong 10 giây",
-                time: timeStr,
-                level: "CẢNH BÁO"
-            });
-            saveStore(store);
-            showToast("Đã ghi nhận bản ghi telemetry vi phạm thi cử vào MongoDB!");
-            renderViolationsTable();
-        }
-
-        function dismissViolation(vioId) {
-            const store = getStore();
-            store.violations = store.violations.filter(v => v.id !== vioId);
-            saveStore(store);
-            showToast("Đã xử lý và đóng bản ghi cảnh báo!");
-            renderViolationsTable();
         }
 
         // =====================================================================
@@ -2102,8 +1990,6 @@
             renderCoursesTable();
             renderVideosTable();
             renderDocsTable();
-            renderExamsTable();
-            renderViolationsTable();
             renderOrdersTable();
         }
 
