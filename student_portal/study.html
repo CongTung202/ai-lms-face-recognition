@@ -97,6 +97,33 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #ab2025; }
+        
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeInScale 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes pulseAmbient {
+            0%, 100% { opacity: 0.45; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.03); }
+        }
+        .ambient-glow {
+            animation: pulseAmbient 4s ease-in-out infinite;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .btn-gradient-primary {
+            background: linear-gradient(135deg, #00539F 0%, #0284c7 100%);
+        }
+        .btn-gradient-primary:hover {
+            background: linear-gradient(135deg, #003E7E 0%, #0369a1 100%);
+        }
+
         /* Cinema Mode */
         body.cinema-mode header { display: none; }
         body.cinema-mode #curriculumSidebar { display: none; }
@@ -109,29 +136,29 @@
     <!-- ========================================================================= -->
     <!-- 1. FIXED TOP NAVBAR -->
     <!-- ========================================================================= -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-surface-container-highest/30">
-        <div class="h-16 w-full px-gutter flex items-center justify-between gap-space-md max-w-[1720px] mx-auto">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl shadow-[0_2px_15px_rgba(0,0,0,0.04)] border-b border-slate-200/80 transition-all">
+        <div class="h-16 w-full px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-4 max-w-[1720px] mx-auto">
             
             <!-- Left: Brand Logo & Course Breadcrumb -->
-            <div class="flex items-center gap-space-md min-w-0 flex-1">
-                <a href="index.html" class="flex items-center gap-space-xs shrink-0 select-none group" title="Về trang chủ Cổng sinh viên">
-                    <img src="assets/images/logo-ntu.jpg" alt="Logo NTU" class="w-9 h-9 object-contain rounded-lg border border-slate-200 shadow-xs group-hover:scale-105 transition-transform" />
+            <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                <a href="index.html" class="flex items-center gap-2.5 shrink-0 select-none group" title="Về trang chủ Cổng sinh viên">
+                    <img src="assets/images/logo-ntu.jpg" alt="Logo NTU" class="w-9 h-9 object-contain rounded-xl border border-slate-200 shadow-sm group-hover:scale-105 transition-transform" />
                     <div class="flex flex-col leading-none">
-                        <span class="font-headline-sm text-[#00539F] tracking-tight font-extrabold text-[15px]">ĐH NGUYỄN TRÃI</span>
-                        <span class="font-label-sm text-slate-500 tracking-wider uppercase text-[10px] font-semibold">Smart LMS</span>
+                        <span class="font-headline-sm text-[#00539F] tracking-tight font-black text-[15px]">ĐH NGUYỄN TRÃI</span>
+                        <span class="text-slate-500 tracking-wider uppercase text-[9.5px] font-bold">Smart LMS • E-Learning</span>
                     </div>
                 </a>
 
-                <div class="hidden md:block w-px h-6 bg-surface-container-highest shrink-0"></div>
+                <div class="hidden md:block w-px h-6 bg-slate-200 shrink-0"></div>
 
-                <nav aria-label="Breadcrumb" class="hidden sm:flex items-center gap-space-xs min-w-0 text-on-surface-variant text-xs">
-                    <a class="hover:text-primary transition-colors shrink-0" href="index.html">Khóa học của tôi</a>
-                    <span class="material-symbols-outlined text-[16px] text-on-surface-variant shrink-0">chevron_right</span>
+                <nav aria-label="Breadcrumb" class="hidden sm:flex items-center gap-2 min-w-0 text-slate-600 text-xs">
+                    <a class="hover:text-[#00539F] transition-colors shrink-0 font-medium" href="index.html">Khóa học của tôi</a>
+                    <span class="material-symbols-outlined text-[16px] text-slate-400 shrink-0">chevron_right</span>
                     
-                    <!-- Course Selector Dropdown -->
-                    <div class="relative shrink-0 max-w-[280px] lg:max-w-md">
+                    <!-- Course Selector Dropdown with constrained max width -->
+                    <div class="relative shrink min-w-0 max-w-[190px] md:max-w-[260px] lg:max-w-xs">
                         <select id="courseHeaderSelector" onchange="switchCourseFromDropdown(this.value)"
-                                class="bg-surface-container-low hover:bg-surface-container border border-surface-container-highest/60 text-on-surface text-xs font-semibold rounded-lg px-2.5 py-1 pr-7 focus:outline-none focus:ring-1 focus:ring-primary truncate cursor-pointer transition">
+                                class="w-full bg-slate-100/90 hover:bg-slate-200/70 border border-slate-200 text-slate-800 text-xs font-bold rounded-xl px-3 py-1.5 pr-8 focus:outline-none focus:ring-2 focus:ring-[#00539F] truncate cursor-pointer transition shadow-2xs">
                             <option value="">Đang nạp môn học...</option>
                         </select>
                     </div>
@@ -139,48 +166,50 @@
             </div>
 
             <!-- Middle: Overall Course Progress Metric -->
-            <div class="hidden xl:flex items-center gap-space-sm bg-surface-container-low px-space-md py-1.5 rounded-full shrink-0 border border-surface-container-highest/40">
+            <div class="hidden xl:flex items-center gap-3 bg-slate-50/90 px-4 py-1.5 rounded-full shrink-0 border border-slate-200/80 shadow-2xs">
                 <div class="flex flex-col">
-                    <div class="flex items-center justify-between gap-space-md leading-none mb-1">
-                        <span class="font-label-sm text-on-surface-variant text-[11px]">Tiến độ môn học</span>
-                        <span class="font-label-sm font-bold text-primary text-[11px]" id="courseProgressPercentTop">0%</span>
+                    <div class="flex items-center justify-between gap-3 leading-none mb-1">
+                        <span class="text-[11px] font-semibold text-slate-500">Tiến độ môn học</span>
+                        <span class="font-bold text-[#00539F] text-[11px]" id="courseProgressPercentTop">0%</span>
                     </div>
-                    <div class="w-36 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-                        <div class="h-full bg-primary rounded-full transition-all duration-500" id="courseProgressBarTop" style="width: 0%"></div>
+                    <div class="w-36 h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-[#00539F] via-blue-500 to-sky-400 rounded-full transition-all duration-500" id="courseProgressBarTop" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Center-Right: Main Navigation Tabs -->
-            <nav class="flex items-center gap-space-xs shrink-0">
+            <nav class="flex items-center gap-1.5 shrink-0">
                 <button type="button" onclick="scrollToPlayerSection()"
-                   class="font-label-lg px-3 py-1.5 transition-colors hidden sm:inline-flex bg-primary-container text-on-primary-container rounded-lg font-semibold text-xs shadow-2xs">
+                   class="px-3.5 py-1.5 transition-all hidden sm:inline-flex bg-[#00539F] hover:bg-[#003E7E] text-white rounded-xl font-bold text-xs shadow-sm hover:shadow active:scale-95">
                     Bài giảng
                 </button>
                 <button type="button" onclick="switchMainTab('tab-documents')"
-                   class="font-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low px-3 py-1.5 rounded-lg transition-colors hidden md:inline-flex font-semibold text-xs">
+                   class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-xl transition-all hidden md:inline-flex font-bold text-xs">
                     Xem tài liệu
                 </button>
                 <button type="button" onclick="switchMainTab('tab-rag')"
-                   class="font-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low px-3 py-1.5 rounded-lg transition-colors hidden lg:inline-flex font-semibold text-xs">
-                    Hỏi RAG
+                   class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-xl transition-all hidden lg:inline-flex font-bold text-xs flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px] text-purple-600">psychology</span>
+                    <span>Hỏi RAG</span>
                 </button>
             </nav>
 
             <!-- Right: Notifications & Student Profile -->
-            <div class="flex items-center gap-space-sm shrink-0">
-                <button aria-label="Thông báo" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors relative">
+            <div class="flex items-center gap-3 shrink-0">
+                <button aria-label="Thông báo" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors relative border border-slate-200/60 shadow-2xs">
                     <span class="material-symbols-outlined text-[20px]">notifications</span>
-                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary"></span>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500"></span>
                 </button>
 
-                <div class="flex items-center gap-space-sm pl-space-xs">
+                <div class="flex items-center gap-2.5 pl-1">
                     <div class="hidden lg:flex flex-col text-right leading-tight">
-                        <span class="font-label-lg text-on-surface truncate max-w-[150px] font-bold text-xs" id="headerStudentName">Nguyễn Văn An</span>
-                        <span class="font-label-sm text-on-surface-variant text-[11px]" id="headerStudentCode">21DH112345</span>
+                        <span class="text-slate-800 truncate max-w-[140px] font-bold text-xs" id="headerStudentName">Lê Văn K</span>
+                        <span class="text-slate-400 text-[10.5px] font-semibold" id="headerStudentCode">SV262556 • CNTT</span>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm shrink-0 text-on-primary font-bold text-xs" id="headerAvatar">
-                        <span class="material-symbols-outlined text-[18px]">person</span>
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#00539F] to-sky-500 flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0 text-white font-black text-xs ring-2 ring-white" id="headerAvatar">
+                        <span class="material-symbols-outlined text-[19px]">person</span>
                     </div>
                 </div>
             </div>
@@ -209,7 +238,9 @@
                     <section id="mainStageCol" class="lg:col-span-8 flex flex-col gap-space-md min-w-0">
                         
                         <!-- VIDEO PLAYER CONTAINER (16:9 Aspect Ratio) -->
-                        <div id="playerContainer" class="relative w-full aspect-video bg-inverse-surface rounded-xl overflow-hidden shadow-md group select-none flex items-center justify-center">
+                        <div class="relative group/ambient">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/25 via-sky-500/15 to-indigo-600/25 rounded-3xl blur-xl opacity-60 group-hover/ambient:opacity-90 transition duration-700 -z-10 pointer-events-none ambient-glow"></div>
+                            <div id="playerContainer" class="relative w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 group select-none flex items-center justify-center">
                             
                             <!-- Real HTML5 Video Element -->
                             <video id="studyVideoPlayer" class="w-full h-full object-contain relative z-0" playsinline preload="metadata">
@@ -325,48 +356,50 @@
                             </div>
                         </div>
 
+                        </div>
+
                         <!-- BOTTOM ACTION TOOLBAR UNDER PLAYER -->
-                        <div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-wrap items-center justify-between gap-space-sm border border-surface-container-highest/30">
+                        <div class="w-full bg-white rounded-2xl p-4 shadow-sm flex flex-wrap items-center justify-between gap-3 border border-slate-200/80">
                             <!-- Prev / Next Navigation -->
-                            <div class="flex items-center gap-space-xs">
+                            <div class="flex items-center gap-2">
                                 <button type="button" onclick="handlePreviousLesson()" id="btnPrevLesson"
-                                        class="flex items-center gap-1 px-3 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                        class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                                     <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                                     <span class="hidden sm:inline">Bài trước</span>
                                 </button>
                                 <button type="button" onclick="handleNextLesson()" id="btnNextLesson"
-                                        class="flex items-center gap-1 px-3.5 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-xs font-semibold transition-all shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
+                                        class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#00539F] to-blue-600 hover:from-[#003E7E] hover:to-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
                                     <span>Bài tiếp theo</span>
                                     <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                                 </button>
                             </div>
 
                             <!-- Middle CTA: Ask AI RAG Shortcut -->
-                            <div class="flex items-center gap-space-xs">
+                            <div class="flex items-center gap-2">
                                 <button type="button" onclick="switchMainTab('tab-rag')"
-                                        class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-secondary-fixed/50 hover:bg-secondary-fixed text-on-secondary-fixed-variant font-label-md text-xs font-semibold transition-colors border border-secondary-container/20 shadow-2xs" id="ask-ai-quick-btn">
-                                    <span class="material-symbols-outlined text-[18px] text-secondary">psychology</span>
+                                        class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95" id="ask-ai-quick-btn">
+                                    <span class="material-symbols-outlined text-[18px]">psychology</span>
                                     <span>Hỏi Trợ lý AI RAG</span>
                                 </button>
                             </div>
 
                             <!-- Status & Utility Controls -->
-                            <div class="flex items-center gap-space-xs">
+                            <div class="flex items-center gap-2">
                                 <!-- Mark Complete Toggle -->
                                 <button type="button" onclick="toggleMarkLessonCompleted()"
-                                        class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-xs font-semibold transition-colors" id="mark-complete-btn">
-                                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant" id="check-icon">check_circle</span>
+                                        class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors" id="mark-complete-btn">
+                                    <span class="material-symbols-outlined text-[18px] text-slate-500" id="check-icon">check_circle</span>
                                     <span id="complete-label">Đánh dấu hoàn thành</span>
                                 </button>
                                 <!-- Bookmark / Share / Rating -->
-                                <div class="flex items-center pl-2 gap-1 text-on-surface-variant">
-                                    <button type="button" onclick="showToast('Cảm ơn bạn đã đánh giá 5 sao cho bài học này!')" class="p-2 rounded-lg hover:bg-surface-container-high hover:text-on-surface transition-colors" title="Đánh giá 5 sao cho bài học">
-                                        <span class="material-symbols-outlined text-[20px] text-secondary">star</span>
+                                <div class="flex items-center pl-1 gap-1 text-slate-500">
+                                    <button type="button" onclick="showToast('Cảm ơn bạn đã đánh giá 5 sao cho bài học này!')" class="p-2 rounded-xl hover:bg-slate-100 hover:text-amber-500 transition-colors" title="Đánh giá 5 sao cho bài học">
+                                        <span class="material-symbols-outlined text-[20px] text-amber-500">star</span>
                                     </button>
-                                    <button type="button" onclick="showToast('Đã lưu bài học vào danh sách yêu thích!')" class="p-2 rounded-lg hover:bg-surface-container-high hover:text-on-surface transition-colors" title="Lưu trữ bài học">
+                                    <button type="button" onclick="showToast('Đã lưu bài học vào danh sách yêu thích!')" class="p-2 rounded-xl hover:bg-slate-100 hover:text-slate-800 transition-colors" title="Lưu trữ bài học">
                                         <span class="material-symbols-outlined text-[20px]">bookmark_border</span>
                                     </button>
-                                    <button type="button" onclick="copyLessonShareLink()" class="p-2 rounded-lg hover:bg-surface-container-high hover:text-on-surface transition-colors" title="Chia sẻ bài giảng">
+                                    <button type="button" onclick="copyLessonShareLink()" class="p-2 rounded-xl hover:bg-slate-100 hover:text-slate-800 transition-colors" title="Chia sẻ bài giảng">
                                         <span class="material-symbols-outlined text-[20px]">share</span>
                                     </button>
                                 </div>
@@ -374,7 +407,7 @@
                         </div>
 
                         <!-- LESSON INFO HEADER -->
-                        <div class="w-full bg-surface-container-lowest rounded-xl p-space-lg shadow-sm border border-surface-container-highest/30">
+                        <div class="w-full bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
                             <div class="flex flex-col gap-space-sm">
                                 <div class="flex flex-wrap items-center gap-space-xs text-on-surface-variant text-xs">
                                     <span class="font-label-sm uppercase tracking-wider text-primary font-bold bg-primary-fixed px-2 py-0.5 rounded text-[11px]" id="lessonChapterBadge">
@@ -424,7 +457,7 @@
                         </div>
 
                         <!-- 2-TAB WORKSPACE: 1 BÊN XEM TÀI LIỆU & 1 BÊN HỎI RAG -->
-                        <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-surface-container-highest/30">
+                        <div class="w-full bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200/80">
                             
                             <!-- Tab Navigation Bar: 3 TABS (Tài liệu, Hỏi RAG, Trắc nghiệm Quiz) -->
                             <div class="flex items-center border-b border-surface-container-highest/50 px-space-md pt-2 overflow-x-auto scrollbar-none gap-space-md" id="tab-nav">
@@ -664,37 +697,37 @@
                     <!-- ============================================================== -->
                     <!-- RIGHT COLUMN: SIDEBAR / CURRICULUM (4 COLS) -->
                     <!-- ============================================================== -->
-                    <aside id="curriculumSidebar" class="lg:col-span-4 flex flex-col gap-space-md w-full sticky top-20">
+                    <aside id="curriculumSidebar" class="lg:col-span-4 flex flex-col gap-4 w-full sticky top-20">
                         
                         <!-- CURRICULUM ACCORDION CARD -->
-                        <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col border border-surface-container-highest/30">
+                        <div class="w-full bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col border border-slate-200/80">
                             
                             <!-- Curriculum Header -->
-                            <div class="p-space-md border-b border-surface-container-highest/40 flex flex-col gap-space-sm bg-surface-container-low/40">
+                            <div class="p-4 sm:p-5 border-b border-slate-200/80 flex flex-col gap-3 bg-gradient-to-r from-slate-50 via-blue-50/20 to-indigo-50/20">
                                 <div class="flex items-center justify-between">
-                                    <h2 class="font-headline-sm text-on-surface font-bold text-sm">Nội dung khóa học</h2>
-                                    <span class="font-label-md text-primary bg-primary-fixed px-2.5 py-0.5 rounded-full font-bold text-xs" id="curriculumLessonsCount">
+                                    <h2 class="font-headline-sm text-slate-900 font-extrabold text-sm sm:text-base">Nội dung khóa học</h2>
+                                    <span class="text-[#00539F] bg-blue-50 border border-blue-200/80 px-3 py-0.5 rounded-full font-bold text-xs shadow-2xs" id="curriculumLessonsCount">
                                         0/0 bài học
                                     </span>
                                 </div>
 
                                 <!-- Progress Bar Metric -->
                                 <div class="flex flex-col gap-1.5">
-                                    <div class="flex items-center justify-between text-on-surface-variant text-xs">
-                                        <span class="font-label-sm text-[11px]">Tiến độ hoàn thành môn</span>
-                                        <span class="font-label-sm font-bold text-primary text-[11px]" id="sidebarProgressPercent">0%</span>
+                                    <div class="flex items-center justify-between text-slate-500 text-xs">
+                                        <span class="font-medium text-[11px]">Tiến độ hoàn thành môn</span>
+                                        <span class="font-bold text-[#00539F] text-[11px]" id="sidebarProgressPercent">0%</span>
                                     </div>
-                                    <div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
-                                        <div class="h-full bg-primary rounded-full transition-all duration-500" id="sidebarProgressBar" style="width: 0%;"></div>
+                                    <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-[#00539F] to-sky-400 rounded-full transition-all duration-500" id="sidebarProgressBar" style="width: 0%;"></div>
                                     </div>
                                 </div>
 
                                 <!-- Search Lessons Input -->
-                                <div class="relative mt-1">
-                                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+                                <div class="relative mt-0.5">
+                                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
                                     <input type="text" id="searchCurriculumInput" oninput="filterCurriculumLessons(this.value)"
                                            placeholder="Tìm kiếm bài giảng, video..."
-                                           class="w-full pl-9 pr-3 py-2 bg-surface-container-lowest rounded-lg font-body-sm text-on-surface placeholder:text-on-surface-variant/80 border border-surface-container-highest/50 shadow-xs focus:ring-1 focus:ring-primary focus:outline-none text-xs">
+                                           class="w-full pl-9 pr-3 py-2 bg-white rounded-xl text-slate-800 placeholder:text-slate-400 border border-slate-200 shadow-2xs focus:ring-2 focus:ring-[#00539F] focus:outline-none text-xs font-medium">
                                 </div>
                             </div>
 
@@ -840,10 +873,23 @@
                 currentCourseData = result.data;
 
                 // Kiểm tra phân quyền truy cập: nếu khóa học có phí và sinh viên chưa đăng ký
+                if (currentCourseData && currentCourseData.title) {
+                    document.title = `${currentCourseData.title} - Phòng Học Trực Tuyến NTU`;
+                }
+
                 const isFree = Boolean(currentCourseData.isFree) || (!currentCourseData.price || parseFloat(currentCourseData.price) <= 0);
                 const isEnrolled = Boolean(currentCourseData.isEnrolled);
                 if (!isFree && !isEnrolled) {
                     showCoursePayGate(currentCourseData);
+                    if (currentCourseData.chapters) {
+                        renderCurriculum(currentCourseData.chapters);
+                    }
+                    if (currentCourseData.title) {
+                        const titleEl = document.getElementById('lessonMainTitle');
+                        if (titleEl) titleEl.textContent = currentCourseData.title;
+                        const badgeEl = document.getElementById('playerTopBadgeTitle');
+                        if (badgeEl) badgeEl.textContent = currentCourseData.title;
+                    }
                     return;
                 } else {
                     hideCoursePayGate();
@@ -2091,15 +2137,73 @@
         let studyPollingInterval = null;
 
         function showCoursePayGate(course) {
-            document.getElementById('payGateCourseTitle').textContent = `Học phần: "${course.title}"`;
-            const priceVal = parseFloat(course.price || 250000);
-            document.getElementById('payGateAmountDisplay').textContent = `${priceVal.toLocaleString('vi-VN')} ₫`;
-            document.getElementById('coursePayGateModal').classList.remove('hidden');
+            if (!course) return;
+            const priceVal = parseFloat(course.price || 10000);
+            
+            const titleEl = document.getElementById('payGateCourseTitle');
+            if (titleEl) titleEl.textContent = course.title || 'Lập Trình Java Script cơ bản';
+
+            const catEl = document.getElementById('payGateCourseCategory');
+            if (catEl) catEl.textContent = course.facultyName || 'Khoa Công Nghệ Thông Tin • NTU';
+
+            const metaEl = document.getElementById('payGateCourseMeta');
+            if (metaEl) {
+                const chapCount = course.chaptersCount || (course.chapters ? course.chapters.length : 3);
+                const lesCount = course.lessonsCount || 5;
+                metaEl.textContent = `${chapCount} Chương • ${lesCount} Bài giảng`;
+            }
+
+            const amountEl = document.getElementById('payGateAmountDisplay');
+            if (amountEl) amountEl.textContent = `${priceVal.toLocaleString('vi-VN')} ₫`;
+
+            const origEl = document.getElementById('payGateOriginalPrice');
+            if (origEl) {
+                const original = priceVal < 100000 ? 250000 : Math.round(priceVal * 1.5);
+                origEl.textContent = `${original.toLocaleString('vi-VN')} ₫`;
+            }
+
+            const discountEl = document.getElementById('payGateDiscountTag');
+            if (discountEl) {
+                const original = priceVal < 100000 ? 250000 : Math.round(priceVal * 1.5);
+                const percent = Math.round((1 - priceVal / original) * 100);
+                discountEl.textContent = `-${percent}% Học Bổng NTU`;
+            }
+
+            const modal = document.getElementById('coursePayGateModal');
+            if (modal) modal.classList.remove('hidden');
         }
 
         function hideCoursePayGate() {
             const gate = document.getElementById('coursePayGateModal');
             if (gate) gate.classList.add('hidden');
+        }
+
+        function copyTextToClipboard(text, msg) {
+            if (!text) return;
+            const cleanText = String(text).trim();
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(cleanText).then(() => {
+                    showToast(msg || 'Đã sao chép vào bộ nhớ tạm!');
+                }).catch(() => fallbackCopy(cleanText, msg));
+            } else {
+                fallbackCopy(cleanText, msg);
+            }
+        }
+
+        function fallbackCopy(text, msg) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast(msg || 'Đã sao chép vào bộ nhớ tạm!');
+            } catch (err) {
+                showToast('Không thể sao chép');
+            }
+            document.body.removeChild(ta);
         }
 
         async function openStudyPayOSModal() {
@@ -2230,155 +2334,261 @@
     </script>
 
     <!-- Modal: Báo Khóa học Tuần tự / Chưa đến ngày học -->
-    <div id="lockedLessonModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-amber-200 space-y-4">
-            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
+    <div id="lockedLessonModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-amber-200 space-y-5 animate-fadeIn">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto shadow-sm">
                 <span class="material-symbols-outlined text-3xl">lock</span>
             </div>
-            <div class="text-center space-y-2">
-                <h3 class="text-base font-bold text-slate-800" id="lockedModalTitle">Bài học đang bị khóa!</h3>
-                <p class="text-xs text-amber-800 bg-amber-50 p-3 rounded-xl border border-amber-200 leading-relaxed font-medium" id="lockedModalReason">
+            <div class="text-center space-y-2.5">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                    Lộ trình tuần tự
+                </span>
+                <h3 class="text-base sm:text-lg font-bold text-slate-900" id="lockedModalTitle">Bài học đang bị khóa!</h3>
+                <p class="text-xs text-amber-900 bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200 leading-relaxed font-medium" id="lockedModalReason">
                     Bạn cần hoàn thành bài học trước đó và vượt qua bài trắc nghiệm để mở khóa.
                 </p>
-                <div class="text-[11px] text-slate-500 pt-1" id="lockedModalSchedule">
-                    📅 Ngày mở bài học: <strong class="text-slate-700">15/11/2026</strong>
+                <div class="text-xs text-slate-500 pt-1" id="lockedModalSchedule">
+                    📅 Ngày mở bài học: <strong class="text-slate-800">15/11/2026</strong>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-2 pt-2">
+            <div class="pt-2">
                 <button type="button" onclick="closeLockedLessonModal()"
-                        class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs shadow-sm transition">
+                        class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition active:scale-95 cursor-pointer">
                     Đã hiểu, quay lại học tiếp
                 </button>
             </div>
         </div>
     </div>
-    <!-- Modal: Báo Yêu Cầu Đóng Học Phí PayOS -->
-    <div id="coursePayGateModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl border border-sky-100 text-center space-y-6">
-            <div class="w-16 h-16 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center mx-auto shadow-sm">
-                <span class="material-symbols-outlined text-4xl">payments</span>
-            </div>
-            <div class="space-y-2">
-                <span class="px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-sky-50 text-sky-700 border border-sky-200">
-                    Yêu cầu đăng ký học phần
-                </span>
-                <h3 class="text-xl font-bold text-slate-800" id="payGateCourseTitle">Học phần yêu cầu học phí</h3>
-                <p class="text-sm text-slate-600 leading-relaxed">
-                    Bạn chưa kích hoạt quyền học tập cho học phần này. Vui lòng thanh toán học phí qua cổng PayOS VietQR tự động để mở toàn bộ video bài giảng và bài trắc nghiệm.
-                </p>
-                <div class="py-3 px-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
-                    <span class="text-xs text-slate-500 font-medium">Học phí cần đóng:</span>
-                    <span class="text-xl font-extrabold text-sky-600" id="payGateAmountDisplay">0 ₫</span>
+
+    <!-- Modal: Báo Yêu Cầu Đóng Học Phí PayOS (Stunning Design) -->
+    <div id="coursePayGateModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto hidden">
+        <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-100 overflow-hidden relative transform transition-all my-auto animate-fadeIn">
+            
+            <!-- Decorative Top Glow & Header Banner -->
+            <div class="relative bg-gradient-to-r from-[#003E7E] via-[#00539F] to-[#0284c7] p-6 text-white overflow-hidden">
+                <!-- Decorative background blur circles -->
+                <div class="absolute -right-8 -top-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute right-20 -bottom-8 w-28 h-28 bg-sky-400/20 rounded-full blur-xl pointer-events-none"></div>
+                
+                <div class="flex items-center justify-between relative z-10">
+                    <span class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-white/15 backdrop-blur-md text-sky-100 border border-white/20 flex items-center gap-1.5 uppercase tracking-wider">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Đại Học Nguyễn Trãi • Smart LMS</span>
+                    </span>
+                    <a href="index.html" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors" title="Quay về Cổng sinh viên">
+                        <span class="material-symbols-outlined text-lg">close</span>
+                    </a>
+                </div>
+
+                <!-- Course Title & Meta Banner -->
+                <div class="mt-4 relative z-10 space-y-1.5">
+                    <div class="flex items-center gap-2 text-sky-200 text-xs font-semibold">
+                        <span class="material-symbols-outlined text-[16px]">school</span>
+                        <span id="payGateCourseCategory">Khoa Công Nghệ Thông Tin</span>
+                        <span>•</span>
+                        <span id="payGateCourseMeta">3 Chương • 5 Bài giảng</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white leading-snug tracking-tight" id="payGateCourseTitle">
+                        Lập Trình Java Script cơ bản
+                    </h2>
                 </div>
             </div>
-            <div class="space-y-3 pt-2">
-                <button type="button" onclick="openStudyPayOSModal()"
-                        class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 text-white font-bold text-sm shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2 transition transform active:scale-95">
-                    <span class="material-symbols-outlined text-lg">qr_code_2</span>
-                    <span>Thanh toán ngay bằng PayOS VietQR</span>
-                </button>
-                <a href="index.html"
-                   class="w-full py-3 px-6 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center justify-center gap-2 transition">
-                    <span class="material-symbols-outlined text-base">arrow_back</span>
-                    <span>Quay về Cổng thông tin sinh viên</span>
-                </a>
+
+            <!-- Body Content -->
+            <div class="p-6 sm:p-7 space-y-5">
+                
+                <!-- Features Grid / Bento Box -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100/80 hover:bg-blue-50/40 transition">
+                        <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 shadow-2xs">
+                            <span class="material-symbols-outlined text-[20px]">play_circle</span>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-800 leading-tight">Video 1080p</p>
+                            <p class="text-[10px] text-slate-500 truncate mt-0.5">Cloudinary CDN</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100/80 hover:bg-purple-50/40 transition">
+                        <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 shadow-2xs">
+                            <span class="material-symbols-outlined text-[20px]">psychology</span>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-800 leading-tight">Trợ Lý AI RAG</p>
+                            <p class="text-[10px] text-slate-500 truncate mt-0.5">Giáo trình MongoDB</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100/80 hover:bg-emerald-50/40 transition">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs">
+                            <span class="material-symbols-outlined text-[20px]">face</span>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-800 leading-tight">Face AI Check-in</p>
+                            <p class="text-[10px] text-slate-500 truncate mt-0.5">Điểm danh bảo mật</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100/80 hover:bg-amber-50/40 transition">
+                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 shadow-2xs">
+                            <span class="material-symbols-outlined text-[20px]">verified</span>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-slate-800 leading-tight">Chứng Nhận NTU</p>
+                            <p class="text-[10px] text-slate-500 truncate mt-0.5">Tín chỉ học phần</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuition Box with Scholarship Discount -->
+                <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200/80 flex items-center justify-between">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-600">Học phí học phần:</span>
+                            <span class="text-xs text-slate-400 line-through font-semibold" id="payGateOriginalPrice">250.000 ₫</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-700 border border-red-200" id="payGateDiscountTag">
+                                -96% Ưu đãi NTU
+                            </span>
+                            <span class="text-[11px] text-slate-500 font-medium">Kích hoạt vĩnh viễn</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-2xl sm:text-3xl font-black text-[#00539F] tracking-tight" id="payGateAmountDisplay">10.000 ₫</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-2.5 pt-1">
+                    <button type="button" onclick="openStudyPayOSModal()"
+                            class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#00539F] via-blue-600 to-indigo-600 hover:from-[#003E7E] hover:to-indigo-700 text-white font-bold text-sm shadow-xl shadow-blue-600/25 hover:shadow-blue-600/40 flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+                        <span class="material-symbols-outlined text-xl">qr_code_scanner</span>
+                        <span>Thanh toán ngay bằng PayOS VietQR</span>
+                    </button>
+                    <a href="index.html"
+                       class="w-full py-3 px-6 rounded-2xl bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer">
+                        <span class="material-symbols-outlined text-base">arrow_back</span>
+                        <span>Quay về Cổng thông tin sinh viên</span>
+                    </a>
+                </div>
+
+                <!-- Security Guarantee Footer -->
+                <div class="flex items-center justify-center gap-2 text-[11px] text-slate-400 pt-1">
+                    <span class="material-symbols-outlined text-[15px] text-emerald-600">shield</span>
+                    <span>Đối soát tự động qua Cổng Napas 247 &amp; PayOS Việt Nam</span>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Modal: PayOS VietQR Checkout trên Study Space -->
-    <div id="studyPayosModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden text-slate-800">
+    <div id="studyPayosModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden text-slate-800 my-auto animate-fadeIn">
             <!-- Header -->
-            <div class="flex items-center justify-between px-6 py-4 bg-slate-900 text-white">
+            <div class="flex items-center justify-between px-6 py-4 bg-slate-950 text-white border-b border-slate-800">
                 <div class="flex items-center gap-3">
                     <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-400/30 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-                        <span>PayOS VietQR</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>VietQR Napas 247</span>
                     </span>
-                    <span class="text-sm font-bold">Thanh Toán Kích Hoạt Khóa Học</span>
+                    <span class="text-sm font-bold tracking-tight">Thanh Toán Kích Hoạt Khóa Học</span>
                 </div>
                 <button type="button" onclick="closeStudyPayOSModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
-                    &times;
+                    <span class="material-symbols-outlined text-lg">close</span>
                 </button>
             </div>
 
             <!-- Body -->
             <div id="studyPayosBody" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- QR Frame -->
-                <div class="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-center">
-                    <div class="w-52 h-52 bg-white rounded-xl shadow-md p-2 flex items-center justify-center relative overflow-hidden border border-slate-100">
-                        <img id="studyPayosQrImg" src="" alt="VietQR" class="w-full h-full object-contain" />
+                <div class="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center">
+                    <div class="w-52 h-52 bg-white rounded-2xl shadow-md p-2.5 flex items-center justify-center relative overflow-hidden border border-slate-100 ring-4 ring-sky-100">
+                        <img id="studyPayosQrImg" src="" alt="VietQR" class="w-full h-full object-contain rounded-lg" />
                     </div>
-                    <div class="mt-3 flex items-center gap-2 text-xs font-bold text-sky-700">
-                        <span class="w-2.5 h-2.5 rounded-full bg-sky-600 animate-ping"></span>
+                    <div class="mt-3.5 flex items-center gap-2 text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                        <span class="w-2 h-2 rounded-full bg-sky-600 animate-ping"></span>
                         <span>Đang chờ chuyển khoản...</span>
                     </div>
-                    <p class="text-[11px] text-slate-500 mt-2 leading-tight">
-                        Quét mã bằng MB, Techcombank, VCB, VietinBank hoặc MoMo.
+                    <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">
+                        Mở app MB, Vietcombank, Techcombank, VietinBank hoặc MoMo quét mã.
                     </p>
                 </div>
 
                 <!-- Info Pane -->
                 <div class="space-y-3 flex flex-col justify-between">
                     <div>
-                        <div class="text-[11px] font-bold uppercase text-sky-600 mb-0.5">Khóa học đăng ký</div>
+                        <div class="text-[11px] font-extrabold uppercase text-[#00539F] tracking-wider mb-0.5">Khóa học đăng ký</div>
                         <h4 class="text-sm font-bold text-slate-900 leading-snug line-clamp-2" id="studyPayosTitle">Tên khóa học</h4>
                     </div>
 
-                    <div class="p-3 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-between">
-                        <span class="text-xs text-slate-600 font-medium">Học phí:</span>
-                        <span class="text-lg font-black text-sky-700" id="studyPayosAmount">0 ₫</span>
+                    <div class="p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-200 flex items-center justify-between">
+                        <span class="text-xs text-slate-600 font-bold">Học phí cần đóng:</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg font-black text-[#00539F]" id="studyPayosAmount">0 ₫</span>
+                            <button type="button" onclick="copyTextToClipboard(document.getElementById('studyPayosAmount').textContent, 'Đã sao chép số tiền!')" class="p-1 rounded-md hover:bg-sky-200/50 text-[#00539F]" title="Sao chép số tiền">
+                                <span class="material-symbols-outlined text-[16px]">content_copy</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="space-y-1.5 text-xs">
-                        <div class="flex justify-between py-1.5 px-2.5 rounded-lg bg-slate-100">
-                            <span class="text-slate-500">Ngân hàng:</span>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-100/90 border border-slate-200/60">
+                            <span class="text-slate-500 font-medium">Ngân hàng:</span>
                             <span class="font-bold text-slate-800">MBBank (Quân Đội)</span>
                         </div>
-                        <div class="flex justify-between py-1.5 px-2.5 rounded-lg bg-slate-100">
-                            <span class="text-slate-500">Số tài khoản:</span>
-                            <span class="font-bold text-slate-900" id="studyPayosAccountNo">30334402527</span>
+                        <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-100/90 border border-slate-200/60">
+                            <span class="text-slate-500 font-medium">Số tài khoản:</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-mono font-bold text-slate-900" id="studyPayosAccountNo">30334402527</span>
+                                <button type="button" onclick="copyTextToClipboard(document.getElementById('studyPayosAccountNo').textContent, 'Đã sao chép số tài khoản!')" class="p-1 rounded-md hover:bg-slate-200 text-slate-600 transition" title="Sao chép số tài khoản">
+                                    <span class="material-symbols-outlined text-[15px]">content_copy</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex justify-between py-1.5 px-2.5 rounded-lg bg-slate-100">
-                            <span class="text-slate-500">Chủ tài khoản:</span>
+                        <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-100/90 border border-slate-200/60">
+                            <span class="text-slate-500 font-medium">Chủ tài khoản:</span>
                             <span class="font-bold text-slate-900" id="studyPayosAccountName">NGUYEN CONG TUNG</span>
                         </div>
-                        <div class="flex justify-between py-1.5 px-2.5 rounded-lg bg-amber-50 border border-amber-200">
+                        <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-amber-50/90 border border-amber-200">
                             <span class="text-amber-800 font-bold">Nội dung CK:</span>
-                            <span class="font-mono font-bold text-amber-900" id="studyPayosMemo">HOCPHI ...</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-mono font-bold text-amber-900" id="studyPayosMemo">HOCPHI ...</span>
+                                <button type="button" onclick="copyTextToClipboard(document.getElementById('studyPayosMemo').textContent, 'Đã sao chép nội dung chuyển khoản!')" class="p-1 rounded-md hover:bg-amber-200 text-amber-800 transition" title="Sao chép nội dung CK">
+                                    <span class="material-symbols-outlined text-[15px]">content_copy</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="p-2.5 rounded-xl bg-amber-50 border-l-4 border-amber-500 text-[11px] text-amber-900 leading-tight">
-                        Giữ nguyên chính xác nội dung chuyển khoản để hệ thống tự động mở khóa sau 3 giây.
+                    <div class="p-3 rounded-xl bg-amber-50/80 border-l-4 border-amber-500 text-[11px] text-amber-900 leading-relaxed font-medium">
+                        ⚠️ Giữ nguyên chính xác nội dung chuyển khoản để hệ thống tự động mở khóa sau 3 giây.
                     </div>
                 </div>
             </div>
 
             <!-- Success Screen -->
-            <div id="studyPayosSuccess" class="p-10 text-center space-y-4 hidden">
-                <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md">
-                    <span class="material-symbols-outlined text-4xl">check_circle</span>
+            <div id="studyPayosSuccess" class="p-10 text-center space-y-4 hidden animate-fadeIn">
+                <div class="w-20 h-20 rounded-3xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
+                    <span class="material-symbols-outlined text-5xl">check_circle</span>
                 </div>
-                <h3 class="text-xl font-bold text-emerald-800">Thanh Toán Thành Công!</h3>
-                <p class="text-xs text-slate-600">Đơn hàng đã được đối soát tự động qua PayOS. Hệ thống đang mở quyền vào học...</p>
+                <div class="space-y-1">
+                    <h3 class="text-2xl font-black text-emerald-800">Thanh Toán Thành Công!</h3>
+                    <p class="text-xs text-slate-600">Đơn hàng đã được đối soát tự động qua PayOS. Hệ thống đang mở quyền vào học...</p>
+                </div>
             </div>
 
             <!-- Footer -->
-            <div id="studyPayosFooter" class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3">
+            <div id="studyPayosFooter" class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3">
                 <button type="button" onclick="manualConfirmStudyOrder()"
-                        class="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-base">verified</span>
+                        class="px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                    <span class="material-symbols-outlined text-base text-emerald-600">verified</span>
                     <span>Xác nhận ngay (Demo Test)</span>
                 </button>
                 <div class="flex items-center gap-2">
                     <button type="button" onclick="closeStudyPayOSModal()"
-                            class="px-4 py-2 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-600 text-xs font-semibold transition">
+                            class="px-4 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold transition cursor-pointer">
                         Đóng
                     </button>
                     <a id="studyPayosDirectLink" href="#" target="_blank"
-                       class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition flex items-center gap-1">
+                       class="px-4 py-2.5 rounded-xl bg-[#00539F] hover:bg-[#003E7E] text-white text-xs font-bold transition flex items-center gap-1 shadow-sm cursor-pointer">
                         <span>Cổng PayOS</span>
                         <span class="material-symbols-outlined text-sm">open_in_new</span>
                     </a>
