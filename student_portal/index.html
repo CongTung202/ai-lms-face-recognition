@@ -2046,7 +2046,46 @@
         actionBtn = `<button type="button" onclick="handleCourseEnrollClick(${c.id})" class="go" style="background: linear-gradient(135deg, #0284c7, #0369a1); border:none; color:#fff; cursor:pointer; font-weight:700; box-shadow:0 4px 12px rgba(2,132,199,0.35);">Đăng ký PayOS<i data-lucide="credit-card"></i></button>`;
       }
 
-      const progressPercent = idx === 0 ? 68 : 42;
+      // Tính tiến độ học tập thực tế từ dữ liệu CSDL
+      let progressPercent = 0;
+      if (c.progressPercent !== undefined && c.progressPercent !== null) {
+        progressPercent = Math.max(0, Math.min(100, Math.round(c.progressPercent)));
+      } else if (lessonCount > 0) {
+        let completed = 0;
+        chapters.forEach(ch => {
+          (ch.lessons || []).forEach(l => {
+            if (l.isCompleted) completed++;
+          });
+        });
+        progressPercent = Math.round((completed * 100) / lessonCount);
+      }
+
+      // Khung tiến độ học chỉ hiển thị khi đã kích hoạt/đã mua; nếu chưa mua thì hiển thị thông báo chưa đăng ký
+      let progressSectionHtml = '';
+      if (isEnrolled) {
+        progressSectionHtml = `
+          <div class="progress">
+            <div class="lbl">
+              <span>Tiến độ học tập</span>
+              <span style="font-weight: 700; color: ${progressPercent > 0 ? '#0284c7' : '#64748b'};">${progressPercent}%</span>
+            </div>
+            <div class="bar">
+              <i data-w="${progressPercent}" style="width: ${progressPercent}%; background: ${progressPercent >= 100 ? '#10b981' : 'linear-gradient(90deg, #0284c7, #38bdf8)'};"></i>
+            </div>
+          </div>
+        `;
+      } else {
+        progressSectionHtml = `
+          <div class="unpurchased-banner" style="margin: 14px 0 10px; padding: 9px 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12.5px;">
+            <span style="color: #64748b; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+              <i data-lucide="lock" style="width: 14px; height: 14px; stroke: #94a3b8;"></i>
+              Chưa kích hoạt
+            </span>
+            <span style="color: #0369a1; font-weight: 700;">${isFree ? 'Miễn phí' : priceVal.toLocaleString('vi-VN') + ' ₫'}</span>
+          </div>
+        `;
+      }
+
       const majorsText = (c.majors || []).map(m => `<span class="major-badge">${escapeHtml(m.name || m.majorCode)}</span>`).join('');
       const searchData = `${c.title} ${c.description || ''} ${c.id}`.toLowerCase();
 
@@ -2069,10 +2108,7 @@
             <h3>${escapeHtml(c.title)}</h3>
             <p>${escapeHtml(c.description || 'Chương trình đào tạo số hóa chuẩn Đại học Nguyễn Trãi.')}</p>
             <div class="majors-tags">${majorsText}</div>
-            <div class="progress">
-              <div class="lbl"><span>Tiến độ học tập</span><span>${progressPercent}%</span></div>
-              <div class="bar"><i data-w="${progressPercent}" style="width: ${progressPercent}%;"></i></div>
-            </div>
+            ${progressSectionHtml}
             <div class="foot">
               <span>Khoa CNTT · NTU</span>
               ${actionBtn}

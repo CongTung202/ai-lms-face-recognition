@@ -586,6 +586,7 @@ public class AdminDataController {
 
         List<Map<String, Object>> chaptersList = new ArrayList<>();
         int totalLessonsCount = 0;
+        int completedLessonsCount = 0;
 
         for (CourseChapter ch : chapters) {
             Map<String, Object> chMap = new HashMap<>();
@@ -623,6 +624,9 @@ public class AdminDataController {
                     lMap.put("lockReason", access.getLockReason());
                     lMap.put("isCompleted", access.getIsCompleted());
                     lMap.put("quizPassed", access.getQuizPassed());
+                    if (Boolean.TRUE.equals(access.getIsCompleted())) {
+                        completedLessonsCount++;
+                    }
                 } else {
                     lMap.put("isLocked", false);
                     lMap.put("lockReason", null);
@@ -698,8 +702,15 @@ public class AdminDataController {
             majorIds.add(cm.getMajor().getId());
         }
 
+        int progressPercent = 0;
+        if (isEnrolled && totalLessonsCount > 0) {
+            progressPercent = Math.round((completedLessonsCount * 100.0f) / totalLessonsCount);
+        }
+
         cMap.put("chaptersCount", chapters.size());
         cMap.put("lessonsCount", totalLessonsCount);
+        cMap.put("completedLessonsCount", completedLessonsCount);
+        cMap.put("progressPercent", progressPercent);
         cMap.put("chapters", chaptersList);
         cMap.put("documents", docsList);
         cMap.put("majors", majorsList);
