@@ -26,6 +26,7 @@
   const NAV_ITEMS = [
     { key: 'home', label: 'Trang chủ', href: `${PORTAL_ROOT}index.html`, icon: 'layout-dashboard', id: 'navHome' },
     { key: 'courses', label: 'Khóa học của tôi', href: `${PORTAL_ROOT}index.html#coursesSection`, icon: 'book-open', id: 'navCourses', countId: 'navCoursesCount' },
+    { key: 'buy', label: 'Mua khóa học', href: `${PORTAL_ROOT}courses.html`, icon: 'shopping-bag', id: 'navBuyCourses', countId: 'navBuyCoursesCount' },
     { key: 'study', label: 'Phòng học trực tuyến', href: `${PORTAL_ROOT}study.html`, icon: 'video', id: 'navStudy' },
     { key: 'docs', label: 'Thư viện tài liệu', href: `${PORTAL_ROOT}index.html#docsSection`, icon: 'library', id: 'navDocs', countId: 'navDocsCount' },
     { key: 'orders', label: 'Lịch sử đơn hàng', href: `${PORTAL_ROOT}orders.html`, icon: 'receipt', id: 'navOrders', countId: 'navOrdersCount' },
@@ -293,13 +294,15 @@
     const isStudy = currentPath.endsWith('study.html');
     const isFace = currentPath.endsWith('face_enrollment.html');
     const isOrders = currentPath.endsWith('orders.html');
+    const isBuy = currentPath.endsWith('courses.html');
 
     const navHtml = NAV_ITEMS.map(item => {
       let activeClass = '';
       if (item.key === 'study' && isStudy) activeClass = 'active';
       else if (item.key === 'face' && isFace) activeClass = 'active';
       else if (item.key === 'orders' && isOrders) activeClass = 'active';
-      else if (item.key === 'home' && !isStudy && !isFace && !isOrders) activeClass = 'active';
+      else if (item.key === 'buy' && isBuy) activeClass = 'active';
+      else if (item.key === 'home' && !isStudy && !isFace && !isOrders && !isBuy) activeClass = 'active';
 
       const iconSvg = ICONS[item.icon] || '';
       const countBadge = item.countId ? `<span class="count" id="${item.countId}">0</span>` : '';
@@ -362,13 +365,25 @@
   // Tải số lượng badge từ CSDL thật
   async function fetchCounts() {
     try {
-      // 1. Số khóa học
-      fetch(`${API_BASE}/api/admin/courses`)
+      // 1. Số khóa học: đếm số đã mua (Khóa học của tôi) và số chưa mua (Mua khóa học)
+      const uStr = sessionStorage.getItem('lms_user') || localStorage.getItem('currentUser') || localStorage.getItem('student_user');
+      let studentId = 5;
+      if (uStr) {
+        try {
+          const u = JSON.parse(uStr);
+          if (u.id || u.userId) studentId = u.id || u.userId;
+        } catch (e) {}
+      }
+      fetch(`${API_BASE}/api/admin/courses?studentId=${studentId}`)
         .then(r => r.json())
         .then(d => {
-          const count = d.data ? d.data.length : 0;
-          const el = document.getElementById('navCoursesCount');
-          if (el) el.textContent = count;
+          const all = d.data || [];
+          const enrolled = all.filter(c => Boolean(c.isEnrolled) || Boolean(c.isFree));
+          const available = all.filter(c => !c.isEnrolled && !c.isFree);
+          const elCourses = document.getElementById('navCoursesCount');
+          if (elCourses) elCourses.textContent = enrolled.length;
+          const elBuy = document.getElementById('navBuyCoursesCount');
+          if (elBuy) elBuy.textContent = available.length;
         }).catch(() => {});
 
       // 2. Số tài liệu

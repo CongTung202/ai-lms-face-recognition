@@ -1280,6 +1280,7 @@
     <nav class="nav">
       <a href="index.html" class="active" id="navHome"><i data-lucide="layout-dashboard"></i>Trang chủ</a>
       <a href="#coursesSection" id="navCourses"><i data-lucide="book-open"></i>Khóa học của tôi<span class="count" id="navCoursesCount">0</span></a>
+      <a href="courses.html" id="navBuyCourses"><i data-lucide="shopping-bag"></i>Mua khóa học<span class="count" id="navBuyCoursesCount">0</span></a>
       <a href="study.html" id="navStudy"><i data-lucide="video"></i>Phòng học trực tuyến</a>
       <a href="#docsSection" id="navDocs"><i data-lucide="library"></i>Thư viện tài liệu<span class="count" id="navDocsCount">0</span></a>
       <a href="orders.html" id="navOrders"><i data-lucide="receipt"></i>Lịch sử đơn hàng<span class="count" id="navOrdersCount">0</span></a>
@@ -1371,9 +1372,9 @@
             <div class="tabs-row">
               <div class="tabs" role="tablist" id="tabs">
                 <span class="tab-ind" id="tabInd"></span>
-                <button class="tab active" role="tab" aria-selected="true" data-filter="all">Tất cả môn học (<span id="tabCountAll">0</span>)</button>
-                <button class="tab" role="tab" aria-selected="false" data-filter="free">Miễn phí (<span id="tabCountFree">0</span>)</button>
-                <button class="tab" role="tab" aria-selected="false" data-filter="enrolled">Đã đăng ký (<span id="tabCountEnrolled">0</span>)</button>
+                <button class="tab active" role="tab" aria-selected="true" data-filter="all">Tất cả khóa học của tôi (<span id="tabCountAll">0</span>)</button>
+                <button class="tab" role="tab" aria-selected="false" data-filter="in_progress">Đang học (<span id="tabCountInProgress">0</span>)</button>
+                <button class="tab" role="tab" aria-selected="false" data-filter="completed">Đã hoàn thành (<span id="tabCountCompleted">0</span>)</button>
               </div>
               <span class="sync"><span class="dot"></span>Cập nhật theo thời gian thực</span>
             </div>
@@ -1390,6 +1391,23 @@
             </div>
           </section>
           <p class="empty card" id="emptyCoursesMsg">Không tìm thấy môn học nào phù hợp với từ khóa của bạn.</p>
+
+          <!-- PROMO BANNER TO BUY COURSES -->
+          <div id="buyCoursePromoBanner" class="card reveal in" style="margin-top: 24px; padding: 20px 24px; background: linear-gradient(135deg, #eef7ff 0%, #f0fdf4 100%); border: 1px solid #bfdbfe; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 46px; height: 46px; border-radius: 14px; background: #00539F; color: #fff; display: grid; place-items: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,83,159,0.25);">
+                <i data-lucide="shopping-bag" style="width: 22px; height: 22px;"></i>
+              </div>
+              <div>
+                <h4 style="font-size: .98rem; font-weight: 700; color: #0b2540; margin-bottom: 3px;">Khám phá &amp; Mua thêm học phần mới</h4>
+                <p style="font-size: .83rem; color: #55677c;">Còn <strong style="color: #00539F; font-weight: 800;" id="availableCoursesBannerCount">0</strong> khóa học sẵn sàng để bạn đăng ký và mở khóa ngay hôm nay.</p>
+              </div>
+            </div>
+            <a href="courses.html" style="padding: 10px 22px; border-radius: 12px; background: #00539F; color: #fff; font-size: .86rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,83,159,.25); transition: transform .2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+              <span>Cửa hàng khóa học</span>
+              <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+            </a>
+          </div>
 
           <!-- REAL DOCUMENTS LIBRARY -->
           <section class="card docs-card reveal" id="docsSection" aria-labelledby="docsTitle">
@@ -1930,10 +1948,14 @@
       const result = await res.json();
       allCourses = result.data || [];
 
-      updateKPIs(allCourses);
-      renderCoursesGrid(allCourses);
+      // Phân tách: Trang chủ chỉ hiển thị các khóa học đã thanh toán / đã kích hoạt
+      const myEnrolledCourses = allCourses.filter(c => Boolean(c.isEnrolled) || Boolean(c.isFree));
+      const availableCourses = allCourses.filter(c => !c.isEnrolled && !c.isFree);
+
+      updateKPIs(allCourses, myEnrolledCourses, availableCourses);
+      renderCoursesGrid(myEnrolledCourses);
       renderRealDocuments(allCourses);
-      renderReadyLessonsWidget(allCourses);
+      renderReadyLessonsWidget(myEnrolledCourses);
       lucide.createIcons();
 
       // Trigger animation after render
@@ -1952,12 +1974,12 @@
   }
 
   // 3. Cập nhật KPIs số liệu thực
-  function updateKPIs(courses) {
+  function updateKPIs(courses, myCourses, buyCourses) {
     let totalChapters = 0;
     let totalLessons = 0;
     let totalDocs = 0;
-    let freeCount = 0;
-    let enrolledCount = 0;
+    let inProgressCount = 0;
+    let completedCount = 0;
 
     courses.forEach(c => {
       const chs = c.chapters || [];
@@ -1966,8 +1988,12 @@
         totalLessons += (ch.lessons || []).length;
       });
       totalDocs += (c.documents || []).length;
-      if (c.isEnrolled) enrolledCount++;
-      if (c.isFree || !c.price || parseFloat(c.price) <= 0) freeCount++;
+    });
+
+    (myCourses || []).forEach(c => {
+      const prog = c.progressPercent || 0;
+      if (prog >= 100) completedCount++;
+      else inProgressCount++;
     });
 
     const statCoursesEl = document.getElementById('statCourses');
@@ -1975,36 +2001,44 @@
     const statDocsEl = document.getElementById('statDocs');
     const statChaptersText = document.getElementById('statChaptersText');
     const navCoursesCount = document.getElementById('navCoursesCount');
+    const navBuyCount = document.getElementById('navBuyCoursesCount');
     const navDocsCount = document.getElementById('navDocsCount');
     const tabCountAll = document.getElementById('tabCountAll');
-    const tabCountFree = document.getElementById('tabCountFree');
-    const tabCountEnrolled = document.getElementById('tabCountEnrolled');
+    const tabCountInProgress = document.getElementById('tabCountInProgress');
+    const tabCountCompleted = document.getElementById('tabCountCompleted');
+    const availableCoursesBannerCount = document.getElementById('availableCoursesBannerCount');
     const docsTotalBadge = document.getElementById('docsTotalBadge');
 
-    if (statCoursesEl) { statCoursesEl.dataset.count = courses.length; countUp(statCoursesEl); }
+    if (statCoursesEl) { statCoursesEl.dataset.count = (myCourses || []).length; countUp(statCoursesEl); }
     if (statLecturesEl) { statLecturesEl.dataset.count = totalLessons; countUp(statLecturesEl); }
     if (statDocsEl) { statDocsEl.dataset.count = totalDocs; countUp(statDocsEl); }
     if (statChaptersText) statChaptersText.textContent = `${totalChapters} chương học trong CSDL`;
 
-    if (navCoursesCount) navCoursesCount.textContent = courses.length;
+    if (navCoursesCount) navCoursesCount.textContent = (myCourses || []).length;
+    if (navBuyCount) navBuyCount.textContent = (buyCourses || []).length;
+    if (availableCoursesBannerCount) availableCoursesBannerCount.textContent = (buyCourses || []).length;
     if (navDocsCount) navDocsCount.textContent = totalDocs;
-    if (tabCountAll) tabCountAll.textContent = courses.length;
-    if (tabCountFree) tabCountFree.textContent = freeCount;
-    if (tabCountEnrolled) tabCountEnrolled.textContent = enrolledCount;
+    if (tabCountAll) tabCountAll.textContent = (myCourses || []).length;
+    if (tabCountInProgress) tabCountInProgress.textContent = inProgressCount;
+    if (tabCountCompleted) tabCountCompleted.textContent = completedCount;
     if (docsTotalBadge) docsTotalBadge.textContent = `${totalDocs} tài liệu`;
   }
 
-  // 4. Render danh sách thẻ khóa học với ẢNH BÌA GỐC TỪ CSDL
+  // 4. Render danh sách thẻ khóa học ĐÃ KÍCH HOẠT trên Trang chủ
   function renderCoursesGrid(courses) {
     const container = document.getElementById('coursesList');
     if (!container) return;
 
     if (courses.length === 0) {
       container.innerHTML = `
-        <div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted); background: #fff; border-radius: var(--radius); border: 1px solid var(--line);">
-          <i data-lucide="book-open" style="width: 44px; height: 44px; margin-bottom: 8px; color: var(--sky-deep);"></i>
-          <p style="font-weight: 600; font-size: 1rem; color: var(--ink);">Hiện chưa có môn học nào trong cơ sở dữ liệu.</p>
-          <small>Giảng viên hoặc Quản trị viên chưa đăng tải học phần.</small>
+        <div style="grid-column: 1/-1; padding: 48px 24px; text-align: center; color: var(--muted); background: #fff; border-radius: var(--radius); border: 1px solid var(--line);">
+          <i data-lucide="book-open-check" style="width: 48px; height: 48px; margin: 0 auto 12px; color: var(--ntu-blue);"></i>
+          <p style="font-weight: 700; font-size: 1.05rem; color: var(--ink);">Bạn chưa có khóa học nào được kích hoạt.</p>
+          <p style="font-size: .84rem; margin: 6px auto 18px; max-width: 440px;">Hãy khám phá các học phần công nghệ cao của Đại học Nguyễn Trãi tại mục Mua khóa học để bắt đầu học ngay.</p>
+          <a href="courses.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 12px; background: var(--ntu-blue); color: #fff; text-decoration: none; font-size: .88rem; font-weight: 700; box-shadow: 0 4px 14px rgba(0,83,159,.25);">
+            <i data-lucide="shopping-bag" style="width: 18px; height: 18px;"></i>
+            <span>Đến cửa hàng khóa học</span>
+          </a>
         </div>
       `;
       lucide.createIcons();
@@ -2015,36 +2049,6 @@
       const chapters = c.chapters || [];
       let lessonCount = 0;
       chapters.forEach(ch => { lessonCount += (ch.lessons || []).length; });
-
-      const isFree = Boolean(c.isFree) || (!c.price || parseFloat(c.price) <= 0);
-      const isEnrolled = Boolean(c.isEnrolled);
-      const priceVal = parseFloat(c.price || 0);
-
-      let type = 'paid';
-      if (isEnrolled) type = 'enrolled';
-      else if (isFree) type = 'free';
-
-      let tagLabel = '';
-      let enrolledClass = '';
-      if (isEnrolled) {
-        tagLabel = `Mã #${c.id} · Đã kích hoạt`;
-        enrolledClass = 'enrolled';
-      } else if (isFree) {
-        tagLabel = `Mã #${c.id} · Miễn phí`;
-        enrolledClass = 'free';
-      } else {
-        tagLabel = `Học phí: ${priceVal.toLocaleString('vi-VN')} ₫`;
-        enrolledClass = 'paid';
-      }
-
-      let actionBtn = '';
-      if (isEnrolled) {
-        actionBtn = `<a href="study.html?courseId=${c.id}" class="go">Vào phòng học<i data-lucide="arrow-right"></i></a>`;
-      } else if (isFree) {
-        actionBtn = `<button type="button" onclick="handleCourseEnrollClick(${c.id})" class="go" style="background: linear-gradient(135deg, #10b981, #059669); border:none; color:#fff; cursor:pointer; font-weight:700;">Đăng ký miễn phí<i data-lucide="sparkles"></i></button>`;
-      } else {
-        actionBtn = `<button type="button" onclick="handleCourseEnrollClick(${c.id})" class="go" style="background: linear-gradient(135deg, #0284c7, #0369a1); border:none; color:#fff; cursor:pointer; font-weight:700; box-shadow:0 4px 12px rgba(2,132,199,0.35);">Đăng ký PayOS<i data-lucide="credit-card"></i></button>`;
-      }
 
       // Tính tiến độ học tập thực tế từ dữ liệu CSDL
       let progressPercent = 0;
@@ -2060,66 +2064,41 @@
         progressPercent = Math.round((completed * 100) / lessonCount);
       }
 
-      // Khung tiến độ học chỉ hiển thị khi đã kích hoạt/đã mua; nếu chưa mua thì hiển thị thông báo chưa đăng ký
-      let progressSectionHtml = '';
-      if (isEnrolled) {
-        progressSectionHtml = `
-          <div class="progress">
-            <div class="lbl">
-              <span>Tiến độ học tập</span>
-              <span style="font-weight: 700; color: ${progressPercent > 0 ? '#0284c7' : '#64748b'};">${progressPercent}%</span>
-            </div>
-            <div class="bar">
-              <i data-w="${progressPercent}" style="width: ${progressPercent}%; background: ${progressPercent >= 100 ? '#10b981' : 'linear-gradient(90deg, #0284c7, #38bdf8)'};"></i>
-            </div>
-          </div>
-        `;
-      } else {
-        progressSectionHtml = `
-          <div class="unpurchased-banner" style="margin: 14px 0 10px; padding: 9px 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12.5px;">
-            <span style="color: #64748b; display: flex; align-items: center; gap: 6px; font-weight: 600;">
-              <i data-lucide="lock" style="width: 14px; height: 14px; stroke: #94a3b8;"></i>
-              Chưa kích hoạt
-            </span>
-            <span style="color: #0369a1; font-weight: 700;">${isFree ? 'Miễn phí' : priceVal.toLocaleString('vi-VN') + ' ₫'}</span>
-          </div>
-        `;
-      }
-
-      const majorsText = (c.majors || []).map(m => `<span class="major-badge">${escapeHtml(m.name || m.majorCode)}</span>`).join('');
-      const searchData = `${c.title} ${c.description || ''} ${c.id}`.toLowerCase();
-
-      // Sử dụng ảnh bìa GỐC từ trường c.thumbnailUrl trong CSDL
-      const originalThumb = c.thumbnailUrl && c.thumbnailUrl.trim().length > 0
-        ? c.thumbnailUrl
-        : (idx % 2 === 0
-            ? 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80'
-            : 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80');
+      const majorTags = (c.majors || []).map(m => `<span class="tag">${escapeHtml(m.name || m)}</span>`).join('') || '<span class="tag">Khoa CNTT - NTU</span>';
 
       return `
-        <article class="card course reveal in" data-type="${type}" data-free="${isFree}" data-enrolled="${isEnrolled}" data-name="${escapeHtml(searchData)}">
-          <div class="cover">
-            <img src="${escapeHtml(originalThumb)}" alt="${escapeHtml(c.title)}" class="cover-img" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80';" />
-            <div class="cover-overlay"></div>
-            <span class="tag ${enrolledClass}">${tagLabel}</span>
+        <article class="course card reveal in" data-name="${escapeHtml(c.title).toLowerCase()}" data-progress="${progressPercent}" style="animation-delay: ${idx * 60}ms;">
+          <div class="thumb">
+            <img src="${c.thumbnailUrl || 'assets/images/course-default.jpg'}" alt="${escapeHtml(c.title)}" onerror="this.src='assets/images/course-default.jpg'" />
+            <span class="badge enrolled">Mã #${c.id} · Đã kích hoạt</span>
             <span class="meta"><i data-lucide="layers"></i>${chapters.length} chương · ${lessonCount} bài giảng</span>
           </div>
           <div class="body">
             <h3>${escapeHtml(c.title)}</h3>
             <p>${escapeHtml(c.description || 'Chương trình đào tạo số hóa chuẩn Đại học Nguyễn Trãi.')}</p>
-            <div class="majors-tags">${majorsText}</div>
-            ${progressSectionHtml}
+            <div class="tags">${majorTags}</div>
+            
+            <div class="progress">
+              <div class="lbl">
+                <span>Tiến độ học tập</span>
+                <span style="font-weight: 700; color: ${progressPercent > 0 ? '#0284c7' : '#64748b'};">${progressPercent}%</span>
+              </div>
+              <div class="bar">
+                <i data-w="${progressPercent}" style="width: ${progressPercent}%; background: ${progressPercent >= 100 ? '#10b981' : 'linear-gradient(90deg, #0284c7, #38bdf8)'};"></i>
+              </div>
+            </div>
+
             <div class="foot">
-              <span>Khoa CNTT · NTU</span>
-              ${actionBtn}
+              <span class="dept">Khoa CNTT · NTU</span>
+              <a href="study.html?courseId=${c.id}" class="go">Vào phòng học<i data-lucide="arrow-right"></i></a>
             </div>
           </div>
         </article>
       `;
     }).join('');
-
-    bindTiltEffect();
+    lucide.createIcons();
   }
+
 
   // 5. Render Thư viện giáo trình PDF thật
   function renderRealDocuments(courses) {
@@ -2252,11 +2231,10 @@
     const cards = [...document.querySelectorAll('.course')];
     let shown = 0;
     cards.forEach((c) => {
-      const isFree = c.dataset.free === 'true';
-      const isEnrolled = c.dataset.enrolled === 'true';
+      const progress = parseInt(c.dataset.progress || '0', 10);
       let matchTab = (filter === 'all');
-      if (filter === 'free') matchTab = isFree;
-      if (filter === 'enrolled') matchTab = isEnrolled;
+      if (filter === 'in_progress') matchTab = (progress < 100);
+      if (filter === 'completed') matchTab = (progress >= 100);
 
       const ok = matchTab && c.dataset.name.includes(q);
       c.classList.toggle('hide', !ok);
