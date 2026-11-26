@@ -1,0 +1,1610 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Thư Viện Tài Liệu &amp; Hỏi Đáp AI RAG — Cổng Sinh Viên NTU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="assets/js/student-sidebar.js"></script>
+<style>
+  :root {
+    --bg: #f6fbfe;
+    --surface: #ffffff;
+    --tint: #e5f7ff;
+    --ink: #0b2540;
+    --ink-2: #163a5c;
+    --sky: #33ccff;
+    --sky-deep: #0679a8;
+    --ntu-blue: #00539F;
+    --ntu-blue-dark: #003e77;
+    --ntu-red: #DA291C;
+    --line: rgba(11,37,64,.08);
+    --muted: #55677c;
+    --ok: #059669;
+    --ok-bg: #d1fae5;
+    --warn: #d97706;
+    --warn-bg: #fef3c7;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    --ease: cubic-bezier(.2,.7,.1,1);
+    --radius: 18px;
+    --card-shadow: 0 10px 30px -10px rgba(0, 83, 159, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  svg.lucide { width: 18px; height: 18px; stroke-width: 1.8; flex-shrink: 0; }
+  em { font-style: italic; color: var(--sky-deep); }
+  .serif { font-family: var(--serif); }
+  .eyebrow { font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--sky-deep); font-weight: 700; }
+
+  /* ambient drift orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: .45;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .orb.a { width: 420px; height: 420px; background: #bfeeff; top: -140px; right: -80px; }
+  .orb.b { width: 340px; height: 340px; background: #d9f4ff; bottom: -100px; left: 15%; animation-delay: -6s; }
+  @keyframes drift { to { transform: translate(-50px, 30px) scale(1.08); } }
+
+  .app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+  /* main layout */
+  .main {
+    margin-left: 290px;
+    width: calc(100% - 290px);
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* topbar */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(246,251,254,.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .menu-btn {
+    display: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid var(--line);
+    place-items: center;
+    color: var(--ink);
+  }
+  .search-wrap {
+    flex: 1;
+    max-width: 460px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-wrap svg { position: absolute; left: 14px; color: var(--muted); pointer-events: none; }
+  .search-wrap input {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 18px 10px 42px;
+    font-size: .88rem;
+    outline: none;
+    transition: all .25s;
+  }
+  .search-wrap input:focus {
+    border-color: var(--ntu-blue);
+    box-shadow: 0 0 0 4px rgba(0,83,159,.1);
+  }
+
+  .top-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .chip-live {
+    font-size: .75rem;
+    color: var(--sky-deep);
+    background: #fff;
+    border: 1px solid rgba(51,204,255,.4);
+    padding: 6px 14px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+  .chip-live .dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,.2); }
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid var(--line);
+    display: grid;
+    place-items: center;
+    color: var(--ink-2);
+    position: relative;
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .icon-btn:hover { background: var(--tint); border-color: rgba(51,204,255,.4); color: var(--ntu-blue); }
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px 4px 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .user-badge span { font-size: .82rem; font-weight: 700; color: var(--ink); }
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--ntu-blue);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: .78rem;
+    font-weight: 800;
+  }
+
+  /* content area */
+  .content { padding: 32px 36px 80px; max-width: 1440px; margin: 0 auto; width: 100%; }
+
+  /* Hero Section */
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .hero-text h1 {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin: 6px 0 8px;
+  }
+  .hero-text p {
+    font-size: .95rem;
+    color: var(--muted);
+    max-width: 650px;
+    line-height: 1.55;
+  }
+  .hero-actions { display: flex; gap: 10px; align-items: center; }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--ntu-blue) 0%, #0077cc 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: .85rem;
+    padding: 10px 18px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,83,159,.25);
+    transition: all .2s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,83,159,.35);
+  }
+
+  /* Bento Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(11,37,64,.02);
+    transition: all .2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,37,64,.06); }
+  .stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .stat-icon.blue { background: #e0f2fe; color: #0284c7; }
+  .stat-icon.green { background: #dcfce7; color: #16a34a; }
+  .stat-icon.purple { background: #f3e8ff; color: #9333ea; }
+  .stat-icon.orange { background: #ffedd5; color: #ea580c; }
+  .stat-val { font-size: 1.45rem; font-weight: 800; color: var(--ink); line-height: 1.1; }
+  .stat-lbl { font-size: .78rem; font-weight: 600; color: var(--muted); margin-top: 3px; }
+
+  /* Course Filters & Tabs */
+  .filter-section {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(11,37,64,.02);
+  }
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .tabs-label {
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .course-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .course-tab {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: .84rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    background: #f1f5f9;
+    border: 1px solid transparent;
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .course-tab:hover { background: var(--tint); color: var(--ntu-blue); }
+  .course-tab.active {
+    background: var(--ntu-blue);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,83,159,.25);
+  }
+  .course-tab .tab-badge {
+    padding: 2px 7px;
+    font-size: .72rem;
+    border-radius: 999px;
+    background: rgba(0,0,0,.08);
+  }
+  .course-tab.active .tab-badge {
+    background: rgba(255,255,255,.25);
+    color: #fff;
+  }
+
+  .sub-filters {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    flex-wrap: wrap;
+  }
+  .format-pills { display: flex; gap: 8px; align-items: center; }
+  .format-pill {
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: #fff;
+    border: 1px solid var(--line);
+    transition: all .2s;
+  }
+  .format-pill:hover, .format-pill.active {
+    background: var(--tint);
+    border-color: rgba(51,204,255,.5);
+    color: var(--sky-deep);
+  }
+  .sort-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .82rem;
+    color: var(--muted);
+  }
+  .sort-select select {
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: .82rem;
+    outline: none;
+  }
+
+  /* Document Grid */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 22px;
+  }
+
+  /* Document Card */
+  .doc-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all .25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px -10px rgba(0, 83, 159, 0.16);
+    border-color: rgba(51,204,255,.4);
+  }
+  .doc-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--ntu-blue), var(--sky));
+    opacity: 0;
+    transition: opacity .25s;
+  }
+  .doc-card:hover::before { opacity: 1; }
+
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .file-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .file-badge.pdf { background: #fee2e2; color: #dc2626; }
+  .file-badge.txt { background: #e0f2fe; color: #0284c7; }
+  .file-badge.docx { background: #e0e7ff; color: #4338ca; }
+
+  .rag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    color: #059669;
+    border: 1px solid rgba(5,150,105,.2);
+  }
+  .rag-badge.pending {
+    background: #fef3c7;
+    color: #d97706;
+    border-color: rgba(217,119,6,.2);
+  }
+
+  .doc-course-tag {
+    font-size: .76rem;
+    font-weight: 700;
+    color: var(--sky-deep);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+  .doc-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.38;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .doc-lesson {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .78rem;
+    color: var(--muted);
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    padding: 12px 0;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+    margin-bottom: 18px;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .doc-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+  }
+  .doc-meta-item svg { width: 15px; height: 15px; color: var(--sky-deep); }
+
+  .doc-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .btn-doc-view {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: all .2s;
+  }
+  .btn-doc-view:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: var(--ink);
+  }
+  .btn-doc-rag {
+    flex: 1.35;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 14px;
+    background: linear-gradient(135deg, var(--ntu-blue) 0%, #0077cc 100%);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #fff;
+    transition: all .2s;
+    box-shadow: 0 4px 12px rgba(0,83,159,.2);
+  }
+  .btn-doc-rag:hover {
+    background: linear-gradient(135deg, var(--ntu-blue-dark) 0%, var(--ntu-blue) 100%);
+    box-shadow: 0 6px 18px rgba(0,83,159,.3);
+    transform: translateY(-1px);
+  }
+
+  /* Empty State */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+    border: 1px dashed var(--line);
+    border-radius: 20px;
+  }
+  .empty-state svg { width: 48px; height: 48px; color: var(--muted); margin-bottom: 14px; }
+  .empty-state h3 { font-size: 1.15rem; color: var(--ink); margin-bottom: 6px; }
+  .empty-state p { font-size: .88rem; color: var(--muted); }
+
+  /* ========================================================
+     MODAL HỎI ĐÁP AI RAG THEO TÀI LIỆU
+     ======================================================== */
+  .rag-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(11, 37, 64, 0.6);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .rag-modal-overlay.open { display: flex !important; }
+
+  .rag-modal {
+    background: #ffffff;
+    width: 100%;
+    max-width: 920px;
+    height: 85vh;
+    max-height: 850px;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px -15px rgba(0, 83, 159, 0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalPop .25s ease-out;
+  }
+  @keyframes modalPop {
+    from { opacity: 0; transform: scale(0.96) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .rag-modal-header {
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #0b2540 0%, #163a5c 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .rag-header-left { display: flex; align-items: center; gap: 14px; }
+  .rag-header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    display: grid;
+    place-items: center;
+    color: #33ccff;
+    flex-shrink: 0;
+  }
+  .rag-header-title { font-size: 1.05rem; font-weight: 700; line-height: 1.25; }
+  .rag-header-sub { font-size: .78rem; color: #94a3b8; margin-top: 3px; display: flex; align-items: center; gap: 8px; }
+  .rag-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    transition: all .2s;
+  }
+  .rag-close-btn:hover { background: rgba(255,255,255,.25); }
+
+  /* Context bar inside modal */
+  .rag-doc-banner {
+    padding: 10px 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: .8rem;
+  }
+  .doc-banner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .doc-banner-tag strong { color: var(--ntu-blue); font-weight: 700; }
+  .doc-banner-stats { display: flex; gap: 14px; color: var(--muted); font-size: .78rem; }
+
+  /* Chat Conversation */
+  .rag-chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #f9fbfe;
+  }
+
+  .chat-msg {
+    display: flex;
+    gap: 14px;
+    max-width: 88%;
+  }
+  .chat-msg.user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+  }
+  .chat-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: .78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .chat-msg.bot .chat-avatar {
+    background: linear-gradient(135deg, var(--ntu-blue), var(--sky));
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,83,159,.25);
+  }
+  .chat-msg.user .chat-avatar {
+    background: #0b2540;
+    color: #fff;
+  }
+  .chat-bubble {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-size: .88rem;
+    line-height: 1.55;
+    color: var(--ink);
+    box-shadow: 0 2px 8px rgba(11,37,64,.04);
+  }
+  .chat-msg.user .chat-bubble {
+    background: var(--ntu-blue);
+    color: #fff;
+    border-color: var(--ntu-blue);
+    border-top-right-radius: 4px;
+  }
+  .chat-msg.bot .chat-bubble {
+    border-top-left-radius: 4px;
+  }
+
+  .chat-bubble h4 {
+    font-size: .92rem;
+    margin-bottom: 6px;
+    color: var(--ntu-blue);
+  }
+  .chat-bubble p { margin-bottom: 8px; }
+  .chat-bubble p:last-child { margin-bottom: 0; }
+  .chat-bubble ul, .chat-bubble ol {
+    margin-left: 20px;
+    margin-bottom: 8px;
+  }
+  .chat-bubble li { margin-bottom: 4px; }
+  .chat-bubble code {
+    background: rgba(0,0,0,.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: .82rem;
+    font-family: monospace;
+  }
+
+  /* Cited Pages Badges */
+  .cited-pages-wrap {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cited-pages-label {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .page-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f1f5f9;
+    color: var(--ntu-blue);
+    border: 1px solid rgba(0,83,159,.2);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: .74rem;
+    font-weight: 700;
+  }
+
+  /* Sources Accordion */
+  .sources-details {
+    margin-top: 10px;
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: .78rem;
+  }
+  .sources-details summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--sky-deep);
+    user-select: none;
+    outline: none;
+  }
+  .sources-list {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .source-item {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+  .source-item-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    color: var(--ink-2);
+    margin-bottom: 4px;
+    font-size: .75rem;
+  }
+  .source-snippet {
+    font-size: .75rem;
+    color: var(--muted);
+    line-height: 1.45;
+    font-style: italic;
+  }
+
+  /* Suggested Prompts Pills */
+  .suggested-prompts {
+    padding: 10px 24px;
+    background: #fff;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .prompt-pill {
+    padding: 6px 12px;
+    background: var(--tint);
+    color: var(--sky-deep);
+    border: 1px solid rgba(51,204,255,.3);
+    border-radius: 999px;
+    font-size: .76rem;
+    font-weight: 600;
+    transition: all .2s;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .prompt-pill:hover {
+    background: var(--ntu-blue);
+    color: #fff;
+    border-color: var(--ntu-blue);
+  }
+
+  /* Chat Input Area */
+  .rag-input-area {
+    padding: 16px 24px;
+    background: #fff;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .rag-input-field {
+    flex: 1;
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: .88rem;
+    outline: none;
+    transition: all .2s;
+  }
+  .rag-input-field:focus {
+    background: #fff;
+    border-color: var(--ntu-blue);
+    box-shadow: 0 0 0 3px rgba(0,83,159,.1);
+  }
+  .rag-send-btn {
+    padding: 12px 20px;
+    background: var(--ntu-blue);
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: .86rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all .2s;
+  }
+  .rag-send-btn:hover {
+    background: var(--ntu-blue-dark);
+  }
+  .rag-send-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+
+  /* Thinking Indicator */
+  .thinking-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .82rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .typing-dots {
+    display: flex;
+    gap: 4px;
+  }
+  .typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sky-deep);
+    animation: typingBounce 1.4s infinite ease-in-out both;
+  }
+  .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+  .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+  @keyframes typingBounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+
+  @media (max-width: 992px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .main { margin-left: 0; width: 100%; }
+    .content { padding: 20px 16px 60px; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .doc-grid { grid-template-columns: 1fr; }
+    .rag-modal { height: 95vh; max-height: none; border-radius: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb a"></div>
+<div class="orb b"></div>
+
+<div class="app">
+  <!-- SIDEBAR CHUNG CỔNG SINH VIÊN NTU -->
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <!-- MAIN WRAPPER -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+
+      <div class="search-wrap">
+        <i data-lucide="search"></i>
+        <input type="text" id="docSearchInput" placeholder="Tìm kiếm tài liệu, giáo trình, buổi học..." oninput="filterDocuments()" />
+      </div>
+
+      <div class="top-right">
+        <span class="chip-live"><i class="dot"></i> Trợ lý AI RAG Trực Tuyến</span>
+
+        <a href="index.html" class="icon-btn" title="Trang chủ"><i data-lucide="home"></i></a>
+        <a href="orders.html" class="icon-btn" title="Lịch sử hóa đơn"><i data-lucide="receipt"></i></a>
+        <button class="icon-btn" title="Làm mới dữ liệu" onclick="fetchDocuments()"><i data-lucide="refresh-cw"></i></button>
+
+        <div class="user-badge">
+          <div class="user-avatar" id="topAvatar">LVB</div>
+          <span id="topStudentName">Lê Văn Bằng (2310900052)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-text">
+          <span class="eyebrow">KHO HỌC LIỆU SỐ HÓA &amp; VECTOR RAG</span>
+          <h1>Thư Viện Tài Liệu <em>Theo Môn Học</em></h1>
+          <p>Kho học liệu giáo trình chính thức của ĐH Nguyễn Trãi. Bấm nút <strong>✨ Hỏi AI RAG</strong> trên từng tài liệu để trò chuyện, giải đáp thắc mắc và trích dẫn trực tiếp số trang từ MongoDB Vector.</p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="openGlobalRagModal()">
+            <i data-lucide="sparkles"></i> Hỏi Đáp RAG Môn Học
+          </button>
+        </div>
+      </section>
+
+      <!-- BENTO STATS -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue"><i data-lucide="files"></i></div>
+          <div>
+            <div class="stat-val" id="statTotalDocs">6</div>
+            <div class="stat-lbl">Tài liệu giáo trình</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i data-lucide="book-open"></i></div>
+          <div>
+            <div class="stat-val" id="statTotalCourses">2</div>
+            <div class="stat-lbl">Môn học liên kết</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple"><i data-lucide="layers"></i></div>
+          <div>
+            <div class="stat-val" id="statTotalPages">108+</div>
+            <div class="stat-lbl">Tổng số trang PDF</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i data-lucide="cpu"></i></div>
+          <div>
+            <div class="stat-val" id="statTotalChunks">371+</div>
+            <div class="stat-lbl">Đoạn Chunks AI RAG</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FILTER SECTION -->
+      <section class="filter-section">
+        <div class="filter-header">
+          <div class="tabs-label"><i data-lucide="filter"></i> Phân loại theo học phần:</div>
+          <div class="course-tabs" id="courseTabsContainer">
+            <button class="course-tab active" data-course="all" onclick="selectCourseFilter('all')">
+              Tất cả môn học <span class="tab-badge" id="tabBadgeAll">6</span>
+            </button>
+            <!-- Dynamic course tabs inserted here -->
+          </div>
+        </div>
+
+        <div class="sub-filters">
+          <div class="format-pills">
+            <span style="font-size: .78rem; font-weight: 700; color: var(--muted); margin-right: 4px;">Định dạng:</span>
+            <button class="format-pill active" data-fmt="all" onclick="selectFormatFilter('all')">Tất cả</button>
+            <button class="format-pill" data-fmt="PDF" onclick="selectFormatFilter('PDF')">PDF</button>
+            <button class="format-pill" data-fmt="TXT" onclick="selectFormatFilter('TXT')">TXT</button>
+            <button class="format-pill" data-fmt="DOCX" onclick="selectFormatFilter('DOCX')">DOCX</button>
+          </div>
+
+          <div class="sort-select">
+            <span>Sắp xếp:</span>
+            <select id="docSortSelect" onchange="sortAndRender()">
+              <option value="newest">Mới cập nhật</option>
+              <option value="chunks">Nhiều Chunks RAG nhất</option>
+              <option value="pages">Nhiều trang nhất</option>
+              <option value="name">Tên tài liệu A-Z</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCUMENTS GRID -->
+      <section class="doc-grid" id="docGridContainer">
+        <!-- Rendered by JS -->
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- ========================================================
+     MODAL HỎI ĐÁP AI RAG TÀI LIỆU
+     ======================================================== -->
+<div class="rag-modal-overlay" id="ragModalOverlay" onclick="if(event.target===this)closeRagModal()">
+  <div class="rag-modal">
+    <!-- Modal Header -->
+    <div class="rag-modal-header">
+      <div class="rag-header-left">
+        <div class="rag-header-icon"><i data-lucide="sparkles"></i></div>
+        <div>
+          <div class="rag-header-title" id="ragModalDocTitle">Trợ Lý AI RAG Giáo Trình</div>
+          <div class="rag-header-sub">
+            <span id="ragModalCourseTitle">Môn học</span>
+            <span>•</span>
+            <span style="color:#4ade80;">MongoDB Vector &amp; Trích dẫn số trang chính xác</span>
+          </div>
+        </div>
+      </div>
+      <button class="rag-close-btn" onclick="closeRagModal()" title="Đóng cửa sổ"><i data-lucide="x"></i></button>
+    </div>
+
+    <!-- Doc Banner Info -->
+    <div class="rag-doc-banner">
+      <div class="doc-banner-tag">
+        <i data-lucide="file-text" style="width:14px; height:14px; color:var(--ntu-blue);"></i>
+        Đang hỏi tài liệu: <strong id="ragBannerDocName">BaoCaoCoBanIn.pdf</strong>
+      </div>
+      <div class="doc-banner-stats">
+        <span>📄 <strong id="ragBannerPages">103</strong> trang</span>
+        <span>🧩 <strong id="ragBannerChunks">370</strong> chunks</span>
+        <span class="rag-badge" style="padding: 2px 8px; font-size: .7rem;"><i data-lucide="check-circle" style="width:12px; height:12px;"></i> Sẵn sàng</span>
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="rag-chat-body" id="ragChatBody">
+      <!-- Dynamic messages will be appended here -->
+    </div>
+
+    <!-- Suggested Prompt Pills -->
+    <div class="suggested-prompts" id="suggestedPromptsBar">
+      <div class="prompt-pill" onclick="sendPrompt('Tóm tắt nội dung chính và cấu trúc của tài liệu này')">
+        💡 Tóm tắt nội dung chính
+      </div>
+      <div class="prompt-pill" onclick="sendPrompt('Những kiến thức và khái niệm trọng tâm nhất cần nắm?')">
+        📌 Khái niệm & kiến thức cốt lõi
+      </div>
+      <div class="prompt-pill" onclick="sendPrompt('Kiến trúc và các thành phần chính được mô tả như thế nào?')">
+        🏗️ Kiến trúc & thành phần
+      </div>
+      <div class="prompt-pill" onclick="sendPrompt('Tạo 3 câu hỏi trắc nghiệm ôn tập kèm giải thích từ tài liệu')">
+        🎯 3 câu hỏi trắc nghiệm ôn tập
+      </div>
+    </div>
+
+    <!-- Chat Input Area -->
+    <div class="rag-input-area">
+      <input type="text" class="rag-input-field" id="ragQuestionInput" placeholder="Nhập câu hỏi về tài liệu này..." onkeydown="if(event.key==='Enter')submitRagQuestion()" />
+      <button class="rag-send-btn" id="ragSendBtn" onclick="submitRagQuestion()">
+        <span>Gửi</span>
+        <i data-lucide="send" style="width:16px; height:16px;"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==========================================
+// STATE QUẢN LÝ TÀI LIỆU & RAG
+// ==========================================
+let allDocuments = [];
+let currentCourseFilter = 'all';
+let currentFormatFilter = 'all';
+let currentSort = 'newest';
+let activeRagDoc = null;
+let isRagWaiting = false;
+
+// Format dung lượng file
+function formatBytes(bytes) {
+  if (!bytes || bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Format ngày tháng
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch (e) {
+    return dateStr;
+  }
+}
+
+// 1. Tải danh sách tài liệu từ Backend
+async function fetchDocuments() {
+  try {
+    const res = await fetch('/api/documents');
+    const json = await res.json();
+    if (json.code === 200 && Array.isArray(json.data)) {
+      allDocuments = json.data;
+    } else if (Array.isArray(json)) {
+      allDocuments = json;
+    } else {
+      allDocuments = [];
+    }
+  } catch (err) {
+    console.error('Lỗi khi tải tài liệu:', err);
+    allDocuments = [];
+  }
+  updateStats();
+  renderCourseTabs();
+  filterAndRender();
+}
+
+// 2. Cập nhật thống kê Bento Cards
+function updateStats() {
+  const totalDocs = allDocuments.length;
+  const coursesSet = new Set(allDocuments.map(d => d.courseId).filter(Boolean));
+  const totalPages = allDocuments.reduce((sum, d) => sum + (d.totalPages || 0), 0);
+  const totalChunks = allDocuments.reduce((sum, d) => sum + (d.chunkCount || 0), 0);
+
+  document.getElementById('statTotalDocs').textContent = totalDocs;
+  document.getElementById('statTotalCourses').textContent = coursesSet.size;
+  document.getElementById('statTotalPages').textContent = totalPages > 0 ? `${totalPages}+` : '0';
+  document.getElementById('statTotalChunks').textContent = totalChunks > 0 ? `${totalChunks}+` : '0';
+  document.getElementById('tabBadgeAll').textContent = totalDocs;
+}
+
+// 3. Render các Tab môn học
+function renderCourseTabs() {
+  const container = document.getElementById('courseTabsContainer');
+  // Lấy danh sách môn học duy nhất
+  const courseMap = new Map();
+  allDocuments.forEach(doc => {
+    if (doc.courseId) {
+      if (!courseMap.has(doc.courseId)) {
+        courseMap.set(doc.courseId, { id: doc.courseId, title: doc.courseTitle || `Môn học #${doc.courseId}`, count: 0 });
+      }
+      courseMap.get(doc.courseId).count++;
+    }
+  });
+
+  let html = `
+    <button class="course-tab ${currentCourseFilter === 'all' ? 'active' : ''}" data-course="all" onclick="selectCourseFilter('all')">
+      Tất cả môn học <span class="tab-badge" id="tabBadgeAll">${allDocuments.length}</span>
+    </button>
+  `;
+
+  courseMap.forEach(c => {
+    const isActive = String(currentCourseFilter) === String(c.id);
+    html += `
+      <button class="course-tab ${isActive ? 'active' : ''}" data-course="${c.id}" onclick="selectCourseFilter('${c.id}')" title="${c.title}">
+        ${c.title.length > 32 ? c.title.substring(0, 32) + '...' : c.title}
+        <span class="tab-badge">${c.count}</span>
+      </button>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// 4. Lọc môn học
+function selectCourseFilter(courseId) {
+  currentCourseFilter = courseId;
+  document.querySelectorAll('.course-tab').forEach(tab => {
+    if (tab.getAttribute('data-course') === String(courseId)) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+  filterAndRender();
+}
+
+// 5. Lọc định dạng
+function selectFormatFilter(fmt) {
+  currentFormatFilter = fmt;
+  document.querySelectorAll('.format-pill').forEach(pill => {
+    if (pill.getAttribute('data-fmt') === fmt) {
+      pill.classList.add('active');
+    } else {
+      pill.classList.remove('active');
+    }
+  });
+  filterAndRender();
+}
+
+// 6. Tìm kiếm và sắp xếp
+function filterDocuments() {
+  filterAndRender();
+}
+
+function sortAndRender() {
+  currentSort = document.getElementById('docSortSelect').value;
+  filterAndRender();
+}
+
+function filterAndRender() {
+  const query = (document.getElementById('docSearchInput').value || '').toLowerCase().trim();
+
+  let filtered = allDocuments.filter(doc => {
+    // Lọc theo course
+    if (currentCourseFilter !== 'all' && String(doc.courseId) !== String(currentCourseFilter)) {
+      return false;
+    }
+    // Lọc theo định dạng file
+    if (currentFormatFilter !== 'all') {
+      const type = (doc.fileType || '').toUpperCase();
+      if (type !== currentFormatFilter) return false;
+    }
+    // Lọc theo từ khóa tìm kiếm
+    if (query) {
+      const titleMatch = (doc.title || '').toLowerCase().includes(query);
+      const fileMatch = (doc.fileName || '').toLowerCase().includes(query);
+      const courseMatch = (doc.courseTitle || '').toLowerCase().includes(query);
+      const lessonMatch = (doc.lessonTitle || '').toLowerCase().includes(query);
+      if (!titleMatch && !fileMatch && !courseMatch && !lessonMatch) return false;
+    }
+    return true;
+  });
+
+  // Sắp xếp
+  filtered.sort((a, b) => {
+    if (currentSort === 'newest') {
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    } else if (currentSort === 'chunks') {
+      return (b.chunkCount || 0) - (a.chunkCount || 0);
+    } else if (currentSort === 'pages') {
+      return (b.totalPages || 0) - (a.totalPages || 0);
+    } else if (currentSort === 'name') {
+      return (a.title || '').localeCompare(b.title || '');
+    }
+    return 0;
+  });
+
+  renderDocumentsGrid(filtered);
+}
+
+// 7. Render danh sách thẻ tài liệu
+function renderDocumentsGrid(docs) {
+  const grid = document.getElementById('docGridContainer');
+  if (!docs || docs.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <i data-lucide="file-question"></i>
+        <h3>Không tìm thấy tài liệu phù hợp</h3>
+        <p>Vui lòng thử chọn môn học khác hoặc thay đổi từ khóa tìm kiếm.</p>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  grid.innerHTML = docs.map(doc => {
+    const fileType = (doc.fileType || 'PDF').toUpperCase();
+    const badgeClass = fileType === 'PDF' ? 'pdf' : (fileType === 'TXT' ? 'txt' : 'docx');
+    const isRagReady = doc.ragIndexed !== false;
+    const fileUrl = doc.fileUrl && doc.fileUrl.startsWith('http') ? doc.fileUrl : (doc.fileUrl ? `${window.location.origin}${doc.fileUrl}` : '#');
+    const docTitle = doc.title || doc.fileName || 'Tài liệu giáo trình';
+    const courseTitle = doc.courseTitle || 'Chưa gán môn học';
+    const lessonTitle = doc.lessonTitle ? `<div class="doc-lesson"><i data-lucide="bookmark" style="width:13px; height:13px;"></i> ${doc.lessonTitle}</div>` : '';
+    const dateFormatted = formatDate(doc.createdAt);
+
+    return `
+      <div class="doc-card" id="doc-card-${doc.id}">
+        <div>
+          <div class="doc-header">
+            <span class="file-badge ${badgeClass}">
+              <i data-lucide="file-text" style="width:13px; height:13px;"></i> ${fileType}
+            </span>
+            <span class="rag-badge ${isRagReady ? '' : 'pending'}">
+              <i data-lucide="${isRagReady ? 'sparkles' : 'clock'}" style="width:12px; height:12px;"></i>
+              ${isRagReady ? 'RAG Sẵn Sàng' : 'Chưa lập chỉ mục'}
+            </span>
+          </div>
+
+          <div class="doc-course-tag">
+            <i data-lucide="graduation-cap" style="width:14px; height:14px;"></i>
+            ${courseTitle}
+          </div>
+
+          <h3 class="doc-title" title="${docTitle}">${docTitle}</h3>
+          ${lessonTitle}
+
+          <div class="doc-meta">
+            <div class="doc-meta-item" title="Số trang tài liệu">
+              <i data-lucide="book-open"></i>
+              <span>${doc.totalPages ? doc.totalPages + ' trang' : '1 trang'}</span>
+            </div>
+            <div class="doc-meta-item" title="Số đoạn chunks RAG trong MongoDB">
+              <i data-lucide="database"></i>
+              <span>${doc.chunkCount || 0} Chunks RAG</span>
+            </div>
+            <div class="doc-meta-item" title="Dung lượng tệp">
+              <i data-lucide="hard-drive"></i>
+              <span>${formatBytes(doc.fileSizeBytes)}</span>
+            </div>
+            ${dateFormatted ? `
+              <div class="doc-meta-item" title="Ngày nạp tài liệu">
+                <i data-lucide="calendar"></i>
+                <span>${dateFormatted}</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <div class="doc-actions">
+          <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="btn-doc-view" title="Đọc hoặc tải tệp tài liệu">
+            <i data-lucide="external-link" style="width:15px; height:15px;"></i>
+            <span>Đọc / Tải file</span>
+          </a>
+          <button class="btn-doc-rag" onclick="openDocRagModal(${doc.id})" title="Hỏi đáp AI RAG trích dẫn trực tiếp từ tài liệu này">
+            <i data-lucide="sparkles" style="width:15px; height:15px;"></i>
+            <span>✨ Hỏi AI RAG</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (window.lucide) lucide.createIcons();
+}
+
+// ==========================================
+// XỬ LÝ MODAL HỎI ĐÁP AI RAG
+// ==========================================
+function openDocRagModal(docId) {
+  const doc = allDocuments.find(d => d.id === docId);
+  if (!doc) return;
+  activeRagDoc = doc;
+
+  document.getElementById('ragModalDocTitle').textContent = doc.title || doc.fileName;
+  document.getElementById('ragModalCourseTitle').textContent = doc.courseTitle || 'Học phần NTU';
+  document.getElementById('ragBannerDocName').textContent = doc.fileName || doc.title;
+  document.getElementById('ragBannerPages').textContent = doc.totalPages || 1;
+  document.getElementById('ragBannerChunks').textContent = doc.chunkCount || 0;
+
+  // Khởi tạo khung chat
+  const chatBody = document.getElementById('ragChatBody');
+  chatBody.innerHTML = `
+    <div class="chat-msg bot">
+      <div class="chat-avatar"><i data-lucide="bot" style="width:18px; height:18px;"></i></div>
+      <div class="chat-bubble">
+        <h4>Xin chào Lê Văn Bằng! 👋</h4>
+        <p>Tôi là <strong>Trợ Lý AI RAG</strong> được kết nối với tài liệu <em>"${doc.title || doc.fileName}"</em> thuộc môn học <strong>${doc.courseTitle || 'Đại học Nguyễn Trãi'}</strong>.</p>
+        <p>Tài liệu này đã được bóc tách thành <strong>${doc.chunkCount || 0} đoạn Chunks</strong> trên tổng số <strong>${doc.totalPages || 1} trang</strong>. Bạn có thể hỏi bất kỳ câu hỏi nào về nội dung, thuật ngữ, hoặc kiến thức bài học trong tài liệu này!</p>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('ragModalOverlay').classList.add('open');
+  document.getElementById('ragQuestionInput').value = '';
+  document.getElementById('ragQuestionInput').focus();
+  if (window.lucide) lucide.createIcons();
+}
+
+function openGlobalRagModal() {
+  if (allDocuments.length > 0) {
+    // Ưu tiên tài liệu có chunks nhiều nhất
+    const sorted = [...allDocuments].sort((a,b) => (b.chunkCount||0) - (a.chunkCount||0));
+    openDocRagModal(sorted[0].id);
+  } else {
+    alert('Chưa có tài liệu nào sẵn sàng!');
+  }
+}
+
+function closeRagModal() {
+  document.getElementById('ragModalOverlay').classList.remove('open');
+  activeRagDoc = null;
+}
+
+// Bấm gợi ý prompt nhanh
+function sendPrompt(text) {
+  if (isRagWaiting) return;
+  document.getElementById('ragQuestionInput').value = text;
+  submitRagQuestion();
+}
+
+// Gửi câu hỏi đến /api/documents/rag/ask
+async function submitRagQuestion() {
+  const input = document.getElementById('ragQuestionInput');
+  const question = (input.value || '').trim();
+  if (!question || isRagWaiting || !activeRagDoc) return;
+
+  const chatBody = document.getElementById('ragChatBody');
+
+  // 1. Thêm câu hỏi của Sinh viên vào Chat
+  const userMsgHtml = `
+    <div class="chat-msg user">
+      <div class="chat-avatar">LVB</div>
+      <div class="chat-bubble">
+        <p>${escapeHtml(question)}</p>
+      </div>
+    </div>
+  `;
+  chatBody.insertAdjacentHTML('beforeend', userMsgHtml);
+  input.value = '';
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  // 2. Thêm Thinking indicator
+  const thinkingId = 'thinking-' + Date.now();
+  const thinkingHtml = `
+    <div class="chat-msg bot" id="${thinkingId}">
+      <div class="chat-avatar"><i data-lucide="bot" style="width:18px; height:18px;"></i></div>
+      <div class="chat-bubble">
+        <div class="thinking-indicator">
+          <div class="typing-dots">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+          <span>AI đang quét ${activeRagDoc.chunkCount || 0} Chunks Vector và trích xuất số trang...</span>
+        </div>
+      </div>
+    </div>
+  `;
+  chatBody.insertAdjacentHTML('beforeend', thinkingHtml);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  if (window.lucide) lucide.createIcons();
+
+  isRagWaiting = true;
+  document.getElementById('ragSendBtn').disabled = true;
+
+  try {
+    const payload = {
+      courseId: activeRagDoc.courseId || 1,
+      question: question,
+      topK: 4
+    };
+
+    const res = await fetch('/api/documents/rag/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const json = await res.json();
+    const thinkingElem = document.getElementById(thinkingId);
+    if (thinkingElem) thinkingElem.remove();
+
+    if (json.code === 200 && json.data) {
+      renderAiResponse(json.data);
+    } else {
+      const errMsg = json.message || 'Không thể lấy phản hồi từ AI RAG.';
+      renderAiError(errMsg);
+    }
+  } catch (err) {
+    console.error('Lỗi RAG ask:', err);
+    const thinkingElem = document.getElementById(thinkingId);
+    if (thinkingElem) thinkingElem.remove();
+    renderAiError('Lỗi kết nối tới máy chủ Trợ lý AI: ' + err.message);
+  } finally {
+    isRagWaiting = false;
+    document.getElementById('ragSendBtn').disabled = false;
+    chatBody.scrollTop = chatBody.scrollHeight;
+    if (window.lucide) lucide.createIcons();
+  }
+}
+
+// Render câu trả lời của AI kèm trích dẫn số trang và nguồn tham khảo
+function renderAiResponse(ragData) {
+  const chatBody = document.getElementById('ragChatBody');
+  const answerFormatted = formatMarkdownAnswer(ragData.answer || 'Không có câu trả lời');
+  const citedPages = ragData.citedPages || [];
+  const sources = ragData.sources || [];
+
+  let citedPagesHtml = '';
+  if (citedPages.length > 0) {
+    citedPagesHtml = `
+      <div class="cited-pages-wrap">
+        <span class="cited-pages-label">📌 Trích dẫn số trang:</span>
+        ${citedPages.map(p => `<span class="page-chip"><i data-lucide="bookmark" style="width:11px; height:11px;"></i> Trang ${p}</span>`).join('')}
+      </div>
+    `;
+  }
+
+  let sourcesHtml = '';
+  if (sources.length > 0) {
+    sourcesHtml = `
+      <details class="sources-details">
+        <summary>🔎 Xem ${sources.length} nguồn trích dẫn đối chiếu từ giáo trình</summary>
+        <div class="sources-list">
+          ${sources.map((s, idx) => {
+            const scorePct = s.similarityScore ? (s.similarityScore * 100).toFixed(1) + '%' : (s.score ? (s.score * 100).toFixed(1) + '%' : 'Khớp cao');
+            return `
+              <div class="source-item">
+                <div class="source-item-header">
+                  <span>Trang ${s.pageNumber || 'N/A'} • ${s.documentName || 'Giáo trình'}</span>
+                  <span style="color:var(--ok);">Độ tương đồng: ${scorePct}</span>
+                </div>
+                <div class="source-snippet">"${escapeHtml(s.snippet || '')}"</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </details>
+    `;
+  }
+
+  const execTimeHtml = ragData.executionTimeMs ? `<div style="font-size:.72rem; color:var(--muted); margin-top:8px; text-align:right;">⚡ Phản hồi trong ${ragData.executionTimeMs}ms</div>` : '';
+
+  const botMsgHtml = `
+    <div class="chat-msg bot">
+      <div class="chat-avatar"><i data-lucide="bot" style="width:18px; height:18px;"></i></div>
+      <div class="chat-bubble">
+        ${answerFormatted}
+        ${citedPagesHtml}
+        ${sourcesHtml}
+        ${execTimeHtml}
+      </div>
+    </div>
+  `;
+
+  chatBody.insertAdjacentHTML('beforeend', botMsgHtml);
+}
+
+function renderAiError(errMsg) {
+  const chatBody = document.getElementById('ragChatBody');
+  const errorHtml = `
+    <div class="chat-msg bot">
+      <div class="chat-avatar" style="background:#ef4444;"><i data-lucide="alert-triangle" style="width:18px; height:18px;"></i></div>
+      <div class="chat-bubble" style="border-color:#fca5a5; background:#fff5f5;">
+        <p style="color:#b91c1c; font-weight:600;">⚠️ Đã xảy ra lỗi:</p>
+        <p style="color:#7f1d1d; font-size:.84rem;">${escapeHtml(errMsg)}</p>
+      </div>
+    </div>
+  `;
+  chatBody.insertAdjacentHTML('beforeend', errorHtml);
+}
+
+// Markdown formatter đơn giản
+function formatMarkdownAnswer(text) {
+  if (!text) return '';
+  let html = escapeHtml(text);
+  // In đậm
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // In nghiêng
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  // Dấu đầu dòng
+  html = html.replace(/^[•\-\*]\s+(.*)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+  // Xuống dòng
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = html.replace(/\n/g, '<br/>');
+  return `<p>${html}</p>`;
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar) sidebar.classList.toggle('open');
+}
+
+// Khởi chạy khi nạp trang
+document.addEventListener('DOMContentLoaded', () => {
+  fetchDocuments();
+});
+</script>
+
+</body>
+</html>

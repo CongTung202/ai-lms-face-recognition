@@ -28,9 +28,6 @@
     --radius: 20px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html {
-    zoom: 0.8;
-  }
   body {
     background: var(--bg);
     color: var(--ink);
@@ -65,9 +62,9 @@
 
   /* sidebar cố định tách riêng như admin */
   .sidebar {
-    width: 300px;
-    min-width: 300px;
-    max-width: 300px;
+    width: 290px;
+    min-width: 290px;
+    max-width: 290px;
     flex-shrink: 0;
     background: rgba(255,255,255,.98);
     backdrop-filter: blur(16px);
@@ -83,16 +80,17 @@
     max-height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 24px 18px;
+    padding: 20px 14px;
     transition: transform .3s var(--ease);
     z-index: 50;
     box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   }
   .sidebar::-webkit-scrollbar { width: 5px; }
   .sidebar::-webkit-scrollbar-thumb { background: #d0dbed; border-radius: 999px; }
   .main {
-    margin-left: 300px;
-    width: calc(100% - 300px);
+    margin-left: 290px;
+    width: calc(100% - 290px);
     min-width: 0;
     box-sizing: border-box;
   }
@@ -100,12 +98,12 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 6px 8px 20px;
+    padding: 6px 8px 16px;
     border-bottom: 1px solid var(--line);
   }
   .brand-logo-img {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
     object-fit: contain;
     background: #fff;
@@ -117,21 +115,21 @@
     display: block;
     font-family: var(--serif);
     font-weight: 700;
-    font-size: 1.15rem;
+    font-size: 1.12rem;
     color: var(--ntu-blue);
     letter-spacing: -.01em;
   }
-  .brand small { font-size: .78rem; color: var(--muted); display: block; }
-  .nav-label { margin: 24px 10px 10px; }
-  .nav { display: flex; flex-direction: column; gap: 8px; }
+  .brand small { font-size: .74rem; color: var(--muted); display: block; }
+  .nav-label { margin: 18px 10px 8px; }
+  .nav { display: flex; flex-direction: column; gap: 5px; }
   .nav a {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 13px 18px;
-    border-radius: 14px;
-    font-size: .94rem;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: .88rem;
     font-weight: 500;
     color: var(--ink-2);
     transition: background .3s, color .3s, transform .3s var(--ease);
@@ -1279,13 +1277,11 @@
     <p class="eyebrow nav-label">PHÂN HỆ HỌC TẬP</p>
     <nav class="nav">
       <a href="index.html" class="active" id="navHome"><i data-lucide="layout-dashboard"></i>Trang chủ</a>
-      <a href="#coursesSection" id="navCourses"><i data-lucide="book-open"></i>Khóa học của tôi<span class="count" id="navCoursesCount">0</span></a>
-      <a href="courses.html" id="navBuyCourses"><i data-lucide="shopping-bag"></i>Mua khóa học<span class="count" id="navBuyCoursesCount">0</span></a>
+      <a href="courses.html?filter=enrolled" id="navCourses"><i data-lucide="book-open"></i>Khóa học của tôi<span class="count" id="navCoursesCount">0</span></a>
+      <a href="courses.html?filter=available" id="navBuyCourses"><i data-lucide="shopping-bag"></i>Mua khóa học<span class="count" id="navBuyCoursesCount">0</span></a>
       <a href="study.html" id="navStudy"><i data-lucide="video"></i>Phòng học trực tuyến</a>
-      <a href="#docsSection" id="navDocs"><i data-lucide="library"></i>Thư viện tài liệu<span class="count" id="navDocsCount">0</span></a>
-      <a href="orders.html" id="navOrders"><i data-lucide="receipt"></i>Lịch sử đơn hàng<span class="count" id="navOrdersCount">0</span></a>
-      <a href="#scheduleSection" id="navSchedule"><i data-lucide="calendar-days"></i>Thời khóa biểu</a>
-      <a href="#ragSection" id="navRag"><i data-lucide="sparkles"></i>Trợ lý AI RAG</a>
+      <a href="documents.html" id="navDocs"><i data-lucide="library"></i>Thư viện tài liệu<span class="count" id="navDocsCount">0</span></a>
+      <a href="orders.html" id="navOrders"><i data-lucide="receipt"></i>Lịch sử hóa đơn<span class="count" id="navOrdersCount">0</span></a>
       <a href="face_enrollment.html" id="navFace"><i data-lucide="scan-face"></i>Đăng ký khuôn mặt AI</a>
       <a href="/admin/index.html" id="navAdmin"><i data-lucide="shield-check"></i>Quản trị viên</a>
     </nav>
@@ -1376,7 +1372,10 @@
                 <button class="tab" role="tab" aria-selected="false" data-filter="in_progress">Đang học (<span id="tabCountInProgress">0</span>)</button>
                 <button class="tab" role="tab" aria-selected="false" data-filter="completed">Đã hoàn thành (<span id="tabCountCompleted">0</span>)</button>
               </div>
-              <span class="sync"><span class="dot"></span>Cập nhật theo thời gian thực</span>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <span class="sync"><span class="dot"></span>Cập nhật theo thời gian thực</span>
+                <a href="courses.html?filter=enrolled" style="font-size: .8rem; font-weight: 700; color: #00539F; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Xem trang đầy đủ <i data-lucide="external-link" style="width:13px;height:13px;"></i></a>
+              </div>
             </div>
             <label class="search">
               <i data-lucide="search"></i>
@@ -1429,7 +1428,7 @@
             </div>
             <p style="font-size: .84rem; color: var(--muted);">Đặt câu hỏi chuyên môn để trợ lý trích xuất câu trả lời chính xác từ giáo trình được lập chỉ mục:</p>
             <div class="rag-input-box">
-              <input type="text" id="ragQueryInput" placeholder="Ví dụ: Kiến trúc Microservices khác gì so với Monolith?..." />
+              <input type="text" id="ragQueryInput" placeholder="Nhập câu hỏi về giáo trình hoặc tài liệu..." />
               <button class="btn primary" id="ragSendBtn" onclick="handleAskRag()"><i data-lucide="send"></i>Hỏi AI</button>
             </div>
             <div class="rag-ans" id="ragAnswerBox">
@@ -1769,8 +1768,8 @@
           <div class="payos-footer" id="payosModalFooter">
             <div style="display:flex;align-items:center;gap:10px;">
               <button class="payos-btn-demo" id="payosDemoConfirmBtn" onclick="manualConfirmCurrentOrder()">
-                <i data-lucide="check-check" style="width:14px;height:14px;"></i>
-                <span>Xác nhận nhanh (Demo Test)</span>
+                <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+                <span>Kiểm tra giao dịch</span>
               </button>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
@@ -1878,10 +1877,12 @@
 
     if (!currentUser) {
       currentUser = {
-        username: '2310900051',
-        fullName: 'Nguyễn Công Tùng',
-        studentCode: '2310900051',
-        className: 'K23',
+        id: 11,
+        userId: 11,
+        username: '2310900052',
+        fullName: 'Lê Văn Bằng',
+        studentCode: '2310900052',
+        className: 'Công nghệ thông tin',
         classCode: 'K23CNT3',
         facultyName: 'Khoa Công nghệ Thông tin',
         faceRegistered: true
@@ -1942,7 +1943,7 @@
   // 2. Tải khóa học THẬT từ Spring Boot CSDL (/api/admin/courses)
   async function loadRealCoursesFromDatabase() {
     try {
-      const studentId = currentUser?.userId || currentUser?.id || 5;
+      const studentId = currentUser?.userId || currentUser?.id || 11;
       const res = await fetch(`${API_BASE}/api/admin/courses?studentId=${studentId}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const result = await res.json();
@@ -2542,7 +2543,7 @@
 
   async function registerFreeCourse(courseId) {
     try {
-      const studentId = currentUser?.userId || currentUser?.id || 5;
+      const studentId = currentUser?.userId || currentUser?.id || 11;
       const res = await fetch(`${API_BASE}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2591,7 +2592,7 @@
     document.body.style.overflow = 'hidden';
 
     try {
-      const studentId = currentUser?.userId || currentUser?.id || 5;
+      const studentId = currentUser?.userId || currentUser?.id || 11;
       const res = await fetch(`${API_BASE}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2701,13 +2702,13 @@
       } else {
         alert(result.message || 'Lỗi khi xác nhận giao dịch.');
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="check-check" style="width:14px;height:14px;"></i><span>Xác nhận nhanh (Demo Test)</span>`;
+        btn.innerHTML = `<i data-lucide="refresh-cw" style="width:14px;height:14px;"></i><span>Kiểm tra giao dịch</span>`;
         lucide.createIcons();
       }
     } catch (err) {
       alert('Lỗi kết nối: ' + err.message);
       btn.disabled = false;
-      btn.innerHTML = `<i data-lucide="check-check" style="width:14px;height:14px;"></i><span>Xác nhận nhanh (Demo Test)</span>`;
+      btn.innerHTML = `<i data-lucide="refresh-cw" style="width:14px;height:14px;"></i><span>Kiểm tra giao dịch</span>`;
       lucide.createIcons();
     }
   }

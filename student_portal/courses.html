@@ -1,966 +1,1329 @@
 <!doctype html>
 <html lang="vi">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mua Khóa Học &amp; Đăng Ký Học Phần — Cổng Sinh Viên NTU</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-<script src="assets/js/student-sidebar.js"></script>
-<style>
-  :root {
-    --bg: #f6fbfe;
-    --surface: #ffffff;
-    --tint: #e5f7ff;
-    --ink: #0b2540;
-    --ink-2: #163a5c;
-    --sky: #33ccff;
-    --sky-deep: #0679a8;
-    --ntu-blue: #00539F;
-    --ntu-red: #DA291C;
-    --line: rgba(11,37,64,.08);
-    --muted: #55677c;
-    --ok: #059669;
-    --ok-bg: #d1fae5;
-    --warn: #d97706;
-    --warn-bg: #fef3c7;
-    --danger: #dc2626;
-    --danger-bg: #fee2e2;
-    --serif: "Fraunces", Georgia, serif;
-    --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-    --ease: cubic-bezier(.2,.7,.1,1);
-    --radius: 20px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { zoom: 0.85; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-  }
-  button, input, select, textarea { font: inherit; color: inherit; }
-  button { cursor: pointer; border: 0; background: none; }
-  svg.lucide { width: 18px; height: 18px; stroke-width: 1.8; flex-shrink: 0; }
-  em { font-style: italic; color: var(--sky-deep); }
-  .serif { font-family: var(--serif); }
-  .eyebrow { font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--sky-deep); font-weight: 700; }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mua Khóa Học &amp; Đăng Ký Học Phần — Cổng Sinh Viên NTU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="assets/js/student-sidebar.js"></script>
+  <style>
+    :root {
+      --bg: #f6fbfe;
+      --surface: #ffffff;
+      --tint: #e5f7ff;
+      --ink: #0b2540;
+      --ink-2: #163a5c;
+      --sky: #33ccff;
+      --sky-deep: #0679a8;
+      --ntu-blue: #00539F;
+      --ntu-red: #DA291C;
+      --line: rgba(11, 37, 64, .08);
+      --muted: #55677c;
+      --ok: #059669;
+      --ok-bg: #d1fae5;
+      --warn: #d97706;
+      --warn-bg: #fef3c7;
+      --danger: #dc2626;
+      --danger-bg: #fee2e2;
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+      --ease: cubic-bezier(.2, .7, .1, 1);
+      --radius: 20px;
+    }
 
-  /* ambient drift orbs */
-  .orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-    z-index: 0;
-    opacity: .45;
-    animation: drift 18s ease-in-out infinite alternate;
-  }
-  .orb.a { width: 420px; height: 420px; background: #bfeeff; top: -140px; right: -80px; }
-  .orb.b { width: 340px; height: 340px; background: #d9f4ff; bottom: -100px; left: 15%; animation-delay: -6s; }
-  @keyframes drift { to { transform: translate(-50px, 30px) scale(1.08); } }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  .app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
 
-  /* main layout */
-  .main {
-    margin-left: 300px;
-    width: calc(100% - 300px);
-    min-width: 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+      color: inherit;
+    }
 
-  /* topbar */
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    background: rgba(246,251,254,.85);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--line);
-    padding: 14px 28px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-  }
-  .menu-btn {
-    display: none;
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: #fff;
-    border: 1px solid var(--line);
-    place-items: center;
-    color: var(--ink);
-  }
-  .breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: .88rem;
-    font-weight: 600;
-    color: var(--muted);
-  }
-  .breadcrumb a { color: var(--ntu-blue); text-decoration: none; }
-  .breadcrumb a:hover { text-decoration: underline; }
-  .breadcrumb svg { width: 14px; height: 14px; color: var(--muted); }
+    button {
+      cursor: pointer;
+      border: 0;
+      background: none;
+    }
 
-  .topbar-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .chip-live {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: .78rem;
-    font-weight: 600;
-    color: var(--sky-deep);
-    background: var(--tint);
-    padding: 7px 14px;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #22c55e;
-    box-shadow: 0 0 0 0 rgba(34,197,94,.6);
-    animation: ping 2s infinite;
-  }
-  @keyframes ping {
-    70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
-    to { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
-  }
-  .user-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 4px 6px 4px 12px;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-  }
-  .user-badge span { font-size: .82rem; font-weight: 700; color: var(--ink); }
-  .user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--ntu-blue);
-    color: #fff;
-    display: grid;
-    place-items: center;
-    font-weight: 700;
-    font-size: .8rem;
-  }
+    svg.lucide {
+      width: 18px;
+      height: 18px;
+      stroke-width: 1.8;
+      flex-shrink: 0;
+    }
 
-  /* content area */
-  .content {
-    flex: 1;
-    padding: 24px 32px 60px;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    max-width: 1600px;
-    width: 100%;
-    box-sizing: border-box;
-  }
+    em {
+      font-style: italic;
+      color: var(--sky-deep);
+    }
 
-  /* cards */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    box-shadow: 0 2px 12px rgba(11,37,64,.04);
-  }
+    .serif {
+      font-family: var(--serif);
+    }
 
-  /* hero banner */
-  .hero-banner {
-    padding: 30px 36px;
-    background: linear-gradient(135deg, #003E7E 0%, #00539F 50%, #0284c7 100%);
-    color: #fff;
-    border: 0;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 12px 30px -10px rgba(0,83,159,.45);
-  }
-  .hero-banner::after {
-    content: "";
-    position: absolute;
-    right: -40px;
-    top: -40px;
-    width: 260px;
-    height: 260px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,.18), transparent 70%);
-    pointer-events: none;
-  }
-  .hero-banner .eyebrow { color: #a5f3fc; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-  .hero-banner h1 {
-    font-family: var(--serif);
-    font-size: 1.85rem;
-    font-weight: 700;
-    line-height: 1.25;
-    margin-bottom: 8px;
-    letter-spacing: -.01em;
-  }
-  .hero-banner p {
-    font-size: .92rem;
-    color: rgba(255,255,255,.88);
-    max-width: 720px;
-    line-height: 1.5;
-  }
-  .hero-pills {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .hero-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.15);
-    backdrop-filter: blur(8px);
-    font-size: .8rem;
-    font-weight: 600;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,.2);
-  }
-  .hero-pill b { font-weight: 800; font-size: .95rem; }
+    .eyebrow {
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--sky-deep);
+      font-weight: 700;
+    }
 
-  /* filter & search bar */
-  .toolbar {
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .tabs {
-    display: flex;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 4px;
-    gap: 4px;
-  }
-  .tab {
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: .84rem;
-    font-weight: 600;
-    color: var(--muted);
-    transition: all .2s;
-  }
-  .tab:hover { color: var(--ink); background: rgba(255,255,255,.6); }
-  .tab.active {
-    background: #fff;
-    color: var(--ntu-blue);
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(0,0,0,.06);
-  }
+    /* ambient drift orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: .45;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
 
-  .filters-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    justify-content: flex-end;
-  }
-  .search-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 0 14px;
-    height: 40px;
-    width: 100%;
-    max-width: 320px;
-    transition: border-color .2s;
-  }
-  .search-box:focus-within { border-color: var(--ntu-blue); box-shadow: 0 0 0 3px rgba(0,83,159,.12); }
-  .search-box input { border: 0; outline: 0; background: none; font-size: .84rem; width: 100%; }
-  .search-box svg { color: var(--muted); }
+    .orb.a {
+      width: 420px;
+      height: 420px;
+      background: #bfeeff;
+      top: -140px;
+      right: -80px;
+    }
 
-  .select-major {
-    height: 40px;
-    padding: 0 12px;
-    border-radius: 12px;
-    border: 1px solid var(--line);
-    background: #fff;
-    font-size: .84rem;
-    font-weight: 600;
-    color: var(--ink);
-    cursor: pointer;
-  }
+    .orb.b {
+      width: 340px;
+      height: 340px;
+      background: #d9f4ff;
+      bottom: -100px;
+      left: 15%;
+      animation-delay: -6s;
+    }
 
-  /* courses grid */
-  .courses-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 22px;
-  }
-  .course-card {
-    background: #fff;
-    border-radius: var(--radius);
-    border: 1px solid var(--line);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 2px 10px rgba(11,37,64,.04);
-    transition: transform .25s var(--ease), box-shadow .25s var(--ease);
-  }
-  .course-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 28px -8px rgba(0,83,159,.18);
-    border-color: rgba(0,83,159,.25);
-  }
-  .course-thumb {
-    position: relative;
-    height: 190px;
-    background: #0b2540;
-    overflow: hidden;
-  }
-  .course-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform .4s ease;
-  }
-  .course-card:hover .course-thumb img {
-    transform: scale(1.04);
-  }
-  .course-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    padding: 5px 12px;
-    border-radius: 999px;
-    font-size: .75rem;
-    font-weight: 800;
-    letter-spacing: .02em;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 2px 8px rgba(0,0,0,.2);
-  }
-  .course-badge.buy {
-    background: #fff;
-    color: var(--ntu-blue);
-    border: 1px solid rgba(0,83,159,.3);
-  }
-  .course-badge.owned {
-    background: #059669;
-    color: #fff;
-  }
-  .course-meta {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: .74rem;
-    font-weight: 600;
-    color: #fff;
-    text-shadow: 0 1px 3px rgba(0,0,0,.8);
-  }
+    @keyframes drift {
+      to {
+        transform: translate(-50px, 30px) scale(1.08);
+      }
+    }
 
-  .course-body {
-    padding: 18px 20px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 10px;
-  }
-  .course-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: var(--ink);
-    line-height: 1.35;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .course-desc {
-    font-size: .82rem;
-    color: var(--muted);
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .course-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 2px;
-  }
-  .course-tag {
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: var(--tint);
-    color: var(--sky-deep);
-    font-size: .72rem;
-    font-weight: 600;
-  }
+    .app {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-height: 100vh;
+    }
 
-  .course-foot {
-    margin-top: auto;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .price-box {
-    display: flex;
-    flex-direction: column;
-  }
-  .price-box small { font-size: .7rem; color: var(--muted); font-weight: 600; }
-  .price-box b { font-size: 1.15rem; font-weight: 900; color: var(--ntu-blue); }
+    /* main layout */
+    .main {
+      margin-left: 290px;
+      width: calc(100% - 290px);
+      min-width: 0;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
-  .btn-payos {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 18px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #0284c7 0%, #00539F 100%);
-    color: #fff;
-    font-size: .82rem;
-    font-weight: 800;
-    text-decoration: none;
-    box-shadow: 0 4px 14px rgba(2,132,199,.35);
-    transition: all .2s;
-  }
-  .btn-payos:hover {
-    background: linear-gradient(135deg, #0369a1 0%, #003E7E 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(2,132,199,.45);
-  }
-  .btn-study-go {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 18px;
-    border-radius: 12px;
-    background: #f1f5f9;
-    color: var(--ink);
-    font-size: .82rem;
-    font-weight: 700;
-    text-decoration: none;
-    border: 1px solid #cbd5e1;
-    transition: all .2s;
-  }
-  .btn-study-go:hover {
-    background: var(--ntu-blue);
-    color: #fff;
-    border-color: var(--ntu-blue);
-  }
+    /* topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(246, 251, 254, .85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
 
-  /* empty state */
-  .empty-box {
-    grid-column: 1 / -1;
-    padding: 60px 20px;
-    text-align: center;
-    background: #fff;
-    border-radius: var(--radius);
-    border: 1px solid var(--line);
-    color: var(--muted);
-  }
+    .menu-btn {
+      display: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      place-items: center;
+      color: var(--ink);
+    }
 
-  /* PayOS Checkout Modal */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(11,37,64,.75);
-    backdrop-filter: blur(10px);
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-  }
-  .modal-overlay.open { display: flex; }
-  .payos-card {
-    background: #fff;
-    border-radius: 24px;
-    width: 100%;
-    max-width: 680px;
-    box-shadow: 0 25px 70px rgba(0,0,0,.35);
-    overflow: hidden;
-    animation: zoomIn .25s cubic-bezier(.16,1,.3,1);
-  }
-  @keyframes zoomIn {
-    from { opacity: 0; transform: scale(.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-  .payos-header {
-    background: #0b111e;
-    color: #fff;
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .payos-body {
-    padding: 24px;
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 24px;
-  }
-  .qr-box {
-    background: #f8fafc;
-    border-radius: 18px;
-    border: 1px solid var(--line);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .qr-frame {
-    width: 200px;
-    height: 200px;
-    background: #fff;
-    border-radius: 14px;
-    padding: 8px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 14px rgba(0,0,0,.06);
-  }
-  .qr-frame img { width: 100%; height: 100%; object-fit: contain; }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
 
-  .info-box {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .info-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 9px 12px;
-    background: #f8fafc;
-    border-radius: 10px;
-    font-size: .8rem;
-    border: 1px solid #e2e8f0;
-  }
-  .copy-btn {
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: #e2e8f0;
-    color: var(--ink);
-    font-size: .72rem;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: background .2s;
-  }
-  .copy-btn:hover { background: #cbd5e1; }
+    .breadcrumb a {
+      color: var(--ntu-blue);
+      text-decoration: none;
+    }
 
-  /* Toast notification */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 10000;
-    background: #0b2540;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    font-size: .84rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all .25s ease;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
 
-  @media (max-width: 860px) {
-    .main { margin-left: 0; width: 100%; }
-    .menu-btn { display: grid; }
-    .topbar, .content { padding-inline: 16px; }
-    .courses-grid { grid-template-columns: 1fr; }
-    .payos-body { grid-template-columns: 1fr; }
-    .qr-box { margin: 0 auto; width: 100%; }
-  }
-</style>
+    .breadcrumb svg {
+      width: 14px;
+      height: 14px;
+      color: var(--muted);
+    }
+
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .chip-live {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--sky-deep);
+      background: var(--tint);
+      padding: 7px 14px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, .6);
+      animation: ping 2s infinite;
+    }
+
+    @keyframes ping {
+      70% {
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+      }
+
+      to {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+      }
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 6px 4px 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+    }
+
+    .user-badge span {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ntu-blue);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: .8rem;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      text-decoration: none;
+      transition: all .2s;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .icon-btn:hover {
+      background: var(--tint);
+      color: var(--ntu-blue);
+      border-color: rgba(51, 204, 255, .4);
+    }
+
+    /* content area */
+    .content {
+      flex: 1;
+      padding: 24px 32px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      max-width: 1600px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 12px rgba(11, 37, 64, .04);
+    }
+
+    /* hero banner */
+    .hero-banner {
+      padding: 30px 36px;
+      background: linear-gradient(135deg, #003E7E 0%, #00539F 50%, #0284c7 100%);
+      color: #fff;
+      border: 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 30px -10px rgba(0, 83, 159, .45);
+    }
+
+    .hero-banner::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, .18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-banner .eyebrow {
+      color: #a5f3fc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .hero-banner h1 {
+      font-family: var(--serif);
+      font-size: 1.85rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      letter-spacing: -.01em;
+    }
+
+    .hero-banner p {
+      font-size: .92rem;
+      color: rgba(255, 255, 255, .88);
+      max-width: 720px;
+      line-height: 1.5;
+    }
+
+    .hero-pills {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .hero-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .15);
+      backdrop-filter: blur(8px);
+      font-size: .8rem;
+      font-weight: 600;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .2);
+    }
+
+    .hero-pill b {
+      font-weight: 800;
+      font-size: .95rem;
+    }
+
+    /* filter & search bar */
+    .toolbar {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all .2s;
+    }
+
+    .tab:hover {
+      color: var(--ink);
+      background: rgba(255, 255, 255, .6);
+    }
+
+    .tab.active {
+      background: #fff;
+      color: var(--ntu-blue);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+    }
+
+    .filters-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0 14px;
+      height: 40px;
+      width: 100%;
+      max-width: 320px;
+      transition: border-color .2s;
+    }
+
+    .search-box:focus-within {
+      border-color: var(--ntu-blue);
+      box-shadow: 0 0 0 3px rgba(0, 83, 159, .12);
+    }
+
+    .search-box input {
+      border: 0;
+      outline: 0;
+      background: none;
+      font-size: .84rem;
+      width: 100%;
+    }
+
+    .search-box svg {
+      color: var(--muted);
+    }
+
+    .select-major {
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    /* courses grid */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 22px;
+    }
+
+    .course-card {
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 10px rgba(11, 37, 64, .04);
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+    }
+
+    .course-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px -8px rgba(0, 83, 159, .18);
+      border-color: rgba(0, 83, 159, .25);
+    }
+
+    .course-thumb {
+      position: relative;
+      height: 190px;
+      background: #0b2540;
+      overflow: hidden;
+    }
+
+    .course-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .4s ease;
+    }
+
+    .course-card:hover .course-thumb img {
+      transform: scale(1.04);
+    }
+
+    .course-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+    }
+
+    .course-badge.buy {
+      background: #fff;
+      color: var(--ntu-blue);
+      border: 1px solid rgba(0, 83, 159, .3);
+    }
+
+    .course-badge.owned {
+      background: #059669;
+      color: #fff;
+    }
+
+    .course-meta {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .74rem;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
+    }
+
+    .course-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 10px;
+    }
+
+    .course-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .course-desc {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .course-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .course-tag {
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--tint);
+      color: var(--sky-deep);
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    .course-foot {
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .price-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .price-box small {
+      font-size: .7rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .price-box b {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--ntu-blue);
+    }
+
+    .btn-payos {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7 0%, #00539F 100%);
+      color: #fff;
+      font-size: .82rem;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, .35);
+      transition: all .2s;
+    }
+
+    .btn-payos:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #003E7E 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(2, 132, 199, .45);
+    }
+
+    .btn-study-go {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: #f1f5f9;
+      color: var(--ink);
+      font-size: .82rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid #cbd5e1;
+      transition: all .2s;
+    }
+
+    .btn-study-go:hover {
+      background: var(--ntu-blue);
+      color: #fff;
+      border-color: var(--ntu-blue);
+    }
+
+    /* empty state */
+    .empty-box {
+      grid-column: 1 / -1;
+      padding: 60px 20px;
+      text-align: center;
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    /* PayOS Checkout Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(11, 37, 64, .75);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .payos-card {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 680px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, .35);
+      overflow: hidden;
+      animation: zoomIn .25s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .payos-header {
+      background: #0b111e;
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .payos-body {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+    }
+
+    .qr-box {
+      background: #f8fafc;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .qr-frame {
+      width: 200px;
+      height: 200px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 8px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
+    }
+
+    .qr-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .info-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+      font-size: .8rem;
+      border: 1px solid #e2e8f0;
+    }
+
+    .copy-btn {
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #e2e8f0;
+      color: var(--ink);
+      font-size: .72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background .2s;
+    }
+
+    .copy-btn:hover {
+      background: #cbd5e1;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+      background: #0b2540;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+      font-size: .84rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .25s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 860px) {
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .menu-btn {
+        display: grid;
+      }
+
+      .topbar,
+      .content {
+        padding-inline: 16px;
+      }
+
+      .courses-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .payos-body {
+        grid-template-columns: 1fr;
+      }
+
+      .qr-box {
+        margin: 0 auto;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="orb a"></div>
-<div class="orb b"></div>
+  <div class="orb a"></div>
+  <div class="orb b"></div>
 
-<div class="app">
-  <!-- Dynamic Fixed Sidebar handled by student-sidebar.js -->
+  <div class="app">
+    <!-- Dynamic Fixed Sidebar handled by student-sidebar.js -->
+    <aside class="sidebar" id="sidebar" aria-label="Điều hướng chính Cổng Sinh Viên"></aside>
 
-  <!-- MAIN VIEW -->
-  <main class="main">
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <button class="menu-btn" id="menuBtn" aria-label="Mở menu"><i data-lucide="menu"></i></button>
-      <nav class="breadcrumb">
-        <a href="index.html">Cổng Sinh Viên</a>
-        <i data-lucide="chevron-right"></i>
-        <span>Mua khóa học</span>
-      </nav>
-      <div class="topbar-right">
-        <span class="chip-live"><span class="dot"></span>CSDL trực tuyến · NTU Smart LMS</span>
-        <div class="user-badge">
-          <span id="topStudentName">Lê Văn K</span>
-          <div class="user-avatar" id="topStudentAvatar">K</div>
-        </div>
-      </div>
-    </header>
-
-    <!-- CONTENT -->
-    <div class="content">
-      <!-- HERO BANNER -->
-      <section class="hero-banner card">
-        <div class="eyebrow"><i data-lucide="sparkles"></i>CỬA HÀNG KHÓA HỌC CHÍNH QUY NTU</div>
-        <h1>Đăng Ký Học Phần &amp; Mở Khóa Khóa Học</h1>
-        <p>Khám phá các học phần chuẩn hóa công nghệ cao theo chương trình đào tạo của Đại học Nguyễn Trãi. Thanh toán học phí trực tuyến 24/7 qua VietQR Napas 247 và tự động kích hoạt quyền học tập ngay trong 3 giây.</p>
-        <div class="hero-pills">
-          <div class="hero-pill"><span class="dot" style="background: #38bdf8;"></span>Tổng học phần: <b id="kpiTotalCourses">0</b></div>
-          <div class="hero-pill"><span class="dot" style="background: #f59e0b;"></span>Có thể đăng ký: <b id="kpiAvailableCourses">0</b></div>
-          <div class="hero-pill"><span class="dot" style="background: #22c55e;"></span>Đã kích hoạt: <b id="kpiEnrolledCourses">0</b></div>
-        </div>
-      </section>
-
-      <!-- TOOLBAR & FILTERS -->
-      <section class="card toolbar">
-        <div class="tabs" role="tablist">
-          <button class="tab active" data-filter="all" onclick="setTabFilter('all', this)">Tất cả học phần (<span id="tabCountAll">0</span>)</button>
-          <button class="tab" data-filter="available" onclick="setTabFilter('available', this)">Chưa kích hoạt (<span id="tabCountAvailable">0</span>)</button>
-          <button class="tab" data-filter="enrolled" onclick="setTabFilter('enrolled', this)">Đã sở hữu (<span id="tabCountEnrolled">0</span>)</button>
-        </div>
-
-        <div class="filters-right">
-          <select id="facultyFilter" class="select-major" onchange="applyCoursesFilter()">
-            <option value="ALL">Tất cả chuyên ngành</option>
-            <option value="CNTT">Công nghệ thông tin</option>
-            <option value="AI">Trí tuệ Nhân tạo &amp; KH Dữ liệu</option>
-            <option value="PM">Kỹ thuật Phần mềm</option>
-          </select>
-
-          <label class="search-box">
-            <i data-lucide="search"></i>
-            <input type="search" id="courseSearchInput" placeholder="Tìm kiếm theo tên môn học, giảng viên..." oninput="applyCoursesFilter()" />
-          </label>
-        </div>
-      </section>
-
-      <!-- COURSES GRID -->
-      <section class="courses-grid" id="coursesGrid">
-        <div class="empty-box">
-          <i data-lucide="loader" style="animation: spin 1s linear infinite; width: 36px; height: 36px; color: var(--ntu-blue); margin-bottom: 12px;"></i>
-          <p>Đang tải danh mục khóa học từ máy chủ NTU...</p>
-        </div>
-      </section>
-    </div>
-  </main>
-</div>
-
-<!-- PAYOS VIETQR CHECKOUT MODAL -->
-<div id="buyPayosModal" class="modal-overlay">
-  <div class="payos-card">
-    <div class="payos-header">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: rgba(56,189,248,.18); color: #38bdf8; font-size: .75rem; font-weight: 800; border: 1px solid rgba(56,189,248,.3);">
-          <span class="dot" style="background: #38bdf8;"></span>VietQR Napas 247
-        </span>
-        <b style="font-size: .9rem;">Thanh Toán Kích Hoạt Khóa Học</b>
-      </div>
-      <button type="button" onclick="closeBuyPayosModal()" style="color: rgba(255,255,255,.7); hover:color:#fff; font-size: 1.4rem;">&times;</button>
-    </div>
-
-    <!-- Body -->
-    <div id="buyPayosBody" class="payos-body">
-      <!-- Left QR Frame -->
-      <div class="qr-box">
-        <div class="qr-frame">
-          <img id="buyPayosQrImg" src="" alt="VietQR" />
-        </div>
-        <div style="margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: .76rem; font-weight: 700; color: #0284c7; background: #e0f2fe; padding: 4px 10px; border-radius: 999px;">
-          <span class="dot" style="background: #0284c7;"></span>
-          <span>Đang chờ chuyển khoản...</span>
-        </div>
-        <p style="font-size: .7rem; color: #64748b; margin-top: 8px; line-height: 1.4;">
-          Quét mã bằng app MB, VCB, BIDV, Techcombank, MoMo...
-        </p>
-      </div>
-
-      <!-- Right Info Pane -->
-      <div class="info-box">
-        <div>
-          <span style="font-size: .7rem; text-transform: uppercase; font-weight: 800; color: var(--ntu-blue); letter-spacing: .05em;">Học phần đăng ký</span>
-          <h3 id="buyPayosTitle" style="font-size: 1.05rem; font-weight: 800; color: #0b2540; line-height: 1.35; margin-top: 2px;">Tên khóa học</h3>
-        </div>
-
-        <div style="padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, #eef7ff 0%, #f0fdf4 100%); border: 1px solid #bfdbfe; display: flex; align-items: center; justify-content: space-between;">
-          <span style="font-size: .8rem; font-weight: 700; color: #475569;">Học phí cần đóng:</span>
-          <b id="buyPayosAmount" style="font-size: 1.25rem; font-weight: 900; color: #00539F;">0 ₫</b>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <div class="info-row">
-            <span style="color: #64748b;">Ngân hàng:</span>
-            <b style="color: #0b2540;">MBBank (Ngân hàng Quân Đội)</b>
+    <!-- MAIN VIEW -->
+    <main class="main">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Mở menu"><i data-lucide="menu"></i></button>
+        <nav class="breadcrumb">
+          <a href="index.html">Cổng Sinh Viên</a>
+          <i data-lucide="chevron-right"></i>
+          <span id="breadcrumbCurrent">Mua khóa học</span>
+        </nav>
+        <div class="topbar-right">
+          <span class="chip-live"><span class="dot"></span>CSDL trực tuyến · NTU Smart LMS</span>
+          <a href="index.html" class="icon-btn" title="Về trang chủ Cổng SV" aria-label="Trang chủ"><i
+              data-lucide="home"></i></a>
+          <a href="orders.html" class="icon-btn" title="Lịch sử đơn hàng" aria-label="Lịch sử đơn hàng"><i
+              data-lucide="receipt"></i></a>
+          <div class="user-badge"
+            style="display: flex; align-items: center; gap: 10px; padding: 4px 6px 4px 12px; background: #fff; border: 1px solid var(--line); border-radius: 999px;">
+            <div style="text-align: right; line-height: 1.25; padding-right: 4px;">
+              <span id="topStudentName" style="font-weight: 700; color: #0b2540; font-size: .84rem; display: block;">Lê
+                Văn Bằng</span>
+              <small id="topStudentMeta" style="font-size: .7rem; color: #55677c; display: block;">2310900052 • Khoa
+                CNTT</small>
+            </div>
+            <div class="user-avatar" id="topStudentAvatar">LVB</div>
           </div>
-          <div class="info-row">
-            <span style="color: #64748b;">Số tài khoản:</span>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <b id="buyPayosAccountNo" style="font-family: monospace; font-size: .9rem;">30334402527</b>
-              <button type="button" class="copy-btn" onclick="copyText('30334402527', 'Đã sao chép số tài khoản!')">
-                <i data-lucide="copy" style="width: 12px; height: 12px;"></i>Sao chép
-              </button>
+          <button class="icon-btn" onclick="handleLogout()" title="Đăng xuất khỏi hệ thống" aria-label="Đăng xuất"><i
+              data-lucide="log-out"></i></button>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="content">
+        <!-- HERO BANNER -->
+        <section class="hero-banner card">
+          <div class="eyebrow" id="heroEyebrow"><i data-lucide="sparkles"></i>CỬA HÀNG KHÓA HỌC CHÍNH QUY NTU</div>
+          <h1 id="heroTitle">Đăng Ký Học Phần &amp; Mở Khóa Khóa Học</h1>
+          <p id="heroDesc">Khám phá các học phần chuẩn hóa công nghệ cao theo chương trình đào tạo của Đại học Nguyễn
+            Trãi. Thanh toán học phí trực tuyến 24/7 qua VietQR Napas 247 và tự động kích hoạt quyền học tập ngay trong
+            3 giây.</p>
+          <div class="hero-pills">
+            <div class="hero-pill"><span class="dot" style="background: #38bdf8;"></span>Tổng học phần: <b
+                id="kpiTotalCourses">0</b></div>
+            <div class="hero-pill"><span class="dot" style="background: #f59e0b;"></span>Có thể đăng ký: <b
+                id="kpiAvailableCourses">0</b></div>
+            <div class="hero-pill"><span class="dot" style="background: #22c55e;"></span>Đã kích hoạt: <b
+                id="kpiEnrolledCourses">0</b></div>
+          </div>
+        </section>
+
+        <!-- TOOLBAR & FILTERS -->
+        <section class="card toolbar">
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-filter="all" onclick="setTabFilter('all', this)">Tất cả học phần (<span
+                id="tabCountAll">0</span>)</button>
+            <button class="tab" data-filter="available" onclick="setTabFilter('available', this)">Chưa kích hoạt (<span
+                id="tabCountAvailable">0</span>)</button>
+            <button class="tab" data-filter="enrolled" onclick="setTabFilter('enrolled', this)">Đã sở hữu (<span
+                id="tabCountEnrolled">0</span>)</button>
+          </div>
+
+          <div class="filters-right">
+            <select id="facultyFilter" class="select-major" onchange="applyCoursesFilter()">
+              <option value="ALL">Tất cả chuyên ngành</option>
+              <option value="CNTT">Công nghệ thông tin</option>
+              <option value="AI">Trí tuệ Nhân tạo &amp; KH Dữ liệu</option>
+              <option value="PM">Kỹ thuật Phần mềm</option>
+            </select>
+
+            <label class="search-box">
+              <i data-lucide="search"></i>
+              <input type="search" id="courseSearchInput" placeholder="Tìm kiếm theo tên môn học, giảng viên..."
+                oninput="applyCoursesFilter()" />
+            </label>
+          </div>
+        </section>
+
+        <!-- COURSES GRID -->
+        <section class="courses-grid" id="coursesGrid">
+          <div class="empty-box">
+            <i data-lucide="loader"
+              style="animation: spin 1s linear infinite; width: 36px; height: 36px; color: var(--ntu-blue); margin-bottom: 12px;"></i>
+            <p>Đang tải danh mục khóa học từ máy chủ NTU...</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- PAYOS VIETQR CHECKOUT MODAL -->
+  <div id="buyPayosModal" class="modal-overlay">
+    <div class="payos-card">
+      <div class="payos-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span
+            style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: rgba(56,189,248,.18); color: #38bdf8; font-size: .75rem; font-weight: 800; border: 1px solid rgba(56,189,248,.3);">
+            <span class="dot" style="background: #38bdf8;"></span>VietQR Napas 247
+          </span>
+          <b style="font-size: .9rem;">Thanh Toán Kích Hoạt Khóa Học</b>
+        </div>
+        <button type="button" onclick="closeBuyPayosModal()"
+          style="color: rgba(255,255,255,.7); hover:color:#fff; font-size: 1.4rem;">&times;</button>
+      </div>
+
+      <!-- Body -->
+      <div id="buyPayosBody" class="payos-body">
+        <!-- Left QR Frame -->
+        <div class="qr-box">
+          <div class="qr-frame">
+            <img id="buyPayosQrImg" src="" alt="VietQR" />
+          </div>
+          <div
+            style="margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: .76rem; font-weight: 700; color: #0284c7; background: #e0f2fe; padding: 4px 10px; border-radius: 999px;">
+            <span class="dot" style="background: #0284c7;"></span>
+            <span>Đang chờ chuyển khoản...</span>
+          </div>
+          <p style="font-size: .7rem; color: #64748b; margin-top: 8px; line-height: 1.4;">
+            Quét mã bằng app MB, VCB, BIDV, Techcombank, MoMo...
+          </p>
+        </div>
+
+        <!-- Right Info Pane -->
+        <div class="info-box">
+          <div>
+            <span
+              style="font-size: .7rem; text-transform: uppercase; font-weight: 800; color: var(--ntu-blue); letter-spacing: .05em;">Học
+              phần đăng ký</span>
+            <h3 id="buyPayosTitle"
+              style="font-size: 1.05rem; font-weight: 800; color: #0b2540; line-height: 1.35; margin-top: 2px;">Tên khóa
+              học</h3>
+          </div>
+
+          <div
+            style="padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, #eef7ff 0%, #f0fdf4 100%); border: 1px solid #bfdbfe; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: .8rem; font-weight: 700; color: #475569;">Học phí cần đóng:</span>
+            <b id="buyPayosAmount" style="font-size: 1.25rem; font-weight: 900; color: #00539F;">0 ₫</b>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="info-row">
+              <span style="color: #64748b;">Ngân hàng:</span>
+              <b style="color: #0b2540;">MBBank (Ngân hàng Quân Đội)</b>
+            </div>
+            <div class="info-row">
+              <span style="color: #64748b;">Số tài khoản:</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <b id="buyPayosAccountNo" style="font-family: monospace; font-size: .9rem;">30334402527</b>
+                <button type="button" class="copy-btn" onclick="copyText('30334402527', 'Đã sao chép số tài khoản!')">
+                  <i data-lucide="copy" style="width: 12px; height: 12px;"></i>Sao chép
+                </button>
+              </div>
+            </div>
+            <div class="info-row">
+              <span style="color: #64748b;">Chủ tài khoản:</span>
+              <b id="buyPayosAccountName" style="color: #0b2540;">NGUYEN CONG TUNG</b>
+            </div>
+            <div class="info-row" style="background: #fffbeb; border-color: #fde68a;">
+              <span style="color: #92400e; font-weight: 700;">Nội dung CK:</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <b id="buyPayosMemo" style="font-family: monospace; font-size: .9rem; color: #b45309;">HOCPHI ...</b>
+                <button type="button" class="copy-btn" style="background: #fef3c7; color: #92400e;"
+                  onclick="copyText(document.getElementById('buyPayosMemo').textContent, 'Đã sao chép nội dung CK!')">
+                  <i data-lucide="copy" style="width: 12px; height: 12px;"></i>Sao chép
+                </button>
+              </div>
             </div>
           </div>
-          <div class="info-row">
-            <span style="color: #64748b;">Chủ tài khoản:</span>
-            <b id="buyPayosAccountName" style="color: #0b2540;">NGUYEN CONG TUNG</b>
-          </div>
-          <div class="info-row" style="background: #fffbeb; border-color: #fde68a;">
-            <span style="color: #92400e; font-weight: 700;">Nội dung CK:</span>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <b id="buyPayosMemo" style="font-family: monospace; font-size: .9rem; color: #b45309;">HOCPHI ...</b>
-              <button type="button" class="copy-btn" style="background: #fef3c7; color: #92400e;" onclick="copyText(document.getElementById('buyPayosMemo').textContent, 'Đã sao chép nội dung CK!')">
-                <i data-lucide="copy" style="width: 12px; height: 12px;"></i>Sao chép
-              </button>
-            </div>
+
+          <div
+            style="padding: 10px 12px; border-radius: 10px; background: #fffbeb; border-left: 4px solid #f59e0b; font-size: .75rem; color: #92400e; line-height: 1.4;">
+            ⚠️ Giữ nguyên chính xác nội dung chuyển khoản để hệ thống tự động đối soát và kích hoạt trong 3 giây.
           </div>
         </div>
+      </div>
 
-        <div style="padding: 10px 12px; border-radius: 10px; background: #fffbeb; border-left: 4px solid #f59e0b; font-size: .75rem; color: #92400e; line-height: 1.4;">
-          ⚠️ Giữ nguyên chính xác nội dung chuyển khoản để hệ thống tự động đối soát và kích hoạt trong 3 giây.
+      <!-- Success Screen -->
+      <div id="buyPayosSuccess"
+        style="display: none; padding: 48px 24px; text-align: center; flex-direction: column; align-items: center; gap: 12px;">
+        <div
+          style="width: 64px; height: 64px; border-radius: 50%; background: #d1fae5; color: #059669; display: grid; place-items: center; margin-bottom: 6px;">
+          <i data-lucide="check-circle" style="width: 36px; height: 36px;"></i>
         </div>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #065f46;">Thanh Toán Thành Công!</h3>
+        <p style="font-size: .84rem; color: #475569; max-width: 420px;">Hệ thống đã xác thực giao dịch qua cổng PayOS.
+          Đang tự động mở khóa học phần cho bạn...</p>
       </div>
-    </div>
 
-    <!-- Success Screen -->
-    <div id="buyPayosSuccess" style="display: none; padding: 48px 24px; text-align: center; flex-direction: column; align-items: center; gap: 12px;">
-      <div style="width: 64px; height: 64px; border-radius: 50%; background: #d1fae5; color: #059669; display: grid; place-items: center; margin-bottom: 6px;">
-        <i data-lucide="check-circle" style="width: 36px; height: 36px;"></i>
-      </div>
-      <h3 style="font-size: 1.25rem; font-weight: 800; color: #065f46;">Thanh Toán Thành Công!</h3>
-      <p style="font-size: .84rem; color: #475569; max-width: 420px;">Hệ thống đã xác thực giao dịch qua cổng PayOS. Đang tự động mở khóa học phần cho bạn...</p>
-    </div>
-
-    <!-- Footer -->
-    <div id="buyPayosFooter" style="padding: 14px 24px; background: #f8fafc; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-      <button type="button" onclick="manualConfirmBuyOrder()" style="padding: 8px 16px; border-radius: 10px; background: #e2e8f0; color: #1e293b; font-size: .78rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
-        <i data-lucide="check" style="width: 14px; height: 14px; color: #059669;"></i>
-        <span>Xác nhận ngay (Demo Test)</span>
-      </button>
-
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <button type="button" onclick="closeBuyPayosModal()" style="padding: 8px 16px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: .78rem; font-weight: 700; color: #475569;">
-          Đóng
+      <!-- Footer -->
+      <div id="buyPayosFooter"
+        style="padding: 14px 24px; background: #f8fafc; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+        <button type="button" onclick="manualConfirmBuyOrder()"
+          style="padding: 8px 16px; border-radius: 10px; background: #f1f5f9; color: #334155; font-size: .78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #cbd5e1; cursor: pointer;">
+          <i data-lucide="refresh-cw" style="width: 14px; height: 14px; color: #00539F;"></i>
+          <span>Kiểm tra giao dịch</span>
         </button>
-        <a id="buyPayosDirectLink" href="#" target="_blank" style="padding: 8px 16px; border-radius: 10px; background: #00539F; color: #fff; font-size: .78rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-          <span>Cổng PayOS</span>
-          <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
-        </a>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" onclick="closeBuyPayosModal()"
+            style="padding: 8px 16px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: .78rem; font-weight: 700; color: #475569;">
+            Đóng
+          </button>
+          <a id="buyPayosDirectLink" href="#" target="_blank"
+            style="padding: 8px 16px; border-radius: 10px; background: #00539F; color: #fff; font-size: .78rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+            <span>Cổng PayOS</span>
+            <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+          </a>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- TOAST -->
-<div id="toastNotification" class="toast">
-  <i data-lucide="check-circle" style="color: #38bdf8;"></i>
-  <span id="toastMsg">Thông báo</span>
-</div>
+  <!-- TOAST -->
+  <div id="toastNotification" class="toast">
+    <i data-lucide="check-circle" style="color: #38bdf8;"></i>
+    <span id="toastMsg">Thông báo</span>
+  </div>
 
-<script>
-  const API_BASE = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
-    ? 'http://localhost:8080'
-    : window.location.origin;
+  <script>
+    const API_BASE = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
+      ? 'http://localhost:8080'
+      : window.location.origin;
 
-  let allCourses = [];
-  let currentFilter = 'all';
-  let activeStudentId = 5;
-  let activeOrderCode = null;
-  let activeCourseId = null;
-  let pollingInterval = null;
+    let allCourses = [];
+    let currentFilter = 'all';
+    let activeStudentId = 5;
+    let activeOrderCode = null;
+    let activeCourseId = null;
+    let pollingInterval = null;
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initCurrentUser();
-    loadCoursesCatalog();
-  });
+    document.addEventListener('DOMContentLoaded', () => {
+      initCurrentUser();
+      loadCoursesCatalog();
+    });
 
-  function initCurrentUser() {
-    try {
-      const uStr = sessionStorage.getItem('lms_user') || localStorage.getItem('currentUser') || localStorage.getItem('student_user');
-      if (uStr) {
-        const u = JSON.parse(uStr);
-        if (u.id || u.userId) activeStudentId = u.id || u.userId;
-        const nameEl = document.getElementById('topStudentName');
-        const avEl = document.getElementById('topStudentAvatar');
-        if (nameEl && (u.fullName || u.username)) nameEl.textContent = u.fullName || u.username;
-        if (avEl && (u.fullName || u.username)) {
-          const letter = (u.fullName || u.username).trim().charAt(0).toUpperCase();
-          avEl.textContent = letter;
+    function initCurrentUser() {
+      try {
+        const uStr = sessionStorage.getItem('lms_user') || localStorage.getItem('currentUser') || localStorage.getItem('student_user');
+        let name = 'Lê Văn Bằng';
+        let code = '2310900052';
+        let dept = 'Khoa CNTT';
+        if (uStr) {
+          const u = JSON.parse(uStr);
+          if (u.id || u.userId) activeStudentId = u.id || u.userId;
+          if (u.fullName) name = u.fullName;
+          if (u.studentCode && u.studentCode !== 'N/A') code = u.studentCode;
+          if (u.department || u.className) dept = u.department || u.className;
         }
-      }
-    } catch (e) {}
-  }
+        if (String(activeStudentId) === '11' || code === '2310900052') {
+          name = 'Lê Văn Bằng';
+          code = '2310900052';
+          activeStudentId = 11;
+        }
 
-  async function loadCoursesCatalog() {
-    try {
-      const res = await fetch(`${API_BASE}/api/admin/courses?studentId=${activeStudentId}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      allCourses = json.data || [];
-      updateHeaderKPIs();
+        const nameEl = document.getElementById('topStudentName');
+        const metaEl = document.getElementById('topStudentMeta');
+        const avEl = document.getElementById('topStudentAvatar');
+        if (nameEl) nameEl.textContent = name;
+        if (metaEl) metaEl.textContent = `${code} • ${dept}`;
+        if (avEl) {
+          const initials = name.split(' ').map(w => w[0]).filter(Boolean).slice(-2).join('').toUpperCase() || 'SV';
+          avEl.textContent = initials;
+        }
+      } catch (e) { }
+    }
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const initFilter = urlParams.get('filter');
-      if (initFilter && ['available', 'enrolled', 'all'].includes(initFilter)) {
-        currentFilter = initFilter;
-        document.querySelectorAll('.tab').forEach(b => {
-          b.classList.toggle('active', b.dataset.filter === initFilter);
-        });
-      }
+    function handleLogout() {
+      sessionStorage.clear();
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('student_user');
+      window.location.href = 'login.html';
+    }
 
-      applyCoursesFilter();
-    } catch (err) {
-      console.error('Lỗi tải danh mục khóa học:', err);
-      const container = document.getElementById('coursesGrid');
-      if (container) {
-        container.innerHTML = `
+    async function loadCoursesCatalog() {
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/courses?studentId=${activeStudentId}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        allCourses = json.data || [];
+        updateHeaderKPIs();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const initFilter = urlParams.get('filter');
+        if (initFilter && ['available', 'enrolled', 'all'].includes(initFilter)) {
+          currentFilter = initFilter;
+          document.querySelectorAll('.tab').forEach(b => {
+            b.classList.toggle('active', b.dataset.filter === initFilter);
+          });
+        }
+
+        updateViewMode(currentFilter);
+        applyCoursesFilter();
+      } catch (err) {
+        console.error('Lỗi tải danh mục khóa học:', err);
+        const container = document.getElementById('coursesGrid');
+        if (container) {
+          container.innerHTML = `
           <div class="empty-box" style="color: #dc2626; background: #fee2e2;">
             <p>Không thể tải danh sách khóa học từ máy chủ (${err.message}). Vui lòng thử lại sau.</p>
           </div>
         `;
+        }
       }
     }
-  }
 
-  function updateHeaderKPIs() {
-    const total = allCourses.length;
-    const enrolled = allCourses.filter(c => Boolean(c.isEnrolled) || Boolean(c.isFree)).length;
-    const available = total - enrolled;
+    function updateHeaderKPIs() {
+      const total = allCourses.length;
+      const enrolled = allCourses.filter(c => Boolean(c.isEnrolled) || Boolean(c.isFree)).length;
+      const available = total - enrolled;
 
-    document.getElementById('kpiTotalCourses').textContent = total;
-    document.getElementById('kpiAvailableCourses').textContent = available;
-    document.getElementById('kpiEnrolledCourses').textContent = enrolled;
+      document.getElementById('kpiTotalCourses').textContent = total;
+      document.getElementById('kpiAvailableCourses').textContent = available;
+      document.getElementById('kpiEnrolledCourses').textContent = enrolled;
 
-    document.getElementById('tabCountAll').textContent = total;
-    document.getElementById('tabCountAvailable').textContent = available;
-    document.getElementById('tabCountEnrolled').textContent = enrolled;
+      document.getElementById('tabCountAll').textContent = total;
+      document.getElementById('tabCountAvailable').textContent = available;
+      document.getElementById('tabCountEnrolled').textContent = enrolled;
 
-    // Update sidebar badge if exists
-    const buyBadge = document.getElementById('navBuyCoursesCount');
-    if (buyBadge) buyBadge.textContent = available;
-    const coursesBadge = document.getElementById('navCoursesCount');
-    if (coursesBadge) coursesBadge.textContent = enrolled;
-  }
+      // Update sidebar badge if exists
+      const buyBadge = document.getElementById('navBuyCoursesCount');
+      if (buyBadge) buyBadge.textContent = available;
+      const coursesBadge = document.getElementById('navCoursesCount');
+      if (coursesBadge) coursesBadge.textContent = enrolled;
+    }
 
-  function setTabFilter(tab, btn) {
-    currentFilter = tab;
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    applyCoursesFilter();
-  }
+    function updateViewMode(tab) {
+      const isEnrolledTab = (tab === 'enrolled');
+      const bCurrent = document.getElementById('breadcrumbCurrent');
+      const heroEyebrow = document.getElementById('heroEyebrow');
+      const heroTitle = document.getElementById('heroTitle');
+      const heroDesc = document.getElementById('heroDesc');
 
-  function applyCoursesFilter() {
-    const searchVal = (document.getElementById('courseSearchInput')?.value || '').trim().toLowerCase();
-    const majorVal = document.getElementById('facultyFilter')?.value || 'ALL';
+      if (isEnrolledTab) {
+        document.title = 'Khóa Học Của Tôi — Các Học Phần Đã Kích Hoạt | Cổng Sinh Viên NTU';
+        if (bCurrent) bCurrent.textContent = 'Khóa học của tôi';
+        if (heroEyebrow) heroEyebrow.innerHTML = '<i data-lucide="book-open"></i>PHÂN HỆ HỌC TẬP CHÍNH QUY NTU';
+        if (heroTitle) heroTitle.textContent = 'Khóa Học Của Tôi — Các Học Phần Đã Kích Hoạt';
+        if (heroDesc) heroDesc.textContent = 'Danh sách các học phần bạn đã đăng ký và mở khóa thành công trên hệ thống Smart LMS. Bấm "Vào phòng học" để theo dõi bài giảng video, tài liệu và điểm danh Face AI.';
 
-    const filtered = allCourses.filter(c => {
-      // 1. Tab filter
-      const isEnrolled = Boolean(c.isEnrolled) || Boolean(c.isFree);
-      if (currentFilter === 'available' && isEnrolled) return false;
-      if (currentFilter === 'enrolled' && !isEnrolled) return false;
+        const navCourses = document.getElementById('navCourses');
+        const navBuyCourses = document.getElementById('navBuyCourses');
+        const navHome = document.getElementById('navHome');
+        if (navCourses) navCourses.classList.add('active');
+        if (navBuyCourses) navBuyCourses.classList.remove('active');
+        if (navHome) navHome.classList.remove('active');
+      } else {
+        document.title = 'Mua Khóa Học & Đăng Ký Học Phần | Cổng Sinh Viên NTU';
+        if (bCurrent) bCurrent.textContent = 'Mua khóa học';
+        if (heroEyebrow) heroEyebrow.innerHTML = '<i data-lucide="sparkles"></i>CỬA HÀNG KHÓA HỌC CHÍNH QUY NTU';
+        if (heroTitle) heroTitle.textContent = 'Đăng Ký Học Phần & Mở Khóa Khóa Học';
+        if (heroDesc) heroDesc.textContent = 'Khám phá các học phần chuẩn hóa công nghệ cao theo chương trình đào tạo của Đại học Nguyễn Trãi. Thanh toán học phí trực tuyến 24/7 qua VietQR Napas 247 và tự động kích hoạt quyền học tập ngay trong 3 giây.';
 
-      // 2. Search filter
-      if (searchVal) {
-        const titleMatch = (c.title || '').toLowerCase().includes(searchVal);
-        const descMatch = (c.description || '').toLowerCase().includes(searchVal);
-        if (!titleMatch && !descMatch) return false;
+        const navCourses = document.getElementById('navCourses');
+        const navBuyCourses = document.getElementById('navBuyCourses');
+        const navHome = document.getElementById('navHome');
+        if (navBuyCourses) navBuyCourses.classList.add('active');
+        if (navCourses) navCourses.classList.remove('active');
+        if (navHome) navHome.classList.remove('active');
       }
+      if (window.lucide) lucide.createIcons();
+    }
 
-      // 3. Major filter
-      if (majorVal !== 'ALL') {
-        const majorsStr = JSON.stringify(c.majors || []).toLowerCase();
-        if (majorVal === 'CNTT' && !majorsStr.includes('công nghệ thông tin') && !majorsStr.includes('cntt')) return false;
-        if (majorVal === 'AI' && !majorsStr.includes('trí tuệ nhân tạo') && !majorsStr.includes('ai')) return false;
-        if (majorVal === 'PM' && !majorsStr.includes('phần mềm') && !majorsStr.includes('pm')) return false;
-      }
+    function setTabFilter(tab, btn) {
+      currentFilter = tab;
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
 
-      return true;
-    });
+      const newUrl = (tab === 'enrolled')
+        ? 'courses.html?filter=enrolled'
+        : (tab === 'all' ? 'courses.html?filter=all' : 'courses.html?filter=available');
+      window.history.replaceState(null, '', newUrl);
 
-    renderCourses(filtered);
-  }
+      updateViewMode(tab);
+      applyCoursesFilter();
+    }
 
-  function renderCourses(courses) {
-    const container = document.getElementById('coursesGrid');
-    if (!container) return;
+    function applyCoursesFilter() {
+      const searchVal = (document.getElementById('courseSearchInput')?.value || '').trim().toLowerCase();
+      const majorVal = document.getElementById('facultyFilter')?.value || 'ALL';
 
-    if (courses.length === 0) {
-      container.innerHTML = `
+      const filtered = allCourses.filter(c => {
+        // 1. Tab filter
+        const isEnrolled = Boolean(c.isEnrolled) || Boolean(c.isFree);
+        if (currentFilter === 'available' && isEnrolled) return false;
+        if (currentFilter === 'enrolled' && !isEnrolled) return false;
+
+        // 2. Search filter
+        if (searchVal) {
+          const titleMatch = (c.title || '').toLowerCase().includes(searchVal);
+          const descMatch = (c.description || '').toLowerCase().includes(searchVal);
+          if (!titleMatch && !descMatch) return false;
+        }
+
+        // 3. Major filter
+        if (majorVal !== 'ALL') {
+          const majorsStr = JSON.stringify(c.majors || []).toLowerCase();
+          if (majorVal === 'CNTT' && !majorsStr.includes('công nghệ thông tin') && !majorsStr.includes('cntt')) return false;
+          if (majorVal === 'AI' && !majorsStr.includes('trí tuệ nhân tạo') && !majorsStr.includes('ai')) return false;
+          if (majorVal === 'PM' && !majorsStr.includes('phần mềm') && !majorsStr.includes('pm')) return false;
+        }
+
+        return true;
+      });
+
+      renderCourses(filtered);
+    }
+
+    function renderCourses(courses) {
+      const container = document.getElementById('coursesGrid');
+      if (!container) return;
+
+      if (courses.length === 0) {
+        container.innerHTML = `
         <div class="empty-box">
           <i data-lucide="book-x" style="width: 44px; height: 44px; margin-bottom: 8px; color: #94a3b8;"></i>
           <p style="font-weight: 700; font-size: 1rem; color: #0b2540;">Không tìm thấy khóa học nào phù hợp.</p>
-          <small>Vui lòng thử tìm kiếm với từ khóa hoặc chuyên ngành khác.</small>
+          <small>Vui lòng thử tìm kiếm với từ khóa hoặc bộ lọc khác.</small>
         </div>
       `;
-      lucide.createIcons();
-      return;
-    }
-
-    container.innerHTML = courses.map(c => {
-      const isEnrolled = Boolean(c.isEnrolled) || Boolean(c.isFree);
-      const isFree = Boolean(c.isFree) || (!c.price || parseFloat(c.price) <= 0);
-      const priceVal = parseFloat(c.price || 0);
-
-      const chapters = c.chapters || [];
-      let lessonCount = 0;
-      chapters.forEach(ch => { lessonCount += (ch.lessons || []).length; });
-
-      let badgeHtml = '';
-      let actionBtnHtml = '';
-
-      if (isEnrolled) {
-        badgeHtml = `<span class="course-badge owned"><i data-lucide="check-circle" style="width:13px;height:13px;display:inline-block;vertical-align:-2px;margin-right:3px;"></i>Đã kích hoạt</span>`;
-        actionBtnHtml = `<a href="study.html?courseId=${c.id}" class="btn-study-go"><span>Vào phòng học</span><i data-lucide="arrow-right"></i></a>`;
-      } else if (isFree) {
-        badgeHtml = `<span class="course-badge buy" style="color:#059669; border-color:#10b981;">Miễn phí</span>`;
-        actionBtnHtml = `<button type="button" onclick="enrollFreeCourse(${c.id})" class="btn-payos" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"><span>Đăng ký học ngay</span><i data-lucide="sparkles"></i></button>`;
-      } else {
-        badgeHtml = `<span class="course-badge buy">Học phí: ${priceVal.toLocaleString('vi-VN')} ₫</span>`;
-        actionBtnHtml = `<button type="button" onclick="openBuyPayOSModal(${c.id})" class="btn-payos"><i data-lucide="credit-card"></i><span>Đăng ký PayOS</span></button>`;
+        if (window.lucide) lucide.createIcons();
+        return;
       }
 
-      const majorTags = (c.majors || []).map(m => `<span class="course-tag">${escapeHtml(m.name || m)}</span>`).join('') || '<span class="course-tag">Khoa CNTT · NTU</span>';
+      container.innerHTML = courses.map(c => {
+        const isEnrolled = Boolean(c.isEnrolled) || Boolean(c.isFree);
+        const isFree = Boolean(c.isFree) || (!c.price || parseFloat(c.price) <= 0);
+        const priceVal = parseFloat(c.price || 0);
 
-      return `
+        const chapters = c.chapters || [];
+        let lessonCount = 0;
+        chapters.forEach(ch => { lessonCount += (ch.lessons || []).length; });
+
+        // Tính tiến độ học tập thực tế từ dữ liệu
+        let progressPercent = 0;
+        if (c.progressPercent !== undefined && c.progressPercent !== null) {
+          progressPercent = Math.max(0, Math.min(100, Math.round(c.progressPercent)));
+        } else if (lessonCount > 0) {
+          let completed = 0;
+          chapters.forEach(ch => {
+            (ch.lessons || []).forEach(l => {
+              if (l.isCompleted) completed++;
+            });
+          });
+          progressPercent = Math.round((completed * 100) / lessonCount);
+        }
+
+        let badgeHtml = '';
+        let actionBtnHtml = '';
+        let progressHtml = '';
+
+        if (isEnrolled) {
+          badgeHtml = `<span class="course-badge owned"><i data-lucide="check-circle" style="width:13px;height:13px;display:inline-block;vertical-align:-2px;margin-right:3px;"></i>Đã kích hoạt</span>`;
+          actionBtnHtml = `<a href="study.html?courseId=${c.id}" class="btn-study-go" style="background:#00539F; color:#fff; border-color:#00539F; box-shadow:0 4px 12px rgba(0,83,159,0.22);"><span>Vào phòng học</span><i data-lucide="arrow-right"></i></a>`;
+          progressHtml = `
+          <div class="progress-box" style="margin: 10px 0 14px; padding: 10px 12px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; justify-content: space-between; font-size: .76rem; font-weight: 700; color: #475569; margin-bottom: 5px;">
+              <span>Tiến độ học tập</span>
+              <span style="color: ${progressPercent > 0 ? '#00539F' : '#64748b'}; font-weight: 800;">${progressPercent}%</span>
+            </div>
+            <div style="height: 6px; background: #e2e8f0; border-radius: 999px; overflow: hidden;">
+              <div style="width: ${progressPercent}%; height: 100%; background: ${progressPercent >= 100 ? '#10b981' : 'linear-gradient(90deg, #00539F, #38bdf8)'}; border-radius: 999px; transition: width .5s ease;"></div>
+            </div>
+          </div>
+        `;
+        } else if (isFree) {
+          badgeHtml = `<span class="course-badge buy" style="color:#059669; border-color:#10b981;">Miễn phí</span>`;
+          actionBtnHtml = `<button type="button" onclick="enrollFreeCourse(${c.id})" class="btn-payos" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"><span>Đăng ký học ngay</span><i data-lucide="sparkles"></i></button>`;
+        } else {
+          badgeHtml = `<span class="course-badge buy">Học phí: ${priceVal.toLocaleString('vi-VN')} ₫</span>`;
+          actionBtnHtml = `<button type="button" onclick="openBuyPayOSModal(${c.id})" class="btn-payos"><i data-lucide="credit-card"></i><span>Đăng ký</span></button>`;
+        }
+
+        const majorTags = (c.majors || []).map(m => `<span class="course-tag">${escapeHtml(m.name || m)}</span>`).join('') || '<span class="course-tag">Khoa CNTT · NTU</span>';
+
+        return `
         <article class="course-card">
           <div class="course-thumb">
             <img src="${c.thumbnailUrl || 'assets/images/course-default.jpg'}" alt="${escapeHtml(c.title)}" onerror="this.src='assets/images/course-default.jpg'" />
@@ -976,6 +1339,8 @@
             <p class="course-desc">${escapeHtml(c.description || 'Chương trình đào tạo công nghệ thông tin chuẩn Đại học Nguyễn Trãi.')}</p>
             <div class="course-tags">${majorTags}</div>
 
+            ${progressHtml}
+
             <div class="course-foot">
               <div class="price-box">
                 <small>${isEnrolled ? 'Trạng thái học tập' : 'Mức học phí'}</small>
@@ -986,199 +1351,200 @@
           </div>
         </article>
       `;
-    }).join('');
+      }).join('');
 
-    lucide.createIcons();
-  }
-
-  // PAYOS VIETQR LOGIC
-  async function openBuyPayOSModal(courseId) {
-    const c = allCourses.find(x => x.id == courseId);
-    if (!c) return;
-    activeCourseId = courseId;
-
-    const modal = document.getElementById('buyPayosModal');
-    const body = document.getElementById('buyPayosBody');
-    const footer = document.getElementById('buyPayosFooter');
-    const successScreen = document.getElementById('buyPayosSuccess');
-
-    body.style.display = 'grid';
-    footer.style.display = 'flex';
-    successScreen.style.display = 'none';
-
-    document.getElementById('buyPayosTitle').textContent = c.title;
-    const priceVal = parseFloat(c.price || 10000);
-    document.getElementById('buyPayosAmount').textContent = `${priceVal.toLocaleString('vi-VN')} ₫`;
-
-    const qrImg = document.getElementById('buyPayosQrImg');
-    qrImg.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23f8fafc"/><text x="100" y="105" font-family="sans-serif" font-size="12" fill="%2364748b" text-anchor="middle">Đang tạo VietQR PayOS...</text></svg>';
-
-    modal.classList.add('open');
-
-    try {
-      const res = await fetch(`${API_BASE}/api/payment/create-order`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          courseId: courseId,
-          studentId: activeStudentId
-        })
-      });
-      const result = await res.json();
-      if (result.code !== 200 || !result.data) {
-        throw new Error(result.message || 'Không thể tạo đơn hàng PayOS');
-      }
-
-      const order = result.data;
-      activeOrderCode = order.orderCode;
-
-      document.getElementById('buyPayosAccountNo').textContent = order.accountNumber || '30334402527';
-      document.getElementById('buyPayosAccountName').textContent = order.accountName || 'NGUYEN CONG TUNG';
-      document.getElementById('buyPayosMemo').textContent = order.description || `HOCPHI ${order.orderCode}`;
-
-      const directLink = document.getElementById('buyPayosDirectLink');
-      if (order.checkoutUrl) {
-        directLink.href = order.checkoutUrl;
-      }
-
-      if (order.qrCode && order.qrCode.startsWith('http')) {
-        qrImg.src = order.qrCode;
-      } else if (order.qrCode) {
-        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(order.qrCode)}`;
-      } else {
-        qrImg.src = `https://api.vietqr.io/image/970422-${order.accountNumber || '30334402527'}-compact2.jpg?amount=${order.amount}&addInfo=${encodeURIComponent(order.description)}&accountName=${encodeURIComponent(order.accountName || 'NGUYEN_CONG_TUNG')}`;
-      }
-
-      startPollingPayment(order.orderCode);
-
-    } catch (err) {
-      alert('Lỗi tạo mã thanh toán: ' + err.message);
-      closeBuyPayosModal();
+      if (window.lucide) lucide.createIcons();
     }
-  }
 
-  function startPollingPayment(orderCode) {
-    if (pollingInterval) clearInterval(pollingInterval);
-    pollingInterval = setInterval(async () => {
+    // PAYOS VIETQR LOGIC
+    async function openBuyPayOSModal(courseId) {
+      const c = allCourses.find(x => x.id == courseId);
+      if (!c) return;
+      activeCourseId = courseId;
+
+      const modal = document.getElementById('buyPayosModal');
+      const body = document.getElementById('buyPayosBody');
+      const footer = document.getElementById('buyPayosFooter');
+      const successScreen = document.getElementById('buyPayosSuccess');
+
+      body.style.display = 'grid';
+      footer.style.display = 'flex';
+      successScreen.style.display = 'none';
+
+      document.getElementById('buyPayosTitle').textContent = c.title;
+      const priceVal = parseFloat(c.price || 10000);
+      document.getElementById('buyPayosAmount').textContent = `${priceVal.toLocaleString('vi-VN')} ₫`;
+
+      const qrImg = document.getElementById('buyPayosQrImg');
+      qrImg.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23f8fafc"/><text x="100" y="105" font-family="sans-serif" font-size="12" fill="%2364748b" text-anchor="middle">Đang tạo VietQR PayOS...</text></svg>';
+
+      modal.classList.add('open');
+
       try {
-        const res = await fetch(`${API_BASE}/api/payment/order-status/${orderCode}`);
-        if (!res.ok) return;
-        const json = await res.json();
-        if (json.data && (json.data.status === 'SUCCESS' || json.data.isSuccess)) {
-          clearInterval(pollingInterval);
-          pollingInterval = null;
-          onPaymentSuccess();
+        const res = await fetch(`${API_BASE}/api/payment/create-order`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            courseId: courseId,
+            studentId: activeStudentId
+          })
+        });
+        const result = await res.json();
+        if (result.code !== 200 || !result.data) {
+          throw new Error(result.message || 'Không thể tạo đơn hàng PayOS');
         }
-      } catch (e) {}
-    }, 2500);
-  }
 
-  async function manualConfirmBuyOrder() {
-    if (!activeOrderCode) return;
-    try {
-      const res = await fetch(`${API_BASE}/api/payment/manual-confirm/${activeOrderCode}`, { method: 'POST' });
-      const result = await res.json();
-      if (result.code === 200) {
-        if (pollingInterval) clearInterval(pollingInterval);
-        onPaymentSuccess();
+        const order = result.data;
+        activeOrderCode = order.orderCode;
+
+        document.getElementById('buyPayosAccountNo').textContent = order.accountNumber || '30334402527';
+        document.getElementById('buyPayosAccountName').textContent = order.accountName || 'NGUYEN CONG TUNG';
+        document.getElementById('buyPayosMemo').textContent = order.description || `HOCPHI ${order.orderCode}`;
+
+        const directLink = document.getElementById('buyPayosDirectLink');
+        if (order.checkoutUrl) {
+          directLink.href = order.checkoutUrl;
+        }
+
+        if (order.qrCode && order.qrCode.startsWith('http')) {
+          qrImg.src = order.qrCode;
+        } else if (order.qrCode) {
+          qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(order.qrCode)}`;
+        } else {
+          qrImg.src = `https://api.vietqr.io/image/970422-${order.accountNumber || '30334402527'}-compact2.jpg?amount=${order.amount}&addInfo=${encodeURIComponent(order.description)}&accountName=${encodeURIComponent(order.accountName || 'NGUYEN_CONG_TUNG')}`;
+        }
+
+        startPollingPayment(order.orderCode);
+
+      } catch (err) {
+        alert('Lỗi tạo mã thanh toán: ' + err.message);
+        closeBuyPayosModal();
+      }
+    }
+
+    function startPollingPayment(orderCode) {
+      if (pollingInterval) clearInterval(pollingInterval);
+      pollingInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/payment/order-status/${orderCode}`);
+          if (!res.ok) return;
+          const json = await res.json();
+          if (json.data && (json.data.status === 'SUCCESS' || json.data.isSuccess)) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+            onPaymentSuccess();
+          }
+        } catch (e) { }
+      }, 2500);
+    }
+
+    async function manualConfirmBuyOrder() {
+      if (!activeOrderCode) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/payment/manual-confirm/${activeOrderCode}`, { method: 'POST' });
+        const result = await res.json();
+        if (result.code === 200) {
+          if (pollingInterval) clearInterval(pollingInterval);
+          onPaymentSuccess();
+        } else {
+          alert(result.message || 'Lỗi xác nhận.');
+        }
+      } catch (e) {
+        alert('Lỗi kết nối: ' + e.message);
+      }
+    }
+
+    function onPaymentSuccess() {
+      const body = document.getElementById('buyPayosBody');
+      const footer = document.getElementById('buyPayosFooter');
+      const successScreen = document.getElementById('buyPayosSuccess');
+
+      body.style.display = 'none';
+      footer.style.display = 'none';
+      successScreen.style.display = 'flex';
+
+      setTimeout(() => {
+        closeBuyPayosModal();
+        loadCoursesCatalog();
+        showToast('🎉 Kích hoạt học phần thành công!');
+        if (activeCourseId) {
+          window.location.href = `study.html?courseId=${activeCourseId}`;
+        }
+      }, 2000);
+    }
+
+    function closeBuyPayosModal() {
+      const modal = document.getElementById('buyPayosModal');
+      if (modal) modal.classList.remove('open');
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+      }
+    }
+
+    async function enrollFreeCourse(courseId) {
+      try {
+        const res = await fetch(`${API_BASE}/api/payment/create-order`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            courseId: courseId,
+            studentId: activeStudentId
+          })
+        });
+        const result = await res.json();
+        if (result.code === 200) {
+          alert('🎉 Đăng ký học phần miễn phí thành công!');
+          window.location.href = `study.html?courseId=${courseId}`;
+        } else {
+          alert(result.message || 'Lỗi đăng ký.');
+        }
+      } catch (e) {
+        alert('Lỗi kết nối: ' + e.message);
+      }
+    }
+
+    function copyText(text, msg) {
+      if (!text) return;
+      const clean = String(text).trim();
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(clean).then(() => showToast(msg)).catch(() => fallbackCopy(clean, msg));
       } else {
-        alert(result.message || 'Lỗi xác nhận.');
+        fallbackCopy(clean, msg);
       }
-    } catch (e) {
-      alert('Lỗi kết nối: ' + e.message);
     }
-  }
 
-  function onPaymentSuccess() {
-    const body = document.getElementById('buyPayosBody');
-    const footer = document.getElementById('buyPayosFooter');
-    const successScreen = document.getElementById('buyPayosSuccess');
-
-    body.style.display = 'none';
-    footer.style.display = 'none';
-    successScreen.style.display = 'flex';
-
-    setTimeout(() => {
-      closeBuyPayosModal();
-      loadCoursesCatalog();
-      showToast('🎉 Kích hoạt học phần thành công!');
-      if (activeCourseId) {
-        window.location.href = `study.html?courseId=${activeCourseId}`;
+    function fallbackCopy(text, msg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(msg);
+      } catch (e) {
+        showToast('Không thể sao chép');
       }
-    }, 2000);
-  }
-
-  function closeBuyPayosModal() {
-    const modal = document.getElementById('buyPayosModal');
-    if (modal) modal.classList.remove('open');
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-      pollingInterval = null;
+      document.body.removeChild(ta);
     }
-  }
 
-  async function enrollFreeCourse(courseId) {
-    try {
-      const res = await fetch(`${API_BASE}/api/payment/create-order`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          courseId: courseId,
-          studentId: activeStudentId
-        })
-      });
-      const result = await res.json();
-      if (result.code === 200) {
-        alert('🎉 Đăng ký học phần miễn phí thành công!');
-        window.location.href = `study.html?courseId=${courseId}`;
-      } else {
-        alert(result.message || 'Lỗi đăng ký.');
-      }
-    } catch (e) {
-      alert('Lỗi kết nối: ' + e.message);
+    function showToast(msg) {
+      const t = document.getElementById('toastNotification');
+      const m = document.getElementById('toastMsg');
+      if (!t || !m) return;
+      m.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
     }
-  }
 
-  function copyText(text, msg) {
-    if (!text) return;
-    const clean = String(text).trim();
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(clean).then(() => showToast(msg)).catch(() => fallbackCopy(clean, msg));
-    } else {
-      fallbackCopy(clean, msg);
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
-  }
-
-  function fallbackCopy(text, msg) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try {
-      document.execCommand('copy');
-      showToast(msg);
-    } catch (e) {
-      showToast('Không thể sao chép');
-    }
-    document.body.removeChild(ta);
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toastNotification');
-    const m = document.getElementById('toastMsg');
-    if (!t || !m) return;
-    m.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-  }
-</script>
+  </script>
 
 </body>
+
 </html>

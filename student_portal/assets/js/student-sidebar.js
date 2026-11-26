@@ -25,13 +25,11 @@
   // Danh mục menu điều hướng Cổng Sinh Viên
   const NAV_ITEMS = [
     { key: 'home', label: 'Trang chủ', href: `${PORTAL_ROOT}index.html`, icon: 'layout-dashboard', id: 'navHome' },
-    { key: 'courses', label: 'Khóa học của tôi', href: `${PORTAL_ROOT}index.html#coursesSection`, icon: 'book-open', id: 'navCourses', countId: 'navCoursesCount' },
-    { key: 'buy', label: 'Mua khóa học', href: `${PORTAL_ROOT}courses.html`, icon: 'shopping-bag', id: 'navBuyCourses', countId: 'navBuyCoursesCount' },
+    { key: 'courses', label: 'Khóa học của tôi', href: `${PORTAL_ROOT}courses.html?filter=enrolled`, icon: 'book-open', id: 'navCourses', countId: 'navCoursesCount' },
+    { key: 'buy', label: 'Mua khóa học', href: `${PORTAL_ROOT}courses.html?filter=available`, icon: 'shopping-bag', id: 'navBuyCourses', countId: 'navBuyCoursesCount' },
     { key: 'study', label: 'Phòng học trực tuyến', href: `${PORTAL_ROOT}study.html`, icon: 'video', id: 'navStudy' },
-    { key: 'docs', label: 'Thư viện tài liệu', href: `${PORTAL_ROOT}index.html#docsSection`, icon: 'library', id: 'navDocs', countId: 'navDocsCount' },
-    { key: 'orders', label: 'Lịch sử đơn hàng', href: `${PORTAL_ROOT}orders.html`, icon: 'receipt', id: 'navOrders', countId: 'navOrdersCount' },
-    { key: 'schedule', label: 'Thời khóa biểu', href: `${PORTAL_ROOT}index.html#scheduleSection`, icon: 'calendar-days', id: 'navSchedule' },
-    { key: 'rag', label: 'Trợ lý AI RAG', href: `${PORTAL_ROOT}index.html#ragSection`, icon: 'sparkles', id: 'navRag' },
+    { key: 'docs', label: 'Thư viện tài liệu', href: `${PORTAL_ROOT}documents.html`, icon: 'library', id: 'navDocs', countId: 'navDocsCount' },
+    { key: 'orders', label: 'Lịch sử hóa đơn', href: `${PORTAL_ROOT}orders.html`, icon: 'receipt', id: 'navOrders', countId: 'navOrdersCount' },
     { key: 'face', label: 'Đăng ký khuôn mặt AI', href: `${PORTAL_ROOT}face_enrollment.html`, icon: 'scan-face', id: 'navFace' },
     { key: 'admin', label: 'Quản trị viên', href: '/admin/index.html', icon: 'shield-check', id: 'navAdmin', isExternal: true }
   ];
@@ -40,6 +38,7 @@
   const ICONS = {
     'layout-dashboard': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>',
     'book-open': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+    'shopping-bag': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
     'video': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg>',
     'library': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>',
     'receipt': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v.5"/><path d="M12 6v.5"/></svg>',
@@ -56,18 +55,18 @@
     style.id = 'ntu-student-sidebar-style';
     style.textContent = `
       .sidebar {
-        width: 300px !important;
-        min-width: 300px !important;
-        max-width: 300px !important;
+        width: 290px !important;
+        min-width: 290px !important;
+        max-width: 290px !important;
         flex-shrink: 0 !important;
         background: rgba(255, 255, 255, 0.98) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
         border-right: 1px solid rgba(11, 37, 64, 0.08) !important;
-        padding: 24px 18px !important;
+        padding: 20px 16px !important;
         display: flex !important;
         flex-direction: column !important;
-        gap: 14px !important;
+        gap: 10px !important;
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
@@ -78,11 +77,17 @@
         overflow-x: hidden !important;
         z-index: 50 !important;
         box-sizing: border-box !important;
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
         transition: transform 0.3s cubic-bezier(.2,.8,.2,1) !important;
       }
+      .sidebar * {
+        box-sizing: border-box !important;
+      }
       .main {
-        margin-left: 300px !important;
-        width: calc(100% - 300px) !important;
+        margin-left: 290px !important;
+        width: calc(100% - 290px) !important;
         min-width: 0 !important;
         box-sizing: border-box !important;
       }
@@ -98,9 +103,10 @@
         display: flex !important;
         align-items: center !important;
         gap: 12px !important;
-        padding: 6px 10px !important;
+        padding: 6px 8px !important;
         text-decoration: none !important;
         color: inherit !important;
+        white-space: nowrap !important;
       }
       .sidebar .brand-logo-img {
         width: 44px !important;
@@ -111,13 +117,18 @@
         box-shadow: 0 4px 12px rgba(0, 83, 159, 0.2) !important;
         flex-shrink: 0 !important;
       }
+      .sidebar .brand div {
+        min-width: 0 !important;
+        flex: 1 !important;
+      }
       .sidebar .brand b {
         display: block !important;
         font-family: 'Fraunces', Georgia, serif !important;
-        font-size: 1.12rem !important;
+        font-size: 1.15rem !important;
         font-weight: 700 !important;
         color: #00539F !important;
         line-height: 1.15 !important;
+        white-space: nowrap !important;
       }
       .sidebar .brand small {
         display: block !important;
@@ -127,6 +138,7 @@
         color: #55677c !important;
         font-weight: 600 !important;
         margin-top: 2px !important;
+        white-space: nowrap !important;
       }
       .sidebar .nav-label {
         font-size: 0.68rem !important;
@@ -136,6 +148,7 @@
         font-weight: 700 !important;
         padding: 6px 12px 0 12px !important;
         margin: 0 !important;
+        white-space: nowrap !important;
       }
       .sidebar .nav {
         display: flex !important;
@@ -155,6 +168,7 @@
         text-decoration: none !important;
         transition: all 0.2s ease !important;
         position: relative !important;
+        white-space: nowrap !important;
       }
       .sidebar .nav a:hover {
         background: #eef6fc !important;
@@ -207,14 +221,18 @@
         font-size: 0.7rem !important;
         color: #64748b !important;
         font-weight: 600 !important;
+        white-space: nowrap !important;
       }
       .sidebar .support a {
         display: block !important;
-        font-size: 0.73rem !important;
+        font-size: 0.74rem !important;
+        font-weight: 700 !important;
         color: #00539F !important;
-        font-weight: 600 !important;
         text-decoration: none !important;
-        word-break: break-all !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 190px !important;
       }
       .sidebar .support .ic {
         width: 32px !important;
@@ -291,18 +309,27 @@
     }
 
     const currentPath = window.location.pathname.replace(/\\/g, '/');
+    const urlParams = new URLSearchParams(window.location.search);
+    const filterParam = urlParams.get('filter');
+
     const isStudy = currentPath.endsWith('study.html');
     const isFace = currentPath.endsWith('face_enrollment.html');
     const isOrders = currentPath.endsWith('orders.html');
-    const isBuy = currentPath.endsWith('courses.html');
+    const isDocs = currentPath.endsWith('documents.html');
+    const isCoursesPage = currentPath.endsWith('courses.html');
+    const isMyCourses = isCoursesPage && filterParam === 'enrolled';
+    const isBuyCourses = isCoursesPage && filterParam !== 'enrolled';
+    const isHome = currentPath.endsWith('index.html') || (!isStudy && !isFace && !isOrders && !isCoursesPage && !isDocs);
 
     const navHtml = NAV_ITEMS.map(item => {
       let activeClass = '';
       if (item.key === 'study' && isStudy) activeClass = 'active';
       else if (item.key === 'face' && isFace) activeClass = 'active';
       else if (item.key === 'orders' && isOrders) activeClass = 'active';
-      else if (item.key === 'buy' && isBuy) activeClass = 'active';
-      else if (item.key === 'home' && !isStudy && !isFace && !isOrders && !isBuy) activeClass = 'active';
+      else if (item.key === 'docs' && isDocs) activeClass = 'active';
+      else if (item.key === 'courses' && isMyCourses) activeClass = 'active';
+      else if (item.key === 'buy' && isBuyCourses) activeClass = 'active';
+      else if (item.key === 'home' && isHome) activeClass = 'active';
 
       const iconSvg = ICONS[item.icon] || '';
       const countBadge = item.countId ? `<span class="count" id="${item.countId}">0</span>` : '';
@@ -367,11 +394,12 @@
     try {
       // 1. Số khóa học: đếm số đã mua (Khóa học của tôi) và số chưa mua (Mua khóa học)
       const uStr = sessionStorage.getItem('lms_user') || localStorage.getItem('currentUser') || localStorage.getItem('student_user');
-      let studentId = 5;
+      let studentId = 11;
       if (uStr) {
         try {
           const u = JSON.parse(uStr);
           if (u.id || u.userId) studentId = u.id || u.userId;
+          if (u.studentCode === '2310900052') studentId = 11;
         } catch (e) {}
       }
       fetch(`${API_BASE}/api/admin/courses?studentId=${studentId}`)
@@ -387,7 +415,7 @@
         }).catch(() => {});
 
       // 2. Số tài liệu
-      fetch(`${API_BASE}/api/admin/documents`)
+      fetch(`${API_BASE}/api/documents`)
         .then(r => r.json())
         .then(d => {
           const count = d.data ? d.data.length : 0;
@@ -416,7 +444,8 @@
       const res = await fetch(url);
       if (res.ok) {
         const json = await res.json();
-        const orders = json.data || [];
+        const rawOrders = json.data || [];
+        const orders = rawOrders.filter(o => o.paymentStatus === 'SUCCESS');
         const el = document.getElementById('navOrdersCount');
         if (el) {
           el.textContent = orders.length;
@@ -441,8 +470,8 @@
               ${ICONS['receipt']}
             </div>
             <div>
-              <h3 style="margin:0; font-family:'Fraunces', Georgia, serif; font-size:1.2rem; color:#00539F;">Lịch Sử Đơn Hàng & Học Phí</h3>
-              <p style="margin:2px 0 0; font-size:.78rem; color:#64748b;">Danh sách các khóa học đã đăng ký & giao dịch cổng thanh toán PayOS</p>
+              <h3 style="margin:0; font-family:'Fraunces', Georgia, serif; font-size:1.2rem; color:#00539F;">Hóa Đơn &amp; Lịch Sử Thanh Toán</h3>
+              <p style="margin:2px 0 0; font-size:.78rem; color:#64748b;">Danh sách các hóa đơn học phí đã thanh toán thành công qua cổng PayOS</p>
             </div>
           </div>
           <button type="button" onclick="closeMyOrdersModal()" style="background:none; border:none; font-size:1.5rem; color:#64748b; cursor:pointer; line-height:1; padding:4px 8px; border-radius:8px;">&times;</button>
@@ -497,7 +526,8 @@
 
       const res = await fetch(url);
       const json = await res.json();
-      const orders = json.data || [];
+      const rawOrders = json.data || [];
+      const orders = rawOrders.filter(o => o.paymentStatus === 'SUCCESS');
 
       // Cập nhật lại badge
       const badge = document.getElementById('navOrdersCount');
@@ -507,8 +537,8 @@
         container.innerHTML = `
           <div style="padding:3rem 1rem; text-align:center; color:#64748b; border:1px dashed #cbd5e1; border-radius:14px;">
             <div style="font-size:2rem; margin-bottom:.5rem;">📦</div>
-            <b>Bạn chưa có đơn hàng nào</b>
-            <p style="margin:4px 0 0; font-size:.82rem;">Hãy đăng ký khóa học trên trang chủ để bắt đầu học tập nhé!</p>
+            <b>Bạn chưa có hóa đơn thanh toán nào</b>
+            <p style="margin:4px 0 0; font-size:.82rem;">Hãy đăng ký khóa học để bắt đầu học tập nhé!</p>
           </div>
         `;
         return;
@@ -573,6 +603,9 @@
     injectOrdersModal();
     fetchCounts();
   }
+
+  // Inject style ngay lập tức khi file script được tải vào <head>
+  injectSidebarStyles();
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

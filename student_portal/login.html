@@ -192,28 +192,6 @@
       </button>
     </div>
 
-    <!-- QUICK TEST ACCOUNTS -->
-    <div class="quick-accounts">
-      <div class="quick-accounts-title">
-        <span class="material-symbols-outlined" style="font-size:16px">bolt</span>
-        <span>Tài khoản mẫu trải nghiệm nhanh (Database):</span>
-      </div>
-      <div class="pills-row">
-        <button type="button" class="pill-btn" onclick="quickFill('nct30000', '123456', 'student')">
-          <span>SV Tùng (2310900051)</span>
-        </button>
-        <button type="button" class="pill-btn" onclick="quickFill('levanbang123@gmail.com', '123456', 'student')">
-          <span>SV Bằng (2310900052)</span>
-        </button>
-        <button type="button" class="pill-btn" onclick="quickFill('admin', '123456', 'faculty')">
-          <span>Admin Hệ thống</span>
-        </button>
-        <button type="button" class="pill-btn" onclick="quickFill('giangvien_tung', '123456', 'faculty')">
-          <span>ThS. Tùng (GV)</span>
-        </button>
-      </div>
-    </div>
-
     <!-- ERROR MESSAGE BOX -->
     <div class="alert-error" id="errorBox">
       <span class="material-symbols-outlined" style="font-size:18px">error</span>
@@ -228,7 +206,7 @@
         </label>
         <div class="input-wrap">
           <span class="material-symbols-outlined input-icon">person</span>
-          <input type="text" id="usernameInput" class="form-input" placeholder="Ví dụ: nct30000 hoặc levanbang123@gmail.com" required autocomplete="username" />
+          <input type="text" id="usernameInput" class="form-input" placeholder="Nhập mã sinh viên hoặc email..." required autocomplete="username" />
         </div>
       </div>
 
@@ -238,7 +216,7 @@
         </label>
         <div class="input-wrap">
           <span class="material-symbols-outlined input-icon">lock</span>
-          <input type="password" id="passwordInput" class="form-input" placeholder="Nhập mật khẩu (123456)" required autocomplete="current-password" />
+          <input type="password" id="passwordInput" class="form-input" placeholder="Nhập mật khẩu..." required autocomplete="current-password" />
           <button type="button" class="pass-toggle" onclick="togglePasswordVisibility()">
             <span class="material-symbols-outlined" id="togglePassIcon">visibility</span>
           </button>
@@ -250,11 +228,11 @@
           <input type="checkbox" id="rememberMe" checked />
           <span>Ghi nhớ đăng nhập</span>
         </label>
-        <a href="#" onclick="alert('Mật khẩu mặc định hệ thống là 123456. Nếu cần cấp lại, vui lòng liên hệ Phòng Đào Tạo NTU qua hotline 0981 924 302.')" class="forgot-link">Quên mật khẩu?</a>
+        <a href="#" onclick="alert('Vui lòng liên hệ Phòng Đào Tạo NTU qua hotline 0981 924 302 để được hỗ trợ cấp lại mật khẩu.')" class="forgot-link">Quên mật khẩu?</a>
       </div>
 
       <button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;height:48px;border-radius:14px;font-size:.95rem">
-        <span id="submitText">Bước 1: Đăng nhập Cổng Sinh Viên</span>
+        <span id="submitText">Đăng nhập Cổng Sinh Viên</span>
         <span class="material-symbols-outlined arrow" style="font-size:20px">arrow_forward</span>
       </button>
     </form>
@@ -400,14 +378,14 @@ function switchRole(role) {
     tabStudent.classList.add('active');
     tabFaculty.classList.remove('active');
     labelUser.innerHTML = '<span>Email hoặc Mã sinh viên (MSSV)</span>';
-    userInput.placeholder = 'Ví dụ: nct30000 hoặc levanbang123@gmail.com';
-    submitText.textContent = 'Bước 1: Đăng nhập Cổng Sinh Viên';
+    userInput.placeholder = 'Nhập mã sinh viên hoặc email...';
+    submitText.textContent = 'Đăng nhập Cổng Sinh Viên';
   } else {
     tabFaculty.classList.add('active');
     tabStudent.classList.remove('active');
     labelUser.innerHTML = '<span>Tài khoản Cán bộ / Giảng viên</span>';
-    userInput.placeholder = 'Ví dụ: admin hoặc giangvien_tung';
-    submitText.textContent = 'Đăng nhập Cổng Quản Trị / Giảng Viên';
+    userInput.placeholder = 'Nhập tài khoản quản trị hoặc cán bộ...';
+    submitText.textContent = 'Đăng nhập Cổng Cán Bộ / Giảng Viên';
   }
   hideError();
 }
@@ -499,8 +477,8 @@ function saveUserSession(data) {
   const userObj = {
     userId: data.userId,
     username: data.username,
-    fullName: data.fullName || (data.role === 'ADMIN' ? 'Quản trị viên Hệ thống' : 'Sinh viên NTU'),
-    studentCode: data.studentCode || (data.role === 'STUDENT' ? '2310900051' : ''),
+    fullName: data.fullName || (data.role === 'ADMIN' ? 'Quản trị viên Hệ thống' : 'Lê Văn Bằng'),
+    studentCode: data.studentCode || (data.role === 'STUDENT' ? '2310900052' : ''),
     role: data.role || 'STUDENT',
     className: data.className || 'K23',
     classCode: data.classCode || 'K23CNT3',

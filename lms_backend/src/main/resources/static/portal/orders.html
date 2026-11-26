@@ -34,7 +34,6 @@
     --radius: 18px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { zoom: 0.85; }
   body {
     background: var(--bg);
     color: var(--ink);
@@ -67,8 +66,8 @@
 
   /* main layout */
   .main {
-    margin-left: 300px;
-    width: calc(100% - 300px);
+    margin-left: 290px;
+    width: calc(100% - 290px);
     min-width: 0;
     box-sizing: border-box;
     display: flex;
@@ -541,8 +540,8 @@
         <a href="index.html" class="icon-btn" title="Về trang chủ Cổng SV" aria-label="Trang chủ"><i data-lucide="home"></i></a>
         <button class="icon-btn" title="Thông báo hệ thống" aria-label="Thông báo"><i data-lucide="bell"></i></button>
         <div class="user">
-          <div><b id="studentHeaderName">Sinh viên NTU</b><small id="studentHeaderMeta">MSSV · Lớp</small></div>
-          <span class="avatar" id="studentAvatarCircle">NTU</span>
+          <div><b id="studentHeaderName">Lê Văn Bằng</b><small id="studentHeaderMeta">2310900052 • Khoa CNTT</small></div>
+          <span class="avatar" id="studentAvatarCircle">LVB</span>
         </div>
         <button class="icon-btn" onclick="handleLogout()" title="Đăng xuất khỏi hệ thống" aria-label="Đăng xuất"><i data-lucide="log-out"></i></button>
       </div>
@@ -554,11 +553,11 @@
       <div class="page-header">
         <div>
           <span class="eyebrow">QUẢN LÝ TÀI CHÍNH &amp; HỌC PHÍ</span>
-          <h1>Lịch sử đơn <em>thanh toán.</em></h1>
-          <p>Xem toàn bộ lịch sử thanh toán học phí qua cổng PayOS VietQR, biên lai giao dịch điện tử và tình trạng kích hoạt bài học.</p>
+          <h1>Hóa đơn &amp; <em>Biên lai thanh toán.</em></h1>
+          <p>Xem toàn bộ hóa đơn thanh toán học phí qua cổng PayOS VietQR đã được xác thực thành công và kích hoạt bài học.</p>
         </div>
         <div>
-          <a href="index.html#coursesSection" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:12px; background:#fff; border:1px solid var(--line); color:var(--ntu-blue); font-size:.85rem; font-weight:700; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,.03);">
+          <a href="courses.html?filter=available" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:12px; background:#fff; border:1px solid var(--line); color:var(--ntu-blue); font-size:.85rem; font-weight:700; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,.03);">
             <i data-lucide="plus-circle" style="width:16px;height:16px;"></i>Đăng ký thêm khóa học
           </a>
         </div>
@@ -569,28 +568,28 @@
         <div class="stat-card">
           <div class="stat-icon blue"><i data-lucide="receipt"></i></div>
           <div class="stat-info">
-            <span>Tổng đơn hàng</span>
+            <span>Hóa đơn đã thanh toán</span>
             <b id="statTotalOrders">0</b>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon green"><i data-lucide="badge-check"></i></div>
           <div class="stat-info">
-            <span>Đã thanh toán</span>
-            <b id="statPaidOrders">0</b>
+            <span>Trạng thái giao dịch</span>
+            <b id="statPaidOrders" style="font-size:1.05rem; color:#10b981;">100% Đã thanh toán</b>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon yellow"><i data-lucide="clock"></i></div>
+          <div class="stat-icon yellow"><i data-lucide="qr-code"></i></div>
           <div class="stat-info">
-            <span>Chờ thanh toán</span>
-            <b id="statPendingOrders">0</b>
+            <span>Cổng thanh toán</span>
+            <b id="statPendingOrders" style="font-size:1.05rem;">PayOS VietQR</b>
           </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon red"><i data-lucide="wallet"></i></div>
           <div class="stat-info">
-            <span>Học phí đã đóng</span>
+            <span>Tổng học phí đã nộp</span>
             <b id="statTotalAmount">0 đ</b>
           </div>
         </div>
@@ -599,10 +598,10 @@
       <!-- TOOLBAR: FILTER & SEARCH -->
       <div class="toolbar">
         <div class="filter-tabs">
-          <button type="button" class="filter-tab active" data-status="ALL" onclick="filterByStatus('ALL', this)">Tất cả (<span id="countFilterAll">0</span>)</button>
-          <button type="button" class="filter-tab" data-status="SUCCESS" onclick="filterByStatus('SUCCESS', this)">Đã thanh toán (<span id="countFilterSuccess">0</span>)</button>
-          <button type="button" class="filter-tab" data-status="PENDING" onclick="filterByStatus('PENDING', this)">Chờ thanh toán (<span id="countFilterPending">0</span>)</button>
-          <button type="button" class="filter-tab" data-status="CANCELLED" onclick="filterByStatus('CANCELLED', this)">Đã hủy (<span id="countFilterCancelled">0</span>)</button>
+          <button type="button" class="filter-tab active" data-status="SUCCESS" onclick="filterByStatus('SUCCESS', this)">
+            <i data-lucide="badge-check" style="width:14px;height:14px;display:inline-block;vertical-align:-2px;color:#10b981;"></i>
+            Hóa đơn đã thanh toán (<span id="countFilterSuccess">0</span>)
+          </button>
         </div>
         <div class="toolbar-actions">
           <button type="button" class="btn-refresh" onclick="loadMyOrders()"><i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>Làm mới</button>
@@ -675,11 +674,11 @@
       const uStr = sessionStorage.getItem('lms_user') || localStorage.getItem('currentUser') || localStorage.getItem('student_user');
       if (uStr) {
         const u = JSON.parse(uStr);
-        const name = u.fullName || u.username || 'Sinh viên NTU';
-        const code = u.studentCode || '--';
+        const name = u.fullName || u.username || 'Lê Văn Bằng';
+        const code = u.studentCode || '2310900052';
         document.getElementById('studentHeaderName').textContent = name;
-        document.getElementById('studentHeaderMeta').textContent = `MSSV: ${code}`;
-        const initials = name.split(' ').map(w => w[0]).filter(Boolean).slice(-2).join('').toUpperCase() || 'SV';
+        document.getElementById('studentHeaderMeta').textContent = `${code} • Khoa CNTT`;
+        const initials = name.split(' ').map(w => w[0]).filter(Boolean).slice(-2).join('').toUpperCase() || 'LVB';
         document.getElementById('studentAvatarCircle').textContent = initials;
       }
     } catch (ignore) {}
@@ -711,16 +710,18 @@
       const res = await fetch(url);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const json = await res.json();
-      allOrders = json.data || [];
+      const rawOrders = json.data || [];
+      // CHỈ HIỂN THỊ CÁC HÓA ĐƠN ĐÃ THANH TOÁN THÀNH CÔNG (SUCCESS)
+      allOrders = rawOrders.filter(o => o.paymentStatus === 'SUCCESS');
 
       updateStats(allOrders);
       renderOrdersTable();
     } catch (err) {
-      console.error('Lỗi tải đơn hàng:', err);
+      console.error('Lỗi tải hóa đơn:', err);
       tbody.innerHTML = `
         <tr>
           <td colspan="7" style="text-align:center; padding:3rem; color:var(--danger);">
-            Không thể tải lịch sử đơn hàng: ${err.message}. Vui lòng kiểm tra lại máy chủ backend.
+            Không thể tải lịch sử hóa đơn: ${err.message}. Vui lòng kiểm tra lại máy chủ backend.
           </td>
         </tr>
       `;
@@ -730,21 +731,21 @@
   // 3. Cập nhật số liệu KPI thống kê
   function updateStats(orders) {
     const total = orders.length;
-    const paid = orders.filter(o => o.paymentStatus === 'SUCCESS');
-    const pending = orders.filter(o => o.paymentStatus === 'PENDING');
-    const cancelled = orders.filter(o => o.paymentStatus === 'CANCELLED');
+    const totalAmount = orders.reduce((sum, o) => sum + Number(o.amount || 0), 0);
 
-    const totalAmount = paid.reduce((sum, o) => sum + Number(o.amount || 0), 0);
+    const elTotal = document.getElementById('statTotalOrders');
+    if (elTotal) elTotal.textContent = total;
 
-    document.getElementById('statTotalOrders').textContent = total;
-    document.getElementById('statPaidOrders').textContent = paid.length;
-    document.getElementById('statPendingOrders').textContent = pending.length;
-    document.getElementById('statTotalAmount').textContent = totalAmount.toLocaleString('vi-VN') + ' đ';
+    const elPaid = document.getElementById('statPaidOrders');
+    if (elPaid) elPaid.textContent = `${total} Hóa đơn`;
 
-    document.getElementById('countFilterAll').textContent = total;
-    document.getElementById('countFilterSuccess').textContent = paid.length;
-    document.getElementById('countFilterPending').textContent = pending.length;
-    document.getElementById('countFilterCancelled').textContent = cancelled.length;
+    const elAmount = document.getElementById('statTotalAmount');
+    if (elAmount) elAmount.textContent = totalAmount.toLocaleString('vi-VN') + ' đ';
+
+    const elSuccess = document.getElementById('countFilterSuccess');
+    if (elSuccess) elSuccess.textContent = total;
+    const elAll = document.getElementById('countFilterAll');
+    if (elAll) elAll.textContent = total;
   }
 
   // 4. Render bảng đơn hàng
@@ -752,7 +753,7 @@
     const tbody = document.getElementById('ordersTableBody');
 
     let filtered = allOrders;
-    if (currentFilterStatus !== 'ALL') {
+    if (currentFilterStatus && currentFilterStatus !== 'ALL' && currentFilterStatus !== 'SUCCESS') {
       filtered = filtered.filter(o => o.paymentStatus === currentFilterStatus);
     }
 
@@ -770,9 +771,9 @@
           <td colspan="7">
             <div class="empty-state">
               <i data-lucide="inbox"></i>
-              <h3>Không tìm thấy đơn thanh toán nào</h3>
-              <p>Chưa có giao dịch nào phù hợp với bộ lọc hiện tại. Bạn có thể đăng ký khóa học mới để bắt đầu học tập ngay.</p>
-              <a href="index.html#coursesSection"><i data-lucide="compass" style="width:16px;height:16px;"></i>Khám phá khóa học ngay</a>
+              <h3>Không tìm thấy hóa đơn thanh toán nào</h3>
+              <p>Chưa có giao dịch thanh toán thành công nào phù hợp với tìm kiếm. Bạn có thể đăng ký học phần mới để bắt đầu học tập ngay.</p>
+              <a href="courses.html?filter=available"><i data-lucide="compass" style="width:16px;height:16px;"></i>Khám phá khóa học ngay</a>
             </div>
           </td>
         </tr>
